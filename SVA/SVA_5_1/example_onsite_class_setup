@@ -1,0 +1,23 @@
+#!/bin/csh 
+# Note that this script is an example of environment settings.
+# Depending on the location of the course (whether that means a customers site or a worldwide cadence office), 
+# your own setup may be different.
+
+#Set these envs below to suit the specifics of your location and required version
+
+setenv MY_XCELIUM_ROOT "/cds/xcelium/2203/22.03.006";
+setenv MY_JASPER_ROOT  "/cds/jasper/2022.06/jasper_2022.06p002";
+setenv MY_INDAGO_ROOT  "/cds/indago/MAIN2203/22.03.001";
+setenv LM_LICENCE_FILE 5280@some_lic_server; #Port number might be something other than 5280
+
+
+###########################################################  
+#The rest of the file should be the same for any version  
+###########################################################
+setenv XCELIUM_BIN_DIR "${MY_XCELIUM_ROOT}/bin";
+setenv XCELIUM_TOOLS_BIN_DIR "${MY_XCELIUM_ROOT}/tools/bin";
+setenv INDAGO_BIN_DIR  "${INDAGO_ROOT}/bin";
+setenv INDAGO_TOOLS_BIN_DIR "${INDAGO_ROOT}/tools/bin";
+setenv PATH "${PATH}:${XCELIUM_BIN_DIR}:${XCELIUM_TOOLS_BIN_DIR}:${INDAGO_BIN_DIR}:${INDAGO_TOOLS_BIN_DIR}:${MY_JASPER_ROOT}/bin;
+
+

@@ -1,0 +1,4 @@
+2024-03-28 11:10:27.722887: : Starting Expert System Logger
+2024-03-28 11:10:28.581505: WARNING: telemetry message delivery failed with error code 1 - Connection refused
+2024-03-28 11:10:28.581541: WARNING: telemetry registration failed (HTTP error code 1)
+2024-03-28 11:10:33.104297: WARNING: uxdb query design_attributes is not supported by the JGIS server

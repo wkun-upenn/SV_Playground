@@ -1,0 +1,34 @@
+module v_arbiter_fairness (
+  clk, rstN,
+  gnt, req,
+  sample_transfer_ready,
+  hi_pri
+);
+input clk, rstN;
+input [3:0] gnt, req;
+input sample_transfer_ready;
+input [3:0] hi_pri;
+
+// Assertion "arbiter fairness" example
+//  Port 0 must not be granted if a request with adequate priority
+// from port 2 is pending
+//
+sequence s_no_gnt_2_since_gnt_0;
+   @(posedge clk) ((gnt[0]&&~gnt[2]) ##1 ~gnt[2][*1:$]);
+endsequence
+
+sequence s_pend_req_2;
+  @(posedge clk)
+  ((sample_transfer_ready && req[2]) ##1
+  ((~gnt[2] && req[2] && (hi_pri[2] || ~hi_pri[0]))[*1:$]));
+endsequence
+
+property arbiter_fairness;
+  @(posedge clk)
+  (s_no_gnt_2_since_gnt_0.ended && s_pend_req_2.ended) |-> (~gnt[0]);
+endproperty
+a_arbiter_fairness: assert property (arbiter_fairness);
+
+ptest_clk: assert property ( @(1'b1) (gnt[0]) );
+
+endmodule // v_arbiter_fairness

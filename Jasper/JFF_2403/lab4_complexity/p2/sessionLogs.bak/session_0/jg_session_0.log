@@ -1,0 +1,382 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2023.12
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2023.12p001 64 bits
+# build date: 2024.01.23 16:09:24 UTC
+# ----------------------------------------
+# started   : 2024-01-24 14:00:55 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 952489
+# arguments : '-label' 'session_0' '-console' '//127.0.0.1:38545' '-style' 'windows' '-data' 'AAABdHicfY67CsJAEEVPjDZWVv6Fj40IIils7BTRwl58QEJQ8QFio5/mp/gn601MlIDxws7dmTM7sw7g36y1JHKvCjVGjJkxVJwwl8ODLh49DAO27AjYELHmQj8l7b/kSPipm0LiFZLOjz0rFqIBS038zjQFPJHzfDu+Q15xXspXpvecQyV7nLW4OlUa7DloY6isrLsnr3PS3oiWyFn/aaZ5rBfcGC+S' '-proj' '/servers/esd_noida/amey/JGFF_2212/lab3_complexity/p2/sessionLogs/session_0' '-init' '-hidden' '/servers/esd_noida/amey/JGFF_2212/lab3_complexity/p2/.tmp/.initCmds.tcl' 'tcl/run.tcl'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2023 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/lab3_complexity/p2/sessionLogs/session_0
+
+INFO: successfully checked out licenses "jasper_interactive" and "jasper_fpv".
+INFO: reading configuration file "/home/adahikar/.config/cadence/jasper.conf".
+% ############################################################
+% # environment setup
+% #
+% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% include tcl/setup_jg.tcl
+%% ############################################################
+%% # tool setup
+%% ############################################################
+%% #Dont use shell mode because this requires knowing a customers PATH and options to bsub
+%% #in advance, which cannot be known for every circumstance
+%% #set_proofgrid_mode shell
+%% set_proofgrid_mode local
+%% 
+%% #Note that the command below will only work on the Cadence SJ Farm. 
+%% #You will have to use your own bsub command to dispatch the jobs, for example
+%% #the PATH to bsub will probably be different, the OS's available, 
+%% #the Project name (-P), the queue name (-q)
+%% #set_proofgrid_shell {/grid/sfi/farm/bin/bsub -q lnx64 -o /dev/null -K -P JG:2021.09:FAV:test -W 200:00 -n %jg_engine_job_threads /
+%% #                     -R "OSNAME==Linux && (OSREL==EE70 || OSREL==CN70) rusage[mem=16000] span[hosts=1]"}
+%% 
+%% set_proofgrid_per_engine_max_jobs        200
+%% set_proofgrid_max_jobs                   200
+%% set_proofgrid_per_engine_max_local_jobs  1
+%% set_proofgrid_max_local_jobs             12
+%% set_proofgrid_manager                    on
+%% set_proofgrid_restarts                   1
+%% set_log_timestamp_mode                   on
+%% set_capture_elaborated_design            on
+%% set_max_trace_length                     0
+%% set_prove_verbosity                      9
+%% 
+%% set_message -ignore VERI-9005
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-9005" has been changed from "warning" to "ignore" level.
+%% set_message -ignore VERI-1208
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-1208" has been changed from "warning" to "ignore" level.
+%% set_message -ignore VERI-1209
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-1209" has been changed from "warning" to "ignore" level.
+%% set_message -ignore VERI-1142
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-1142" has been changed from "warning" to "ignore" level.
+%% set_message -ignore VERI-1875
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-1875" has been changed from "warning" to "ignore" level.
+%% set_message -ignore VERI-1060
+2024-01-24 14:00:56: INFO (ICD011): Message "VERI-1060" has been changed from "warning" to "ignore" level.
+%% 
+%% set_message -disable WPM025
+2024-01-24 14:00:56: INFO (ICD012): Message "WPM025" has been disabled.
+%% set_message -disable WNL023
+2024-01-24 14:00:56: INFO (ICD012): Message "WNL023" has been disabled.
+% include tcl/local_dut.tcl
+%% #abvip -set_location /grid/avs/install/vipcat/11.3/latest/tools.lnx86/abvip
+%% abvip -set_location $env(ABVIP_INST_DIR)
+2024-01-24 14:00:56: WARNING (WSW008): The directory "/cds/avs/install/vipcat/11.3/11.30.088-s/tools/abvip" does not exist.
+%% 
+%% analyze -sv09 \
+   ./local_pp/rtl/pp_cfg.v \
+   ./local_pp/rtl/pp_cg.v \
+   ./local_pp/rtl/pp_drop_ctrl.v \
+   ./local_pp/rtl/pp_fifo.v \
+   ./local_pp/rtl/pp_ig_parse.v \
+   ./local_pp/rtl/pp_intr.v \
+   ./local_pp/rtl/pp_list_ctrl.v \
+   ./local_pp/rtl/pp_mem_2r2w.v \
+   ./local_pp/rtl/pp_payload_mem.v \
+   ./local_pp/rtl/pp_route_ctrl.v \
+   ./local_pp/rtl/pp_stall.v \
+   ./local_pp/rtl/pp_sync_pulse.v \
+   ./local_pp/rtl/pp_sync.v \
+   ./local_pp/rtl/pp_thr_mem.v \
+   ./local_pp/rtl/pp.v \
+
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_cfg.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_cfg.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_cg.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_cg.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_drop_ctrl.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_drop_ctrl.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_fifo.v'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_ig_parse.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_ig_parse.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_intr.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_intr.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_list_ctrl.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_list_ctrl.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_mem_2r2w.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_mem_2r2w.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_payload_mem.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_payload_mem.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_route_ctrl.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_route_ctrl.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_stall.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_stall.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_sync_pulse.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_sync_pulse.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_sync.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_sync.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp_thr_mem.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp_thr_mem.v(24): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/rtl/pp.v'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/rtl/pp.v(24): analyzing included file './local_pp/rtl/pp.vh'
+%% analyze -sv09 \
+   +incdir+./local_pp/formal_verif/tb/env \
+   +incdir+./local_pp/rtl \
+   ./local_pp/formal_verif/tb/env/fv_adapter.sv \
+   ./local_pp/formal_verif/tb/env/fv_bind.sv \
+   ./local_pp/formal_verif/tb/env/fv_env.sv \
+   ./local_pp/formal_verif/tb/env/fv_pkg.sv \
+
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/env/fv_adapter.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/env/fv_adapter.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/env/fv_adapter.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/env/fv_bind.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/env/fv_bind.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/env/fv_env.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/env/fv_env.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/env/fv_env.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/env/fv_pkg.sv'
+2024-01-24 14:00:56: [WARN (VERI-2418)] ./local_pp/formal_verif/tb/env/fv_pkg.sv(42): parameter 'TAG_DROP_BIT' declared inside package 'fv_pkg' shall be treated as localparam
+2024-01-24 14:00:56: [WARN (VERI-2418)] ./local_pp/formal_verif/tb/env/fv_pkg.sv(43): parameter 'TAG_CHECKSUM_BIT' declared inside package 'fv_pkg' shall be treated as localparam
+2024-01-24 14:00:56: [WARN (VERI-2418)] ./local_pp/formal_verif/tb/env/fv_pkg.sv(44): parameter 'TAG_THR_BIT' declared inside package 'fv_pkg' shall be treated as localparam
+%% analyze -sv09 \
+   +incdir+./local_pp/formal_verif/tb/env \
+   +incdir+./local_pp/rtl \
+   ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv \
+   ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_port_intf.sv \
+   ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_agent.sv \
+   ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_port_intf.sv \
+   ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv \
+   ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_port_intf.sv \
+   ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_agent.sv \
+   ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_check.sv \
+   ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_port_intf.sv \
+   ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_agent.sv \
+   ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_port_intf.sv \
+
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_port_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_port_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_agent.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_agent.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_agent.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_port_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_port_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_port_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_port_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_agent.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_agent.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_agent.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_check.sv'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_port_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_port_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/route_agent/src/route_agent.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_agent.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_agent.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/agents/route_agent/src/route_port_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_port_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+%% analyze -sv09 \
+   +incdir+./local_pp/formal_verif/tb/env \
+   +incdir+./local_pp/rtl \
+   ./local_pp/formal_verif/tb/components/env_interfaces/apb_txn_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/cfg_probe_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/fl_probe_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/header_txn_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/intr_txn_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/level_trk_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/packet_txn_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/payload_txn_intf.sv \
+   ./local_pp/formal_verif/tb/components/env_interfaces/resp_txn_intf.sv \
+
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/apb_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/apb_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/cfg_probe_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/cfg_probe_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/fl_probe_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/fl_probe_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/header_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/header_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/intr_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/intr_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/level_trk_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/level_trk_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/packet_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/packet_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/payload_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/payload_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/env_interfaces/resp_txn_intf.sv'
+2024-01-24 14:00:56: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/env_interfaces/resp_txn_intf.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+%% analyze -sv09 \
+   +incdir+./local_pp/formal_verif/tb/env \
+   +incdir+./local_pp/rtl \
+   ./local_pp/formal_verif/tb/components/checkers/cfg_chk.sv \
+   ./local_pp/formal_verif/tb/components/checkers/fl_chk.sv \
+   ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv \
+   ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv \
+   ./local_pp/formal_verif/tb/components/checkers/init_chk.sv \
+   ./local_pp/formal_verif/tb/components/checkers/level_chk.sv \
+
+2024-01-24 14:00:56: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/cfg_chk.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/cfg_chk.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/cfg_chk.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/fl_chk.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/fl_chk.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/fl_chk.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/init_chk.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/init_chk.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/init_chk.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/checkers/level_chk.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/level_chk.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/checkers/level_chk.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+%% analyze -sv09 \
+   +incdir+./local_pp/formal_verif/tb/env \
+   +incdir+./local_pp/rtl \
+   ./local_pp/formal_verif/tb/components/abstractions/jasper_fifo.sv \
+   ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv \
+   ./local_pp/formal_verif/tb/components/coverage/covers.sv \
+
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/abstractions/jasper_fifo.sv'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/abstractions/tag_abs.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+2024-01-24 14:00:57: [-- (VERI-1482)] Analyzing Verilog file './local_pp/formal_verif/tb/components/coverage/covers.sv'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/coverage/covers.sv(24): analyzing included file './local_pp/formal_verif/tb/env/fv_defines.svh'
+2024-01-24 14:00:57: [INFO (VERI-1328)] ./local_pp/formal_verif/tb/components/coverage/covers.sv(25): analyzing included file './local_pp/rtl/pp.vh'
+%% elaborate -top pp \
+   -no_preconditions \
+   -parameter DATA_MEM_SIZE    128 \
+   -parameter DATA_W           32 \
+   -parameter NUM_THR          8 \
+   -parameter PROC_FIFO_DEPTH  8 \
+
+2024-01-24 14:00:57: INFO (ISW003): Top module name is "pp".
+2024-01-24 14:00:57: [INFO (VERI-1508)] The default Verilog library search path is now "/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3"
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_pkg' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_pkg.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_core' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_core.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_sync' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_sync.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_tag' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_tag.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_symbol' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_symbol.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_datacnt' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_datacnt.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_txcnt' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_txcnt.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_tracker' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_tracker.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3_latency_counter' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3_latency_counter.sdb'
+2024-01-24 14:00:57: [-- (VERI-1503)] Restoring Verilog module 'work.jasper_scoreboard_3' from file '/grid/avs/install/jasper/latest/lib/Linux64/verilog/jasper_package/jasper_scoreboard_3/work/jasper_scoreboard_3.sdb'
+2024-01-24 14:00:57: [WARN (VERI-2435)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(72): port 'incoming_clk' is not connected on this instance
+2024-01-24 14:00:57: [WARN (VERI-1927)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(72): port 'incoming_selected' remains unconnected for this instance
+2024-01-24 14:00:57: [WARN (VERI-2435)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(49): port 'incoming_clk' is not connected on this instance
+2024-01-24 14:00:57: [WARN (VERI-1927)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(49): port 'incoming_selected' remains unconnected for this instance
+2024-01-24 14:00:57: [WARN (VERI-1927)] ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv(88): port 'data_front_valid' remains unconnected for this instance
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_cg.v(26): compiling module 'pp_cg'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_ig_parse.v(26): compiling module 'pp_ig_parse:(DATA_W=32)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_fifo.v(24): compiling module 'pp_fifo:(WIDTH=19,DEPTH=8)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_fifo.v(24): compiling module 'pp_fifo:(WIDTH=4,DEPTH=8)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_route_ctrl.v(26): compiling module 'pp_route_ctrl:(DATA_W=32,PTR_W=7,THR_W=3,PROC_FIFO_DEPTH=8)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_mem_2r2w.v(26): compiling module 'pp_mem_2r2w:(DATA_W=41,ADDR_W=7)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_payload_mem.v(26): compiling module 'pp_payload_mem:(DATA_W=32,PTR_W=7)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_mem_2r2w.v(26): compiling module 'pp_mem_2r2w:(DATA_W=15,ADDR_W=3)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_thr_mem.v(26): compiling module 'pp_thr_mem:(PTR_W=7,NUM_THR=8,THR_W=3)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_stall.v(26): compiling module 'pp_stall:(PTR_W=7,THR_W=3)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_drop_ctrl.v(26): compiling module 'pp_drop_ctrl:(PTR_W=7)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_list_ctrl.v(26): compiling module 'pp_list_ctrl:(PTR_W=7)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync_pulse.v(26): compiling module 'pp_sync_pulse'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync.v(26): compiling module 'pp_sync'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync.v(26): compiling module 'pp_sync:(WIDTH=8)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync.v(26): compiling module 'pp_sync:(WIDTH=64)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync.v(26): compiling module 'pp_sync:(WIDTH=32)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_sync.v(26): compiling module 'pp_sync:(WIDTH=3)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_cfg.v(26): compiling module 'pp_cfg:(PTR_W=7,THR_W=3,NUM_THR=8)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/rtl/pp_intr.v(26): compiling module 'pp_intr:(PTR_W=7,NUM_THR=8,THR_W=3)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/env/fv_adapter.sv(27): compiling module 'fv_adapter:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_port=ig_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,eg_port=eg_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,apb_port=apb_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,intr_port=intr_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,fl_probe=fl_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv(27): compiling module 'ig_agent:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_port=ig_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,ig_payload_txn=payload_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,ig_header_txn=header_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,ig_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [WARN (VERI-9060)] ./local_pp/formal_verif/tb/components/agents/ig_agent/src/ig_agent.sv(184): To extract covergroup from the design, use switch "-extract_covergroup" with the elaborate command. For more information on supported constructs of covergroup, refer to the appendix "Covergroup Support" in the Command Reference Manual.
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/route_agent/src/route_agent.sv(27): compiling module 'route_agent:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_header_txn=header_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,resp_txn=resp_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/eg_agent/src/eg_agent.sv(27): compiling module 'eg_agent:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,eg_port=eg_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_payload_txn=payload_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,eg_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv(27): compiling module 'apb_agent:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,apb_port=apb_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,apb_txn=apb_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver)'
+2024-01-24 14:00:57: [WARN (VERI-1063)] ./local_pp/formal_verif/tb/components/agents/apb_agent/src/apb_agent.sv(57): instantiating unknown module 'apb3_master'
+2024-01-24 14:00:57: ERROR (ENL058): Unable to elaborate module/entity "apb3_master" because this module/entity is missing or it contains errors.
+    Re-analyze it or use "-bbox_m apb3_master" if you want to black box this module/entity.
+2024-01-24 14:00:57: WARNING (WNL059): If you are analyzing with "-mfcu" or "-sfcu" and "-L", try using "elaborate -L libname", "set_analyze_libunboundsearch" or "analyze +libunboundsearch"
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_check.sv(24): compiling module 'intr_check'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_check.sv(24): compiling module 'intr_check:(PULSE=0)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/agents/intr_agent/src/intr_agent.sv(27): compiling module 'intr_agent:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,intr_port=intr_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,intr_txn=intr_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver,ig_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,fl_probe=fl_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,level_trk=level_trk_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,apb_txn=apb_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/fl_chk.sv(27): compiling module 'fl_chk:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,fl_probe=fl_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/init_chk.sv(27): compiling module 'init_chk:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_port=ig_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/cfg_chk.sv(27): compiling module 'cfg_chk:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,apb_txn=apb_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,level_trk=level_trk_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/level_chk.sv(27): compiling module 'level_chk:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_port=eg_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,resp_txn=resp_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,fl_probe=fl_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,level_trk=level_trk_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_driver)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] jasper_scoreboard_3.v(1179): compiling module 'jasper_scoreboard_3_tracker:(IN_CHUNKS=32'b01,OUT_CHUNKS=32'b01,CHUNK_WIDTH=32'b010000100,MAX_PENDING=32'b010,ORDERING=IN_ORDER)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] jasper_scoreboard_3.v(259): compiling module 'jasper_scoreboard_3_core:(ORDERING=IN_ORDER,IN_CHUNKS=32'b01,OUT_CHUNKS=32'b01,CHUNK_WIDTH=32'b010000100,MAX_PENDING=32'b010,INTEGRITY_CHECK=1'b1,OVERFLOW_CHECK=1'b1,COVER_COUNT=32'b010,LATENCY_CHECK=1'b1,LATENCY_HALT_MODE=2'b0,XPROP_CTRL_CHECK=1'b0,XPROP_DATA_CHECK=1'b0,LITE_CHECKS=1'b0,FIRST_CHECKS=1'b0,FIRST_CHECKS_COUNT=32'b010,MODEL=DYN)'
+2024-01-24 14:00:57: [INFO (VERI-1018)] jasper_scoreboard_3.v(12): compiling module 'jasper_scoreboard_3:(CHUNK_WIDTH=32'b010000100,MAX_PENDING=32'b010,LATENCY_CHECK=1'b1,DYNAMIC=1'b1)'
+2024-01-24 14:00:58: [WARN (VERI-2234)] jasper_scoreboard_3.v(74): no netlist generated for assert 'cfg_latency_check'
+2024-01-24 14:00:58: [WARN (VDB-1002)] jasper_scoreboard_3.v(66): net 'global_clock' does not have a driver
+2024-01-24 14:00:58: [WARN (VDB-1002)] jasper_scoreboard_3.v(67): net 'global_reset' does not have a driver
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(27): compiling module 'ig_route_sb:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_header_txn=header_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_header_txn=header_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:58: [WARN (VERI-8028)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(66): missing/open ports on instance sb of module jasper_scoreboard_3
+2024-01-24 14:00:58: [WARN (VDB-1013)] ./local_pp/formal_verif/tb/components/checkers/ig_route_sb.sv(72): input port 'incoming_clk' is not connected on this instance
+2024-01-24 14:00:58: [INFO (VERI-1018)] jasper_scoreboard_3.v(1179): compiling module 'jasper_scoreboard_3_tracker:(IN_CHUNKS=32'b01,OUT_CHUNKS=32'b01,CHUNK_WIDTH=32'b0100001,MAX_PENDING=32'b010000001,ORDERING=IN_ORDER)'
+2024-01-24 14:00:58: [INFO (VERI-1018)] jasper_scoreboard_3.v(259): compiling module 'jasper_scoreboard_3_core:(ORDERING=IN_ORDER,IN_CHUNKS=32'b01,OUT_CHUNKS=32'b01,CHUNK_WIDTH=32'b0100001,MAX_PENDING=32'b010000001,INTEGRITY_CHECK=1'b1,OVERFLOW_CHECK=1'b1,COVER_COUNT=32'b010,LATENCY_CHECK=1'b0,LATENCY_HALT_MODE=2'b0,XPROP_CTRL_CHECK=1'b0,XPROP_DATA_CHECK=1'b0,LITE_CHECKS=1'b0,FIRST_CHECKS=1'b0,FIRST_CHECKS_COUNT=32'b010000001,MODEL=DYN)'
+2024-01-24 14:00:58: [INFO (VERI-1018)] jasper_scoreboard_3.v(12): compiling module 'jasper_scoreboard_3:(CHUNK_WIDTH=32'b0100001,MAX_PENDING=32'b010000001,DYNAMIC=1'b1)'
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(27): compiling module 'ig_eg_sb:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_payload_txn=payload_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_payload_txn=payload_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:58: [WARN (VERI-8028)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(43): missing/open ports on instance sb of module jasper_scoreboard_3
+2024-01-24 14:00:58: [WARN (VDB-1013)] ./local_pp/formal_verif/tb/components/checkers/ig_eg_sb.sv(49): input port 'incoming_clk' is not connected on this instance
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/coverage/covers.sv(27): compiling module 'covers:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_port=ig_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,ig_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_port=eg_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,eg_packet_txn=packet_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,resp_txn=resp_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,intr_txn=intr_txn_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,fl_probe=fl_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,level_trk=level_trk_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/abstractions/jasper_fifo.sv(24): compiling module 'jasper_fifo:(WIDTH=4,DEPTH=8,ASSERT_NO_UNDERFLOW=1,ASSUME_NO_OVERFLOW=1)'
+2024-01-24 14:00:58: [WARN (VDB-1002)] ./local_pp/formal_verif/tb/components/abstractions/jasper_fifo.sv(54): net 'data_front_free[3]' does not have a driver
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv(27): compiling module 'tag_abs:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8,ig_port=ig_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,route_port=route_port_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor,cfg_probe=cfg_probe_intf:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)_monitor)'
+2024-01-24 14:00:58: [WARN (VERI-8028)] ./local_pp/formal_verif/tb/components/abstractions/tag_abs.sv(81): missing/open ports on instance tag_fifo of module jasper_fifo
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/formal_verif/tb/env/fv_env.sv(27): compiling module 'fv_env:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)'
+2024-01-24 14:00:58: [INFO (VERI-1018)] ./local_pp/rtl/pp.v(26): compiling module 'pp:(DATA_W=32,DATA_MEM_SIZE=128,NUM_THR=8,PROC_FIFO_DEPTH=8)'
+2024-01-24 14:00:58: [ERROR (VDB-9017)] Module pp could not be elaborated
+2024-01-24 14:00:58: Summary of errors detected:
+2024-01-24 14:00:58: 	ERROR (ENL058): Unable to elaborate module/entity "apb3_master" because this module/entity is missing or it contains errors.
+    Re-analyze it or use "-bbox_m apb3_master" if you want to black box this module/entity.
+2024-01-24 14:00:58: 	[ERROR (VDB-9017)] Module pp could not be elaborated
+ERROR at line 74 in file tcl/local_dut.tcl, more info in Tcl-variable errorInfo
+ERROR (ENL034): 2 errors detected in the design file(s).
+
+ERROR: problem encountered at line 6 in file tcl/run.tcl
+
+2024-01-24 14:01:04: INFO (IPL005): Received request to exit from the console.
+2024-01-24 14:01:04: INFO (IPL014): Waiting for the Tcl-thread to exit.
+2024-01-24 14:01:04: INFO (IPL018): The peak resident set memory use for this session was 0.449 GB.
+2024-01-24 14:01:04: INFO (IPL015): The Tcl-thread exited with status 0.
+2024-01-24 14:01:04: INFO (IPL016): Exiting the analysis session with status 0.

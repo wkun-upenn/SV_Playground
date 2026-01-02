@@ -1,0 +1,25 @@
+module \embedded__dynamic_properties (
+    clk
+    ,rdata0
+    ,rdata1
+);
+
+input clk ;
+input [31:0] rdata0 ;
+input [31:0] rdata1 ;
+ 
+\assert__assert_1 : assert property (@(posedge clk) 
+ rdata0
+);
+
+\assert__assert_2 : assert property (@(posedge clk) 
+ rdata1
+);
+
+endmodule
+
+bind top \embedded__dynamic_properties \embedded__properties (
+    .clk (clk ),
+    .rdata0 (rdata0 ),
+    .rdata1 (rdata1 )
+);

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+jg -fpv jg_fpv.tcl 

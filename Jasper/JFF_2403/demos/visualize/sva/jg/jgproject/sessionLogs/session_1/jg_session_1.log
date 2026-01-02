@@ -1,0 +1,233 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2024.03
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2024.03 FCS 64 bits
+# build date: 2024.03.27 15:42:27 UTC
+# ----------------------------------------
+# started   : 2024-04-01 22:15:42 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 2066880
+# arguments : '-label' 'session_1' '-console' '//127.0.0.1:36259' '-style' 'windows' '-data' 'AAAAknicY2RgYLCp////PwMYMFcBCTYGfwY3IIQDxgdQhg0jAyoA8ZlQRQIbUGgGBlaYZmRNIgxZDOkM8QxpDAUMZQx6DCUMyQw5YFkA00oMIA==' '-proj' '/servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/sessionLogs/session_1'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/sessionLogs/session_1
+
+% session -refresh
+INFO (ISR002): The value of configuration "expert_system_status" has been restored to "on".
+INFO (ISR002): The value of configuration "max_trace_length" has been restored to "88".
+%% # 
+%% #
+%% # Any disclosure about the Cadence Design Systems software or its use
+%% # model to any third party violates the written Non-Disclosure Agreement
+%% # between Cadence Design Systems, Inc. and the customer.
+%% #
+%% # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+%% # CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+%% # PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+%% # DESIGN SYSTEMS, INC.
+%% #
+%% # Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+%% # Reserved.  Unpublished -- rights reserved under the copyright laws of
+%% # the United States.
+%% #
+%% # This product includes software developed by others and redistributed
+%% # according to license agreement. See doc/third_party_readme.txt for
+%% # further details.
+%% #
+%% # RESTRICTED RIGHTS LEGEND
+%% #
+%% # Use, duplication, or disclosure by the Government is subject to
+%% # restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+%% # Technical Data and Computer Software clause at DFARS 252.227-7013 or
+%% # subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+%% # Rights at 48 CFR 52.227-19, as applicable.
+%% #
+%% #
+%% #                           Cadence Design Systems, Inc.
+%% #                           2655 Seely Avenue
+%% #                           San Jose, CA 95134
+%% #                           Phone: 408.943.1234
+%% #
+%% # For technical assistance visit http://support.cadence.com.
+%% 
+%% # ----------------------------------------
+%% # Jasper Version Info
+%% # tool      : Jasper 2024.03
+%% # platform  : Linux 4.18.0-305.el8.x86_64
+%% # version   : 2024.03 FCS 64 bits
+%% # build date: 2024.03.27 15:42:27 UTC
+%% # ----------------------------------------
+%% 
+%% # The following script was created on Mon Apr  1 22:15:10 2024
+%% 
+%% custom_engine -add -code hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Ncustom1
+%% custom_engine -add -code hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+Bcustom2: Custom engine code is hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+Bcustom2
+%% custom_engine -add -code hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+AMcustom3: Custom engine code is hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+AMcustom3
+%% custom_engine -add -code hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+Mpcustom4: Custom engine code is hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+Mpcustom4
+%% custom_engine -add -code hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+AMcustom5: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+AMcustom5
+%% custom_engine -add -code hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+Ncustom6: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+Ncustom6
+%% custom_engine -add -code hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+ADcustom7: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+ADcustom7
+%% custom_engine -add -code hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Tricustom8: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Tricustom8
+%% custom_engine -add -code hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+Gcustom9: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+Gcustom9
+%% custom_engine -add -code hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+C2custom10: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+C2custom10
+%% custom_engine -add -code hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+AGcustom11: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+AGcustom11
+%% custom_engine -add -code hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Bcustom12: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Bcustom12
+%% custom_engine -add -code hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Ncustom13: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Ncustom13
+%% custom_engine -add -code hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+Tricustom14: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+Tricustom14
+%% # BEGIN ENV CONFIG COMMANDS
+%% # END ENV CONFIG COMMANDS
+%% # BEGIN RTL COMMANDS
+%% analyze -verilog ../source/design/arbiter.v ../source/design/port_select.v ../source/design/bridge.v ../source/design/egress.v ../source/design/ingress.v ../source/design/top.v
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/arbiter.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/port_select.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/bridge.v'
+[WARN (VERI-1875)] ../source/design/bridge.v(109): identifier 'int2eg_end' is used before its declaration
+[WARN (VERI-1875)] ../source/design/bridge.v(111): identifier 'int2eg_end' is used before its declaration
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/egress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/ingress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/top.v'
+[INFO (VERI-2561)] ../source/design/top.v(155): undeclared symbol 'rd_ready', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(166): undeclared symbol 'new_tran0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(167): undeclared symbol 'int_read_done0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(168): undeclared symbol 'current_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(169): undeclared symbol 'int_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(170): undeclared symbol 'int_ready0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(171): undeclared symbol 'int_valid0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(172): undeclared symbol 'trans_started0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(189): undeclared symbol 'new_tran1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(190): undeclared symbol 'int_read_done1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(191): undeclared symbol 'current_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(192): undeclared symbol 'int_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(193): undeclared symbol 'int_ready1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(194): undeclared symbol 'int_valid1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(195): undeclared symbol 'trans_started1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(212): undeclared symbol 'new_tran2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(213): undeclared symbol 'int_read_done2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(214): undeclared symbol 'current_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(215): undeclared symbol 'int_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(216): undeclared symbol 'int_ready2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(217): undeclared symbol 'int_valid2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(218): undeclared symbol 'trans_started2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(235): undeclared symbol 'new_tran3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(236): undeclared symbol 'int_read_done3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(237): undeclared symbol 'current_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(238): undeclared symbol 'int_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(239): undeclared symbol 'int_ready3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(240): undeclared symbol 'int_valid3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(241): undeclared symbol 'trans_started3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(270): undeclared symbol 'new_tran', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(271): undeclared symbol 'int_read_done', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(272): undeclared symbol 'trans_started', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(273): undeclared symbol 'current_read_write', assumed default net type 'wire'
+%% analyze -sv09 ../source/properties/v_arbiter.sva ../source/properties/v_arbiter_fairness.sva ../source/properties/v_bridge.sva ../source/properties/v_ingress.sva ../source/properties/v_egress.sva ../source/properties/v_port_select.sva ../source/properties/bindings.sva
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter_fairness.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_bridge.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_ingress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_egress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_port_select.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/bindings.sva'
+%% elaborate -top top
+INFO (ISW003): Top module name is "top".
+[INFO (HIER-8002)] ../source/design/top.v(342): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] ../source/properties/v_ingress.sva(1): compiling module 'v_ingress'
+[INFO (VERI-1018)] ../source/design/ingress.v(47): compiling module 'ingress'
+[INFO (VERI-1018)] ../source/properties/v_egress.sva(1): compiling module 'v_egress'
+[INFO (VERI-1018)] ../source/design/egress.v(51): compiling module 'egress'
+[INFO (VERI-1018)] ../source/properties/v_bridge.sva(1): compiling module 'v_bridge'
+[INFO (VERI-1018)] ../source/design/bridge.v(54): compiling module 'bridge'
+[INFO (VERI-1018)] ../source/properties/v_arbiter_fairness.sva(1): compiling module 'v_arbiter_fairness'
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-2119)] ../source/properties/v_arbiter_fairness.sva(32): constant expression cannot be used as event expression
+[WARN (VERI-1994)] ../source/properties/v_arbiter_fairness.sva(32): unsatisfiable sequence in assertion
+[WARN (VERI-2234)] ../source/properties/v_arbiter_fairness.sva(32): no netlist generated for assert 'ptest_clk'
+[INFO (VERI-1018)] ../source/properties/v_arbiter.sva(1): compiling module 'v_arbiter'
+[INFO (VERI-1018)] ../source/design/arbiter.v(49): compiling module 'arbiter'
+[INFO (VERI-1018)] ../source/properties/v_port_select.sva(1): compiling module 'v_port_select'
+[INFO (VERI-1018)] ../source/design/port_select.v(47): compiling module 'port_select'
+[INFO (VERI-1018)] ../source/design/top.v(49): compiling module 'top'
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          13 (1 packages)
+  Single run mode                         On
+  Pipeline                                On (12 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      13 (13 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+top
+%% # END RTL COMMANDS
+%% # Setup global clocks and resets
+%% clock clk
+%% reset -expression !(rstN)
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rstN".
+%% namespace eval ::post_setup {proc run_post_setup_script {} {}}
+%% 
+INFO (IPL005): Received request to exit from the console.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPL018): The peak resident set memory use for this session was 0.379 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

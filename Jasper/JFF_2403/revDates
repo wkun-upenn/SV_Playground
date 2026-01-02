@@ -1,0 +1,49 @@
+===========================================================================
+Jasper Formal Fundamentals
+V15.0 12th April, 2024 - Updated for 2403, added complexity reduction technique lab
+									removed superlint and xprop labs.
+
+Tested on Jasper versions:
+2024.03p001 64 bits
+VIPCAT Release VIPCAT 11.3.095-s
+
+
+History
+==================================================
+V14.0 28th February, 2023 - Updated for 2212
+
+V13.0 16th November, 2021 - Updated for 2109, added complexity lab
+                            added latest SVA test environment to demos directory.
+                            Updated Xprop and Superlint labs to latest GUI
+V12.0 27th March, 2020 - Updated for 1912
+V10.0 1st Oct, 2019 - Updated for 1906
+V9.0 11th Feb, 2019 - Updated Xprop and Superlint Labs, Interactive labs remains in tar file 
+                        but no longer in schedule. Visualize lab there for demo purposes as well 
+
+V8.0 10th May, 2018 - Updated Xprop and Superlint Labs, Interactive labs remains in tar file 
+                      but no longer in schedule. Visualize lab there for demo purposes as well 
+                      Tested on JasperGold versions:
+                      2018.03 FCS 64 bits
+
+V7.0 5th August, 2016 - Updated for JG2016.06
+                       Changed to scoreboard lab to use jasper_scoreboard3 (big differences)
+                       Enhanced interactive lab solution and scripts
+                       Corrected frame lab cover statements
+                       Completely specified BB Interface property req |-> ack property
+                       Removed reset from combinatorial expressions in frame lab
+V6.0 6th May, 2016 - Updated for JG2016.03
+                      Improved coding style/aux code for solutions
+                      Fixed bug in BB_IF lab UT which required stability of write date when transaction ws a read
+                      SPS Lab now AFL Lab, does not state to fix RTL which is a good implemntation orf a circular buffer.
+                      AFL now also requires an Incisive installation.
+                      Rather the failing check is required by the user to be waived.
+                      Xprop lab now has source of uninitialised reg and destination of output only.
+V5.0 14 November, 2015 - Enhanced interactive lab solution
+V4.0 31 October, 2015 - -Corrected known errors, updated for 2015-09, added interactive lab
+V3.0 2nd September, 2015 -Corrected known errors, updated for 2015-06 and removed IFV directories
+V2.0 11th February, 2015 -Added Visualize labs for Xprop and SPS
+V1.0 3rd November, 2014 - First Release of Formal Fundamentals With JasperGold
+
+Developer: Michael Avery
+           mavery@cadence.com
+==========================================================================

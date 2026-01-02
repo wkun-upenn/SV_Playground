@@ -1,0 +1,767 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2023.12
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2023.12p001 64 bits
+# build date: 2024.01.23 16:09:24 UTC
+# ----------------------------------------
+# started   : 2024-01-25 11:27:09 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 1080403
+# arguments : '-label' 'session_0' '-console' '//127.0.0.1:46431' '-style' 'windows' '-data' 'AAABWnicY2RgYLCp////PwMYMFcBCQEGHwZfhiAGVyDpzxAGpBkYDjCYMhgxWDAYMjgw5DHkM2QypDHkMKQyVDBYQWUM8MoUM2TBxQ1xyhjhlDHGYk8KQyJQNpMhGWgiwkxDHPJgwPgAQjPYMDKgAhCfCVUksAGFZmBghWlG1iTEUAK0IYmhFOhePTA7BywHAD24LE4=' '-proj' '/servers/esd_noida/amey/JGFF_2212/lab6_BB_IF/part2/solution/jaspergold/jgproject/sessionLogs/session_0' '-init' '-hidden' '/servers/esd_noida/amey/JGFF_2212/lab6_BB_IF/part2/solution/jaspergold/jgproject/.tmp/.initCmds.tcl' 'tcbus.tcl'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2023 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/lab6_BB_IF/part2/solution/jaspergold/jgproject/sessionLogs/session_0
+
+INFO: successfully checked out licenses "jasper_interactive" and "jasper_fpv".
+INFO: reading configuration file "/home/adahikar/.config/cadence/jasper.conf".
+% ################
+% # Clear
+% ################
+% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% 
+% #source example_proofgrid_setup.tcl
+% 
+% ################
+% # Analyze
+% ################
+% analyze -v2k -f jg_tcbus.f
+INFO (INL011): Processing "-f" file "/servers/esd_noida/amey/JGFF_2212/lab6_BB_IF/part2/solution/jaspergold/jg_tcbus.f".
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te.v'
+[INFO (VERI-1328)] ../rtl/te.v(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te_bm.v'
+[INFO (VERI-1328)] ../rtl/te_bm.v(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te_tcbus.v'
+[INFO (VERI-1328)] ../rtl/te_tcbus.v(27): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te_dabus.v'
+[INFO (VERI-1328)] ../rtl/te_dabus.v(27): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te_pkt.v'
+[INFO (VERI-1328)] ../rtl/te_pkt.v(27): analyzing included file '../rtl/dfafn_lib.h'
+[INFO (VERI-2561)] ../rtl/te_pkt.v(376): undeclared symbol 'pktob_ak_cnt', assumed default net type 'wire'
+[INFO (VERI-2561)] ../rtl/te_pkt.v(575): undeclared symbol 'dma_ob_req', assumed default net type 'wire'
+[INFO (VERI-2561)] ../rtl/te_pkt.v(575): undeclared symbol 'ob_ibpath_req', assumed default net type 'wire'
+[INFO (VERI-2561)] ../rtl/te_pkt.v(580): undeclared symbol 'ob_dma_bm_read_gnt', assumed default net type 'wire'
+[INFO (VERI-2561)] ../rtl/te_pkt.v(580): undeclared symbol 'ob_rr_gnt', assumed default net type 'wire'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/te_csr.v'
+[INFO (VERI-1328)] ../rtl/te_csr.v(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/fifo_cntl.v'
+[INFO (VERI-1328)] ../rtl/fifo_cntl.v(27): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/fifo.v'
+[INFO (VERI-1328)] ../rtl/fifo.v(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/fifo_dc_cntl.v'
+[INFO (VERI-1328)] ../rtl/fifo_dc_cntl.v(27): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/fifo_dc.v'
+[INFO (VERI-1328)] ../rtl/fifo_dc.v(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_arb.vlib'
+[INFO (VERI-1328)] ../rtl/dfafn_arb.vlib(22): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1489)]       Resolving module 'dfafn_arb'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_switch.vlib'
+[-- (VERI-1489)]       Resolving module 'dfafn_switch'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_bin2hot.vlib'
+[INFO (VERI-1328)] ../rtl/dfafn_bin2hot.vlib(28): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1489)]       Resolving module 'dfafn_bin2hot'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_mem.vlib'
+[INFO (VERI-1328)] ../rtl/dfafn_mem.vlib(23): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1489)]       Resolving module 'dfafn_mem'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_bin2gray.vlib'
+[-- (VERI-1489)]       Resolving module 'dfafn_bin2gray'
+[-- (VERI-1482)] Analyzing Verilog file '../rtl/dfafn_prio_search.vlib'
+[INFO (VERI-1328)] ../rtl/dfafn_prio_search.vlib(28): analyzing included file '../rtl/dfafn_lib.h'
+[-- (VERI-1489)]       Resolving module 'dfafn_prio_search'
+% analyze -sv09 vcomp_tcbus.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'vcomp_tcbus.v'
+% 
+% ################
+% # Elaborate
+% ################
+% elaborate -top te
+INFO (ISW003): Top module name is "te".
+[INFO (HIER-8002)] ../rtl/te.v(361): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] ../rtl/te_csr.v(24): compiling module 'te_csr:(DMA_MAX_LENGTH=32,TC_DWIDTH=4)'
+[INFO (VERI-1018)] ../rtl/dfafn_prio_search.vlib(49): compiling module 'dfafn_prio_search:(WIDTH=5)'
+[INFO (VERI-1018)] ../rtl/dfafn_arb.vlib(47): compiling module 'dfafn_arb:(N=5)'
+[INFO (VERI-1018)] ../rtl/dfafn_prio_search.vlib(49): compiling module 'dfafn_prio_search:(WIDTH=6)'
+[INFO (VERI-1018)] ../rtl/dfafn_arb.vlib(47): compiling module 'dfafn_arb:(N=6,ARB_TYPE="PRIORITY")'
+[INFO (VERI-1018)] ../rtl/dfafn_switch.vlib(37): compiling module 'dfafn_switch:(N=6,M=1,WIDTH=3)'
+[INFO (VERI-1018)] ../rtl/dfafn_switch.vlib(37): compiling module 'dfafn_switch:(N=4,M=1)'
+[INFO (VERI-1018)] ../rtl/dfafn_switch.vlib(37): compiling module 'dfafn_switch:(N=1,M=4)'
+[INFO (VERI-1018)] ../rtl/te_bm.v(24): compiling module 'te_bm:(BM_AWIDTH=3,BM_DWIDTH=8)'
+[INFO (VERI-1018)] ../rtl/fifo_cntl.v(29): compiling module 'fifo_cntl:(NUM_ENTRIES=4)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=4,DWIDTH=10)'
+[INFO (VERI-1018)] ../rtl/fifo.v(24): compiling module 'fifo:(NUM_ENTRIES=4,DWIDTH=10)'
+[INFO (VERI-1018)] ../rtl/dfafn_bin2hot.vlib(36): compiling module 'dfafn_bin2hot:(WIDTH=2)'
+[INFO (VERI-1018)] ../rtl/dfafn_switch.vlib(37): compiling module 'dfafn_switch:(N=2,M=1,WIDTH=4)'
+[INFO (VERI-1018)] ../rtl/te_tcbus.v(29): compiling module 'te_tcbus:(BM_AWIDTH=3,TC_AWIDTH=5)'
+[INFO (VERI-1018)] ../rtl/te_dabus.v(29): compiling module 'te_dabus:(BM_AWIDTH=3,BM_DWIDTH=8,BYTE_SIZE=1)'
+[WARN (VDB-1002)] ../rtl/te_dabus.v(99): net 'req_internal' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_dabus.v(99): net 'rnw_internal' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_dabus.v(100): net 'addr_internal[9]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_dabus.v(101): net 'wdata_internal[3]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_dabus.v(102): net 'bytecnt_internal[4]' does not have a driver
+[INFO (VERI-1018)] vcomp_tcbus.v(1): compiling module 'vcomp_tcbus:(TC_AWIDTH=5,TC_DWIDTH=4)'
+[INFO (VERI-1018)] ../rtl/fifo_cntl.v(29): compiling module 'fifo_cntl:(NUM_ENTRIES=2)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=2,DWIDTH=2)'
+[INFO (VERI-1018)] ../rtl/fifo.v(24): compiling module 'fifo:(NUM_ENTRIES=2,DWIDTH=2)'
+[INFO (VERI-1018)] ../rtl/dfafn_bin2gray.vlib(27): compiling module 'dfafn_bin2gray'
+[INFO (VERI-1018)] ../rtl/fifo_dc_cntl.v(29): compiling module 'fifo_dc_cntl:(NUM_ENTRIES=4)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=4,DWIDTH=24)'
+[INFO (VERI-1018)] ../rtl/fifo_dc.v(24): compiling module 'fifo_dc:(NUM_ENTRIES=4,DWIDTH=24)'
+[INFO (VERI-1018)] ../rtl/dfafn_bin2gray.vlib(27): compiling module 'dfafn_bin2gray:(WIDTH=5)'
+[INFO (VERI-1018)] ../rtl/fifo_dc_cntl.v(29): compiling module 'fifo_dc_cntl:(NUM_ENTRIES=12)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=12)'
+[INFO (VERI-1018)] ../rtl/fifo_dc.v(24): compiling module 'fifo_dc:(NUM_ENTRIES=12)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=2,DWIDTH=24)'
+[INFO (VERI-1018)] ../rtl/fifo.v(24): compiling module 'fifo:(NUM_ENTRIES=2,DWIDTH=24)'
+[INFO (VERI-1018)] ../rtl/dfafn_prio_search.vlib(49): compiling module 'dfafn_prio_search'
+[INFO (VERI-1018)] ../rtl/dfafn_arb.vlib(47): compiling module 'dfafn_arb:(N=2)'
+[INFO (VERI-1018)] ../rtl/dfafn_bin2gray.vlib(27): compiling module 'dfafn_bin2gray:(WIDTH=7)'
+[INFO (VERI-1018)] ../rtl/fifo_dc_cntl.v(29): compiling module 'fifo_dc_cntl:(NUM_ENTRIES=64)'
+[INFO (VERI-1018)] ../rtl/dfafn_mem.vlib(41): compiling module 'dfafn_mem:(DEPTH=64,DWIDTH=1)'
+[INFO (VERI-1018)] ../rtl/fifo_dc.v(24): compiling module 'fifo_dc:(NUM_ENTRIES=64,DWIDTH=1)'
+[INFO (VERI-1018)] ../rtl/te_pkt.v(29): compiling module 'te_pkt:(BM_AWIDTH=3,BYTE_SIZE=1)'
+[WARN (VERI-1209)] ../rtl/te_pkt.v(365): expression size 8 truncated to fit in target size 1
+[WARN (VERI-1209)] ../rtl/te_pkt.v(383): expression size 2 truncated to fit in target size 1
+[WARN (VERI-8028)] ../rtl/te_pkt.v(572): missing/open ports on instance pkt_da_rr_arb of module dfafn_arb
+[WARN (VDB-1002)] ../rtl/te_pkt.v(182): net 'pktib_ak_cnt[1]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(232): net 'pktob_cmd_pop' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(236): net 'pktob_data_pop' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(240): net 'pktob_akreq_pop' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(242): net 'pktob_akreq_bypass' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(246): net 'pktob_done' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(247): net 'pktob_type[2]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(255): net 'ob_cmd_push' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(256): net 'ob_cmd_pushdata[23]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(260): net 'ob_data_push' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(261): net 'ob_data_pushdata[0]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(265): net 'ob_ib_cmd_pop' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(575): net 'dma_ob_req' does not have a driver
+[WARN (VDB-1002)] ../rtl/te_pkt.v(575): net 'ob_ibpath_req' does not have a driver
+[WARN (VDB-1013)] ../rtl/te_pkt.v(578): input port 'last[1]' is not connected on this instance
+[INFO (VERI-1018)] ../rtl/te.v(24): compiling module 'te'
+[WARN (VDB-1002)] ../rtl/te.v(251): net 'dma_da_req[7]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(252): net 'dma_da_dir' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(253): net 'dma_da_bytecnt[4]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(254): net 'dma_da_ob_saddr[2]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(255): net 'dma_da_ob_daddr[9]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(256): net 'dma_da_ib_saddr[9]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(257): net 'dma_da_ib_daddr[2]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(300): net 'dma_pkt_req[1]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(301): net 'dma_pkt_dir[1]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(302): net 'dma_pkt_bytecnt[9]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(303): net 'dma_pkt_ob_saddr[5]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(304): net 'dma_pkt_ob_daddr[19]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(305): net 'dma_pkt_ib_saddr[19]' does not have a driver
+[WARN (VDB-1002)] ../rtl/te.v(306): net 'dma_pkt_ib_daddr[5]' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          38 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (38 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      17 (17 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+te
+[<embedded>] % 
+[<embedded>] % ################
+[<embedded>] % # Clocks
+[<embedded>] % ################
+[<embedded>] % clock clk_bus
+[<embedded>] % clock clk_pkt
+[<embedded>] % 
+[<embedded>] % ################
+[<embedded>] % # Reset
+[<embedded>] % ################
+[<embedded>] % reset !rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+[<embedded>] % 
+[<embedded>] % ################
+[<embedded>] % # Constrain pins
+[<embedded>] % ################
+[<embedded>] % assume -name ASM_bm_rdata_0 {bm_rdata == 8'd0}
+ASM_bm_rdata_0
+[<embedded>] % assume -name ASM_da_rdata_0 {da_rdata == 4'd0}
+ASM_da_rdata_0
+[<embedded>] % assume -name ASM_da_rrdy_0 {da_rrdy == 0}
+WARNING (WNL023): Expression sizes mismatch.
+ASM_da_rrdy_0
+[<embedded>] % assume -name ASM_da_wrdy_0 {da_wrdy == 0}
+ASM_da_wrdy_0
+[<embedded>] % assume -name ASM_pktib_data_0 {pktib_data == 16'b0}
+ASM_pktib_data_0
+[<embedded>] % assume -name ASM_pktib_sop_0 {pktib_sop == 2'b0}
+ASM_pktib_sop_0
+[<embedded>] % 
+[<embedded>] % ################
+[<embedded>] % # Settings
+[<embedded>] % ################
+[<embedded>] % 
+[<embedded>] % # Uncommenting the lines below will disable asssertions and precondition covers
+[<embedded>] % # and hence leave only the covers
+[<embedded>] % #assert -disable *
+[<embedded>] % #cover -disable *precond*
+[<embedded>] % 
+[<embedded>] % set_prove_per_property_time_limit 1m
+[<embedded>] % 
+[<embedded>] % prove -all
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Bcustom2: Custom engine code is hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+AMcustom3: Custom engine code is hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+Mpcustom4: Custom engine code is hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+INFO (IPF036): Starting proof on task: "<embedded>", 26 properties to prove with 0 already proven/unreachable
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 372 of 1591 design flops, 0 of 0 design latches, 44 of 63 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 60s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+AMcustom5: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+Ncustom6: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+ADcustom7: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+Tricustom8: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Gcustom9: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+C2custom10: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+AGcustom11: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+Bcustom12: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Ncustom13: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Tricustom14: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0.002s
+0.0.PRE: Performing Proof Simplification...
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 1 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.PRE: The cover property "te.vcomp_tbus_inst.assert_aack_only_if:precondition1" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "te.vcomp_tbus_inst.assert_req_eventually_aack:precondition1" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "te.vcomp_tbus_inst.cover_tc_req_and_tc_aack" was covered in 1 cycles in 0.00 s.
+0.0.N: Proof Simplification Iteration 2	[0.09 s]
+0.0.N: Proof Simplification Iteration 3	[0.09 s]
+0.0.N: Proof Simplification Iteration 4	[0.09 s]
+0.0.PRE: Proof Simplification completed in 0.09 s
+0.0.N: Identified and disabled 6 duplicated targets.
+0: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+0: =============================== ProofGrid start ===============================
+0: ProofGrid usable level: 19
+0: Initial ProofGrid level: 1
+0: ProofGrid is starting event handling
+0.0.N: Proofgrid shell started at 1080469@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_aack_only_if"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  7	[0.07 s]
+0.0.N: A trace with 7 cycles was found. [0.08 s]
+INFO (IPF055): 0.0.N: A counterexample (cex) with 7 cycles was found for the property "te.vcomp_tbus_inst.assert_aack_only_if" in 0.08 s.
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.assert_rack_only_if:precondition1" was covered in 7 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack:precondition1" was covered in 2 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack:precondition1" was covered in 4 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.cover_transaction_buffer_full" was covered in 5 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.cover_tc_addr_change" was covered in 2 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.cover_tc_wdata_change" was covered in 2 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.cover_read_pending" was covered in 2 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+INFO (IPF047): 0.0.N: The cover property "te.vcomp_tbus_inst.cover_write_pending" was covered in 4 cycles in 0.08 s by the incidental trace "te.vcomp_tbus_inst.assert_aack_only_if".
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_aack_only_if"	[0.10 s].
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_rack_only_if"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt  5	[0.02 s]
+0.0.Hp: Proofgrid shell started at 1080470@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Trace Attempt  1	[0.02 s]
+0.0.Hp: A trace with 1 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Hp: The cover property "te.vcomp_tbus_inst.cover_tc_aack_speculative" was covered in 1 cycles in 0.02 s.
+0.0.Hp: Trace Attempt  2	[0.09 s]
+0.0.Hp: Trace Attempt  3	[0.15 s]
+0.0.Ht: Proofgrid shell started at 1080494@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Ht: Trace Attempt  1	[0.01 s]
+0.0.Ht: Trace Attempt  2	[0.01 s]
+0.0.Ht: Trace Attempt  3	[0.01 s]
+0.0.Ht: Trace Attempt  4	[0.01 s]
+0.0.Ht: Trace Attempt  5	[0.01 s]
+0.0.Ht: A trace with 5 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.assert_wack_only_if:precondition1" was covered in 5 cycles in 0.02 s.
+0.0.Ht: A trace with 5 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.assume_addr_hold:precondition1" was covered in 5 cycles in 0.02 s.
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.assume_wdata_hold:precondition1" was covered in 5 cycles in 0.02 s.
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.assume_rnw_hold:precondition1" was covered in 5 cycles in 0.02 s.
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.assume_req_hold:precondition1" was covered in 5 cycles in 0.02 s.
+0.0.Ht: Trace Attempt  6	[0.02 s]
+0.0.Ht: A trace with 6 cycles was found. [0.03 s]
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.cover_tc_rack_and_tc_wack" was covered in 6 cycles in 0.03 s.
+0.0.Ht: Trace Attempt  7	[0.03 s]
+0.0.Oh: Proofgrid shell started at 1080499@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0.0.Oh: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.B: Proofgrid shell started at 1080503@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0.0.B: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.B: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.B: Starting proof for property "te.vcomp_tbus_inst.assert_rack_only_if"	[0.00 s].
+0.0.Ht: A trace with 7 cycles was found. [0.06 s]
+INFO (IPF047): 0.0.Ht: The cover property "te.vcomp_tbus_inst.cover_tc_rack_multiple_high" was covered in 7 cycles in 0.06 s.
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.Oh: bwd trail(1): 1 0.0029941s
+0.0.Oh: All properties either determined or skipped. [0.02 s]
+0: ProofGrid usable level: 6
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.Oh: Exited with Success (@ 0.48 s)
+0: ProofGrid usable level: 6
+0.0.B: Trace Attempt  5	[0.02 s]
+0.0.Bm: Proofgrid shell started at 1080496@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Bm: Trace Attempt  1	[0.00 s]
+0.0.Bm: Trace Attempt  2	[0.00 s]
+0.0.Bm: Trace Attempt  3	[0.00 s]
+0.0.Bm: Trace Attempt  4	[0.02 s]
+0.0.Bm: Trace Attempt  5	[0.03 s]
+0.0.L: Proofgrid shell started at 1080501@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0.0.L: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.L: Using trace diversification with seed 1 (0.05)
+0.0.L: Using LRU state removal heuristic
+0.0.Mpcustom4: Proofgrid shell started at 1080498@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0.0.L: Using states from traces to { (reset) }
+0.0.L: Trace Attempt  3	[0.02 s]
+0.0.AM: Proofgrid shell started at 1080505@noivl-adahikar(local) jg_1080403_noivl-adahikar_1
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0.0.Mpcustom4: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0.0.Mpcustom4: Trace Attempt  1	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  2	[0.01 s]
+0.0.AM: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.AM: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.AM: Starting proof for property "te.vcomp_tbus_inst.assert_rack_only_if"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.L: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.L: The cover property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack:precondition1" was covered in 3 cycles in 0.04 s.
+INFO (IPF047): 0.0.L: The cover property "te.vcomp_tbus_inst.cover_write_pending" was covered in 3 cycles in 0.04 s.
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack:precondition1 (2) }
+0.0.AM: Trace Attempt  4	[0.01 s]
+0.0.L: Trace Attempt  3	[0.05 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack:precondition1 (3) }
+0.0.L: Trace Attempt  3	[0.07 s]
+0.0.L: Trace Attempt  4	[0.08 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.assert_wack_only_if:precondition1 (5) }
+0.0.L: Trace Attempt  3	[0.10 s]
+0.0.L: Trace Attempt  4	[0.10 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.08 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.08 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.09 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.assert_aack_only_if <7> }
+0.0.L: Trace Attempt  3	[0.11 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.09 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.10 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.cover_tc_rack_multiple_high (8) }
+0.0.L: Trace Attempt  3	[0.13 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.10 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.10 s]
+0.0.L: Trace Attempt  4	[0.13 s]
+0.0.Bm: Trace Attempt 10	[0.11 s]
+0.0.Bm: A trace with 10 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.Bm: The cover property "te.vcomp_tbus_inst.cover_transaction_buffer_full_then_MT" was covered in 10 cycles in 0.17 s.
+0.0.Bm: Trace Attempt 11	[0.17 s]
+0.0.L: Trace Attempt  5	[0.14 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.cover_tc_rack_and_tc_wack (11) }
+0.0.L: Trace Attempt  3	[0.15 s]
+0.0.L: Trace Attempt  4	[0.15 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.14 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.cover_transaction_buffer_full_then_MT (13) }
+0.0.L: Trace Attempt  3	[0.18 s]
+0.0.L: Trace Attempt  4	[0.19 s]
+0.0.L: Trace Attempt  5	[0.19 s]
+0: ProofGrid usable level: 5
+0.0.N: Trace Attempt  1	[1.27 s]
+0.0.N: Trace Attempt  2	[1.28 s]
+0.0.N: Trace Attempt  3	[1.28 s]
+0.0.N: Trace Attempt  4	[1.28 s]
+0.0.N: Trace Attempt  5	[1.28 s]
+0.0.AM: Trace Attempt  1	[1.15 s]
+0.0.AM: Trace Attempt  2	[1.15 s]
+0.0.AM: Trace Attempt  3	[1.16 s]
+0.0.AM: Trace Attempt  5	[1.16 s]
+0.0.Hp: Trace Attempt  4	[1.59 s]
+0.0.Hp: Trace Attempt  5	[1.59 s]
+0.0.Ht: Trace Attempt 19	[4.09 s]
+0.0.L: Trace Attempt 340	[4.21 s]
+0.0.B: Trace Attempt 21	[4.29 s]
+0.0.Mpcustom4: Trace Attempt 12	[4.19 s]
+0.0.Bm: Trace Attempt 20	[4.27 s]
+0.0.L: Using states from traces to { te.vcomp_tbus_inst.cover_tc_rack_and_tc_wack (11) }
+0.0.L: Trace Attempt  3	[5.10 s]
+0.0.L: Trace Attempt  4	[5.10 s]
+0.0.L: Trace Attempt  5	[5.10 s]
+0.0.N: Trace Attempt 14	[5.80 s]
+0.0.Hp: Trace Attempt 21	[5.83 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.06
+0.0.N: A proof was found: No trace exists. [6.57 s]
+INFO (IPF057): 0.0.N: The property "te.vcomp_tbus_inst.assert_rack_only_if" was proven in 6.56 s.
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_rack_only_if"	[6.56 s].
+0.0.B: Stopped processing property "te.vcomp_tbus_inst.assert_rack_only_if"	[6.21 s].
+0.0.B: Starting proof for property "te.vcomp_tbus_inst.assert_wack_only_if"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  4	[0.00 s]
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_wack_only_if"	[0.00 s].
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt 13	[4.63 s]
+0.0.AM: Stopped processing property "te.vcomp_tbus_inst.assert_rack_only_if"	[6.11 s].
+0.0.AM: Starting proof for property "te.vcomp_tbus_inst.assert_wack_only_if"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  5	[0.02 s]
+0.0.AM: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.02 s]
+0: ProofGrid usable level: 4
+0.0.AM: Trace Attempt  1	[1.01 s]
+0.0.AM: Trace Attempt  2	[1.03 s]
+0.0.AM: Trace Attempt  3	[1.03 s]
+0.0.AM: Trace Attempt  4	[1.03 s]
+0.0.AM: Trace Attempt  5	[1.05 s]
+0.0.N: Trace Attempt  1	[1.50 s]
+0.0.N: Trace Attempt  2	[1.50 s]
+0.0.N: Trace Attempt  3	[1.50 s]
+0.0.N: Trace Attempt  4	[1.51 s]
+0.0.N: Trace Attempt  5	[1.51 s]
+0.0.Mpcustom4: Trace Attempt 18	[8.26 s]
+0.0.Ht: Trace Attempt 22	[8.50 s]
+0.0.Bm: Trace Attempt 23	[8.77 s]
+0.0.AM: Validation of fixpoint was successful. Time = 0.02
+0.0.AM: Trace Attempt 13	[2.50 s]
+0.0.AM: A proof was found: No trace exists. [3.37 s]
+INFO (IPF057): 0.0.AM: The property "te.vcomp_tbus_inst.assert_wack_only_if" was proven in 3.37 s.
+0.0.B: Trace Attempt 21	[2.76 s]
+0.0.AM: Stopped processing property "te.vcomp_tbus_inst.assert_wack_only_if"	[3.38 s].
+0.0.AM: Starting proof for property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.00 s].
+0.0.N: Trace Attempt 14	[3.29 s]
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_wack_only_if"	[3.39 s].
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.00 s].
+0.0.B: Stopped processing property "te.vcomp_tbus_inst.assert_wack_only_if"	[3.40 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.B: Starting proof for property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.00 s].
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0: ProofGrid usable level: 3
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.02 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  4	[0.02 s]
+0.0.B: Trace Attempt  5	[0.02 s]
+0.0.AM: Trace Attempt  4	[0.02 s]
+0.0.Bm: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.Bm: Trace Attempt  1	[0.00 s]
+0.0.Bm: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  5	[0.03 s]
+0.0.N: Trace Attempt  5	[0.03 s]
+0.0.Bm: Trace Attempt  3	[0.01 s]
+0.0.Bm: Trace Attempt  4	[0.01 s]
+0.0.Bm: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt  1	[0.08 s]
+0.0.N: Trace Attempt  2	[0.10 s]
+0.0.N: Trace Attempt  3	[0.10 s]
+0.0.AM: Trace Attempt  1	[0.11 s]
+0.0.AM: Trace Attempt  2	[0.13 s]
+0.0.AM: Trace Attempt  3	[0.14 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: Trace Attempt 10	[0.16 s]
+0.0.N: A proof was found: No trace exists. [0.17 s]
+INFO (IPF057): 0.0.N: The property "te.vcomp_tbus_inst.assert_req_eventually_aack" was proven in 0.17 s.
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.17 s].
+0.0.AM: Trace Attempt  6	[0.17 s]
+0.0.AM: Stopped processing property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.18 s].
+0.0.AM: Starting proof for property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[0.00 s].
+0.0.B: Trace Attempt 19	[0.17 s]
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.B: Stopped processing property "te.vcomp_tbus_inst.assert_req_eventually_aack"	[0.18 s].
+0.0.B: Starting proof for property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[0.00 s].
+0.0.Hp: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.Bm: Trace Attempt  1	[0.01 s]
+0.0.Bm: Trace Attempt  2	[0.01 s]
+0.0.B: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.02 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  3	[0.02 s]
+0.0.Bm: Trace Attempt  3	[0.02 s]
+0.0.Bm: Trace Attempt  4	[0.02 s]
+0.0.AM: Trace Attempt  3	[0.03 s]
+0.0.N: Trace Attempt  4	[0.02 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.B: Trace Attempt  4	[0.03 s]
+0.0.Bm: Trace Attempt  5	[0.04 s]
+0.0.B: Trace Attempt  5	[0.04 s]
+0.0.AM: Trace Attempt  4	[0.05 s]
+0.0.N: Trace Attempt  5	[0.05 s]
+0.0.AM: Trace Attempt  5	[0.07 s]
+0.0.N: Trace Attempt  5	[0.06 s]
+0.0.Hp: Trace Attempt  1	[0.08 s]
+0.0.Hp: Trace Attempt  2	[0.11 s]
+0.0.Hp: Trace Attempt  3	[0.14 s]
+0.0.Hp: Trace Attempt  4	[0.17 s]
+0.0.Hp: Trace Attempt  5	[0.20 s]
+0.0.Mpcustom4: Trace Attempt 21	[9.11 s]
+0.0.Mpcustom4: All properties either determined or skipped. [10.14 s]
+0.0.Mpcustom4: Exited with Success (@ 10.72 s)
+0.0.Mpcustom4: Completed, Restart ignored.
+0: ProofGrid usable level: 2
+0.0.AM: Trace Attempt  1	[0.94 s]
+0.0.AM: Trace Attempt  2	[1.04 s]
+0.0.AM: Trace Attempt  3	[1.05 s]
+0.0.AM: Trace Attempt  4	[1.15 s]
+0.0.L: Trace Attempt 20	[10.88 s]
+0.0.AM: Trace Attempt  5	[1.19 s]
+0.0.Ht: Next scan (0) will use per property time limit: 60s * 10 ^ 0 = 60s
+0.0.Ht: Trace Attempt  1	[0.00 s]
+0.0.Ht: Trace Attempt  2	[0.00 s]
+0.0.Ht: Trace Attempt  3	[0.01 s]
+0.0.Ht: Trace Attempt  4	[0.02 s]
+0.0.Ht: Trace Attempt  5	[0.02 s]
+0.0.N: Trace Attempt  1	[1.52 s]
+0.0.N: Trace Attempt  2	[1.58 s]
+0.0.N: Trace Attempt  3	[1.58 s]
+0.0.N: Trace Attempt  4	[1.64 s]
+0.0.N: Trace Attempt  5	[1.69 s]
+0.0.AM: Validation of fixpoint was successful. Time = 0.01
+0.0.AM: Trace Attempt 12	[3.60 s]
+0.0.AM: A proof was found: No trace exists. [3.80 s]
+INFO (IPF057): 0.0.AM: The property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack" was proven in 3.81 s.
+0.0.AM: Stopped processing property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[3.81 s].
+0.0.AM: Last scan. Per property time limit: 0s
+0.0.AM: Starting proof for property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[0.00 s].
+0.0.B: Trace Attempt 22	[3.42 s]
+0.0.N: Trace Attempt 10	[3.45 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.B: Stopped processing property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[3.81 s].
+0.0.B: Last scan. Per property time limit: 0s
+0.0.B: Starting proof for property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.Ht: Trace Attempt  1	[0.01 s]
+0.0.Ht: Trace Attempt  2	[0.01 s]
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_rd_cnt_eventually_rack"	[3.81 s].
+0.0.N: Last scan. Per property time limit: 0s
+0.0.N: Starting proof for property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[0.00 s].
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.Ht: Trace Attempt  3	[0.01 s]
+0.0.Ht: Trace Attempt  4	[0.02 s]
+0.0.AM: Trace Attempt  3	[0.02 s]
+0.0.N: Trace Attempt  1	[0.01 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.Ht: Trace Attempt  5	[0.02 s]
+0.0.N: Trace Attempt  2	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.Bm: Trace Attempt  1	[0.00 s]
+0.0.Bm: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  4	[0.02 s]
+0.0.AM: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  4	[0.02 s]
+0.0.B: Trace Attempt  5	[0.03 s]
+0.0.Bm: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.Bm: Trace Attempt  4	[0.02 s]
+0.0.AM: Trace Attempt  5	[0.04 s]
+0.0.N: Trace Attempt  5	[0.04 s]
+0.0.Bm: Trace Attempt  5	[0.03 s]
+0.0.N: Trace Attempt  5	[0.07 s]
+0: ProofGrid usable level: 1
+0.0.Hp: Trace Attempt  1	[0.02 s]
+0.0.Hp: Trace Attempt  2	[0.03 s]
+0.0.Hp: Trace Attempt  3	[0.05 s]
+0.0.Hp: Trace Attempt  4	[0.07 s]
+0.0.Hp: Trace Attempt  5	[0.09 s]
+0.0.N: Trace Attempt  1	[0.72 s]
+0.0.N: Trace Attempt  2	[0.77 s]
+0.0.N: Trace Attempt  3	[0.78 s]
+0.0.N: Trace Attempt  4	[0.80 s]
+0.0.N: Trace Attempt  5	[0.82 s]
+0.0.AM: Trace Attempt  1	[1.69 s]
+0.0.AM: Trace Attempt  2	[1.74 s]
+0.0.AM: Trace Attempt  3	[1.74 s]
+0.0.AM: Trace Attempt  4	[1.77 s]
+0.0.AM: Trace Attempt  5	[1.80 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.01
+0.0.L: Trace Attempt 22	[15.36 s]
+0.0.N: Requesting engine job to stop
+0.0.B: Requesting engine job to stop
+0.0.AM: Requesting engine job to stop
+0.0.Hp: Requesting engine job to terminate
+0.0.Ht: Requesting engine job to terminate
+0.0.Bm: Requesting engine job to terminate
+0.0.L: Requesting engine job to terminate
+INFO (IPF144): 0: Initiating shutdown of proof [15.91 s]
+0.0.N: Trace Attempt 13	[1.75 s]
+0.0.N: A proof was found: No trace exists. [1.84 s]
+INFO (IPF057): 0.0.N: The property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack" was proven in 1.84 s.
+0.0.AM: Trace Attempt  6	[1.85 s]
+0.0.N: Stopped processing property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[1.84 s].
+0.0.N: Interrupted. [1.84 s]
+0.0.AM: Stopped processing property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[1.86 s].
+0.0.AM: Interrupted. [1.86 s]
+0.0.N: Exited with Success (@ 15.92 s)
+0: ProofGrid usable level: 0
+0.0.Bm: Trace Attempt 21	[1.83 s]
+0.0.Bm: Interrupted. [1.84 s]
+0.0.AM: Exited with Success (@ 15.92 s)
+0.0.Bm: Exited with Success (@ 15.92 s)
+0.0.L: Interrupted. [15.38 s]
+0.0.Hp: Trace Attempt 14	[1.27 s]
+0.0.Hp: Interrupted. [1.31 s]
+0.0.B: Trace Attempt 20	[1.57 s]
+0.0.B: Stopped processing property "te.vcomp_tbus_inst.assert_wr_cnt_eventually_wack"	[1.87 s].
+0.0.B: Interrupted. [1.86 s]
+0.0.Hp: Exited with Success (@ 15.93 s)
+0.0.L: Exited with Success (@ 15.96 s)
+0.0.B: Exited with Success (@ 15.96 s)
+0.0.Ht: Trace Attempt 17	[1.63 s]
+0.0.Ht: Interrupted. [1.91 s]
+0.0.Ht: Exited with Success (@ 15.97 s)
+0: --------------------------------------------------------------
+ProofGrid Summary (utilization 96.98 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.09       15.90        0.00       99.46 %
+     Hp        0.29       15.70        0.00       98.19 %
+     Ht        0.40       15.50        0.00       97.47 %
+     Bm        0.49       15.41        0.00       96.89 %
+    Mpcustom4        0.55       10.14        0.00       94.88 %
+     Oh        0.44        0.02        0.00        3.75 %
+      L        0.52       15.37        0.00       96.72 %
+      B        0.42       15.44        0.00       97.37 %
+     AM        0.50       15.34        0.00       96.84 %
+    all        0.41       13.20        0.00       96.98 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.70      118.82        0.00
+
+    Data read    : 135.50 kiB
+    Data written : 479.96 kiB
+
+0: All pending notifications were processed.
+INFO (IPF059): 0: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 26
+                 assertions                   : 6
+                  - proven                    : 5 (83.3333%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 1 (16.6667%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 20
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 20 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+determined
+INFO (IPL005): Received request to exit from the console.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.660 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

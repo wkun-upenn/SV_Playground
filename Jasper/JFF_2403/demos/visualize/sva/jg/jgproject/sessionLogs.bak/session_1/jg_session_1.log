@@ -1,0 +1,1188 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2024.03
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2024.03 FCS 64 bits
+# build date: 2024.03.27 15:42:27 UTC
+# ----------------------------------------
+# started   : 2024-03-28 16:32:43 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 1470773
+# arguments : '-label' 'session_1' '-console' '//127.0.0.1:36739' '-style' 'windows' '-data' 'AAAAknicY2RgYLCp////PwMYMFcBCTYGfwY3IIQDxgdQhg0jAyoA8ZlQRQIbUGgGBlaYZmRNIgxZDOkM8QxpDAUMZQx6DCUMyQw5YFkA00oMIA==' '-proj' '/servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/sessionLogs/session_1'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/sessionLogs/session_1
+
+% session -refresh
+INFO (ISR002): The value of configuration "expert_system_status" has been restored to "on".
+INFO (ISR002): The value of configuration "max_trace_length" has been restored to "88".
+%% # 
+%% #
+%% # Any disclosure about the Cadence Design Systems software or its use
+%% # model to any third party violates the written Non-Disclosure Agreement
+%% # between Cadence Design Systems, Inc. and the customer.
+%% #
+%% # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+%% # CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+%% # PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+%% # DESIGN SYSTEMS, INC.
+%% #
+%% # Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+%% # Reserved.  Unpublished -- rights reserved under the copyright laws of
+%% # the United States.
+%% #
+%% # This product includes software developed by others and redistributed
+%% # according to license agreement. See doc/third_party_readme.txt for
+%% # further details.
+%% #
+%% # RESTRICTED RIGHTS LEGEND
+%% #
+%% # Use, duplication, or disclosure by the Government is subject to
+%% # restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+%% # Technical Data and Computer Software clause at DFARS 252.227-7013 or
+%% # subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+%% # Rights at 48 CFR 52.227-19, as applicable.
+%% #
+%% #
+%% #                           Cadence Design Systems, Inc.
+%% #                           2655 Seely Avenue
+%% #                           San Jose, CA 95134
+%% #                           Phone: 408.943.1234
+%% #
+%% # For technical assistance visit http://support.cadence.com.
+%% 
+%% # ----------------------------------------
+%% # Jasper Version Info
+%% # tool      : Jasper 2024.03
+%% # platform  : Linux 4.18.0-305.el8.x86_64
+%% # version   : 2024.03 FCS 64 bits
+%% # build date: 2024.03.27 15:42:27 UTC
+%% # ----------------------------------------
+%% 
+%% # The following script was created on Thu Mar 28 16:32:31 2024
+%% 
+%% custom_engine -add -code hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Ncustom1
+%% custom_engine -add -code hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+Bcustom2: Custom engine code is hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+Bcustom2
+%% custom_engine -add -code hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+AMcustom3: Custom engine code is hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+AMcustom3
+%% custom_engine -add -code hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+Mpcustom4: Custom engine code is hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+Mpcustom4
+%% custom_engine -add -code hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+AMcustom5: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+AMcustom5
+%% custom_engine -add -code hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+Ncustom6: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+Ncustom6
+%% custom_engine -add -code hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+ADcustom7: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+ADcustom7
+%% custom_engine -add -code hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Tricustom8: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Tricustom8
+%% custom_engine -add -code hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+Gcustom9: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+Gcustom9
+%% custom_engine -add -code hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+C2custom10: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+C2custom10
+%% custom_engine -add -code hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+AGcustom11: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+AGcustom11
+%% custom_engine -add -code hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Bcustom12: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Bcustom12
+%% custom_engine -add -code hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Ncustom13: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Ncustom13
+%% custom_engine -add -code hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+Tricustom14: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+Tricustom14
+%% # BEGIN ENV CONFIG COMMANDS
+%% # END ENV CONFIG COMMANDS
+%% # BEGIN RTL COMMANDS
+%% analyze -verilog ../source/design/arbiter.v ../source/design/port_select.v ../source/design/bridge.v ../source/design/egress.v ../source/design/ingress.v ../source/design/top.v
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/arbiter.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/port_select.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/bridge.v'
+[WARN (VERI-1875)] ../source/design/bridge.v(109): identifier 'int2eg_end' is used before its declaration
+[WARN (VERI-1875)] ../source/design/bridge.v(111): identifier 'int2eg_end' is used before its declaration
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/egress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/ingress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/top.v'
+[INFO (VERI-2561)] ../source/design/top.v(155): undeclared symbol 'rd_ready', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(166): undeclared symbol 'new_tran0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(167): undeclared symbol 'int_read_done0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(168): undeclared symbol 'current_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(169): undeclared symbol 'int_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(170): undeclared symbol 'int_ready0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(171): undeclared symbol 'int_valid0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(172): undeclared symbol 'trans_started0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(189): undeclared symbol 'new_tran1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(190): undeclared symbol 'int_read_done1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(191): undeclared symbol 'current_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(192): undeclared symbol 'int_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(193): undeclared symbol 'int_ready1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(194): undeclared symbol 'int_valid1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(195): undeclared symbol 'trans_started1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(212): undeclared symbol 'new_tran2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(213): undeclared symbol 'int_read_done2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(214): undeclared symbol 'current_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(215): undeclared symbol 'int_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(216): undeclared symbol 'int_ready2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(217): undeclared symbol 'int_valid2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(218): undeclared symbol 'trans_started2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(235): undeclared symbol 'new_tran3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(236): undeclared symbol 'int_read_done3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(237): undeclared symbol 'current_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(238): undeclared symbol 'int_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(239): undeclared symbol 'int_ready3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(240): undeclared symbol 'int_valid3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(241): undeclared symbol 'trans_started3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(270): undeclared symbol 'new_tran', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(271): undeclared symbol 'int_read_done', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(272): undeclared symbol 'trans_started', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(273): undeclared symbol 'current_read_write', assumed default net type 'wire'
+%% analyze -sv09 ../source/properties/v_arbiter.sva ../source/properties/v_arbiter_fairness.sva ../source/properties/v_bridge.sva ../source/properties/v_ingress.sva ../source/properties/v_egress.sva ../source/properties/v_port_select.sva ../source/properties/bindings.sva
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter_fairness.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_bridge.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_ingress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_egress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_port_select.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/bindings.sva'
+%% elaborate -top top
+INFO (ISW003): Top module name is "top".
+[INFO (HIER-8002)] ../source/design/top.v(342): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] ../source/properties/v_ingress.sva(1): compiling module 'v_ingress'
+[INFO (VERI-1018)] ../source/design/ingress.v(47): compiling module 'ingress'
+[INFO (VERI-1018)] ../source/properties/v_egress.sva(1): compiling module 'v_egress'
+[INFO (VERI-1018)] ../source/design/egress.v(51): compiling module 'egress'
+[INFO (VERI-1018)] ../source/properties/v_bridge.sva(1): compiling module 'v_bridge'
+[INFO (VERI-1018)] ../source/design/bridge.v(54): compiling module 'bridge'
+[INFO (VERI-1018)] ../source/properties/v_arbiter_fairness.sva(1): compiling module 'v_arbiter_fairness'
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-2119)] ../source/properties/v_arbiter_fairness.sva(32): constant expression cannot be used as event expression
+[WARN (VERI-1994)] ../source/properties/v_arbiter_fairness.sva(32): unsatisfiable sequence in assertion
+[WARN (VERI-2234)] ../source/properties/v_arbiter_fairness.sva(32): no netlist generated for assert 'ptest_clk'
+[INFO (VERI-1018)] ../source/properties/v_arbiter.sva(1): compiling module 'v_arbiter'
+[INFO (VERI-1018)] ../source/design/arbiter.v(49): compiling module 'arbiter'
+[INFO (VERI-1018)] ../source/properties/v_port_select.sva(1): compiling module 'v_port_select'
+[INFO (VERI-1018)] ../source/design/port_select.v(47): compiling module 'port_select'
+[INFO (VERI-1018)] ../source/design/top.v(49): compiling module 'top'
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          13 (1 packages)
+  Single run mode                         On
+  Pipeline                                On (12 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      13 (13 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+top
+%% # END RTL COMMANDS
+%% # Setup global clocks and resets
+%% clock clk
+%% reset -expression !(rstN)
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rstN".
+%% # Setup task Added_assume
+%% task -create -set Added_assume
+Added_assume
+%% # Setup current task environment
+%% task -set <embedded>
+<embedded>
+%% namespace eval ::post_setup {proc run_post_setup_script {} {}}
+%% 
+[<embedded>] % clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% restore -jdb /servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/run_1
+%% # 
+%% #
+%% # Any disclosure about the Cadence Design Systems software or its use
+%% # model to any third party violates the written Non-Disclosure Agreement
+%% # between Cadence Design Systems, Inc. and the customer.
+%% #
+%% # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+%% # CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+%% # PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+%% # DESIGN SYSTEMS, INC.
+%% #
+%% # Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+%% # Reserved.  Unpublished -- rights reserved under the copyright laws of
+%% # the United States.
+%% #
+%% # This product includes software developed by others and redistributed
+%% # according to license agreement. See doc/third_party_readme.txt for
+%% # further details.
+%% #
+%% # RESTRICTED RIGHTS LEGEND
+%% #
+%% # Use, duplication, or disclosure by the Government is subject to
+%% # restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+%% # Technical Data and Computer Software clause at DFARS 252.227-7013 or
+%% # subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+%% # Rights at 48 CFR 52.227-19, as applicable.
+%% #
+%% #
+%% #                           Cadence Design Systems, Inc.
+%% #                           2655 Seely Avenue
+%% #                           San Jose, CA 95134
+%% #                           Phone: 408.943.1234
+%% #
+%% # For technical assistance visit http://support.cadence.com.
+%% 
+%% # ----------------------------------------
+%% # Jasper Version Info
+%% # tool      : Jasper 2024.03
+%% # platform  : Linux 4.18.0-305.el8.x86_64
+%% # version   : 2024.03 FCS 64 bits
+%% # build date: 2024.03.27 15:42:27 UTC
+%% # ----------------------------------------
+%% 
+%% # The following script was created on Thu Mar 28 16:32:31 2024
+%% 
+%% custom_engine -add -code hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Ncustom1
+%% custom_engine -add -code hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+Bcustom2
+%% custom_engine -add -code hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+AMcustom3
+%% custom_engine -add -code hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+Mpcustom4
+%% custom_engine -add -code hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+AMcustom5
+%% custom_engine -add -code hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+Ncustom6
+%% custom_engine -add -code hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+ADcustom7
+%% custom_engine -add -code hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Tricustom8
+%% custom_engine -add -code hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+Gcustom9
+%% custom_engine -add -code hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+C2custom10
+%% custom_engine -add -code hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+AGcustom11
+%% custom_engine -add -code hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Bcustom12
+%% custom_engine -add -code hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Ncustom13
+%% custom_engine -add -code hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+Tricustom14
+%% # BEGIN ENV CONFIG COMMANDS
+%% # END ENV CONFIG COMMANDS
+%% # BEGIN RTL COMMANDS
+%% analyze -verilog ../source/design/arbiter.v ../source/design/port_select.v ../source/design/bridge.v ../source/design/egress.v ../source/design/ingress.v ../source/design/top.v
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/arbiter.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/port_select.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/bridge.v'
+[WARN (VERI-1875)] ../source/design/bridge.v(109): identifier 'int2eg_end' is used before its declaration
+[WARN (VERI-1875)] ../source/design/bridge.v(111): identifier 'int2eg_end' is used before its declaration
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/egress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/ingress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/top.v'
+[INFO (VERI-2561)] ../source/design/top.v(155): undeclared symbol 'rd_ready', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(166): undeclared symbol 'new_tran0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(167): undeclared symbol 'int_read_done0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(168): undeclared symbol 'current_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(169): undeclared symbol 'int_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(170): undeclared symbol 'int_ready0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(171): undeclared symbol 'int_valid0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(172): undeclared symbol 'trans_started0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(189): undeclared symbol 'new_tran1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(190): undeclared symbol 'int_read_done1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(191): undeclared symbol 'current_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(192): undeclared symbol 'int_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(193): undeclared symbol 'int_ready1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(194): undeclared symbol 'int_valid1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(195): undeclared symbol 'trans_started1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(212): undeclared symbol 'new_tran2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(213): undeclared symbol 'int_read_done2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(214): undeclared symbol 'current_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(215): undeclared symbol 'int_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(216): undeclared symbol 'int_ready2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(217): undeclared symbol 'int_valid2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(218): undeclared symbol 'trans_started2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(235): undeclared symbol 'new_tran3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(236): undeclared symbol 'int_read_done3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(237): undeclared symbol 'current_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(238): undeclared symbol 'int_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(239): undeclared symbol 'int_ready3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(240): undeclared symbol 'int_valid3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(241): undeclared symbol 'trans_started3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(270): undeclared symbol 'new_tran', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(271): undeclared symbol 'int_read_done', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(272): undeclared symbol 'trans_started', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(273): undeclared symbol 'current_read_write', assumed default net type 'wire'
+%% analyze -sv09 ../source/properties/v_arbiter.sva ../source/properties/v_arbiter_fairness.sva ../source/properties/v_bridge.sva ../source/properties/v_ingress.sva ../source/properties/v_egress.sva ../source/properties/v_port_select.sva ../source/properties/bindings.sva
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter_fairness.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_bridge.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_ingress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_egress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_port_select.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/bindings.sva'
+%% elaborate -top top
+INFO (ISW003): Top module name is "top".
+[INFO (HIER-8002)] ../source/design/top.v(342): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] ../source/properties/v_ingress.sva(1): compiling module 'v_ingress'
+[INFO (VERI-1018)] ../source/design/ingress.v(47): compiling module 'ingress'
+[INFO (VERI-1018)] ../source/properties/v_egress.sva(1): compiling module 'v_egress'
+[INFO (VERI-1018)] ../source/design/egress.v(51): compiling module 'egress'
+[INFO (VERI-1018)] ../source/properties/v_bridge.sva(1): compiling module 'v_bridge'
+[INFO (VERI-1018)] ../source/design/bridge.v(54): compiling module 'bridge'
+[INFO (VERI-1018)] ../source/properties/v_arbiter_fairness.sva(1): compiling module 'v_arbiter_fairness'
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-2119)] ../source/properties/v_arbiter_fairness.sva(32): constant expression cannot be used as event expression
+[WARN (VERI-1994)] ../source/properties/v_arbiter_fairness.sva(32): unsatisfiable sequence in assertion
+[WARN (VERI-2234)] ../source/properties/v_arbiter_fairness.sva(32): no netlist generated for assert 'ptest_clk'
+[INFO (VERI-1018)] ../source/properties/v_arbiter.sva(1): compiling module 'v_arbiter'
+[INFO (VERI-1018)] ../source/design/arbiter.v(49): compiling module 'arbiter'
+[INFO (VERI-1018)] ../source/properties/v_port_select.sva(1): compiling module 'v_port_select'
+[INFO (VERI-1018)] ../source/design/port_select.v(47): compiling module 'port_select'
+[INFO (VERI-1018)] ../source/design/top.v(49): compiling module 'top'
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          13 (1 packages)
+  Single run mode                         On
+  Pipeline                                On (12 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      13 (13 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+top
+%% # END RTL COMMANDS
+%% # Setup global clocks and resets
+%% clock clk
+%% reset -expression !(rstN)
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rstN".
+%% # Setup task Added_assume
+%% task -create -set Added_assume
+Added_assume
+%% # Setup current task environment
+%% task -set <embedded>
+<embedded>
+%% namespace eval ::post_setup {proc run_post_setup_script {} {}}
+%% 
+INFO (ISL018): Started grouping violations
+INFO (ISL018): Finished grouping violations
+[<embedded>] % visualize -new_window; visualize -cover {(ready0 != 1'b0)} -bg
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "(ready0 != 1'b0)".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 814 of 950 design flops, 0 of 0 design latches, 90 of 90 internal elements.
+INFO (IRS039): Reset analysis complete.
+background 0
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = on
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    max_trace_length              = 88
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0.012s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 1 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.01 s
+[<embedded>] % visualize -min_length [expr [visualize -get_length -window visualize:0] + 1] -window visualize:0; visualize -freeze [visualize -get_length -window visualize:0] -window visualize:0; visualize -replot -bg -window visualize:0
+INFO (IVS008): Expanding analysis region to enable visualization of "1".
+background 1
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    max_trace_length              = 88
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0.002s
+1.0.PRE: Performing Proof Simplification...
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+1.0.Hp: A max_length bound was found. The shortest trace is no longer than 2 cycles. [0.00 s]
+1.0.Hp: Proof Simplification Iteration 2	[0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+1.0.PRE: Proof Simplification completed in 0.00 s
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 1
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.B: Proofgrid shell started at 1471311@noivl-adahikar(local) jg_1470773_noivl-adahikar_2
+1.0.B: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: Proofgrid shell started at 1471308@noivl-adahikar(local) jg_1470773_noivl-adahikar_2
+1.0.B: Last scan. Per property time limit: 0s
+1.0.B: Trace Attempt  1	[0.00 s]
+1.0.B: Trace Attempt  2	[0.00 s]
+1.0.B: Requesting engine job to stop
+INFO (IPF144): 1: Initiating shutdown of proof [0.00 s]
+1.0.B: A trace with 2 cycles was found. [0.00 s]
+1.0.Hp: Preventing job from starting because proof is shutting down.
+1.0.Hp: Requesting engine job to terminate
+1.0.B: All properties determined. [0.00 s]
+1.0.Hp: Interrupted. [0.00 s]
+1.0.B: Exited with Success (@ 0.02 s)
+1: ProofGrid usable level: 0
+1.0.N: Proofgrid shell started at 1471310@noivl-adahikar(local) jg_1470773_noivl-adahikar_2
+1.0.N: Requesting engine job to terminate
+1.0.N: Preventing job from starting because proof is shutting down.
+1.0.N: Requesting engine job to terminate
+1.0.N: Interrupted. [0.00 s]
+1.0.Hp: Exited with Success (@ 0.04 s)
+1.0.Ht: Proofgrid shell started at 1471309@noivl-adahikar(local) jg_1470773_noivl-adahikar_2
+1.0.Ht: Requesting engine job to terminate
+1.0.N: Exited with Success (@ 0.04 s)
+1.0.Ht: Preventing job from starting because proof is shutting down.
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Interrupted. [0.00 s]
+1.0.Ht: Exited with Success (@ 0.04 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 0.22 %)
+--------------------------------------------------------------
+     engines started                               :     4
+     engine jobs started                           :     4
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+     Hp        0.27        0.00        0.00        0.00 %
+     Ht        0.30        0.00        0.00        0.00 %
+      N        0.28        0.00        0.00        0.00 %
+      B        0.24        0.00        0.00        0.97 %
+    all        0.27        0.00        0.00        0.22 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               1.09        0.00        0.00
+
+    Data read    : 3.61 kiB
+    Data written : 260.00 B
+
+1: All pending notifications were processed.
+[<embedded>] % visualize -new_window; visualize -violation {(ready0 != 1'b0)} -bg
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "(ready0 != 1'b0)".
+background 2
+INFO (IPF031): Settings used for proof thread 2:
+    orchestration                 = on
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    max_trace_length              = 88
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+2: Using multistage preprocessing
+2: Starting reduce
+2: Finished reduce in 0.002s
+2.0.PRE: Performing Proof Simplification...
+2.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+2.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+2.0.Hp: Proof Simplification Iteration 2	[0.01 s]
+2.0.Hp: Proof Simplification Iteration 3	[0.01 s]
+2.0.PRE: A proof was found: No trace exists. [0.00 s]
+2.0.PRE: A proof was found: No trace exists. [0.00 s]
+2.0.PRE: Proof Simplification completed in 0.01 s
+2: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+2: =============================== ProofGrid start ===============================
+2: ProofGrid usable level: 1
+2: Initial ProofGrid level: 1
+2: ProofGrid is starting event handling
+2.0.Ht: Proofgrid shell started at 1471393@noivl-adahikar(local) jg_1470773_noivl-adahikar_3
+2.0.Hp: Proofgrid shell started at 1471392@noivl-adahikar(local) jg_1470773_noivl-adahikar_3
+2.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+2.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+2.0.Ht: Trace Attempt  1	[0.00 s]
+2.0.Ht: Trace Attempt  2	[0.00 s]
+2.0.Hp: Requesting engine job to terminate
+2.0.Ht: Requesting engine job to terminate
+INFO (IPF144): 2: Initiating shutdown of proof [0.01 s]
+2.0.Ht: A trace with 2 cycles was found. [0.00 s]
+2.0.Ht: All properties determined. [0.01 s]
+2.0.Hp: Interrupted (multi)
+2.0.Hp: All properties determined. [0.01 s]
+2.0.B: Proofgrid shell started at 1471395@noivl-adahikar(local) jg_1470773_noivl-adahikar_3
+2.0.B: Requesting engine job to terminate
+2.0.Hp: Exited with Success (@ 0.04 s)
+2: ProofGrid usable level: 0
+2.0.Ht: Exited with Success (@ 0.04 s)
+2.0.B: Preventing job from starting because proof is shutting down.
+2.0.B: Requesting engine job to terminate
+2.0.B: Interrupted. [0.00 s]
+2.0.N: Proofgrid shell started at 1471394@noivl-adahikar(local) jg_1470773_noivl-adahikar_3
+2.0.N: Requesting engine job to terminate
+2.0.B: Exited with Success (@ 0.05 s)
+2.0.N: Preventing job from starting because proof is shutting down.
+2.0.N: Requesting engine job to terminate
+2.0.N: Interrupted. [0.00 s]
+2.0.N: Exited with Success (@ 0.05 s)
+2: --------------------------------------------------------------
+ProofGrid Summary (utilization 1.11 %)
+--------------------------------------------------------------
+     engines started                               :     4
+     engine jobs started                           :     4
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+     Hp        0.20        0.00        0.00        1.68 %
+     Ht        0.20        0.01        0.00        2.72 %
+      N        0.21        0.00        0.00        0.00 %
+      B        0.19        0.00        0.00        0.00 %
+    all        0.20        0.00        0.00        1.11 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               0.79        0.01        0.00
+
+    Data read    : 3.74 kiB
+    Data written : 434.00 B
+
+2: All pending notifications were processed.
+[<embedded>] % source /servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/work/saveRestore/jges.waivers
+couldn't read file "/servers/esd_noida/amey/JGFF_2212/demos/visualize/sva/jg/jgproject/work/saveRestore/jges.waivers": no such file or directory
+
+[<embedded>] % include jg_fpv.tcl
+%% # Rehash Verification environment
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% # JG settings for lab
+%% set_max_trace_length 88
+%% 
+%% # Define path to design under verification files
+%% set design_path ../source/design
+../source/design
+%% # Define path to property files
+%% set prop_path   ../source/properties
+../source/properties
+%% 
+%% # Analyze design under verification files
+%% analyze -verilog \
+  $design_path/arbiter.v \
+  $design_path/port_select.v \
+  $design_path/bridge.v \
+  $design_path/egress.v \
+  $design_path/ingress.v \
+  $design_path/top.v
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/arbiter.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/port_select.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/bridge.v'
+[WARN (VERI-1875)] ../source/design/bridge.v(109): identifier 'int2eg_end' is used before its declaration
+[WARN (VERI-1875)] ../source/design/bridge.v(111): identifier 'int2eg_end' is used before its declaration
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/egress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/ingress.v'
+[-- (VERI-1482)] Analyzing Verilog file '../source/design/top.v'
+[INFO (VERI-2561)] ../source/design/top.v(155): undeclared symbol 'rd_ready', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(166): undeclared symbol 'new_tran0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(167): undeclared symbol 'int_read_done0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(168): undeclared symbol 'current_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(169): undeclared symbol 'int_read_write0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(170): undeclared symbol 'int_ready0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(171): undeclared symbol 'int_valid0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(172): undeclared symbol 'trans_started0', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(189): undeclared symbol 'new_tran1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(190): undeclared symbol 'int_read_done1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(191): undeclared symbol 'current_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(192): undeclared symbol 'int_read_write1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(193): undeclared symbol 'int_ready1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(194): undeclared symbol 'int_valid1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(195): undeclared symbol 'trans_started1', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(212): undeclared symbol 'new_tran2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(213): undeclared symbol 'int_read_done2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(214): undeclared symbol 'current_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(215): undeclared symbol 'int_read_write2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(216): undeclared symbol 'int_ready2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(217): undeclared symbol 'int_valid2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(218): undeclared symbol 'trans_started2', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(235): undeclared symbol 'new_tran3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(236): undeclared symbol 'int_read_done3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(237): undeclared symbol 'current_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(238): undeclared symbol 'int_read_write3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(239): undeclared symbol 'int_ready3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(240): undeclared symbol 'int_valid3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(241): undeclared symbol 'trans_started3', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(270): undeclared symbol 'new_tran', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(271): undeclared symbol 'int_read_done', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(272): undeclared symbol 'trans_started', assumed default net type 'wire'
+[INFO (VERI-2561)] ../source/design/top.v(273): undeclared symbol 'current_read_write', assumed default net type 'wire'
+%% 
+%% # Analyze property files
+%% analyze -sv09 \
+  $prop_path/v_arbiter.sva \
+  $prop_path/v_arbiter_fairness.sva \
+  $prop_path/v_bridge.sva \
+  $prop_path/v_ingress.sva \
+  $prop_path/v_egress.sva \
+  $prop_path/v_port_select.sva \
+  $prop_path/bindings.sva
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_arbiter_fairness.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_bridge.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_ingress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_egress.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/v_port_select.sva'
+[-- (VERI-1482)] Analyzing Verilog file '../source/properties/bindings.sva'
+%% 
+%% # Elaborate design and extract properties
+%% elaborate -top top
+INFO (ISW003): Top module name is "top".
+[INFO (HIER-8002)] ../source/design/top.v(342): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] ../source/properties/v_ingress.sva(1): compiling module 'v_ingress'
+[INFO (VERI-1018)] ../source/design/ingress.v(47): compiling module 'ingress'
+[INFO (VERI-1018)] ../source/properties/v_egress.sva(1): compiling module 'v_egress'
+[INFO (VERI-1018)] ../source/design/egress.v(51): compiling module 'egress'
+[INFO (VERI-1018)] ../source/properties/v_bridge.sva(1): compiling module 'v_bridge'
+[INFO (VERI-1018)] ../source/design/bridge.v(54): compiling module 'bridge'
+[INFO (VERI-1018)] ../source/properties/v_arbiter_fairness.sva(1): compiling module 'v_arbiter_fairness'
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-1832)] ../source/properties/v_arbiter_fairness.sva(28): method ended is deprecated in this mode of Verilog
+[WARN (VERI-2119)] ../source/properties/v_arbiter_fairness.sva(32): constant expression cannot be used as event expression
+[WARN (VERI-1994)] ../source/properties/v_arbiter_fairness.sva(32): unsatisfiable sequence in assertion
+[WARN (VERI-2234)] ../source/properties/v_arbiter_fairness.sva(32): no netlist generated for assert 'ptest_clk'
+[INFO (VERI-1018)] ../source/properties/v_arbiter.sva(1): compiling module 'v_arbiter'
+[INFO (VERI-1018)] ../source/design/arbiter.v(49): compiling module 'arbiter'
+[INFO (VERI-1018)] ../source/properties/v_port_select.sva(1): compiling module 'v_port_select'
+[INFO (VERI-1018)] ../source/design/port_select.v(47): compiling module 'port_select'
+[INFO (VERI-1018)] ../source/design/top.v(49): compiling module 'top'
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          13 (1 packages)
+  Single run mode                         On
+  Pipeline                                On (12 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      13 (13 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+top
+%% 
+%% # Setup proof environment
+%% clock clk
+%% reset !(rstN)
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rstN".
+%% 
+%% prove -all
+INFO (IPF036): Starting proof on task: "<embedded>", 75 properties to prove with 0 already proven/unreachable
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 814 of 950 design flops, 0 of 0 design latches, 90 of 90 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = on
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    max_trace_length              = 88
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0.003s
+0.0.PRE: Performing Proof Simplification...
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 1 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_read" was covered in 1 cycles in 0.00 s.
+0.0.PRE: A trace with 1 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.PRE: The cover property "top.ing1.i_ingress.c_read" was covered in 1 cycles in 0.00 s.
+0.0.PRE: A trace with 1 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.PRE: The cover property "top.ing2.i_ingress.c_read" was covered in 1 cycles in 0.00 s.
+0.0.PRE: A trace with 1 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.PRE: The cover property "top.ing3.i_ingress.c_read" was covered in 1 cycles in 0.00 s.
+0.0.PRE: A trace with 2 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_rd_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_write" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_valid" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_int_valid" was covered in 2 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing0.i_ingress.c_int_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing1.i_ingress.c_rd_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing1.i_ingress.c_write" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing1.i_ingress.c_valid" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing2.i_ingress.c_rd_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing2.i_ingress.c_write" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing2.i_ingress.c_valid" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing3.i_ingress.c_rd_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing3.i_ingress.c_write" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.ing3.i_ingress.c_valid" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.eg.i_egress.c_eg_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.eg.i_egress.c_int_datardy" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.brdg.i_bridge.a_fifo_no_underflow:precondition1" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.brdg.i_bridge.c_int_datardy" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.brdg.i_bridge.c_int_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.arb.i_arbiter.c_req0" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.arb.i_arbiter.c_req1" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.arb.i_arbiter.c_req2" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.arb.i_arbiter.c_req3" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.arb.i_arbiter.c_int_ready" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.p_sel.i_port_select.a_int_size_select_00:precondition1" was covered in 1 cycles in 0.00 s.
+INFO (IPF047): 0.0.PRE: The cover property "top.p_sel.i_port_select.c_ig_sel_00" was covered in 1 cycles in 0.00 s.
+0.0.N: Proof Simplification Iteration 2	[0.08 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property "top.arb.i_arbiter.a_grant_is_onehot0" was proven in 0.00 s.
+0.0.N: Proof Simplification Iteration 3	[0.08 s]
+0.0.N: Proof Simplification Iteration 4	[0.08 s]
+0.0.N: Proof Simplification Iteration 5	[0.09 s]
+0.0.N: Proof Simplification Iteration 6	[0.09 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 0.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+0.0.PRE: Proof Simplification completed in 0.11 s
+0.0.N: Identified and disabled 34 duplicated targets.
+0: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+0: =============================== ProofGrid start ===============================
+0: ProofGrid usable level: 38
+0: Initial ProofGrid level: 1
+0: ProofGrid is starting event handling
+0.0.Hp: Proofgrid shell started at 1750224@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Proofgrid shell started at 1750223@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 0.0.Hp: The property "top.p_sel.i_port_select.a_int_ready_onehot0" was proven in 0.01 s.
+0.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 0.0.Hp: The property "top.p_sel.i_port_select.a_int_size_select_00" was proven in 0.01 s.
+0.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 0.0.Hp: The property "top.p_sel.i_port_select.a_int_size_select_01" was proven in 0.01 s.
+0.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 0.0.Hp: The property "top.p_sel.i_port_select.a_int_size_select_10" was proven in 0.01 s.
+0.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 0.0.Hp: The property "top.p_sel.i_port_select.a_int_size_select_11" was proven in 0.01 s.
+0: ProofGrid usable level: 33
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.N: Starting proof for property "top.ing0.i_ingress.c_int_read_done"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  4	[0.06 s]
+0.0.N: Trace Attempt  5	[0.08 s]
+0.0.N: Trace Attempt  5	[0.13 s]
+0.0.Ht: Proofgrid shell started at 1750255@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Bm: Proofgrid shell started at 1750256@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.Ht: Trace Attempt  1	[0.01 s]
+0.0.Ht: Trace Attempt  2	[0.02 s]
+0.0.Ht: A trace with 2 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.brdg.i_bridge.c_int_valid" was covered in 2 cycles in 0.02 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_trans_started" was covered in 2 cycles in 0.02 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_int_valid" was covered in 2 cycles in 0.02 s.
+0.0.Ht: Trace Attempt  3	[0.02 s]
+0.0.Ht: Trace Attempt  4	[0.02 s]
+0.0.Ht: A trace with 4 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.eg.i_egress.c_int_datavalid" was covered in 4 cycles in 0.03 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.brdg.i_bridge.c_int_datavalid" was covered in 4 cycles in 0.03 s.
+0.0.Ht: Trace Attempt  5	[0.03 s]
+0.0.L: Proofgrid shell started at 1750259@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.Ht: A trace with 5 cycles was found. [0.04 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing1.i_ingress.c_ready" was covered in 5 cycles in 0.04 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.ing1.i_ingress.c_int_ready" was covered in 5 cycles in 0.04 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.a_grant_is_one_cycle:precondition1" was covered in 5 cycles in 0.04 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_gnt1" was covered in 5 cycles in 0.04 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.a_int_size_select_01:precondition1" was covered in 5 cycles in 0.04 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.c_ig_sel_01" was covered in 5 cycles in 0.04 s.
+0.0.Oh: Proofgrid shell started at 1750258@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.Ht: A trace with 5 cycles was found. [0.04 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing2.i_ingress.c_ready" was covered in 5 cycles in 0.05 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.ing2.i_ingress.c_int_ready" was covered in 5 cycles in 0.05 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_gnt2" was covered in 5 cycles in 0.05 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.a_int_size_select_10:precondition1" was covered in 5 cycles in 0.05 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.c_ig_sel_10" was covered in 5 cycles in 0.05 s.
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0.0.Ht: A trace with 5 cycles was found. [0.04 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing3.i_ingress.c_ready" was covered in 5 cycles in 0.07 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.ing3.i_ingress.c_int_ready" was covered in 5 cycles in 0.07 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_gnt3" was covered in 5 cycles in 0.07 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.a_int_size_select_11:precondition1" was covered in 5 cycles in 0.07 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.p_sel.i_port_select.c_ig_sel_11" was covered in 5 cycles in 0.07 s.
+0.0.L: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Ht: A trace with 5 cycles was found. [0.05 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.eg.i_egress.c_eg_valid" was covered in 5 cycles in 0.08 s.
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter.c_gnt0" was covered in 5 cycles in 0.08 s.
+0.0.Oh: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.L: Using trace diversification with seed 1 (0.05)
+0.0.L: Using LRU state removal heuristic
+0.0.Ht: Trace Attempt  6	[0.05 s]
+0.0.Ht: A trace with 6 cycles was found. [0.05 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing1.i_ingress.c_int_valid" was covered in 6 cycles in 0.09 s.
+0.0.L: Using states from traces to { (reset) }
+0: ProofGrid is temporarily paused because there are too many pending traces.
+0: ProofGrid is resuming to work after pausing for 0s. The amount of pending traces decreased.
+0.0.Ht: A trace with 6 cycles was found. [0.05 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing2.i_ingress.c_int_valid" was covered in 6 cycles in 0.10 s.
+0: ProofGrid is temporarily paused because there are too many pending traces.
+0: ProofGrid is resuming to work after pausing for 0s. The amount of pending traces decreased.
+0.0.Ht: A trace with 6 cycles was found. [0.06 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.ing3.i_ingress.c_int_valid" was covered in 6 cycles in 0.11 s.
+0.0.Ht: A trace with 6 cycles was found. [0.06 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.eg.i_egress.a_wvalid_2cycle:precondition1" was covered in 6 cycles in 0.13 s.
+0.0.Ht: A trace with 6 cycles was found. [0.06 s]
+INFO (IPF047): 0.0.Ht: The cover property "top.arb.i_arbiter_fairness.a_arbiter_fairness:precondition1" was covered in 6 cycles in 0.13 s.
+0.0.Ht: Trace Attempt  7	[0.06 s]
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0.0.Oh: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 0.0.Oh: The property "top.brdg.i_bridge.a_fifo_no_underflow" was proven in 0.06 s.
+0.0.L: Trace Attempt  3	[0.02 s]
+0.0.L: Using states from traces to { top.ing0.i_ingress.c_int_valid (2) }
+0.0.L: Trace Attempt  3	[0.05 s]
+0.0.L: Trace Attempt  4	[0.06 s]
+0.0.B: Proofgrid shell started at 1750260@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.L: Using states from traces to { top.arb.i_arbiter.a_grant_is_one_cycle:precondition1 (4) }
+0.0.Bm: Trace Attempt  1	[0.04 s]
+0.0.Bm: Trace Attempt  2	[0.04 s]
+0.0.Bm: Trace Attempt  3	[0.04 s]
+0.0.B: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.B: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.B: Starting proof for property "top.ing0.i_ingress.c_int_read_done"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.L: Trace Attempt  3	[0.07 s]
+0.0.Bm: Trace Attempt  4	[0.05 s]
+0.0.L: Trace Attempt  4	[0.07 s]
+0.0.L: Trace Attempt  5	[0.08 s]
+0.0.B: Trace Attempt  4	[0.02 s]
+0.0.Bm: Trace Attempt  5	[0.07 s]
+0.0.Oh: bwd trail(1): 1 0.0216354s
+0.0.B: Trace Attempt  5	[0.05 s]
+0.0.Oh: All properties either determined or skipped. [0.11 s]
+0: ProofGrid usable level: 9
+0.0.Oh: Exited with Success (@ 0.57 s)
+0: ProofGrid usable level: 9
+0.0.Mpcustom4: Proofgrid shell started at 1750257@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0.0.AM: Proofgrid shell started at 1750261@noivl-adahikar(local) jg_1470773_noivl-adahikar_4
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0.0.Mpcustom4: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0.0.AM: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.AM: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.AM: Starting proof for property "top.ing0.i_ingress.c_int_read_done"	[0.00 s].
+0.0.Mpcustom4: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  2	[0.02 s]
+0.0.AM: Trace Attempt  3	[0.04 s]
+0.0.AM: Trace Attempt  4	[0.07 s]
+0.0.AM: Trace Attempt  5	[0.08 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.30 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.35 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.44 s]
+0.0.AM: Trace Attempt 11	[0.24 s]
+0.0.AM: Per property time limit expired (0.45 s) [0.46 s]
+0.0.AM: Stopped processing property "top.ing0.i_ingress.c_int_read_done"	[0.46 s].
+0.0.Mpcustom4: Trace Attempt  5	[0.47 s]
+0.0.AM: Starting proof for property "top.ing1.i_ingress.c_int_read_done"	[0.00 s].
+0.0.B: Trace Attempt 12	[0.42 s]
+0.0.B: Per property time limit expired (0.52 s) [0.54 s]
+0.0.B: Stopped processing property "top.ing0.i_ingress.c_int_read_done"	[0.50 s].
+0.0.B: Starting proof for property "top.ing1.i_ingress.c_int_read_done"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.B: Trace Attempt  1	[0.01 s]
+0.0.B: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  4	[0.02 s]
+0.0.N: Trace Attempt 13	[0.64 s]
+0.0.AM: Trace Attempt  4	[0.04 s]
+0.0.N: Stopped processing property "top.ing0.i_ingress.c_int_read_done"	[1.05 s].
+0.0.N: Starting proof for property "top.ing1.i_ingress.c_int_read_done"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  5	[0.04 s]
+0.0.AM: Trace Attempt  5	[0.05 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  5	[0.03 s]
+0.0.N: Trace Attempt  5	[0.07 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.59 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.62 s]
+0.0.Hp: A proof was found: No trace exists. [1.20 s]
+INFO (IPF057): 0.0.Hp: The property "top.arb.i_arbiter.a_grant_is_one_cycle" was proven in 1.18 s.
+0.0.Mpcustom4: Trace Attempt  5	[0.73 s]
+0.0.Bm: Trace Attempt 14	[0.84 s]
+0.0.Bm: A trace with 14 cycles was found. [1.03 s]
+INFO (IPF047): 0.0.Bm: The cover property "top.ing0.i_ingress.c_int_read_done" was covered in 14 cycles in 0.94 s.
+0.0.AM: Trace Attempt  1	[0.56 s]
+0.0.Bm: Trace Attempt 15	[1.15 s]
+0.0.AM: Trace Attempt  2	[0.61 s]
+0.0.L: Trace Attempt 88	[1.18 s]
+0.0.L: Reached length limit (88) [1.22 s]
+0.0.L: Exited with Success (@ 1.68 s)
+0.0.L: Completed, Restart ignored.
+0: ProofGrid usable level: 7
+0.0.AM: Trace Attempt  3	[0.63 s]
+0.0.Mpcustom4: Trace Attempt  4	[1.14 s]
+0.0.Mpcustom4: Trace Attempt  5	[1.15 s]
+0.0.AM: Trace Attempt  5	[0.72 s]
+0.0.AM: Trace Attempt  7	[0.94 s]
+0.0.AM: Per property time limit expired (1.00 s) [1.00 s]
+0.0.AM: Stopped processing property "top.ing1.i_ingress.c_int_read_done"	[1.01 s].
+0.0.AM: Starting proof for property "top.ing2.i_ingress.c_int_read_done"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.B: Trace Attempt 16	[0.93 s]
+0.0.B: Per property time limit expired (1.00 s) [1.02 s]
+0.0.B: Stopped processing property "top.ing1.i_ingress.c_int_read_done"	[1.02 s].
+0.0.B: Starting proof for property "top.ing2.i_ingress.c_int_read_done"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt 16	[0.92 s]
+0.0.AM: Trace Attempt  3	[0.02 s]
+0.0.B: Trace Attempt  2	[0.01 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.N: Stopped processing property "top.ing1.i_ingress.c_int_read_done"	[1.00 s].
+0.0.N: Starting proof for property "top.ing2.i_ingress.c_int_read_done"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  5	[0.03 s]
+0.0.AM: Trace Attempt  5	[0.04 s]
+0.0.N: Trace Attempt  3	[0.02 s]
+0.0.N: Trace Attempt  4	[0.03 s]
+0.0.N: Trace Attempt  5	[0.03 s]
+0.0.AM: Trace Attempt  1	[0.07 s]
+0.0.AM: Trace Attempt  2	[0.09 s]
+0.0.N: Trace Attempt  5	[0.06 s]
+0.0.AM: Trace Attempt  3	[0.09 s]
+0.0.AM: Trace Attempt  5	[0.16 s]
+0.0.Bm: Trace Attempt 17	[1.79 s]
+0.0.Bm: A trace with 17 cycles was found. [2.04 s]
+INFO (IPF047): 0.0.Bm: The cover property "top.brdg.i_bridge.a_fifo_no_overflow:precondition1" was covered in 17 cycles in 1.96 s.
+0.0.Bm: A trace with 17 cycles was found. [2.20 s]
+INFO (IPF055): 0.0.Bm: A counterexample (cex) with 17 cycles was found for the property "top.arb.i_arbiter_fairness.a_arbiter_fairness" in 2.11 s.
+0.0.Bm: Trace Attempt 18	[2.24 s]
+0.0.Bm: A trace with 18 cycles was found. [2.29 s]
+INFO (IPF055): 0.0.Bm: A counterexample (cex) with 18 cycles was found for the property "top.brdg.i_bridge.a_fifo_no_overflow" in 2.21 s.
+0.0.Mpcustom4: Validation of fixpoint was successful. Time = 0.00
+0.0.Mpcustom4: Trace Attempt 16	[2.23 s]
+0.0.Mpcustom4: A proof was found: No trace exists. [2.24 s]
+INFO (IPF057): 0.0.Mpcustom4: The property "top.eg.i_egress.a_wvalid_2cycle" was proven in 2.24 s.
+0: ProofGrid usable level: 3
+0.0.Mpcustom4: Trace Attempt  6	[2.38 s]
+0.0.AM: Trace Attempt 10	[0.93 s]
+0.0.AM: Per property time limit expired (1.00 s) [1.01 s]
+0.0.B: Trace Attempt 16	[0.74 s]
+0.0.B: Per property time limit expired (1.00 s) [1.00 s]
+0.0.AM: Stopped processing property "top.ing2.i_ingress.c_int_read_done"	[1.02 s].
+0.0.AM: Starting proof for property "top.ing3.i_ingress.c_int_read_done"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.B: Stopped processing property "top.ing2.i_ingress.c_int_read_done"	[1.01 s].
+0.0.B: Starting proof for property "top.ing3.i_ingress.c_int_read_done"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt 16	[0.81 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  4	[0.02 s]
+0.0.N: Stopped processing property "top.ing2.i_ingress.c_int_read_done"	[1.01 s].
+0.0.N: Starting proof for property "top.ing3.i_ingress.c_int_read_done"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  5	[0.02 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.03 s]
+0.0.N: Trace Attempt  4	[0.02 s]
+0.0.N: Trace Attempt  5	[0.02 s]
+0.0.AM: Trace Attempt  1	[0.07 s]
+0.0.AM: Trace Attempt  2	[0.11 s]
+0.0.AM: Trace Attempt  3	[0.12 s]
+0.0.AM: Trace Attempt  5	[0.16 s]
+0.0.Bm: Trace Attempt 19	[2.71 s]
+0.0.Bm: A trace with 19 cycles was found. [2.90 s]
+INFO (IPF047): 0.0.Bm: The cover property "top.ing1.i_ingress.c_int_read_done" was covered in 19 cycles in 2.81 s.
+0.0.Bm: A trace with 19 cycles was found. [3.00 s]
+INFO (IPF047): 0.0.Bm: The cover property "top.ing2.i_ingress.c_int_read_done" was covered in 19 cycles in 2.91 s.
+0.0.N: Requesting engine job to stop
+0.0.B: Requesting engine job to stop
+0.0.AM: Requesting engine job to stop
+0.0.Hp: Requesting engine job to terminate
+0.0.Ht: Requesting engine job to terminate
+0.0.Bm: Requesting engine job to terminate
+0.0.Mpcustom4: Requesting engine job to terminate
+INFO (IPF144): 0: Initiating shutdown of proof [3.52 s]
+0.0.Bm: A trace with 19 cycles was found. [3.05 s]
+INFO (IPF047): 0.0.Bm: The cover property "top.ing3.i_ingress.c_int_read_done" was covered in 19 cycles in 2.96 s.
+0.0.AM: Trace Attempt  6	[0.27 s]
+0.0.AM: Stopped processing property "top.ing3.i_ingress.c_int_read_done"	[0.45 s].
+0.0.AM: Interrupted. [0.44 s]
+0.0.N: Trace Attempt 14	[0.39 s]
+0.0.N: Stopped processing property "top.ing3.i_ingress.c_int_read_done"	[0.43 s].
+0.0.N: Interrupted. [0.42 s]
+0.0.AM: Exited with Success (@ 3.53 s)
+0: ProofGrid usable level: 0
+0.0.N: Exited with Success (@ 3.53 s)
+0.0.Bm: Interrupted. [3.06 s]
+0.0.Ht: Interrupted (multi)
+0.0.Ht: Trace Attempt 17	[2.52 s]
+0.0.Ht: Interrupted. [3.15 s]
+0.0.Bm: Exited with Success (@ 3.56 s)
+0.0.B: Trace Attempt 14	[0.45 s]
+0.0.Hp: Interrupted (multi)
+0.0.Hp: Interrupted. [3.57 s]
+0.0.B: Stopped processing property "top.ing3.i_ingress.c_int_read_done"	[0.49 s].
+0.0.B: Interrupted. [0.49 s]
+0.0.Ht: Exited with Success (@ 3.59 s)
+0.0.B: Exited with Success (@ 3.59 s)
+0.0.Hp: Exited with Success (@ 3.59 s)
+0.0.Mpcustom4: Trace Attempt  9	[2.67 s]
+0.0.Mpcustom4: Interrupted. [3.02 s]
+0.0.Mpcustom4: Exited with Success (@ 3.60 s)
+0: --------------------------------------------------------------
+ProofGrid Summary (utilization 86.85 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.21        3.49        0.00       94.21 %
+     Hp        0.14        3.51        0.00       96.04 %
+     Ht        0.40        3.11        0.00       88.63 %
+     Bm        0.42        3.01        0.00       87.88 %
+    Mpcustom4        0.56        2.94        0.00       84.04 %
+     Oh        0.41        0.11        0.00       21.28 %
+      L        0.40        1.22        0.00       75.10 %
+      B        0.46        3.01        0.00       86.67 %
+     AM        0.52        2.94        0.00       84.97 %
+    all        0.39        2.59        0.00       86.85 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.53       23.34        0.00
+
+    Data read    : 110.08 kiB
+    Data written : 14.63 kiB
+
+0: All pending notifications were processed.
+INFO (IPF059): 0: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 75
+                 assertions                   : 11
+                  - proven                    : 9 (81.8182%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 2 (18.1818%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 64
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 64 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+determined
+determined
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.428 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

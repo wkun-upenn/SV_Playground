@@ -1,0 +1,29 @@
+rstn 1'b0
+PRESETn 1'b0
+fv_tb.fv_rst 1'b1
+10
+rstn 1'b1
+PRESETn 1'b1
+PSEL 1'b0
+PENABLE 1'b0
+ig_valid 1'b0
+route_resp_valid 1'b0
+eg_req 1'b0
+20
+PSEL 1'b1
+PENABLE 1'b0
+PADDR 16'h0020
+PWDATA 32'h00000101
+PWRITE 1'b1
+1
+PENABLE 1'b1
+1
+PSEL 1'b0
+PENABLE 1'b0
+PADDR 16'bxxxxxxxxxxxxxxxx
+PWDATA 32'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+100
+rstn 1'b1
+PRESETn 1'b1
+fv_tb.fv_rst 1'b0
+$

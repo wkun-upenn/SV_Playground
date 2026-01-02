@@ -1,0 +1,17 @@
+* Title: SystemVerilog Assertions 1.5 day course
+* Version: 5.1
+* Modified: 15 September 2022
+* Description:
+SystemVerilog Assertions Language Course
+Course requires Xcelium, Indago and Jasper  
+Solutions are in a directory named solutions 
+The course requires the software Xcelium(or INCISIVE if Xcelium is not available), INDAGO and JasperGold.
+These labs were tested on Xcelium 22.03-s006, INDAGO_MAIN 22.03.001-s and Jasper 2022.06-p002 64 bits.
+
+There is a class_setup script which gets automatically sourced in the Cadence managed AWS environment
+There is a example_onsite_class_setup file which shows examples of the the bare minimum env settings to
+get the tool working, given that the $PATHs where the software is installed are not known in advance.
+You will need to change the PATHs to match your installation
+
+Developer: Michael Avery
+           mavery@cadence.com

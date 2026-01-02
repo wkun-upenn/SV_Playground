@@ -1,0 +1,4 @@
+rm -rf ./jgproject
+rm -rf ./xcelium.d
+rm -rf ./xrun.history
+rm -rf ./xrun.log

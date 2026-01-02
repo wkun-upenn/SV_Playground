@@ -1,0 +1,735 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2024.03
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2024.03 FCS 64 bits
+# build date: 2024.03.27 15:42:27 UTC
+# ----------------------------------------
+# started   : 2024-03-28 11:10:28 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 1437160
+# arguments : '-label' 'session_0' '-console' '//127.0.0.1:45265' '-style' 'windows' '-data' 'AAAAjnicY2RgYLCp////PwMYMFcBCTYGfwY3IIQDxgdQhg0jAyoA8ZlQRQIbUGgGBlaYZmRNAgwlDKkMxUBSD4iTGXLAMgChAgtg' '-proj' '/servers/esd_noida/amey/JGFF_2212/demos/interactive_lab/solution/jgproject/sessionLogs/session_0' '-init' '-hidden' '/servers/esd_noida/amey/JGFF_2212/demos/interactive_lab/solution/jgproject/.tmp/.initCmds.tcl' 'test.tcl'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2024 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/demos/interactive_lab/solution/jgproject/sessionLogs/session_0
+
+WARNING (WDEP017): You have defined deprecated environment variable "JASPERGOLD_UXDB_ARGS".
+    Starting with the next release, Jasper will no longer recognize this environment variable.
+    Define environment variable "JASPER_UXDB_ARGS" with the same value instead.
+WARNING (WDEP017): You have defined deprecated environment variable "JASPERGOLD_UXDB_PATH".
+    Starting with the next release, Jasper will no longer recognize this environment variable.
+    Define environment variable "JASPER_UXDB_PATH" with the same value instead.
+INFO: successfully checked out licenses "jasper_interactive" and "jasper_fpv".
+INFO: reading configuration file "/home/adahikar/.config/cadence/jasper.conf".
+% # Run JG with a TCl file: jg foo.tcl
+% # To get help about the tcl command syntax
+% # use the help command "help" at the JG console
+% # This will list an overview of all commands.
+% # To get details about individual command use
+% # help in combination with the command name and its options.
+% # For example "help assert"
+% 
+% # Clear previous run
+% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% 
+% # Analyze RTL files
+% analyze -sv09  tags.sv
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'tags.sv'
+% 
+% # Elaborate
+% elaborate
+[INFO (HIER-8002)] tags.sv(133): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] tags.sv(3): compiling module 'tags'
+INFO (ISW003): Top module name is "tags".
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          1 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (1 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      1 (1 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+tags
+[<embedded>] % 
+[<embedded>] % # Initialization
+[<embedded>] % # Clock specification
+[<embedded>] % # clock pin is called "clk"
+[<embedded>] % # duty cycle is 1:1 by default
+[<embedded>] % clock clk
+[<embedded>] % 
+[<embedded>] % # Define reset condition
+[<embedded>] % # reset pin is called rst_n, active low
+[<embedded>] % reset !rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+[<embedded>] % 
+[<embedded>] % # Start the verification
+[<embedded>] % prove -all
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Bcustom2: Custom engine code is hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+AMcustom3: Custom engine code is hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+Mpcustom4: Custom engine code is hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+INFO (IPF036): Starting proof on task: "<embedded>", 48 properties to prove with 0 already proven/unreachable
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 24 of 24 design flops, 0 of 0 design latches, 67 of 73 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = on
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+AMcustom5: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+Ncustom6: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+ADcustom7: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+Tricustom8: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Gcustom9: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+C2custom10: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+AGcustom11: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+Bcustom12: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Ncustom13: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Tricustom14: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 0.0.PRE: The property "tags.ast_no_full_empty" was proven in 0.00 s.
+0.0.N: A max_length bound was found. The shortest trace is no longer than 1 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 1 was found for the property "tags.asm_no_pop_when_empty:precondition1" in 0.00 s.
+0.0.N: Proof Simplification Iteration 2	[0.00 s]
+0.0.N: Proof Simplification Iteration 3	[0.00 s]
+0.0.N: Proof Simplification Iteration 4	[0.00 s]
+0.0.N: Proof Simplification Iteration 5	[0.00 s]
+0.0.PRE: Proof Simplification completed in 0.01 s
+0.0.N: Identified and disabled 4 duplicated targets.
+0: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+0: =============================== ProofGrid start ===============================
+0: ProofGrid usable level: 43
+0: Initial ProofGrid level: 1
+0: ProofGrid is starting event handling
+0.0.N: Proofgrid shell started at 1437224@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.N: Starting proof for property "tags.asm_rx_valid_hold:precondition1"	[0.00 s].
+0.0.N: Starting proof for property "tags.ast_rx_id_stable:precondition1"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A trace with 1 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.N: The cover property "tags.asm_rx_valid_hold:precondition1" was covered in 1 cycles in 0.06 s.
+INFO (IPF047): 0.0.N: The cover property "tags.asm_no_pop_when_empty:precondition1" was covered in 1 cycles in 0.06 s by the incidental trace "tags.asm_rx_valid_hold:precondition1".
+INFO (IPF055): 0.0.N: A counterexample (cex) with 1 cycles was found for the property "tags.ast_vc_empty_same_as_dut_empty" in 0.06 s by the incidental trace "tags.asm_rx_valid_hold:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.ast_rx_id_stable:precondition1" was covered in 1 cycles in 0.06 s.
+0.0.N: Stopped processing property "tags.asm_rx_valid_hold:precondition1"	[0.07 s].
+0.0.N: Stopped processing property "tags.ast_rx_id_stable:precondition1"	[0.07 s].
+0.0.N: Starting proof for property "tags.asm_tx_valid_hold:precondition1"	[0.00 s].
+0.0.N: Starting proof for property "tags.ast_tx_id_stable:precondition1"	[0.00 s].
+0: ProofGrid usable level: 40
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 16777216 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 16777216 was found for the property "tags.asm_tx_valid_hold:precondition1" in 0.00 s.
+0.0.N: A max_length bound was found. The shortest trace is no longer than 16777216 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 16777216 was found for the property "tags.ast_tx_id_stable:precondition1" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.N: The cover property "tags.asm_tx_valid_hold:precondition1" was covered in 2 cycles in 0.00 s.
+INFO (IPF047): 0.0.N: The cover property "tags.asm_rx_tag_overwrite:precondition1" was covered in 1 cycles in 0.00 s by the incidental trace "tags.asm_tx_valid_hold:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[1].cov_rx_cnt" was covered in 2 cycles in 0.00 s by the incidental trace "tags.asm_tx_valid_hold:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[1].cov_fullness" was covered in 2 cycles in 0.00 s by the incidental trace "tags.asm_tx_valid_hold:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.ast_tx_id_stable:precondition1" was covered in 2 cycles in 0.00 s.
+INFO (IPF047): 0.0.N: The cover property "tags.asm_dont_use_rx_tag_twice:precondition1" was covered in 1 cycles in 0.00 s by the incidental trace "tags.asm_tx_valid_hold:precondition1".
+0.0.N: Stopped processing property "tags.asm_tx_valid_hold:precondition1"	[0.01 s].
+0.0.N: Stopped processing property "tags.ast_tx_id_stable:precondition1"	[0.01 s].
+0.0.N: Starting proof for property "tags.asm_tx_tag_check:precondition1"	[0.00 s].
+0: ProofGrid usable level: 36
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 16777216 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 16777216 was found for the property "tags.asm_tx_tag_check:precondition1" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.N: The cover property "tags.asm_tx_tag_check:precondition1" was covered in 2 cycles in 0.00 s.
+0.0.N: Stopped processing property "tags.asm_tx_tag_check:precondition1"	[0.01 s].
+0.0.N: Starting proof for property "tags.asm_no_push_when_full:precondition1"	[0.00 s].
+0.0.N: Starting proof for property "tags.cov_empty_to_full"	[0.00 s].
+0: ProofGrid usable level: 35
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 16777216 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 16777216 was found for the property "tags.asm_no_push_when_full:precondition1" in 0.00 s.
+0.0.N: A max_length bound was found. The shortest trace is no longer than 16777216 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 16777216 was found for the property "tags.cov_empty_to_full" in 0.00 s.
+0.0.Hp: Proofgrid shell started at 1437225@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Trace Attempt  1	[0.01 s]
+0.0.Hp: A trace with 1 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.Hp: The cover property "tags.ast_empty_no_push:precondition1" was covered in 1 cycles in 0.00 s.
+INFO (IPF055): 0.0.Hp: A counterexample (cex) with 1 cycles was found for the property "tags.ast_vc_full_same_as_dut_full" in 0.00 s.
+0.0.N: Trace Attempt  9	[0.13 s]
+0.0.N: A trace with 9 cycles was found. [0.13 s]
+INFO (IPF047): 0.0.N: The cover property "tags.asm_no_push_when_full:precondition1" was covered in 9 cycles in 0.08 s.
+INFO (IPF047): 0.0.N: The cover property "tags.ast_full_no_pop:precondition1" was covered in 9 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.cov_going_full" was covered in 9 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[2].cov_rx_cnt" was covered in 3 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[3].cov_rx_cnt" was covered in 4 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[4].cov_rx_cnt" was covered in 5 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[5].cov_rx_cnt" was covered in 6 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[6].cov_rx_cnt" was covered in 7 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[7].cov_rx_cnt" was covered in 8 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[8].cov_rx_cnt" was covered in 9 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[2].cov_fullness" was covered in 3 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[3].cov_fullness" was covered in 4 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[4].cov_fullness" was covered in 5 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[5].cov_fullness" was covered in 6 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[6].cov_fullness" was covered in 7 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[7].cov_fullness" was covered in 8 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.genblk2[8].cov_fullness" was covered in 9 cycles in 0.08 s by the incidental trace "tags.asm_no_push_when_full:precondition1".
+INFO (IPF047): 0.0.N: The cover property "tags.cov_empty_to_full" was covered in 9 cycles in 0.08 s.
+0.0.N: Stopped processing property "tags.asm_no_push_when_full:precondition1"	[0.09 s].
+0.0.N: Stopped processing property "tags.cov_empty_to_full"	[0.09 s].
+0.0.N: Starting proof for property "tags.ast_full_no_pop"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 33554432 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 33554432 was found for the property "tags.ast_full_no_pop" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt  1	[0.01 s]
+0.0.N: Trace Attempt  2	[0.01 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 0.0.N: The property "tags.ast_full_no_pop" was proven in 0.00 s.
+0.0.N: Stopped processing property "tags.ast_full_no_pop"	[0.00 s].
+0.0.N: Starting proof for property "tags.ast_empty_no_push"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 33554432 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 33554432 was found for the property "tags.ast_empty_no_push" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.01 s]
+0.0.N: Validation of fixpoint was successful. Time = 0.00
+0.0.N: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 0.0.N: The property "tags.ast_empty_no_push" was proven in 0.01 s.
+0.0.N: Stopped processing property "tags.ast_empty_no_push"	[0.01 s].
+0.0.N: Starting proof for property "tags.cov_going_empty"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 33554432 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 33554432 was found for the property "tags.cov_going_empty" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 0.0.N: The cover property "tags.cov_going_empty" was covered in 3 cycles in 0.00 s.
+INFO (IPF047): 0.0.N: The cover property "tags.genblk1[1].cov_tx_cnt" was covered in 3 cycles in 0.00 s by the incidental trace "tags.cov_going_empty".
+0.0.N: Stopped processing property "tags.cov_going_empty"	[0.01 s].
+0.0.N: Starting proof for property "tags.cov_full_to_empty"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 33554432 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 33554432 was found for the property "tags.cov_full_to_empty" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.Hp: Trace Attempt  2	[0.12 s]
+0.0.Hp: Trace Attempt  3	[0.20 s]
+0.0.Ht: Proofgrid shell started at 1437256@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+0.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Trace Attempt  4	[0.26 s]
+0.0.Hp: A trace with 4 cycles was found. [0.26 s]
+INFO (IPF047): 0.0.Hp: The cover property "tags.genblk1[2].cov_tx_cnt" was covered in 4 cycles in 0.26 s.
+0.0.Ht: Trace Attempt  1	[0.01 s]
+0.0.Ht: Trace Attempt  2	[0.01 s]
+0.0.Ht: Trace Attempt  3	[0.01 s]
+0.0.Ht: Trace Attempt  4	[0.01 s]
+0.0.Ht: Trace Attempt  5	[0.01 s]
+0.0.Ht: A trace with 5 cycles was found. [0.01 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[3].cov_tx_cnt" was covered in 5 cycles in 0.02 s.
+0.0.Ht: Trace Attempt  6	[0.01 s]
+0.0.Ht: A trace with 6 cycles was found. [0.02 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[4].cov_tx_cnt" was covered in 6 cycles in 0.03 s.
+0.0.Ht: Trace Attempt  7	[0.02 s]
+0.0.Ht: A trace with 7 cycles was found. [0.03 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[5].cov_tx_cnt" was covered in 7 cycles in 0.04 s.
+0.0.Ht: Trace Attempt  8	[0.03 s]
+0.0.Ht: A trace with 8 cycles was found. [0.04 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[6].cov_tx_cnt" was covered in 8 cycles in 0.05 s.
+0.0.Ht: Trace Attempt  9	[0.05 s]
+0.0.Ht: A trace with 9 cycles was found. [0.06 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[7].cov_tx_cnt" was covered in 9 cycles in 0.07 s.
+0.0.Mpcustom4: Proofgrid shell started at 1437258@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+0.0.Mpcustom4: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Bm: Proofgrid shell started at 1437257@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0.0.Mpcustom4: Trace Attempt  1	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  2	[0.01 s]
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 5 threads on "noivl-adahikar" with 2 cores.
+0.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Bm: Trace Attempt  1	[0.00 s]
+0.0.Bm: Trace Attempt  2	[0.01 s]
+0.0.Bm: Trace Attempt  3	[0.01 s]
+0.0.Bm: Trace Attempt  4	[0.01 s]
+0.0.Bm: Trace Attempt  5	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.03 s]
+0.0.Ht: Trace Attempt 10	[0.06 s]
+0.0.Ht: A trace with 10 cycles was found. [0.10 s]
+INFO (IPF047): 0.0.Ht: The cover property "tags.genblk1[8].cov_tx_cnt" was covered in 10 cycles in 0.10 s.
+0.0.B: Proofgrid shell started at 1437261@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0.0.Mpcustom4: Trace Attempt  4	[0.04 s]
+0.0.Mpcustom4: Trace Attempt  3	[0.05 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.05 s]
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 6 threads on "noivl-adahikar" with 2 cores.
+0.0.B: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.B: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.B: Starting proof for property "tags.cov_full_to_empty"	[0.00 s].
+0.0.Mpcustom4: Trace Attempt  5	[0.05 s]
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.06 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.07 s]
+0.0.B: Trace Attempt  5	[0.02 s]
+0.0.Mpcustom4: Trace Attempt  4	[0.08 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.08 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.11 s]
+0.0.Oh: Proofgrid shell started at 1437259@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0.0.Oh: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Oh: bwd trail(1): 1 0.00113242s
+0.0.Oh: All properties either determined or skipped. [0.00 s]
+0: ProofGrid usable level: 5
+0.0.Oh: Exited with Success (@ 0.58 s)
+0: ProofGrid usable level: 5
+0.0.L: Proofgrid shell started at 1437260@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 7 threads on "noivl-adahikar" with 2 cores.
+0.0.L: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.L: Using trace diversification with seed 1 (0.05)
+0.0.L: Using LRU state removal heuristic
+0.0.AM: Proofgrid shell started at 1437262@noivl-adahikar(local) jg_1437160_noivl-adahikar_1
+0.0.L: Using states from traces to { (reset) }
+0.0.L: Trace Attempt  3	[0.01 s]
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0: Running jobs with 8 threads on "noivl-adahikar" with 2 cores.
+0.0.AM: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.L: Using states from traces to { tags.genblk1[1].cov_rx_cnt (2) }
+0.0.AM: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+0.0.AM: Starting proof for property "tags.cov_full_to_empty"	[0.00 s].
+0.0.L: Trace Attempt  3	[0.01 s]
+0.0.Mpcustom4: Trace Attempt  5	[0.17 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.L: Using states from traces to { tags.asm_tx_valid_hold:precondition1 (3) }
+0.0.L: Trace Attempt  3	[0.02 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.Ht: Trace Attempt 11	[0.25 s]
+0.0.L: Using states from traces to { tags.genblk1[2].cov_rx_cnt (4) }
+0.0.L: Trace Attempt  3	[0.03 s]
+0.0.L: Using states from traces to { tags.asm_tx_tag_check:precondition1 (5) }
+0.0.L: Trace Attempt  3	[0.04 s]
+0.0.L: Using states from traces to { tags.genblk1[1].cov_tx_cnt (6) }
+0.0.L: Trace Attempt  3	[0.05 s]
+0.0.AM: Trace Attempt  1	[0.04 s]
+0.0.AM: Trace Attempt  2	[0.05 s]
+0.0.L: Using states from traces to { tags.cov_going_empty (7) }
+0.0.AM: Trace Attempt  3	[0.05 s]
+0.0.AM: Trace Attempt  4	[0.05 s]
+0.0.L: Trace Attempt  3	[0.06 s]
+0.0.L: Using states from traces to { tags.genblk1[3].cov_rx_cnt (8) }
+0.0.L: Trace Attempt  3	[0.07 s]
+0.0.L: Using states from traces to { tags.genblk1[3].cov_tx_cnt (9) }
+0.0.L: Trace Attempt  3	[0.08 s]
+0.0.L: Using states from traces to { tags.genblk1[4].cov_tx_cnt (10) }
+0.0.L: Trace Attempt  3	[0.09 s]
+0.0.L: Using states from traces to { tags.genblk1[5].cov_rx_cnt (11) }
+0.0.L: Trace Attempt  3	[0.10 s]
+0.0.L: Using states from traces to { tags.genblk1[5].cov_tx_cnt (12) }
+0.0.L: Trace Attempt  3	[0.11 s]
+0.0.L: Using states from traces to { tags.genblk1[6].cov_rx_cnt (13) }
+0.0.L: Trace Attempt  3	[0.12 s]
+0.0.L: Using states from traces to { tags.genblk1[6].cov_tx_cnt (14) }
+0.0.L: Trace Attempt  3	[0.13 s]
+0.0.L: Using states from traces to { tags.genblk1[7].cov_rx_cnt (15) }
+0.0.L: Trace Attempt  3	[0.14 s]
+0.0.L: Using states from traces to { tags.genblk1[7].cov_tx_cnt (16) }
+0.0.L: Trace Attempt  3	[0.15 s]
+0.0.N: Trace Attempt 17	[0.47 s]
+0.0.N: A trace with 17 cycles was found. [0.53 s]
+INFO (IPF047): 0.0.N: The cover property "tags.cov_full_to_empty" was covered in 17 cycles in 0.53 s.
+0.0.L: Using states from traces to { tags.genblk1[8].cov_rx_cnt (17) }
+0.0.L: Trace Attempt  3	[0.15 s]
+0.0.N: Stopped processing property "tags.cov_full_to_empty"	[0.55 s].
+0.0.N: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.L: Using states from traces to { tags.genblk1[8].cov_tx_cnt (18) }
+0.0.N: A max_length bound was found. The shortest trace is no longer than 268435456 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 268435456 was found for the property "tags.genblk1[9].cov_tx_cnt" in 0.00 s.
+0.0.L: Trace Attempt  3	[0.16 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.L: Trace Attempt  4	[0.16 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.L: Trace Attempt  5	[0.16 s]
+0.0.AM: Trace Attempt  9	[0.06 s]
+0.0.B: Trace Attempt 15	[0.23 s]
+0.0.B: Stopped processing property "tags.cov_full_to_empty"	[0.28 s].
+0.0.B: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.N: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.AM: Stopped processing property "tags.cov_full_to_empty"	[0.17 s].
+0.0.AM: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  4	[0.00 s]
+0.0.AM: Trace Attempt  5	[0.00 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.02 s]
+0.0.AM: Trace Attempt  3	[0.02 s]
+0: ProofGrid usable level: 4
+0.0.Hp: Trace Attempt  5	[0.93 s]
+0.0.N: Trace Attempt 11	[0.02 s]
+0.0.N: Per property time limit expired (1.00 s) [1.00 s]
+0.0.N: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[0.98 s].
+0.0.B: Trace Attempt 11	[0.04 s]
+0.0.B: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[0.98 s].
+0.0.B: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.N: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 268435456 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 268435456 was found for the property "tags.genblk1[10].cov_tx_cnt" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.B: Trace Attempt  3	[0.01 s]
+0.0.N: Trace Attempt  5	[0.01 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt 11	[0.05 s]
+0.0.AM: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[1.00 s].
+0.0.AM: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.AM: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.02 s]
+0.0.AM: Trace Attempt  5	[0.02 s]
+0.0.L: Using states from traces to { tags.genblk1[8].cov_rx_cnt (17) }
+0.0.L: Trace Attempt  3	[2.09 s]
+0.0.L: Trace Attempt  4	[2.10 s]
+0.0.L: Trace Attempt  5	[2.10 s]
+0.0.N: Trace Attempt 12	[0.02 s]
+0.0.N: Per property time limit expired (1.00 s) [1.00 s]
+0.0.N: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[1.00 s].
+0.0.N: Starting proof for property "tags.genblk1[9].cov_rx_cnt"	[0.00 s].
+0.0.B: Trace Attempt 12	[0.03 s]
+0.0.B: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[1.00 s].
+0.0.B: Starting proof for property "tags.genblk1[9].cov_rx_cnt"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: A max_length bound was found. The shortest trace is no longer than 268435456 cycles. [0.00 s]
+INFO (IPF008): 0.0.N: A max_length bound of 268435456 was found for the property "tags.genblk1[9].cov_rx_cnt" in 0.00 s.
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.B: Trace Attempt  4	[0.00 s]
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt 12	[0.04 s]
+0.0.AM: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[1.00 s].
+0.0.AM: Starting proof for property "tags.genblk1[9].cov_rx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.AM: Trace Attempt  4	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.B: Trace Attempt 11	[0.20 s]
+0.0.B: Per property time limit expired (1.00 s) [1.00 s]
+0.0.B: Stopped processing property "tags.genblk1[9].cov_rx_cnt"	[1.01 s].
+0.0.B: Starting proof for property "tags.genblk1[10].cov_rx_cnt"	[0.00 s].
+0.0.B: A max_length bound was found. The shortest trace is no longer than 268435456 cycles. [0.00 s]
+INFO (IPF008): 0.0.B: A max_length bound of 268435456 was found for the property "tags.genblk1[10].cov_rx_cnt" in 0.00 s.
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt 10	[0.01 s]
+0.0.N: Per property time limit expired (1.00 s) [1.01 s]
+0.0.N: Stopped processing property "tags.genblk1[9].cov_rx_cnt"	[1.01 s].
+0.0.N: Starting proof for property "tags.genblk1[10].cov_rx_cnt"	[0.00 s].
+0.0.N: Trace Attempt  1	[0.00 s]
+0.0.N: Trace Attempt  2	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.N: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  4	[0.00 s]
+0.0.B: Trace Attempt  5	[0.00 s]
+0.0.N: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt  5	[0.00 s]
+0.0.AM: Trace Attempt 11	[0.23 s]
+0.0.AM: Stopped processing property "tags.genblk1[9].cov_rx_cnt"	[1.03 s].
+0.0.AM: Starting proof for property "tags.genblk1[10].cov_rx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.AM: Trace Attempt  4	[0.00 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.02 s]
+0.0.L: Using states from traces to { tags.genblk1[7].cov_tx_cnt (16) }
+0.0.L: Trace Attempt  3	[3.77 s]
+0.0.L: Trace Attempt  4	[3.77 s]
+0.0.L: Trace Attempt  5	[3.78 s]
+0.0.B: Trace Attempt 11	[0.03 s]
+0.0.B: Per property time limit expired (1.00 s) [1.00 s]
+0.0.B: Stopped processing property "tags.genblk1[10].cov_rx_cnt"	[1.00 s].
+0.0.B: Next scan (1) will use per property time limit: 1s * 10 ^ 1 = 10s
+0.0.B: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  4	[0.00 s]
+0.0.N: Trace Attempt 11	[0.01 s]
+0.0.N: Stopped processing property "tags.genblk1[10].cov_rx_cnt"	[1.01 s].
+0.0.N: Next scan (1) will use per property time limit: 1s * 10 ^ 1 = 10s
+0.0.N: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.N: Trace Attempt 11	[0.00 s]
+0.0.Mpcustom4: Trace Attempt 12	[4.37 s]
+0.0.AM: Trace Attempt 12	[0.33 s]
+0.0.AM: Stopped processing property "tags.genblk1[10].cov_rx_cnt"	[1.03 s].
+0.0.AM: Next scan (1) will use per property time limit: 1s * 10 ^ 1 = 10s
+0.0.AM: Starting proof for property "tags.genblk1[9].cov_tx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.AM: Trace Attempt  4	[0.00 s]
+0.0.AM: Trace Attempt  5	[0.00 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.Mpcustom4: Validation of fixpoint was successful. Time = 0.02
+0.0.Mpcustom4: Trace Attempt 13	[4.73 s]
+0.0.Mpcustom4: A proof was found: No trace exists. [4.74 s]
+INFO (IPF051): 0.0.Mpcustom4: The cover property "tags.genblk1[10].cov_rx_cnt" was proven unreachable in 4.84 s.
+0.0.Mpcustom4: Trace Attempt 10	[4.88 s]
+0: ProofGrid usable level: 3
+0.0.Mpcustom4: Trace Attempt 12	[6.01 s]
+0.0.Mpcustom4: A proof was found: No trace exists. [6.31 s]
+INFO (IPF051): 0.0.Mpcustom4: The cover property "tags.genblk1[9].cov_rx_cnt" was proven unreachable in 6.32 s.
+0.0.Mpcustom4: Trace Attempt 13	[6.33 s]
+0: ProofGrid usable level: 2
+0.0.L: Trace Attempt 274	[7.79 s]
+0.0.AM: Trace Attempt 12	[5.37 s]
+0.0.Mpcustom4: Trace Attempt 11	[10.52 s]
+0.0.B: Trace Attempt 12	[6.22 s]
+0.0.L: Using states from traces to { tags.genblk1[7].cov_rx_cnt (15) }
+0.0.L: Trace Attempt  3	[11.38 s]
+0.0.L: Trace Attempt  4	[11.39 s]
+0.0.L: Trace Attempt  5	[11.40 s]
+0.0.B: Per property time limit expired (10.00 s) [10.00 s]
+0.0.B: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[10.00 s].
+0.0.B: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.B: Trace Attempt  1	[0.00 s]
+0.0.B: Trace Attempt  2	[0.00 s]
+0.0.B: Trace Attempt  3	[0.00 s]
+0.0.B: Trace Attempt  4	[0.01 s]
+0.0.B: Trace Attempt  5	[0.01 s]
+0.0.N: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[10.01 s].
+0.0.N: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.AM: Stopped processing property "tags.genblk1[9].cov_tx_cnt"	[9.96 s].
+0.0.AM: Starting proof for property "tags.genblk1[10].cov_tx_cnt"	[0.00 s].
+0.0.AM: Trace Attempt  1	[0.00 s]
+0.0.AM: Trace Attempt  2	[0.00 s]
+0.0.AM: Trace Attempt  3	[0.00 s]
+0.0.AM: Trace Attempt  4	[0.00 s]
+0.0.AM: Trace Attempt  5	[0.00 s]
+0.0.AM: Trace Attempt  1	[0.01 s]
+0.0.AM: Trace Attempt  2	[0.01 s]
+0.0.AM: Trace Attempt  3	[0.01 s]
+0.0.AM: Trace Attempt  5	[0.01 s]
+0.0.Mpcustom4: Trace Attempt 12	[14.99 s]
+0.0.L: Trace Attempt 300	[15.41 s]
+0.0.L: Using states from traces to { tags.genblk1[6].cov_tx_cnt (14) }
+0.0.L: Trace Attempt  3	[17.62 s]
+0.0.L: Trace Attempt  4	[17.62 s]
+0.0.L: Trace Attempt  5	[17.62 s]
+0.0.B: Trace Attempt 13	[4.95 s]
+0.0.Mpcustom4: Trace Attempt 12	[19.50 s]
+0.0.AM: Trace Attempt 13	[5.48 s]
+0.0.L: Trace Attempt 193	[21.64 s]
+INFO (IPL005): Received request to exit from the console.
+INFO (IIM001): *** Interrupting current command ***
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO (IPF144): 0: Initiating shutdown of proof [22.59 s]
+0.0.Bm: Trace Attempt 12	[1.33 s]
+0.0.Bm: Interrupted. [22.15 s]
+0.0.B: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[7.84 s].
+0.0.Ht: Interrupted (multi)
+0.0.Ht: Trace Attempt 12	[2.44 s]
+0.0.Ht: Interrupted. [22.24 s]
+0.0.B: Interrupted. [7.84 s]
+0.0.Bm: Exited with Success (@ 22.61 s)
+0.0.Ht: Exited with Success (@ 22.61 s)
+0.0.B: Exited with Success (@ 22.62 s)
+0.0.N: Trace Attempt 12	[0.00 s]
+0.0.N: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[7.84 s].
+0.0.Hp: Interrupted (multi)
+0.0.Hp: Trace Attempt 12	[1.77 s]
+0.0.Hp: Interrupted. [22.50 s]
+0.0.Mpcustom4: Trace Attempt 12	[22.12 s]
+0.0.Mpcustom4: Interrupted. [22.18 s]
+0.0.N: Interrupted. [7.84 s]
+0.0.N: Exited with Success (@ 22.62 s)
+0.0.L: Trace Attempt 202	[22.00 s]
+0.0.L: Interrupted. [22.03 s]
+0.0.L: Exited with Success (@ 22.63 s)
+0.0.Hp: Exited with Success (@ 22.63 s)
+0.0.Mpcustom4: Exited with Success (@ 22.63 s)
+0.0.AM: Stopped processing property "tags.genblk1[10].cov_tx_cnt"	[7.86 s].
+0.0.AM: Interrupted. [7.86 s]
+0.0.AM: Exited with Success (@ 22.65 s)
+0: ProofGrid usable level: 0
+0: --------------------------------------------------------------
+ProofGrid Summary (utilization 98.07 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.09       22.61        0.00       99.61 %
+     Hp        0.18       22.50        0.00       99.21 %
+     Ht        0.35       22.24        0.00       98.44 %
+     Bm        0.44       22.15        0.00       98.06 %
+    Mpcustom4        0.42       22.18        0.00       98.14 %
+     Oh        0.53        0.00        0.00        0.78 %
+      L        0.55       22.03        0.00       97.56 %
+      B        0.42       22.12        0.00       98.14 %
+     AM        0.52       22.04        0.00       97.69 %
+    all        0.39       19.76        0.00       98.07 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.50      177.88        0.00
+
+    Data read    : 154.50 kiB
+    Data written : 567.36 kiB
+
+0: All pending notifications were processed.
+INFO (IPM007): "prove" command stopped.
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 48
+                 assertions                   : 5
+                  - proven                    : 3 (60%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 2 (40%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 43
+                  - unreachable               : 2 (4.65116%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 39 (90.6977%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 2 (4.65116%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.647 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

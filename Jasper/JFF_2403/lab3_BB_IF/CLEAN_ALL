@@ -1,0 +1,17 @@
+#!/bin/sh
+pushd .
+cd part1/jaspergold
+CLEAN
+popd
+pushd .
+cd part2/jaspergold
+CLEAN
+popd
+pushd .
+cd part1/solution/jaspergold
+CLEAN
+popd
+pushd .
+cd part2/solution/jaspergold
+CLEAN
+popd

@@ -1,0 +1,65 @@
+2024-01-24 12:45:05.083703 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.083767 (944510) main____ INFO    Jasper version info
+2024-01-24 12:45:05.083776 (944510) main____ INFO      tool      : Jasper 2023.12
+2024-01-24 12:45:05.083782 (944510) main____ INFO      version   : 2023.12p001 64 bits
+2024-01-24 12:45:05.083787 (944510) main____ INFO      build date: 2024.01.23 16:09:24 UTC
+2024-01-24 12:45:05.083790 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.083793 (944510) main____ INFO    Runtime info:
+2024-01-24 12:45:05.083796 (944510) main____ INFO      platform  : Linux 4.18.0-305.el8.x86_64 x86_64
+2024-01-24 12:45:05.083803 (944510) main____ INFO      hostname  : noivl-adahikar
+2024-01-24 12:45:05.083808 (944510) main____ INFO      pid       : 944510
+2024-01-24 12:45:05.083811 (944510) main____ INFO      arguments : '-style' 'windows' 'tcl/run.tcl'
+2024-01-24 12:45:05.083815 (944510) main____ INFO      locale    : UTF-8
+2024-01-24 12:45:05.083818 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.083821 (944510) main____ INFO    System resource limits info:
+2024-01-24 12:45:05.083825 (944510) main____ INFO      virtual memory: unlimited
+2024-01-24 12:45:05.083829 (944510) main____ INFO      cpu time      : unlimited
+2024-01-24 12:45:05.083837 (944510) main____ INFO      processes     : 30931
+2024-01-24 12:45:05.083845 (944510) main____ INFO      stack size    : 8388608 B
+2024-01-24 12:45:05.083849 (944510) main____ INFO      core file size: unlimited
+2024-01-24 12:45:05.083854 (944510) main____ INFO      open files    : 4096
+2024-01-24 12:45:05.083857 (944510) main____ INFO      file size     : unlimited
+2024-01-24 12:45:05.083860 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.083863 (944510) main____ INFO    Memory statistics:
+2024-01-24 12:45:05.083867 (944510) main____ INFO      total physical memory  : 7955108 kB
+2024-01-24 12:45:05.083871 (944510) main____ INFO      free physical memory   : 3543224 kB
+2024-01-24 12:45:05.083875 (944510) main____ INFO      committed address space: 5959456 kB
+2024-01-24 12:45:05.083877 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.084747 (944510) main____ INFO    Important environment variables:
+2024-01-24 12:45:05.084760 (944510) main____ INFO      CDS_INST_DIR       : '/ccstools/cdsind2/Software/IC612ISR_lnx86'
+2024-01-24 12:45:05.084765 (944510) main____ INFO      CDS_LIC_FILE       : '5281@noiflex:5280@noiflex:5280@sjflex1:5280@sjflex2:5280@sjflex3'
+2024-01-24 12:45:05.084771 (944510) main____ INFO      CDS_Netlisting_Mode: 'Analog'
+2024-01-24 12:45:05.084775 (944510) main____ INFO      DISPLAY            : 'noivl-adahikar:1'
+2024-01-24 12:45:05.084779 (944510) main____ INFO      JASPER             : '/grid/avs/install/jasper/latest'
+2024-01-24 12:45:05.084784 (944510) main____ INFO      JASPER_INSTALL_DIR : '/grid/avs/install/jasper/latest'
+2024-01-24 12:45:05.084788 (944510) main____ INFO      JASPER_JAVA        : '/grid/avs/install/fav/latest/Linux64/jre'
+2024-01-24 12:45:05.084791 (944510) main____ INFO      JASPER_KERNEL_CHECK: '1'
+2024-01-24 12:45:05.084795 (944510) main____ INFO      JASPER_OS_CHECK    : '1'
+2024-01-24 12:45:05.084799 (944510) main____ INFO      JG_INSTALL         : '/grid/avs/install/fav/latest'
+2024-01-24 12:45:05.084802 (944510) main____ INFO      LANG               : 'en_US.UTF-8'
+2024-01-24 12:45:05.084806 (944510) main____ INFO      LM_LICENSE_FILE    : '5280@noidalic11:5281@noidalic11'
+2024-01-24 12:45:05.084810 (944510) main____ INFO      LSF_BINDIR         : '/grid/sfi/farm/nflsf01//10.1/linux2.6-glibc2.3-x86_64/bin'
+2024-01-24 12:45:05.084813 (944510) main____ INFO    ----------------------------------------
+2024-01-24 12:45:05.085563 (944510) lic_core INFO    Initializing license system ...
+2024-01-24 12:45:05.087855 (944510) lic_core INFO    ... license system initialized.
+2024-01-24 12:45:05.092802 (944510) lic__man INFO    Claim 'main' for <ui>.
+2024-01-24 12:45:05.092836 (944510) lic_core INFO    (1) checking out 'jasper_interactive' ...
+2024-01-24 12:45:05.141197 (944510) lic_core INFO    ... (1) checkout succeeded
+2024-01-24 12:45:05.141264 (944510) lic__man INFO    Claim 'fpv' for <ui>.
+2024-01-24 12:45:05.141283 (944510) lic_core INFO    (2) checking out 'jasper_fpv' ...
+2024-01-24 12:45:05.175287 (944510) lic_core INFO    ... (2) checkout succeeded
+2024-01-24 12:45:05.175823 (944510) main____ INFO    Tool inactivity delay is 480000 ms.
+2024-01-24 12:45:05.867629 (944510) lic__man INFO    Claim 'fpv' for <ui>.
+2024-01-24 12:45:06.131711 (944510) lic__man INFO    Unclaim 'fpv' for <ui>.
+2024-01-24 12:45:06.131749 (944510) lic__man INFO    Claim 'fpv' for <ui>.
+2024-01-24 12:45:06.175897 (944510) session_ INFO    Starting analysis session with session id 'session_0' (launcher: <local>) ...
+2024-01-24 12:45:06.178007 (944510) session_ INFO    Analysis session with session id 'session_0' started (pid: 944546)
+2024-01-24 12:45:07.242284 (944510) session_ INFO    Analysis session 'session_0' connected to the console (host: 127.0.0.1:50992)
+2024-01-24 12:45:07.667612 (944510) main____ INFO    Releasing console memory by request of analysis session 'session_0'.
+2024-01-24 12:45:07.668075 (944510) lic__man INFO    Unclaim everything for 'session_0'.
+2024-01-24 12:53:20.574959 (944510) lic__man INFO    Entering idle state.
+2024-01-24 13:43:27.969263 (944510) main____ INFO    About to exit: requested from GUI
+2024-01-24 13:43:28.129326 (944510) session_ INFO    Analysis session 'session_0' disconnected.
+2024-01-24 13:43:28.133864 (944510) lic_core INFO    (1) checkin jasper_interactive
+2024-01-24 13:43:28.139607 (944510) lic_core INFO    (2) checkin jasper_fpv
+2024-01-24 13:43:28.146710 (944510) main____ INFO    Exiting with status 0.

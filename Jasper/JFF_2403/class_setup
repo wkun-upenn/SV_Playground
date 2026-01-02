@@ -1,0 +1,24 @@
+#!/bin/csh
+#################################################################################
+#Note that these PATH's are only valid on a Cadence network hosted on AWS.
+#At a customers site you will need to point the env variables to your own paths
+#and licence manager.
+#At many customers this is done from the Linux command line using
+# $> module load
+#Try $> mgrep jasper or $> module avail jasper - to list available modules if 
+#your company uses module load.
+#Otherwise ask the CAD manager or colleagues in your company who use Jasper already
+
+#####################################################################################
+#For Cadence setup only - The start of PATH depends upon whether on SJ Grid or on AWS
+#set CDN_INST_ROOT "/grid"; #SJ GRID environment
+#set CDN_INST_ROOT "/cds"; #AWS environment
+#setenv CDN_VIP_ROOT "${CDN_INST_ROOT}/avs/install/vipcat/11.3/11.30.095-s"
+#setenv ABVIP_INST_DIR  "${CDN_VIP_ROOT}/tools/abvip"
+#setenv PATH "${CDN_INST_ROOT}/avs/install/jasper/2022.12/jasper_2022.12p002/bin/:${PATH}"
+#####################################################################################
+
+setenv CDN_VIP_ROOT "/cds/avs/install/vipcat/11.3/11.30.095-s"
+setenv ABVIP_INST_DIR  "${CDN_VIP_ROOT}/tools/abvip"
+setenv PATH "/cds/avs/install/jasper/2022.12/jasper_2024.03p001/bin/:${PATH}"
+setenv LM_LICENSE_FILE 5280@10.8.10.76

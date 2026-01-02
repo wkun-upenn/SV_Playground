@@ -1,0 +1,2539 @@
+# ----------------------------------------
+# Jasper Version Info
+# tool      : Jasper 2023.12
+# platform  : Linux 4.18.0-305.el8.x86_64
+# version   : 2023.12 FCS 64 bits
+# build date: 2023.12.19 17:39:24 UTC
+# ----------------------------------------
+# started   : 2024-01-22 12:23:53 IST
+# hostname  : noivl-adahikar.cadence.com
+# pid       : 652438
+# arguments : '-label' 'session_0' '-console' '//127.0.0.1:42697' '-style' 'windows' '-data' 'AAABaHicY2RgYLCp////PwMYMFcBCQEGHwZfhiAGVyDpzxAGpBkYDjCYMhgxWDAYMjgw5DHkM2QypDHkMKQyVDBYQWUM8MoUM2TBxQ1xyhjhlDHGYk8KQyJQNpMhGWgiwkxDHPJgwPgAQjPYMDKgAhCfCVUksAGFZmBghWlG1qQAdGMxQy5DPNjn8UB2KkMJQylDAYMekE4GugAEANB+Lz8=' '-proj' '/servers/esd_noida/amey/JGFF_2212/lab1_fsm/jgproject/sessionLogs/session_0' '-init' '-hidden' '/servers/esd_noida/amey/JGFF_2212/lab1_fsm/jgproject/.tmp/.initCmds.tcl' 'fsm_if_setup.tcl'
+
+Any disclosure about the Cadence Design Systems software or its use
+model to any third party violates the written Non-Disclosure Agreement
+between Cadence Design Systems, Inc. and the customer.
+
+THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS OF
+CADENCE DESIGN SYSTEMS, INC. USE, DISCLOSURE, OR REPRODUCTION IS
+PROHIBITED WITHOUT THE PRIOR EXPRESS WRITTEN PERMISSION OF CADENCE
+DESIGN SYSTEMS, INC.
+
+Copyright (C) 2000-2023 Cadence Design Systems, Inc. All Rights
+Reserved.  Unpublished -- rights reserved under the copyright laws of
+the United States.
+
+This product includes software developed by others and redistributed
+according to license agreement. See doc/third_party_readme.txt for
+further details.
+
+RESTRICTED RIGHTS LEGEND
+
+Use, duplication, or disclosure by the Government is subject to
+restrictions as set forth in subparagraph (c) (1) (ii) of the Rights in
+Technical Data and Computer Software clause at DFARS 252.227-7013 or
+subparagraphs (c) (1) and (2) of Commercial Computer Software -- Restricted
+Rights at 48 CFR 52.227-19, as applicable.
+
+
+                          Cadence Design Systems, Inc.
+                          2655 Seely Avenue
+                          San Jose, CA 95134
+                          Phone: 408.943.1234
+
+For technical assistance visit http://support.cadence.com.
+
+Jasper Apps Analysis Session - /servers/esd_noida/amey/JGFF_2212/lab1_fsm/jgproject/sessionLogs/session_0
+
+INFO: successfully checked out licenses "jasper_interactive" and "jasper_fpv".
+INFO: reading configuration file "/home/adahikar/.config/cadence/jasper.conf".
+% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+% 
+% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+[<embedded>] % 
+[<embedded>] % clock clk
+[<embedded>] % reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+[<embedded>] % 
+[<embedded>] % 
+[<embedded>] % visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 94 of 94 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.07 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.07 s
+covered
+[<embedded>] % prove -bg -all
+Ncustom1: Custom engine code is hT3Ng7hPPfiYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSl+CwjiTMAQA
+Bcustom2: Custom engine code is hT3Nm7hPr1Vp3Di1Ra2USNIGL4JypRnLKLAdF6JAyuavO2JfGCiY9OZJhcAcOUnLx5xwNdhILGrAWX9s+z2WDkKwNR7tAfClBEjRFVQeq6DU54boFgEA
+AMcustom3: Custom engine code is hT3Ng7hP/feYQOTDZ3qhYOwGAM51eA+J/FjkM5shLioAsqhgLR4Ft+O1BuKG6ilQ83B9tLXSmmqwm7g9AQA
+Mpcustom4: Custom engine code is hT3NZbhP9fmY2AbBQnsjfOxn6c+6e6yL+/e8fZFmaQrnlgEA
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 18 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+AMcustom5: Custom engine code is hT3N1rhP11/52HrFRS21ROp2LOjVTgPvT8L8BGXHgLhaIuqtT4nARFjUqrBL+7pLmaTOzBepZW/Jm8SSrHDybSQtoNiO3y43wk+dEoWlsZizu97Fih6O6lPVG/LpWP5SsUPwlGagLNa1FKEFvwVXyX7//8prySbvSxIHXr5er+z4RAEA
+Ncustom6: Custom engine code is hT3OXrhPByJp3TrFSTLhUmMH4KVtJgmTCnNDF46yMXOKY48m4LS5nE7yBzFjA7kDuwO/GhGUpEPiky3p3wmPn3dJZHxFMsafSoObRzSC+tn7sEY0WbTdZ/FV4hL3MYH/b1CIUvXSWR4wqEoVLsmMOD4xIPT4lI1LO6ZCO7PnnWQuLwetnvKlrXx6wCW/A+x+enqslg1YPobi4wEF/EvbzOvcTYdJvl2s4H2yZg2b2ofAVN5WvhWk1HoBAA
+ADcustom7: Custom engine code is hT3Nv7hPv1752HrFRa2kROx2f/ECJeZB2AZsLdlO8VwmIuqtT4nIDFXclhg+O+o+DMmQCekbheGk0kK28laA9gaOFDXsQp29J3X615HY1IPHJWd6FUFvCHjO+p1k652b5JJvZlShNpGlGSXAiQe/mEAj6tEBAA
+Tricustom8: Custom engine code is hT3Nu7hPt1752DvFRa0kNDiyIV97VyejwM9C/jCLJjdPvusZONHY42VYUy0Q1ZotnhcVtNc56tJ5wbxv6V2+XpdsaSlHck5vfnbYjdwj1OECy9U+7oSQ0SZE3g5ayD+Phuh4odCJTjeKa2k4elM9ldQfkAEA
+Gcustom9: Custom engine code is hT3NibhPDfeYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncipMGcUXqAadachREE9F2PwhBUZUNw5kHnd4JdXkamORRgEA
+C2custom10: Custom engine code is hT3NirhPjfWYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInncgkrYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuG86XYVV00BAA
+AGcustom11: Custom engine code is hT3NirhP/fmYQADBZnYcglOvK9Pfd7EOeniIqP8jNsyIqInnckcwYMMXCYbdK0dUjZIF9d4cJ0rHoBDjwVLBKuHEZnZByh0BAA
+Bcustom12: Custom engine code is hT3NjrhPDfiYQADBZnYcglOvK9PfWxFtenjIyBqfrgr7if/jL/yPOuK1BAflEcW0DxNH2eDIoezN2gxlQFg81RZtiWXh7aiTAidvAQA
+Ncustom13: Custom engine code is hT3NR7hPByFp3TrFSTLhUmMH4KWtJglTyV/c51BHEeZWamnJv767nE6PCak26bd3gf3XGN3rIRheufhDieCJQVISo+gNYUKhiUedBKGtsP/a18svAnlMJZudHxDFwK5ufsyoxsIyiAeSY2oi3tEuoDHr5gw42DFKAG3PqO3CEsl8Azzdt3pl5nGA1Ifv2H02eYsFzWb/nfp8PMb3F0krE/EgBcm8TD9Div8BAA
+Tricustom14: Custom engine code is hT3Nu7hP3fiYQADBZnYcglNHp9bfd7EOeniIqP/ji8sGLQu8yhsFO+wxJ+O+R0bU8g/IewXFomyos+viQnWc2xYNYmMqpo3i40O7DaZR7qfp4YqNx26KRvQ/qx0BAA
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.N: Proof Simplification Iteration 2	[0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.00 s
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 17
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.N: Proofgrid shell started at 652577@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.01 s].
+1.0.Hp: Proofgrid shell started at 652578@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1: ProofGrid usable level: 16
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.00 s.
+1.0.Hp: Trace Attempt  1	[0.01 s]
+1.0.Hp: Trace Attempt  2	[0.01 s]
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.00 s].
+1: ProofGrid usable level: 9
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" in 0.01 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.01 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.00 s].
+1: ProofGrid usable level: 8
+1.0.Hp: Trace Attempt  3	[0.04 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: A trace with 4 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.00 s].
+1: ProofGrid usable level: 7
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: A trace with 5 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.01 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.Hp: Trace Attempt  4	[0.06 s]
+1.0.Hp: Trace Attempt  5	[0.08 s]
+1.0.Hp: Trace Attempt  6	[0.09 s]
+1.0.Hp: A trace with 6 cycles was found. [0.09 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.07 s.
+1.0.Hp: Trace Attempt  7	[0.11 s]
+1.0.N: Trace Attempt 19	[0.12 s]
+1.0.N: A trace with 19 cycles was found. [0.12 s]
+INFO (IPF055): 1.0.N: A counterexample (cex) with 19 cycles was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.11 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 19 cycles in 0.11 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.12 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.02 s]
+1.0.N: Trace Attempt  2	[0.02 s]
+1.0.N: Trace Attempt  3	[0.02 s]
+1.0.N: Trace Attempt  5	[0.02 s]
+1.0.N: Trace Attempt 20	[0.10 s]
+1.0.N: A trace with 20 cycles was found. [0.10 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 20 cycles in 0.09 s.
+1.0.Bm: Proofgrid shell started at 652610@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Bm: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Bm: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.Bm: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Bm: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" in 0.00 s.
+1.0.Bm: Trace Attempt  1	[0.00 s]
+1.0.Bm: Trace Attempt  2	[0.00 s]
+1.0.Bm: Trace Attempt  3	[0.00 s]
+1.0.Bm: Trace Attempt  4	[0.00 s]
+1.0.Bm: Trace Attempt  5	[0.00 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.11 s].
+1.0.Bm: Trace Attempt 38	[0.01 s]
+1.0.Bm: A trace with 38 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.00 s.
+1.0.Bm: Trace Attempt 39	[0.01 s]
+1.0.N: Last scan. Per property time limit: 0s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1"	[0.00 s].
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Bm: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.30 s]
+1.0.Bm: Trace Attempt 42	[0.01 s]
+1.0.Bm: A trace with 42 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.02 s.
+1.0.Bm: All properties determined. [0.01 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1"	[0.01 s].
+1.0.N: All properties determined. [0.00 s]
+1.0.Bm: Exited with Success (@ 0.31 s)
+1: ProofGrid usable level: 0
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 20	[0.28 s]
+1.0.Hp: All properties determined. [0.30 s]
+1.0.N: Exited with Success (@ 0.31 s)
+1.0.Hp: Exited with Success (@ 0.32 s)
+1.0.B: Proofgrid shell started at 652615@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.B: Requesting engine job to terminate
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.B: Interrupted. [0.00 s]
+1.0.Mpcustom4: Proofgrid shell started at 652612@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Preventing job from starting because proof is shutting down.
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Interrupted. [0.00 s]
+1.0.B: Exited with Success (@ 0.35 s)
+1.0.Ht: Proofgrid shell started at 652609@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.Ht: Requesting engine job to terminate
+1.0.Mpcustom4: Exited with Success (@ 0.39 s)
+1.0.Ht: Preventing job from starting because proof is shutting down.
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Interrupted. [0.00 s]
+1.0.AM: Proofgrid shell started at 652616@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.AM: Requesting engine job to terminate
+1.0.Ht: Exited with Success (@ 0.41 s)
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.L: Proofgrid shell started at 652614@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.L: Requesting engine job to terminate
+1.0.AM: Exited with Success (@ 0.41 s)
+1.0.L: Preventing job from starting because proof is shutting down.
+1.0.L: Requesting engine job to terminate
+1.0.L: Interrupted. [0.00 s]
+1.0.Oh: Proofgrid shell started at 652613@noivl-adahikar(local) jg_652438_noivl-adahikar_2
+1.0.Oh: Requesting engine job to terminate
+1.0.L: Exited with Success (@ 0.42 s)
+1.0.Oh: Preventing job from starting because proof is shutting down.
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Interrupted. [0.00 s]
+1.0.Oh: Exited with Success (@ 0.43 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 18.35 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.09        0.30        0.00       76.08 %
+     Hp        0.10        0.29        0.00       73.84 %
+     Ht        0.39        0.00        0.00        0.00 %
+     Bm        0.29        0.01        0.00        2.43 %
+    Mpcustom4        0.34        0.00        0.00        0.00 %
+     Oh        0.40        0.00        0.00        0.00 %
+      L        0.37        0.00        0.00        0.00 %
+      B        0.30        0.00        0.00        0.00 %
+     AM        0.35        0.00        0.00        0.00 %
+    all        0.29        0.07        0.00       18.35 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               2.65        0.59        0.00
+
+    Data read    : 25.07 kiB
+    Data written : 5.97 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 18
+                 assertions                   : 9
+                  - proven                    : 8 (88.8889%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 1 (11.1111%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 9
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 9 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 106 of 106 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.05 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.05 s
+covered
+covered
+[<embedded>] % prove -bg -all
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 30 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.N: Proof Simplification Iteration 2	[0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.00 s
+1.0.N: Identified and disabled 10 duplicated targets.
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 19
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.N: Proofgrid shell started at 655706@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.Hp: Proofgrid shell started at 655707@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" in 0.02 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.02 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.05 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.00 s.
+INFO (IPF055): 1.0.N: A counterexample (cex) with 3 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND" in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1" was covered in 3 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.02 s.
+1.0.Hp: Trace Attempt  1	[0.04 s]
+1.0.Hp: Trace Attempt  2	[0.04 s]
+1.0.N: Trace Attempt 13	[0.00 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: A trace with 4 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.00 s.
+INFO (IPF055): 1.0.N: A counterexample (cex) with 4 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" was covered in 4 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.02 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME"	[0.02 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: A trace with 5 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.00 s.
+INFO (IPF055): 1.0.N: A counterexample (cex) with 5 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" was covered in 5 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.02 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW"	[0.02 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.Hp: Trace Attempt  3	[0.08 s]
+1.0.Hp: Trace Attempt  4	[0.12 s]
+1.0.Hp: Trace Attempt  5	[0.14 s]
+1.0.N: Trace Attempt 19	[0.11 s]
+1.0.N: A trace with 19 cycles was found. [0.11 s]
+INFO (IPF055): 1.0.N: A counterexample (cex) with 19 cycles was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.05 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 19 cycles in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF055): 1.0.N: A counterexample (cex) with 6 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH" in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF055): 1.0.N: A counterexample (cex) with 19 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW" in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" was covered in 19 cycles in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH:precondition1" was covered in 6 cycles in 0.05 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.06 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.N: Trace Attempt 20	[0.05 s]
+1.0.N: A trace with 20 cycles was found. [0.05 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 20 cycles in 0.04 s.
+INFO (IPF055): 1.0.N: A counterexample (cex) with 20 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH" in 0.04 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" was covered in 20 cycles in 0.04 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.05 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.Ht: Proofgrid shell started at 655738@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.N: Trace Attempt  1	[0.14 s]
+1.0.N: Trace Attempt  2	[0.14 s]
+1.0.N: Trace Attempt  3	[0.14 s]
+1.0.N: Trace Attempt  5	[0.14 s]
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Ht: Trace Attempt  1	[0.00 s]
+1.0.Ht: Trace Attempt  2	[0.00 s]
+1.0.Ht: Trace Attempt  3	[0.00 s]
+1.0.Ht: Trace Attempt  4	[0.00 s]
+1.0.Ht: Trace Attempt  5	[0.00 s]
+1.0.Ht: Trace Attempt 38	[0.01 s]
+1.0.Ht: A trace with 38 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Ht: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.01 s.
+1.0.Ht: Trace Attempt 39	[0.01 s]
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Ht: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.38 s]
+1.0.Ht: Trace Attempt 42	[0.01 s]
+1.0.Ht: A trace with 42 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Ht: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.02 s.
+1.0.Ht: All properties determined. [0.01 s]
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 23	[0.35 s]
+1.0.Hp: Interrupted. [0.36 s]
+1.0.N: Trace Attempt  7	[0.15 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.17 s].
+1.0.N: Interrupted. [0.16 s]
+1.0.Ht: Exited with Success (@ 0.38 s)
+1: ProofGrid usable level: 0
+1.0.N: Exited with Success (@ 0.38 s)
+1.0.Bm: Proofgrid shell started at 655739@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.Bm: Requesting engine job to terminate
+1.0.Hp: Exited with Success (@ 0.42 s)
+1.0.Bm: Preventing job from starting because proof is shutting down.
+1.0.Bm: Requesting engine job to terminate
+1.0.Bm: Interrupted. [0.00 s]
+1.0.B: Proofgrid shell started at 655743@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.B: Requesting engine job to terminate
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.Bm: Exited with Success (@ 0.42 s)
+1.0.B: Interrupted. [0.00 s]
+1.0.Oh: Proofgrid shell started at 655741@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Preventing job from starting because proof is shutting down.
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Interrupted. [0.00 s]
+1.0.B: Exited with Success (@ 0.43 s)
+1.0.Oh: Exited with Success (@ 0.43 s)
+1.0.Mpcustom4: Proofgrid shell started at 655740@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Preventing job from starting because proof is shutting down.
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Interrupted. [0.00 s]
+1.0.L: Proofgrid shell started at 655742@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.L: Requesting engine job to terminate
+1.0.Mpcustom4: Exited with Success (@ 0.46 s)
+1.0.L: Preventing job from starting because proof is shutting down.
+1.0.L: Requesting engine job to terminate
+1.0.L: Interrupted. [0.00 s]
+1.0.AM: Proofgrid shell started at 655744@noivl-adahikar(local) jg_652438_noivl-adahikar_4
+1.0.AM: Requesting engine job to terminate
+1.0.L: Exited with Success (@ 0.47 s)
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.AM: Exited with Success (@ 0.47 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 18.73 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.10        0.38        0.00       79.46 %
+     Hp        0.10        0.34        0.00       76.80 %
+     Ht        0.36        0.01        0.00        2.54 %
+     Bm        0.41        0.00        0.00        0.00 %
+    Mpcustom4        0.45        0.00        0.00        0.00 %
+     Oh        0.42        0.00        0.00        0.00 %
+      L        0.45        0.00        0.00        0.00 %
+      B        0.40        0.00        0.00        0.00 %
+     AM        0.43        0.00        0.00        0.00 %
+    all        0.35        0.08        0.00       18.73 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.12        0.72        0.00
+
+    Data read    : 27.21 kiB
+    Data written : 6.53 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 30
+                 assertions                   : 15
+                  - proven                    : 8 (53.3333%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 7 (46.6667%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 15
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 15 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+[<embedded>] % visualize -violation -property <embedded>::FSM_IF_TEST.U1.STATE_5_CHECK -new_window
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "<embedded>::FSM_IF_TEST.U1.STATE_5_CHECK".
+cex
+[<embedded>] % visualize -violation -property <embedded>::FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND -new_window
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "<embedded>::FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND".
+cex
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 106 of 106 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.07 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.07 s
+covered
+covered
+[<embedded>] % prove -bg -all
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 30 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.N: Proof Simplification Iteration 2	[0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.00 s
+1.0.N: Identified and disabled 4 duplicated targets.
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 25
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.N: Proofgrid shell started at 656518@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1: ProofGrid usable level: 24
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1"	[0.00 s].
+1: ProofGrid usable level: 23
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1" was covered in 3 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK"	[0.00 s].
+1: ProofGrid usable level: 22
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.00 s].
+1: ProofGrid usable level: 21
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: A trace with 4 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" was covered in 4 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.02 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: A trace with 5 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" was covered in 5 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt 19	[0.08 s]
+1.0.N: A trace with 19 cycles was found. [0.08 s]
+INFO (IPF055): 1.0.N: A counterexample (cex) with 19 cycles was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK" in 0.06 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.06 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 19 cycles in 0.06 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH:precondition1" was covered in 6 cycles in 0.06 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" was covered in 19 cycles in 0.06 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_5_CHECK"	[0.08 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_6_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_6_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_6_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.01 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  4	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.02 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK"	[0.02 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.N: Trace Attempt 20	[0.04 s]
+1.0.N: A trace with 20 cycles was found. [0.04 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 20 cycles in 0.04 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" was covered in 20 cycles in 0.04 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.05 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 1024 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 1024 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.N: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  4	[0.02 s]
+1.0.N: Trace Attempt  5	[0.02 s]
+1.0.N: Trace Attempt  1	[0.03 s]
+1.0.N: Trace Attempt  2	[0.03 s]
+1.0.N: Trace Attempt  3	[0.03 s]
+1.0.N: Trace Attempt  5	[0.03 s]
+1.0.Hp: Proofgrid shell started at 656519@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.00 s.
+1.0.Hp: Trace Attempt  1	[0.00 s]
+1.0.Hp: Trace Attempt  2	[0.00 s]
+1.0.Hp: Trace Attempt  3	[0.00 s]
+1.0.Hp: Trace Attempt  4	[0.01 s]
+1.0.Hp: Trace Attempt  5	[0.01 s]
+1.0.Oh: Proofgrid shell started at 656539@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Oh: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Oh: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Oh: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" in 0.00 s.
+1.0.Oh: bwd trail(1): 1 0.000978698s
+1.0.Oh: All properties either determined or skipped. [0.00 s]
+1: ProofGrid usable level: 2
+1.0.Oh: Exited with Success (@ 0.40 s)
+1: ProofGrid usable level: 2
+1.0.Ht: Proofgrid shell started at 656535@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Ht: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Ht: Trace Attempt  1	[0.00 s]
+1.0.Ht: Trace Attempt  2	[0.00 s]
+1.0.Ht: Trace Attempt  3	[0.00 s]
+1.0.Ht: Trace Attempt  4	[0.00 s]
+1.0.Ht: Trace Attempt  5	[0.00 s]
+1.0.Mpcustom4: Proofgrid shell started at 656537@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.Ht: Trace Attempt 38	[0.01 s]
+1.0.Ht: A trace with 38 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Ht: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.00 s.
+1.0.Ht: Trace Attempt 39	[0.01 s]
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Ht: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.43 s]
+1.0.Ht: Trace Attempt 42	[0.01 s]
+1.0.Ht: A trace with 42 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Ht: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.02 s.
+1.0.Ht: All properties determined. [0.01 s]
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 12	[0.09 s]
+1.0.Hp: Interrupted. [0.14 s]
+1.0.Mpcustom4: Preventing job from starting because proof is shutting down.
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Interrupted. [0.00 s]
+1.0.N: Trace Attempt 38	[0.21 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.24 s].
+1.0.N: Interrupted. [0.22 s]
+1.0.Ht: Exited with Success (@ 0.43 s)
+1: ProofGrid usable level: 0
+1.0.Mpcustom4: Exited with Success (@ 0.43 s)
+1.0.Hp: Exited with Success (@ 0.44 s)
+1.0.B: Proofgrid shell started at 656541@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.B: Requesting engine job to terminate
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.N: Exited with Success (@ 0.44 s)
+1.0.B: Interrupted. [0.00 s]
+1.0.Bm: Proofgrid shell started at 656536@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.Bm: Requesting engine job to terminate
+1.0.B: Exited with Success (@ 0.44 s)
+1.0.Bm: Preventing job from starting because proof is shutting down.
+1.0.Bm: Requesting engine job to terminate
+1.0.AM: Proofgrid shell started at 656542@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.AM: Exited with Success (@ 0.45 s)
+1.0.Bm: Interrupted. [0.00 s]
+1.0.L: Proofgrid shell started at 656540@noivl-adahikar(local) jg_652438_noivl-adahikar_6
+1.0.L: Requesting engine job to terminate
+1.0.Bm: Exited with Success (@ 0.46 s)
+1.0.L: Preventing job from starting because proof is shutting down.
+1.0.L: Requesting engine job to terminate
+1.0.L: Interrupted. [0.00 s]
+1.0.L: Exited with Success (@ 0.46 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 14.66 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.08        0.42        0.00       83.91 %
+     Hp        0.36        0.14        0.00       27.48 %
+     Ht        0.41        0.01        0.00        1.68 %
+     Bm        0.44        0.00        0.00        0.00 %
+    Mpcustom4        0.42        0.00        0.00        0.00 %
+     Oh        0.36        0.00        0.00        0.91 %
+      L        0.43        0.00        0.00        0.00 %
+      B        0.41        0.00        0.00        0.00 %
+     AM        0.41        0.00        0.00        0.00 %
+    all        0.37        0.06        0.00       14.66 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.32        0.57        0.00
+
+    Data read    : 28.43 kiB
+    Data written : 7.60 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 30
+                 assertions                   : 15
+                  - proven                    : 14 (93.3333%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 1 (6.66667%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 15
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 15 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 106 of 106 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.05 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.06 s
+covered
+covered
+[<embedded>] % prove -bg -all
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 30 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.N: Proof Simplification Iteration 2	[0.00 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.00 s
+1.0.N: Identified and disabled 4 duplicated targets.
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 25
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.Hp: Proofgrid shell started at 656804@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_5_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.03 s.
+1.0.Hp: Trace Attempt  1	[0.01 s]
+1.0.Hp: Trace Attempt  2	[0.01 s]
+1.0.Hp: A trace with 2 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.03 s.
+1.0.Hp: Trace Attempt  3	[0.04 s]
+1.0.Hp: A trace with 3 cycles was found. [0.04 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.04 s.
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT_END_FRAME_LOAD_COMMAND:precondition1" was covered in 3 cycles in 0.04 s.
+1.0.Hp: Trace Attempt  4	[0.09 s]
+1.0.Hp: A trace with 4 cycles was found. [0.09 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.08 s.
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" was covered in 4 cycles in 0.08 s.
+1.0.Hp: Trace Attempt  5	[0.12 s]
+1.0.Hp: A trace with 5 cycles was found. [0.12 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.12 s.
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" was covered in 5 cycles in 0.12 s.
+1.0.Hp: Trace Attempt  6	[0.17 s]
+1.0.Hp: A trace with 6 cycles was found. [0.17 s]
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.16 s.
+INFO (IPF047): 1.0.Hp: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH:precondition1" was covered in 6 cycles in 0.16 s.
+1.0.N: Proofgrid shell started at 656803@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.Hp: Trace Attempt  7	[0.22 s]
+1.0.N: Trace Attempt 21	[0.04 s]
+1.0.N: A trace with 21 cycles was found. [0.04 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 21 cycles in 0.04 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" was covered in 21 cycles in 0.04 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.05 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.05 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.N: Trace Attempt 22	[0.14 s]
+1.0.N: A trace with 22 cycles was found. [0.15 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 22 cycles in 0.14 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" was covered in 22 cycles in 0.14 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+1.0.Bm: Proofgrid shell started at 656830@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.15 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Bm: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Bm: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" in 0.00 s.
+1.0.Bm: Trace Attempt  1	[0.00 s]
+1.0.Bm: Trace Attempt  2	[0.00 s]
+1.0.Bm: Trace Attempt  3	[0.00 s]
+1.0.Bm: Trace Attempt  4	[0.00 s]
+1.0.Bm: Trace Attempt  5	[0.00 s]
+1.0.Bm: Trace Attempt 38	[0.01 s]
+1.0.Bm: A trace with 38 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.00 s.
+1.0.Bm: Trace Attempt 39	[0.01 s]
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Bm: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.39 s]
+1.0.Bm: Trace Attempt 42	[0.01 s]
+1.0.Bm: A trace with 42 cycles was found. [0.01 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.02 s.
+1.0.Bm: Interrupted. [0.01 s]
+1.0.Ht: Proofgrid shell started at 656829@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.Ht: Requesting engine job to terminate
+1.0.N: Trace Attempt  9	[0.01 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.04 s].
+1.0.N: Interrupted. [0.02 s]
+1.0.Ht: Preventing job from starting because proof is shutting down.
+1.0.Ht: Requesting engine job to terminate
+1.0.Bm: Exited with Success (@ 0.40 s)
+1: ProofGrid usable level: 0
+1.0.N: Exited with Success (@ 0.40 s)
+1.0.Ht: Interrupted. [0.00 s]
+1.0.Mpcustom4: Proofgrid shell started at 656831@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Ht: Exited with Success (@ 0.40 s)
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 17	[0.36 s]
+1.0.Hp: Interrupted. [0.40 s]
+1.0.Mpcustom4: Preventing job from starting because proof is shutting down.
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.Mpcustom4: Interrupted. [0.00 s]
+1.0.L: Proofgrid shell started at 656834@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.L: Requesting engine job to terminate
+1.0.Hp: Exited with Success (@ 0.41 s)
+1.0.Mpcustom4: Exited with Success (@ 0.41 s)
+1.0.B: Proofgrid shell started at 656836@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.B: Requesting engine job to terminate
+1.0.L: Preventing job from starting because proof is shutting down.
+1.0.L: Requesting engine job to terminate
+1.0.L: Interrupted. [0.00 s]
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.B: Interrupted. [0.00 s]
+1.0.Oh: Proofgrid shell started at 656833@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.Oh: Requesting engine job to terminate
+1.0.L: Exited with Success (@ 0.43 s)
+1.0.B: Exited with Success (@ 0.43 s)
+1.0.Oh: Preventing job from starting because proof is shutting down.
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Interrupted. [0.00 s]
+1.0.AM: Proofgrid shell started at 656837@noivl-adahikar(local) jg_652438_noivl-adahikar_8
+1.0.AM: Requesting engine job to terminate
+1.0.Oh: Exited with Success (@ 0.45 s)
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.AM: Exited with Success (@ 0.45 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 15.97 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.29        0.21        0.00       41.68 %
+     Hp        0.11        0.39        0.00       78.61 %
+     Ht        0.39        0.00        0.00        0.00 %
+     Bm        0.37        0.01        0.00        2.54 %
+    Mpcustom4        0.40        0.00        0.00        0.00 %
+     Oh        0.43        0.00        0.00        0.00 %
+      L        0.40        0.00        0.00        0.00 %
+      B        0.38        0.00        0.00        0.00 %
+     AM        0.42        0.00        0.00        0.00 %
+    all        0.35        0.07        0.00       15.97 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.18        0.60        0.00
+
+    Data read    : 23.17 kiB
+    Data written : 6.36 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 30
+                 assertions                   : 15
+                  - proven                    : 15 (100%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 0 (0%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 15
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 15 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 110 of 110 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.08 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.08 s
+covered
+covered
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 110 of 110 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.05 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.05 s
+covered
+covered
+[<embedded>] % prove -bg -all
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 34 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.PRE: A trace with 1 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.PRE: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT:precondition1" was covered in 1 cycles in 0.00 s.
+1.0.N: Proof Simplification Iteration 2	[0.01 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.02 s
+1.0.N: Identified and disabled 4 duplicated targets.
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 28
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.Hp: Proofgrid shell started at 657644@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.N: Proofgrid shell started at 657643@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" in 0.02 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.02 s.
+1: ProofGrid usable level: 27
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.04 s].
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_5_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.04 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.00 s.
+1.0.Hp: Trace Attempt  1	[0.04 s]
+1.0.Hp: Trace Attempt  2	[0.04 s]
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Validation of fixpoint was successful. Time = 0.00
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1" was covered in 3 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: A trace with 4 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" was covered in 4 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: A trace with 5 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" was covered in 5 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  6	[0.00 s]
+1.0.N: A trace with 6 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH:precondition1" was covered in 6 cycles in 0.00 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.Hp: Trace Attempt  3	[0.09 s]
+1.0.N: Trace Attempt  2	[0.04 s]
+1.0.N: Trace Attempt  3	[0.04 s]
+1.0.Hp: Trace Attempt  4	[0.14 s]
+1.0.Hp: Trace Attempt  5	[0.17 s]
+1.0.N: Trace Attempt 21	[0.17 s]
+1.0.N: A trace with 21 cycles was found. [0.17 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 21 cycles in 0.15 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" was covered in 21 cycles in 0.15 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.16 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.16 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.Mpcustom4: Proofgrid shell started at 657678@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Mpcustom4: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" in 0.00 s.
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME" in 0.00 s.
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME:precondition1" in 0.00 s.
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" in 0.00 s.
+1.0.Mpcustom4: Trace Attempt  1	[0.00 s]
+1.0.Mpcustom4: Trace Attempt  2	[0.00 s]
+1.0.Mpcustom4: Trace Attempt  3	[0.02 s]
+1.0.Mpcustom4: Trace Attempt  4	[0.02 s]
+1.0.L: Proofgrid shell started at 657680@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.N: Trace Attempt 22	[0.09 s]
+1.0.N: A trace with 22 cycles was found. [0.10 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 22 cycles in 0.09 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" was covered in 22 cycles in 0.09 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.10 s].
+1.0.Mpcustom4: Trace Attempt  5	[0.03 s]
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.Mpcustom4: Trace Attempt  4	[0.03 s]
+1.0.Mpcustom4: Trace Attempt  5	[0.03 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+1.0.L: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.L: Using trace diversification with seed 1 (0.05)
+1.0.L: Using LRU state removal heuristic
+1.0.L: Using states from traces to { (reset) }
+1.0.L: Trace Attempt  3	[0.00 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_1_CHECK:precondition1 (2) }
+1.0.N: Trace Attempt  1	[0.02 s]
+1.0.L: Trace Attempt  3	[0.01 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_3_CHECK:precondition1 (3) }
+1.0.L: Trace Attempt  3	[0.01 s]
+1.0.Mpcustom4: Trace Attempt  5	[0.05 s]
+1.0.N: Trace Attempt  2	[0.02 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_4_CHECK:precondition1 (4) }
+1.0.L: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  3	[0.02 s]
+1.0.N: Trace Attempt  5	[0.02 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_5_CHECK:precondition1 (5) }
+1.0.L: Trace Attempt  3	[0.01 s]
+1.0.L: Trace Attempt  4	[0.01 s]
+1.0.L: Trace Attempt  5	[0.01 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_6_CHECK:precondition1 (20) }
+1.0.L: Trace Attempt  3	[0.02 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_7_CHECK:precondition1 (21) }
+1.0.L: Trace Attempt  3	[0.02 s]
+1.0.L: Trace Attempt  4	[0.02 s]
+1.0.L: Trace Attempt  5	[0.02 s]
+1.0.Bm: Proofgrid shell started at 657677@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.L: Trace Attempt 18	[0.02 s]
+1.0.L: A trace with 38 cycles was found. [0.02 s]
+INFO (IPF047): 1.0.L: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.02 s.
+1.0.N: Trace Attempt  7	[0.03 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.04 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.STATE_8_CHECK:precondition1 (37) }
+1.0.L: Trace Attempt  3	[0.02 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.L: A trace with 39 cycles was found. [0.03 s]
+INFO (IPF055): 1.0.L: A counterexample (cex) with 39 cycles was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME" in 0.03 s.
+INFO (IPF047): 1.0.L: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME:precondition1" was covered in 39 cycles in 0.03 s.
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.L: Using states from traces to { FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME <38> }
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.L: Trace Attempt  3	[0.03 s]
+1.0.L: Trace Attempt  4	[0.03 s]
+1.0.L: Trace Attempt  5	[0.03 s]
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Mpcustom4: Requesting engine job to terminate
+1.0.L: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.39 s]
+1.0.L: A trace with 42 cycles was found. [0.03 s]
+INFO (IPF047): 1.0.L: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.04 s.
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 12	[0.37 s]
+1.0.Hp: Interrupted. [0.39 s]
+1.0.L: All properties determined. [0.03 s]
+1.0.N: Trace Attempt  6	[0.01 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1"	[0.02 s].
+1.0.N: Interrupted. [0.01 s]
+1.0.Mpcustom4: Trace Attempt 13	[0.07 s]
+1.0.Mpcustom4: Interrupted. [0.07 s]
+1.0.N: Exited with Success (@ 0.40 s)
+1: ProofGrid usable level: 0
+1.0.Hp: Exited with Success (@ 0.40 s)
+1.0.Bm: Preventing job from starting because proof is shutting down.
+1.0.Bm: Requesting engine job to terminate
+1.0.Bm: Interrupted. [0.00 s]
+1.0.L: Exited with Success (@ 0.41 s)
+1.0.Ht: Proofgrid shell started at 657676@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Preventing job from starting because proof is shutting down.
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Interrupted. [0.00 s]
+1.0.Mpcustom4: Exited with Success (@ 0.41 s)
+1.0.Bm: Exited with Success (@ 0.45 s)
+1.0.B: Proofgrid shell started at 657681@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.B: Requesting engine job to terminate
+1.0.Ht: Exited with Success (@ 0.45 s)
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.B: Interrupted. [0.00 s]
+1.0.Oh: Proofgrid shell started at 657679@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.Oh: Requesting engine job to terminate
+1.0.B: Exited with Success (@ 0.47 s)
+1.0.Oh: Preventing job from starting because proof is shutting down.
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Interrupted. [0.00 s]
+1.0.AM: Proofgrid shell started at 657682@noivl-adahikar(local) jg_652438_noivl-adahikar_11
+1.0.AM: Requesting engine job to terminate
+1.0.Oh: Exited with Success (@ 0.48 s)
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.AM: Exited with Success (@ 0.48 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 22.21 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.12        0.37        0.00       75.93 %
+     Hp        0.12        0.37        0.00       76.01 %
+     Ht        0.41        0.00        0.00        0.00 %
+     Bm        0.38        0.00        0.00        0.00 %
+    Mpcustom4        0.31        0.07        0.00       19.09 %
+     Oh        0.45        0.00        0.00        0.00 %
+      L        0.32        0.03        0.00        8.06 %
+      B        0.42        0.00        0.00        0.00 %
+     AM        0.43        0.00        0.00        0.00 %
+    all        0.33        0.09        0.00       22.21 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               2.95        0.84        0.00
+
+    Data read    : 29.67 kiB
+    Data written : 7.86 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 34
+                 assertions                   : 17
+                  - proven                    : 16 (94.1176%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 1 (5.88235%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 17
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 17 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+[<embedded>] % visualize -violation -property <embedded>::FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME -new_window
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "<embedded>::FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME".
+cex
+[<embedded>] % include fsm_if_setup.tcl
+%% clear -all
+INFO (IPF121): Cleared environment completely for new design analysis.
+%% 
+%% analyze -sv09 fsm_if.v fsm_if_test.v
+[-- (VERI-1482)] Analyzing Verilog file '/grid/avs/install/jasper/latest/lib/verilog/packages/std/std.sv' into library 'std'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if.v'
+[-- (VERI-1482)] Analyzing Verilog file 'fsm_if_test.v'
+%% elaborate -top FSM_IF_TEST
+INFO (ISW003): Top module name is "FSM_IF_TEST".
+[INFO (HIER-8002)] fsm_if_test.v(21): Disabling old hierarchical reference handler
+[INFO (VERI-1018)] fsm_if.v(2): compiling module 'FSM_IF'
+[WARN (VERI-1142)] fsm_if.v(60): system task 'display' is ignored for synthesis
+[INFO (VERI-1018)] fsm_if_test.v(2): compiling module 'FSM_IF_TEST'
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'clk' does not have a driver
+[WARN (VDB-1002)] fsm_if_test.v(4): net 'rst_n' does not have a driver
+INFO (INL208): Elaboration synthesis summary:
+  Number of synthesized netlists          2 (0 packages)
+  Single run mode                         On
+  Pipeline                                On (2 pipelined netlists)
+  Late hierarchical reference connection  On
+  Number of analyzed Verilog modules      2 (2 synthesized)
+  Number of analyzed VHDL entities        0 (0 synthesized)
+INFO (INL003): Clearing all state information (assumes, stopats, and so forth).
+FSM_IF_TEST
+%% 
+%% clock clk
+%% reset ~rst_n
+INFO (IPM031): Clearing proof results of all properties.
+INFO (IRS006): Current reset condition is "rst_n".
+%% 
+%% 
+%% visualize {1[*45]}
+INFO (IVS015): Setting Visualize task to "<embedded>".
+INFO (IVS008): Expanding analysis region to enable visualization of "1[*45]".
+INFO (IRS029): Starting reset analysis: phase 1 of 4.
+INFO (IRS030): Running reset analysis: phase 2 of 4.
+INFO (IRS031): Running reset analysis: phase 3 of 4.
+INFO (IRS020): Starting the reset analysis simulation with a limit of 100 iterations (phase 4 of 4).
+INFO (IRS024): Reset iterations 0 to 4 analyzed.
+INFO (IRS018): Reset analysis simulation executed for 3 iterations. Assigned values for 9 of 9 design flops, 0 of 0 design latches, 110 of 110 internal elements.
+INFO (IRS039): Reset analysis complete.
+INFO (IPF031): Settings used for proof thread 0:
+    orchestration                 = off (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = Hp Ht N B 
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = Hp Ht N B, total 4
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+0: Using multistage preprocessing
+0: Starting reduce
+0: Finished reduce in 0s
+0.0.PRE: Performing Proof Simplification...
+0.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+0.0.Hp: Proof Simplification Iteration 1	[0.00 s]
+0.0.PRE: A trace with 45 cycles was found. [0.00 s]
+0.0.Hp: Proof Simplification Iteration 2	[0.04 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: A proof was found: No trace exists. [0.00 s]
+0.0.PRE: Proof Simplification completed in 0.04 s
+covered
+covered
+[<embedded>] % prove -bg -all
+background 1
+INFO (IPF036): Starting proof on task: "<embedded>", 34 properties to prove with 0 already proven/unreachable
+INFO (IPF031): Settings used for proof thread 1:
+    orchestration                 = on (auto)
+    time_limit                    = 86400s
+    per_property_time_limit       = 1s * 10 ^ scan
+    engine_mode                   = auto
+    proofgrid_per_engine_max_jobs = 1
+    max engine jobs               = auto
+    proofgrid_mode                = local
+    proofgrid_restarts            = 10
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property "FSM_IF_TEST.U1.STATE_1_CHECK" was proven in 0.00 s.
+1: Found proofs for 1 properties in preprocessing
+1: Using multistage preprocessing
+1: Starting reduce
+1: Finished reduce in 0s
+1.0.PRE: Performing Proof Simplification...
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Proof Simplification Iteration 1	[0.00 s]
+1.0.PRE: A trace with 1 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.PRE: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT:precondition1" was covered in 1 cycles in 0.00 s.
+1.0.N: Proof Simplification Iteration 2	[0.01 s]
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noDeadEnd" was proven in 0.00 s.
+    Use check_assumptions -show -dead_end to show this property in the property table.
+1.0.PRE: A proof was found: No trace exists. [0.00 s]
+INFO (IPF057): 1.0.PRE: The property ":noConflict" was proven in 0.00 s.
+    Use check_assumptions -show to show this property in the property table.
+INFO (IPF047): 1.0.PRE: The cover property ":live" was covered in 1 cycles in 0.00 s.
+    Use check_assumptions -show -live to show this property in the property table.
+1.0.PRE: Proof Simplification completed in 0.01 s
+1.0.N: Identified and disabled 4 duplicated targets.
+1: About to start ProofGrid in its own thread with a limit of 10000 pending notifications and a limit of 10 traces.
+1: =============================== ProofGrid start ===============================
+1: ProofGrid usable level: 28
+1: Initial ProofGrid level: 1
+1: ProofGrid is starting event handling
+1.0.Hp: Proofgrid shell started at 658000@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.N: Proofgrid shell started at 657999@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.Hp: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_INIT" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW" was proven in 0.00 s.
+1.0.Hp: A proof was found: No trace exists. [0.01 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH" was proven in 0.00 s.
+1: ProofGrid usable level: 20
+1.0.N: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.N: Next scan (0) will use per property time limit: 1s * 10 ^ 0 = 1s
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: A trace with 2 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1" was covered in 2 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_1_CHECK:precondition1"	[0.01 s].
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_2_CHECK" was proven in 0.02 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_3_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_4_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_5_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_6_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_7_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_8_CHECK" was proven in 0.03 s.
+1.0.Hp: A proof was found: No trace exists. [0.02 s]
+INFO (IPF057): 1.0.Hp: The property "FSM_IF_TEST.U1.STATE_9_CHECK" was proven in 0.03 s.
+1.0.Hp: Trace Attempt  1	[0.02 s]
+1.0.Hp: Trace Attempt  2	[0.02 s]
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1"	[0.00 s].
+1: ProofGrid usable level: 11
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: A trace with 3 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1" was covered in 3 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1" was covered in 3 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_2_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECKE_LOAD_COMMAND:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.00 s].
+1: ProofGrid usable level: 10
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: A trace with 4 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1" was covered in 4 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1" was covered in 4 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_3_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_START_FRAME:precondition1"	[0.01 s].
+1: ProofGrid usable level: 9
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: A trace with 5 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1" was covered in 5 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1" was covered in 5 cycles in 0.00 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_4_CHECK:precondition1"	[0.01 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_LOW:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  6	[0.00 s]
+1.0.N: A trace with 6 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1" was covered in 6 cycles in 0.00 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_WRC_HIGH:precondition1" was covered in 6 cycles in 0.00 s by the incidental trace "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_5_CHECK:precondition1"	[0.01 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.00 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" in 0.00 s.
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.Hp: Trace Attempt  3	[0.06 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.Hp: Trace Attempt  4	[0.09 s]
+1.0.Hp: Trace Attempt  5	[0.11 s]
+1.0.N: Trace Attempt 21	[0.09 s]
+1.0.N: A trace with 21 cycles was found. [0.09 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1" was covered in 21 cycles in 0.08 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1" was covered in 21 cycles in 0.08 s.
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_6_CHECK:precondition1"	[0.08 s].
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_LOW:precondition1"	[0.08 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.01 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.N: Trace Attempt 22	[0.04 s]
+1.0.N: A trace with 22 cycles was found. [0.04 s]
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1" was covered in 22 cycles in 0.04 s.
+INFO (IPF047): 1.0.N: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_RDC_HIGH:precondition1" was covered in 22 cycles in 0.04 s by the incidental trace "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1".
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_7_CHECK:precondition1"	[0.05 s].
+1.0.N: Starting proof for property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.00 s].
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.N: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" in 0.00 s.
+1.0.N: Trace Attempt  2	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  3	[0.00 s]
+1.0.N: Trace Attempt  4	[0.00 s]
+1.0.N: Trace Attempt  5	[0.00 s]
+1.0.N: Trace Attempt  1	[0.00 s]
+1.0.N: Trace Attempt  2	[0.01 s]
+1.0.N: Trace Attempt  3	[0.01 s]
+1.0.N: Trace Attempt  5	[0.01 s]
+1.0.Mpcustom4: Proofgrid shell started at 658033@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 3 threads on "noivl-adahikar" with 2 cores.
+1.0.Mpcustom4: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" in 0.00 s.
+1.0.Mpcustom4: A max_length bound was found. The shortest trace is no longer than 512 cycles. [0.00 s]
+INFO (IPF008): 1.0.Mpcustom4: A max_length bound of 512 was found for the property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME:precondition1" in 0.00 s.
+1.0.Mpcustom4: Trace Attempt  1	[0.00 s]
+1.0.Mpcustom4: Trace Attempt  2	[0.00 s]
+1.0.Bm: Proofgrid shell started at 658032@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+1: Running jobs with 4 threads on "noivl-adahikar" with 2 cores.
+1.0.Bm: clocks: 1, declared: 1, looping: 0, posedge: 1, negedge: 0, noedge: 0, bothedge: 0
+1.0.Bm: Trace Attempt  1	[0.00 s]
+1.0.Bm: Trace Attempt  2	[0.00 s]
+1.0.Bm: Trace Attempt  3	[0.00 s]
+1.0.Bm: Trace Attempt  4	[0.00 s]
+1.0.Bm: Trace Attempt  5	[0.00 s]
+1.0.Bm: Trace Attempt 38	[0.00 s]
+1.0.Bm: A trace with 38 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1" was covered in 38 cycles in 0.00 s.
+1.0.Bm: Trace Attempt 39	[0.00 s]
+1.0.Bm: A trace with 39 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.CYCLE_CHECK_END_FRAME:precondition1" was covered in 39 cycles in 0.01 s.
+1.0.N: Requesting engine job to stop
+1.0.Hp: Requesting engine job to terminate
+1.0.Bm: Requesting engine job to terminate
+1.0.Mpcustom4: Requesting engine job to terminate
+INFO (IPF144): 1: Initiating shutdown of proof [0.38 s]
+1.0.Bm: Trace Attempt 42	[0.00 s]
+1.0.Bm: A trace with 42 cycles was found. [0.00 s]
+INFO (IPF047): 1.0.Bm: The cover property "FSM_IF_TEST.U1.STATE_9_CHECK:precondition1" was covered in 42 cycles in 0.02 s.
+1.0.Bm: All properties determined. [0.00 s]
+1.0.Bm: Exited with Success (@ 0.39 s)
+1: ProofGrid usable level: 0
+1.0.Mpcustom4: Interrupted. [0.02 s]
+1.0.N: Trace Attempt 32	[0.18 s]
+1.0.N: Stopped processing property "FSM_IF_TEST.U1.STATE_8_CHECK:precondition1"	[0.20 s].
+1.0.N: Interrupted. [0.18 s]
+1.0.Mpcustom4: Exited with Success (@ 0.39 s)
+1.0.Ht: Proofgrid shell started at 658031@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Preventing job from starting because proof is shutting down.
+1.0.Ht: Requesting engine job to terminate
+1.0.Ht: Interrupted. [0.00 s]
+1.0.N: Exited with Success (@ 0.39 s)
+1.0.Ht: Exited with Success (@ 0.39 s)
+1.0.Hp: Interrupted (multi)
+1.0.Hp: Trace Attempt 19	[0.37 s]
+1.0.Hp: Interrupted. [0.39 s]
+1.0.B: Proofgrid shell started at 658036@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.B: Requesting engine job to terminate
+1.0.Hp: Exited with Success (@ 0.44 s)
+1.0.B: Preventing job from starting because proof is shutting down.
+1.0.B: Requesting engine job to terminate
+1.0.B: Interrupted. [0.00 s]
+1.0.B: Exited with Success (@ 0.44 s)
+1.0.L: Proofgrid shell started at 658035@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.L: Requesting engine job to terminate
+1.0.L: Preventing job from starting because proof is shutting down.
+1.0.L: Requesting engine job to terminate
+1.0.L: Interrupted. [0.00 s]
+1.0.Oh: Proofgrid shell started at 658034@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.Oh: Requesting engine job to terminate
+1.0.L: Exited with Success (@ 0.45 s)
+1.0.Oh: Preventing job from starting because proof is shutting down.
+1.0.Oh: Requesting engine job to terminate
+1.0.Oh: Interrupted. [0.00 s]
+1.0.AM: Proofgrid shell started at 658037@noivl-adahikar(local) jg_652438_noivl-adahikar_13
+1.0.AM: Requesting engine job to terminate
+1.0.Oh: Exited with Success (@ 0.46 s)
+1.0.AM: Preventing job from starting because proof is shutting down.
+1.0.AM: Requesting engine job to terminate
+1.0.AM: Interrupted. [0.00 s]
+1.0.AM: Exited with Success (@ 0.47 s)
+1: --------------------------------------------------------------
+ProofGrid Summary (utilization 20.04 %)
+--------------------------------------------------------------
+     engines started                               :     9
+     engine jobs started                           :     9
+
+    Average time in state (seconds)
+    ------------------------------------------------------
+    Engine  Pending     Running        Dead    Utilization
+    ------------------------------------------------------
+      N        0.13        0.37        0.00       73.87 %
+     Hp        0.11        0.37        0.00       77.57 %
+     Ht        0.39        0.00        0.00        0.00 %
+     Bm        0.37        0.01        0.00        1.35 %
+    Mpcustom4        0.35        0.01        0.00        3.23 %
+     Oh        0.43        0.00        0.00        0.00 %
+      L        0.42        0.00        0.00        0.00 %
+      B        0.40        0.00        0.00        0.00 %
+     AM        0.41        0.00        0.00        0.00 %
+    all        0.33        0.08        0.00       20.04 %
+
+    Total time in state (seconds)
+    -----------------------------------------
+            Pending     Running        Dead  
+    -----------------------------------------
+               3.01        0.76        0.00
+
+    Data read    : 29.23 kiB
+    Data written : 8.17 kiB
+
+1: All pending notifications were processed.
+INFO (IPF059): 1: Completed proof on task: "<embedded>"
+
+==============================================================
+SUMMARY
+==============================================================
+           Properties Considered              : 34
+                 assertions                   : 17
+                  - proven                    : 17 (100%)
+                  - bounded_proven (user)     : 0 (0%)
+                  - bounded_proven (auto)     : 0 (0%)
+                  - marked_proven             : 0 (0%)
+                  - cex                       : 0 (0%)
+                  - ar_cex                    : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+                 covers                       : 17
+                  - unreachable               : 0 (0%)
+                  - bounded_unreachable (user): 0 (0%)
+                  - covered                   : 17 (100%)
+                  - ar_covered                : 0 (0%)
+                  - undetermined              : 0 (0%)
+                  - unknown                   : 0 (0%)
+                  - error                     : 0 (0%)
+INFO (IPL005): Received request to exit from the console.
+INFO (IPL014): Waiting for the Tcl-thread to exit.
+INFO: Waiting for proof threads to stop...
+INFO: Proof threads stopped.
+INFO (IPL018): The peak resident set memory use for this session was 0.458 GB.
+INFO (IPL015): The Tcl-thread exited with status 0.
+INFO (IPL016): Exiting the analysis session with status 0.

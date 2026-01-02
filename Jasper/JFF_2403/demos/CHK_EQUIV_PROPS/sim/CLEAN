@@ -1,0 +1,10 @@
+#!/bin/sh
+rm -rf INCA* *key .sta* *.log .nc*
+rm -rf ../log/* ./.*.log ./.SSout
+rm -rf ./.is* ./.loc* ./.ifv* 
+rm -rf ./.formal*
+rm -rf ./*.shm
+rm -rf ./.simvision
+rm -rf ./.reinvoke*
+rm -rf ./xrun.* ./xcelium.d ./*.shm
+rm -rf ./*run.key ./*run.history 

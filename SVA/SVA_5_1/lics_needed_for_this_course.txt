@@ -1,0 +1,5 @@
+#Licence features needed for this course
+Xcelium_Limited_Single_Core
+Indago_DA_App
+jasper_interactive
+jasper_fpv

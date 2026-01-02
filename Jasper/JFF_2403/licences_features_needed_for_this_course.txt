@@ -1,0 +1,7 @@
+PRODUCT #            Product Name                                  Licence Feature Name
+===========================================================================================
+JGFVBASE        Jasper Formal Verification Platform                  jasper_papp
+                                                                     jasper_pcov
+                                                                     jasper_pint
+
+Note that only the APB VIP is used from VIPCAT and no additional licences are needed for that.

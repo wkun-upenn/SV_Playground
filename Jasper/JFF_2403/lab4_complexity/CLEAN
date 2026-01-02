@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rm -rf ./jgproject
+rm -rf ./INCA_libs
+rm -rf irun.* *.log .*.log
