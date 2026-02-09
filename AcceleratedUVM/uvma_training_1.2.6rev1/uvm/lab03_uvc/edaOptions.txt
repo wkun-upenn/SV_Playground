@@ -1,0 +1,4 @@
+% Compile Option
+-f run.f -timescale 1ns/1ns -sysv
+% Run Option
+-access +rwc
