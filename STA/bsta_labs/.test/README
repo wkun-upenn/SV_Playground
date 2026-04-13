@@ -1,0 +1,149 @@
+#************************************************#
+# TITLE: README file for the testscript.
+# Author: Krishna Atreya
+# Version: 1.1
+#************************************************#
+# Usage: 
+# These testscripts are meant for most operating systems as specified below. 
+# The testscript's main intent is to test our Cadence classroom environment and is hard to setup elsewhere.
+  But you could follow some certain specifications below to make it work in other environments.
+
+# ********* REQUIREMENTS ********
+# You must have perl installation 5.0 or greater in your path.
+# The machine must be one of the following: Linux, Windows, or UNIX (Sun, HP, or IBM preferably).
+# The following files must be present in your .test directory.
+  1. utilities.pl
+  2. test_engine.pl
+  3. config.pl 
+
+#** IMPORTANT REQUIREMENTS FOR THE TESTSCRIPT TO PASS. **
+# You must have a .class_setup file at the level of the .test directory that contains the paths to the software tested by this testscript. Or you must atleast have all the paths declared in your environment.
+# You must have all the proper licenses in your environment, and setup properly. If not, you have the option of specifying a license file.
+
+#***************#
+# Testing your lab installation.
+#***************#
+# To test your lab installation move to the top directory of your lab.
+  cd .test
+  cd ..
+# Run the following command to verify your database and software:
+  source ./.testscript
+  OR
+  ./.test/testscript.cmd
+  The first execution (run) of the above command will always be the GOLDEN run and is used for directory map comparision later. 
+  If you delete the following file: 
+     master_directory_map
+  you can generate it by executing the above command, and this new run will be the GOLDEN run of the testscripts. The Directory mapping from the GOLDEN results are then compared with the results of the later runs. The rest of the checks are independent of the GOLDEN results.
+
+# Once the testscript passes:
+  1. Create a tar file for your database using:
+    tar cvf <course_abb>_<course_vs>.tar <top-level directory>
+  2. Make a copy of the resulting tar file.
+    cp <course_abb>_<course_vs>.tar <course_abb>_<course_vs>.copy.tar
+  3. You can use different compression techniques for different platforms:
+     For Solaris/HP, use:
+    compress <course_abb>_<course_vs>.tar
+     For Linux, move the copy of the tarred file to the proper name, and then compress it:
+    gzip <course_abb>_<course_vs>.tar
+  4. For Windows, use the same copy, but you can rename it from .tar to .zip for Windows purposes.
+#
+Make sure you have the following in your top-level directory.
+ 1. ./.test ( This entire directory.)
+ 2. .testscript (This is a link to the ./.test/testscript.cmd).
+    To create the link use the following command:
+    ln -s ./.test/testscript.cmd .testscript
+    Make sure this is just a link. You can view it by using "ls -a".
+#************************************************#
+Follow the steps below to configure your labs before testing them.
+#************************************************#
+ 1. The ".test" directory must be in your top-level directory.
+    cd .test
+ 2. Move to the top-level directory of your labs, to run the test.
+    cd ..
+ 3. Run the preconfiguration for the testscript to work.
+    perl .test/preconfigure.pl
+ 4. Modify the variables in the ".test/config.pl" file to suit your labs.
+#### THE FOLLOWING VARIABLES ARE FOR REPORTING PURPOSES. ######
+#a# Enter the course name.
+$courseName = "Encounter RTL Compiler";
+#b# Enter the version on the books.
+$courseVersion = "7.1";
+#c# Enter the date when the course was released, or speculated to release.
+$releaseDate = "Sep 1 2007";
+#e# Change this only if you want your results in a different directory.
+$tempDir = "./.test";
+#d# Change this only if you want to enter a different name for the report file.
+$reportFile = "$tempDir/testReport$$";
+
+##### THE FOLLOWING VARIABLES ARE REQUIRED FOR ALL COURSES #########
+#1# Enter the name of the operating system it should work on. 
+$osName = "Linux,Solaris,HP,IBM,Windows";
+#2# Enter the names of the tool executable followed by the required version separated by commas as shown in the example below:
+%toolExeAndVersion = ('rc' => 'v07.10-s009_1', 'encounter' => 'v07.10', 'ncsim' => '07.10');
+          # You can usually get the exact version information by entering:
+             toolExecutable -version
+          # For example:
+             rc -version
+               # would give you the following output.
+       >>> Program Name: RTL Compiler (RC), Version: v04.20-p001_2
+         Use only the portion that makes the version that you have tested the labs on stand out. The script searches for the string you provide.
+#3# Enter the corresponding command/expression that would trigger your tool executable to give out the version in the following format.
+%toolExeAndExpr = ('rc' => '-version', 'encounter' => '-cmd script1.tcl -logfile .test/encounter.log', 'icms' => '-nograph -replay .test/script1.tcl -log .test/icms.log', 'ncsim' => '-version -log .test/ncsim.log', 'icfb' => '-W', 'verilog' => '-version') ;
+#4# Enter the name of the logfile used in your command/expression. # If you specify a logfile in your command/expression, it is important to specify the same logfile in the following variable.
+%toolExeAndLogfile = ('rc' => '', 'encounter' => '.test/encounter.log', 'icms' => '.test/icms.log', 'ncsim' => '.test/ncim.log', 'icfb' => '', verilog => '');
+        This is optional to others. Just leave the string empty in that case.
+        %toolExeAndLogfile = "";
+#5# Enter the Software Release Version intended for the course. 
+%toolExeAndSoftRel = ('rc' => 'RC71', 'encounter' => 'SOC72', 'icms' => 'IC610', 'assura' => 'ASSURA317', 'icfb' => 'IC610');
+    Remember there are no dots or spaces in the release numbers.
+#6# Enter the names of licenses corresponding to each tool executable. Multiple licenses for the same tool can be separated by commas.
+%toolExeAndLicenses = ('rc' => 'RTL_Compiler_Ultra', 'icms' => 'AMS_environment', 'encounter' => 'First_Encounter_L,SoC_Encounter_GXL');
+        For multiple optional licenses of the softwares that could be used in your lab, enter more licenses in the following format.
+       %toolExeAndLicenses = ('toolName1' => 'licenseName1,licenseName2', 'toolName2, 'licenseName3,licenseName4');
+        You can find the name of the licenses by using lmstat on your system.
+        For example, use:
+             lmstat -i RTL
+        and the results will show all license names containing "RTL". Sometimes "lmstat -a" could be more helpful.
+        You can also use the http://demokey.cadence.com site to find license names based on your release stream. Or use http://esd.caence.com/cgi-bin/features.pl.cgi.
+        FYI: A lot of times the license names change from release to release on a newer product. You need to know what software release to use, and search the corresponding license names.
+#7# Enter the number of licenses required for each tool.
+%toolExeAndNumLicenses = ('icms' => '1', 'ncsim' => '1');
+#8# Enter any additional info you want searched in your logfiles.
+$additionalLogTestString = "Synthesis succeeded.";
+        This is also optional and must be used only if you have specified a logfile, and expect the logfile to contain this information verbatim.
+        Othwerwise, just leave it as an empty string.
+        $additionalLogTestString = "";
+#9#
+#### CHECKSYSCONF WORKS WITH 99% OF ALL CADENCE SOFTWARE ####
+##### THE FOLLOWING VARIABLES ARE MAINLY FOR WINDOWS COURSES, OR IF YOU DONT WANT TO USE CHECKSYSCONF #########
+#z# By default the testscript will use checkSysConf to make sure the labs have the right configuration. Change it to "NO", only if you have to.
+$useCheckSysConf = "YES";
+#y# Enter the Software Release Version intended for the course. 
+%toolExeAndCheckSoftRel = ('rc' => 'RC71', 'encounter' => 'SOC72', 'icms' => 'IC6.1', 'assura' => 'AV31', 'icfb' => 'IC6.1');
+    Remember there are no dots or spaces in the release numbers.
+#x# Change this only if the database would work only on a specific version.
+$osVersion = "ANY";
+#w# Change this only if the database would work only on a specific architecture.
+$cpuArch = "ANY";
+#v# Change this only if your database would work on a specific type of machine. #For example, sparc, SunOS Solaris etc.
+$machType = "ANY";
+#u# Enter the amount of physical memory your labs would require on disk in MB.
+$physMem = "ANY";
+#t# Enter the amount of swap space your labs would require in MB.
+$totalSwap = "ANY";
+#s# Enter the amount of freeDisk the user OS should have in MB.
+$freeDisk = "ANY";
+
+#10# ###Enter additional files to search for.
+#You can enter any additional files or directories to search for.
+#For example, the TSMC libraries require the following file in the classroom server: /cds/libraries/RC71USR1/RC_7_1.qqqq.tar.gz
+#Specify the filename including the path to look for:
+$additionalFile = "";
+
+#11# Specify a comment, about this course testing:
+$comment = "This course is meant for Cadence classrooms only";
+#If you have no comments, leave it empty.
+
+#*****************************************#
+# End of installation of testscripts 
+#*****************************************#

@@ -1,0 +1,32 @@
+#!/bin/csh
+
+# Set the master install hierarchy for local machines- change this based on your location
+setenv SSVC_HOME /icd/flow/SSV/SSV251/25.10-p001_1/lnx86
+# Set the master install hierarchy for classroom machines
+setenv SSV_HOME /cds/icd/ssv/251/25.10.000
+# Set the path to use the install hierarchy for both local and classroom machines
+set path = (${SSVC_HOME}/bin ${SSVC_HOME}/tools.lnx86/bin ${SSV_HOME}/bin ${SSV_HOME}/tools.lnx86/bin $path)
+echo "Sourcing SSV251 BASE"
+
+# Set the master install hierarchy for local machines � change this based on your location
+setenv GENUSC /icd/flow/DDI/DDI251/25.10-p001_1
+# Set the master install hierarchy for classroom machines
+setenv GENUS /cds/icd/DDI/251/25.10.000
+# Set the path to use the install hierarchy for both local and classroom machines
+set path = ($GENUSC/bin $GENUSC/GENUS251/bin $GENUSC/GENUS251/tools.lnx86/bin $GENUS/bin $GENUS/GENUS251/bin $GENUS/GENUS251/tools.lnx86/bin $path)
+echo "Sourcing GENUS251 BASE"
+# Set the master install hierarchy for local machines � change this based on your location
+setenv INNOVUSC /icd/flow/DDI/DDI251/25.10-p001_1
+# Set the master install hierarchy for classroom machines
+setenv INNOVUS /cds/icd/DDI/251/25.10.000
+# Set the path to use the install hierarchy for both local and classroom machines 
+set path = ($INNOVUSC/bin $INNOVUSC/INNOVUS251/bin $INNOVUSC/INNOVUS251/tools.lnx86/bin $INNOVUS/bin $INNOVUS/INNOVUS251/bin $INNOVUS/INNOVUS251/tools.lnx86/bin $path)
+echo "Sourcing INNOVUS251 BASE"
+# Set the master install hierarchy for local machines� change this based on your location
+setenv SSVC_HOME /icd/flow/SSV/SSV251/25.10-p001_1/lnx86
+# Set the master install hierarchy for classroom machines
+setenv SSV_HOME /cds/icd/ssv/251/25.10.000
+# Set the path to use the install hierarchy for both local and classroom machines
+set path = (${SSVC_HOME}/bin ${SSVC_HOME}/tools.lnx86/bin ${SSV_HOME}/bin ${SSV_HOME}/tools.lnx86/bin $path)
+echo "Sourcing SSV251 BASE"
+

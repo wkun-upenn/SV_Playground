@@ -1,0 +1,339 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+module dticlkmaskdelayd (
+   /*AUTOARG*/
+   // Outputs
+   DtiSuperClk, 
+   // Inputs
+   xxin_IDCLK
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Delayed versions of the primary clock (bit [0] equals the "first" clock)
+   output [`DTI_CLK_MASK_WIDTH-1:0] DtiSuperClk;
+
+   // Inputs
+   input  xxin_IDCLK;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+// surefire lint_off UDDSDN
+   wire                 DtiDummy;
+   wire [9:0]           DtiUnusedClk;
+// surefire lint_on UDDSDN
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [39:0]          DtiChainClk;            // From U0 of BUF4.v, ...
+   // End of automatics
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+/* BUF4 AUTO_TEMPLATE (
+      .CK0 (DtiUnusedClk[@]),
+      .Y   (DtiChainClk[@])
+      .CK  (xxin_IDCLK));
+*/
+
+   BUF4 U0 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[0]),       // Templated
+            .Y                          (DtiChainClk[0]),        // Templated
+            // Inputs
+            .CK                         (xxin_IDCLK));            // Templated
+
+/* BUF4 AUTO_TEMPLATE (
+      .CK0 (DtiUnusedClk[@]),
+      .Y   (DtiChainClk[@]),
+      .CK  (DtiChainClk[@"(- @ 1)"]));
+*/
+
+   BUF4 U1 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[1]),       // Templated
+            .Y                          (DtiChainClk[1]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[0]));        // Templated
+   BUF4 U2 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[2]),       // Templated
+            .Y                          (DtiChainClk[2]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[1]));        // Templated
+   BUF4 U3 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[3]),       // Templated
+            .Y                          (DtiChainClk[3]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[2]));        // Templated
+   BUF4 U4 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[4]),       // Templated
+            .Y                          (DtiChainClk[4]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[3]));        // Templated
+   BUF4 U5 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[5]),       // Templated
+            .Y                          (DtiChainClk[5]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[4]));        // Templated
+   BUF4 U6 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[6]),       // Templated
+            .Y                          (DtiChainClk[6]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[5]));        // Templated
+   BUF4 U7 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[7]),       // Templated
+            .Y                          (DtiChainClk[7]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[6]));        // Templated
+   BUF4 U8 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[8]),       // Templated
+            .Y                          (DtiChainClk[8]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[7]));        // Templated
+   BUF4 U9 (/*AUTOINST*/
+            // Outputs
+            .CK0                        (DtiUnusedClk[9]),       // Templated
+            .Y                          (DtiChainClk[9]),        // Templated
+            // Inputs
+            .CK                         (DtiChainClk[8]));        // Templated
+
+/* BUF4 AUTO_TEMPLATE (
+      .CK0 (DtiSuperClk[@"(- @ 10)"]),
+      .Y   (DtiChainClk[@]),
+      .CK  (DtiChainClk[@"(- @ 1)"]));
+*/
+
+   BUF4 U10 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[0]),        // Templated
+             .Y                         (DtiChainClk[10]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[9]));        // Templated
+   BUF4 U11 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[1]),        // Templated
+             .Y                         (DtiChainClk[11]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[10]));       // Templated
+   BUF4 U12 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[2]),        // Templated
+             .Y                         (DtiChainClk[12]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[11]));       // Templated
+   BUF4 U13 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[3]),        // Templated
+             .Y                         (DtiChainClk[13]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[12]));       // Templated
+   BUF4 U14 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[4]),        // Templated
+             .Y                         (DtiChainClk[14]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[13]));       // Templated
+   BUF4 U15 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[5]),        // Templated
+             .Y                         (DtiChainClk[15]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[14]));       // Templated
+   BUF4 U16 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[6]),        // Templated
+             .Y                         (DtiChainClk[16]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[15]));       // Templated
+   BUF4 U17 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[7]),        // Templated
+             .Y                         (DtiChainClk[17]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[16]));       // Templated
+   BUF4 U18 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[8]),        // Templated
+             .Y                         (DtiChainClk[18]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[17]));       // Templated
+   BUF4 U19 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[9]),        // Templated
+             .Y                         (DtiChainClk[19]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[18]));       // Templated
+   BUF4 U20 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[10]),       // Templated
+             .Y                         (DtiChainClk[20]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[19]));       // Templated
+   BUF4 U21 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[11]),       // Templated
+             .Y                         (DtiChainClk[21]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[20]));       // Templated
+   BUF4 U22 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[12]),       // Templated
+             .Y                         (DtiChainClk[22]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[21]));       // Templated
+   BUF4 U23 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[13]),       // Templated
+             .Y                         (DtiChainClk[23]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[22]));       // Templated
+   BUF4 U24 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[14]),       // Templated
+             .Y                         (DtiChainClk[24]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[23]));       // Templated
+   BUF4 U25 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[15]),       // Templated
+             .Y                         (DtiChainClk[25]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[24]));       // Templated
+   BUF4 U26 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[16]),       // Templated
+             .Y                         (DtiChainClk[26]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[25]));       // Templated
+   BUF4 U27 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[17]),       // Templated
+             .Y                         (DtiChainClk[27]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[26]));       // Templated
+   BUF4 U28 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[18]),       // Templated
+             .Y                         (DtiChainClk[28]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[27]));       // Templated
+   BUF4 U29 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[19]),       // Templated
+             .Y                         (DtiChainClk[29]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[28]));       // Templated
+   BUF4 U30 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[20]),       // Templated
+             .Y                         (DtiChainClk[30]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[29]));       // Templated
+   BUF4 U31 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[21]),       // Templated
+             .Y                         (DtiChainClk[31]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[30]));       // Templated
+   BUF4 U32 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[22]),       // Templated
+             .Y                         (DtiChainClk[32]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[31]));       // Templated
+   BUF4 U33 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[23]),       // Templated
+             .Y                         (DtiChainClk[33]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[32]));       // Templated
+   BUF4 U34 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[24]),       // Templated
+             .Y                         (DtiChainClk[34]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[33]));       // Templated
+   BUF4 U35 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[25]),       // Templated
+             .Y                         (DtiChainClk[35]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[34]));       // Templated
+   BUF4 U36 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[26]),       // Templated
+             .Y                         (DtiChainClk[36]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[35]));       // Templated
+   BUF4 U37 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[27]),       // Templated
+             .Y                         (DtiChainClk[37]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[36]));       // Templated
+   BUF4 U38 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[28]),       // Templated
+             .Y                         (DtiChainClk[38]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[37]));       // Templated
+   BUF4 U39 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[29]),       // Templated
+             .Y                         (DtiChainClk[39]),       // Templated
+             // Inputs
+             .CK                        (DtiChainClk[38]));       // Templated
+
+/* BUF4 AUTO_TEMPLATE (
+      .CK0 (DtiSuperClk[@"(- @ 10)"]),
+      .Y   (DtiDummy),
+      .CK  (DtiChainClk[@"(- @ 1)"]));
+*/
+
+   BUF4 U40 (/*AUTOINST*/
+             // Outputs
+             .CK0                       (DtiSuperClk[30]),       // Templated
+             .Y                         (DtiDummy),              // Templated
+             // Inputs
+             .CK                        (DtiChainClk[39]));       // Templated
+
+
+endmodule // dticlkmaskdelayd
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul 25 12:00:00 2002 : created
+//
+// $Log: dticlkmaskdelayd.v,v $
+// Revision 1.2  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.1  2002/07/26 18:32:22  chris
+// Use separate delay chains for each superc & clkmaskc
+//

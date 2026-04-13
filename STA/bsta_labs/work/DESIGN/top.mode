@@ -1,0 +1,16 @@
+################################################################################
+#
+# Innovus mode file
+# Created by Genus(TM) Synthesis Solution on 07/26/2020 05:17:16
+#
+################################################################################
+
+
+# General Mode Settings
+################################################################################
+
+set_global timing_apply_default_primary_input_assertion false
+setAnalysisMode -asyncChecks noAsync
+setExtractRCMode -layerIndependent 1
+catch {enc::set_global_entry timing_library_convert_n_piece_cap_to_2_piece false}
+setPlaceMode -reorderScan false

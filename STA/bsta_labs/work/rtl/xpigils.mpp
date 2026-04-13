@@ -1,0 +1,1290 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpigils
+  (/*AUTOARG*/
+   // Outputs
+   XpiGilPciDataIrdyP11S, XpiGilPciDataP11S, XpiGilINTAP11S, 
+   XpiGilINTBP11S, XpiGilINTCP11S, XpiGilINTDP11S, XpiGilINTAENP11S, 
+   XpiGilINTBENP11S, XpiGilINTCENP11S, XpiGilINTDENP11S, 
+   // Inputs
+   GlCoreResetR00C, XpiCoreClk, XpiPciClk, XpiPciAppFreq33P11S, 
+   XpiPciAppFreq66P11S, XpiPciAppFreq133P11S, XpiGilIntrEventsP10S, 
+   XpiDma0PciIntrPsn13S, XpiDma1PciIntrPsn13S, 
+   XpiDescDmaPciIntrPsn13S, XpiPktRxPciIntrPsn13S, 
+   XpiPktTxPciIntrPsn13S, XpiPciAppIntrP11S, 
+   XpiPciAppGilAddrIrdyP11S, XpiPciAppGilOffsetP11S, 
+   XpiPciAppGilDataIrdyP11S, XpiPciAppGilDataP11S, 
+   XpiPciAppGilCmdP11S, XpiPciAppGilTrdyP10S
+   );
+
+  //----------------------------------
+  //---- Input/Output Declaration ---- 
+  //----------------------------------
+  
+  input                              GlCoreResetR00C;
+  input 			     XpiCoreClk;
+  input 			     XpiPciClk;
+  
+  input 			     XpiPciAppFreq33P11S;  
+  input 			     XpiPciAppFreq66P11S;  
+  input 			     XpiPciAppFreq133P11S;  
+  
+  input [`GIL_INTR_EVENTS-1:0] 	     XpiGilIntrEventsP10S;
+  
+  input [`DMA_INTR_EVENTS-1:0] 	     XpiDma0PciIntrPsn13S;
+  input [`DMA_INTR_EVENTS-1:0] 	     XpiDma1PciIntrPsn13S;
+  input [`DMA_INTR_EVENTS-1:0] 	     XpiDescDmaPciIntrPsn13S;
+  input [`PKTRX_INTR_EVENTS-1:0]     XpiPktRxPciIntrPsn13S;
+  input [`PKTTX_INTR_EVENTS-1:0]     XpiPktTxPciIntrPsn13S;
+  input [`PCIAPP_INTR_EVENTS-1:0]    XpiPciAppIntrP11S;
+  
+  input 			     XpiPciAppGilAddrIrdyP11S;
+  input [`GIL_OFFSET_WIDTH-1:0]      XpiPciAppGilOffsetP11S;
+  input 			     XpiPciAppGilDataIrdyP11S;
+  input [`GIL_DATA_WIDTH-1:0] 	     XpiPciAppGilDataP11S;
+  input [`GIL_CMD_WIDTH-1:0] 	     XpiPciAppGilCmdP11S;
+  input 			     XpiPciAppGilTrdyP10S;
+  
+  output 			     XpiGilPciDataIrdyP11S;
+  output [`GIL_DATA_WIDTH-1:0] 	     XpiGilPciDataP11S;
+  
+  output 			     XpiGilINTAP11S;
+  output 			     XpiGilINTBP11S;
+  output 			     XpiGilINTCP11S;
+  output 			     XpiGilINTDP11S;
+
+  output 			     XpiGilINTAENP11S;
+  output 			     XpiGilINTBENP11S;
+  output 			     XpiGilINTCENP11S;
+  output 			     XpiGilINTDENP11S;
+
+  //--- Wire Declaration ----
+    
+  wire [`GIL_INTR_EVENTS-1:0] 	     XpiGilIntrEventsP11S;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHIntrEventsP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHIntrEventsP12S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHIntrEventsP12C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGIntrEventsP13C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHIntrEventsP13C;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGWrClrEnP14C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHWrClrEnP14C;
+
+  wire 				     XpiGilNewIntrEventP11C;
+  wire 				     XpiGilGrpANewIntrEventP11C;
+  wire 				     XpiGilGrpBNewIntrEventP11C;
+  wire 				     XpiGilGrpCNewIntrEventP11C;
+  wire 				     XpiGilGrpDNewIntrEventP11C;
+  wire 				     XpiGilGrpENewIntrEventP11C;
+  wire 				     XpiGilGrpFNewIntrEventP11C;
+  wire 				     XpiGilGrpGNewIntrEventP11C;
+  wire 				     XpiGilGrpHNewIntrEventP11C;
+
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpANewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpBNewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpCNewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpDNewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpENewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpFNewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpGNewEventDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpHNewEventDataP11C;
+
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpAWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpBWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpCWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpDWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpEWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpFWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpGWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpHWrClrDataP14C;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP11C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP11C;  
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP11S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP12S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP13S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP14C;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP14S;  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP14S;  
+  
+  wire 				     XpiGilPciAddrIrdyP10S;
+  wire [`GIL_OFFSET_WIDTH-1:0] 	     XpiGilPciOffsetP10S;
+  wire [`GIL_CMD_WIDTH-1:0] 	     XpiGilPciCmdP10S;
+  wire 				     XpiGilValidCfgWrP11C;
+  wire 				     XpiGilValidCfgRdP11C;
+  wire 				     XpiGilGrpAICRWrP11C;
+  wire 				     XpiGilGrpBICRWrP11C;
+  wire 				     XpiGilGrpCICRWrP11C;
+  wire 				     XpiGilGrpDICRWrP11C;
+  wire 				     XpiGilGrpEICRWrP11C;
+  wire 				     XpiGilGrpFICRWrP11C;
+  wire 				     XpiGilGrpGICRWrP11C;
+  wire 				     XpiGilGrpHICRWrP11C;
+  
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHICRP11C;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGICRP11S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHICRP11S;
+
+  wire 				     XpiGilGrpAISRWrP11C;
+  wire 				     XpiGilGrpBISRWrP11C;
+  wire 				     XpiGilGrpCISRWrP11C;
+  wire 				     XpiGilGrpDISRWrP11C;
+  wire 				     XpiGilGrpEISRWrP11C;
+  wire 				     XpiGilGrpFISRWrP11C;
+  wire 				     XpiGilGrpGISRWrP11C;
+  wire 				     XpiGilGrpHISRWrP11C;
+  wire 				     XpiGilGrpAISRWrP11S;
+  wire 				     XpiGilGrpBISRWrP11S;
+  wire 				     XpiGilGrpCISRWrP11S;
+  wire 				     XpiGilGrpDISRWrP11S;
+  wire 				     XpiGilGrpEISRWrP11S;
+  wire 				     XpiGilGrpFISRWrP11S;
+  wire 				     XpiGilGrpGISRWrP11S;
+  wire 				     XpiGilGrpHISRWrP11S;
+
+  wire 				     XpiGilGrpAISRWrP12S;
+  wire 				     XpiGilGrpBISRWrP12S;
+  wire 				     XpiGilGrpCISRWrP12S;
+  wire 				     XpiGilGrpDISRWrP12S;
+  wire 				     XpiGilGrpEISRWrP12S;
+  wire 				     XpiGilGrpFISRWrP12S;
+  wire 				     XpiGilGrpGISRWrP12S;
+  wire 				     XpiGilGrpHISRWrP12S;
+  wire 				     XpiGilGrpAISRWrP13S;
+  wire 				     XpiGilGrpBISRWrP13S;
+  wire 				     XpiGilGrpCISRWrP13S;
+  wire 				     XpiGilGrpDISRWrP13S;
+  wire 				     XpiGilGrpEISRWrP13S;
+  wire 				     XpiGilGrpFISRWrP13S;
+  wire 				     XpiGilGrpGISRWrP13S;
+  wire 				     XpiGilGrpHISRWrP13S;
+  wire 				     XpiGilGrpAISRWrP13C;
+  wire 				     XpiGilGrpBISRWrP13C;
+  wire 				     XpiGilGrpCISRWrP13C;
+  wire 				     XpiGilGrpDISRWrP13C;
+  wire 				     XpiGilGrpEISRWrP13C;
+  wire 				     XpiGilGrpFISRWrP13C;
+  wire 				     XpiGilGrpGISRWrP13C;
+  wire 				     XpiGilGrpHISRWrP13C;
+  wire 				     XpiGilGrpAISRWrP14S;
+  wire 				     XpiGilGrpBISRWrP14S;
+  wire 				     XpiGilGrpCISRWrP14S;
+  wire 				     XpiGilGrpDISRWrP14S;
+  wire 				     XpiGilGrpEISRWrP14S;
+  wire 				     XpiGilGrpFISRWrP14S;
+  wire 				     XpiGilGrpGISRWrP14S;
+  wire 				     XpiGilGrpHISRWrP14S;
+  wire 				     XpiGilGrpAISRWrP15S;
+  wire 				     XpiGilGrpBISRWrP15S;
+  wire 				     XpiGilGrpCISRWrP15S;
+  wire 				     XpiGilGrpDISRWrP15S;
+  wire 				     XpiGilGrpEISRWrP15S;
+  wire 				     XpiGilGrpFISRWrP15S;
+  wire 				     XpiGilGrpGISRWrP15S;
+  wire 				     XpiGilGrpHISRWrP15S;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpAISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpEISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGISRP15S;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHISRP15S;
+
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpANewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpBNewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpCNewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpDNewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpENewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpFNewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpGNewIntrP10C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpHNewIntrP10C;
+
+  wire 				     XpiGilGrpANewIntrP11C;
+  wire 				     XpiGilGrpBNewIntrP11C;
+  wire 				     XpiGilGrpCNewIntrP11C;
+  wire 				     XpiGilGrpDNewIntrP11C;
+  wire 				     XpiGilGrpENewIntrP11C;
+  wire 				     XpiGilGrpFNewIntrP11C;
+  wire 				     XpiGilGrpGNewIntrP11C;
+  wire 				     XpiGilGrpHNewIntrP11C;
+  
+  wire 				     XpiGilNewIntrP11C;
+  wire 				     XpiGilINTAP11S;
+  wire 				     XpiGilINTBP11S;
+  wire 				     XpiGilINTCP11S;
+  wire 				     XpiGilINTDP11S;
+  wire 				     XpiGilINTAENP11S;
+  wire 				     XpiGilINTBENP11S;
+  wire 				     XpiGilINTCENP11S;
+  wire 				     XpiGilINTDENP11S;
+  
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilWrClrDataP11S;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilWrClrDataP12S;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilWrClrDataP13S;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilWrClrDataP14C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilWrClrDataP14S;
+  wire 				     XpiGilWrClrEnP14C;
+  
+  wire [`DRT_INTR_EVENTS-1:0] 	     XpiGilDRTIntrEventsP13C;
+  wire [`DRT_INTR_EVENTS-1:0] 	     XpiGilDRTIntrEventsP13S;
+  wire [`DRT_INTR_EVENTS-1:0] 	     XpiGilDRTIntrEventsP14C;
+  wire 				     XpiGilGrpXNewIntrEventP14C;
+  wire [`DRT_INTR_EVENTS-1:0] 	     XpiGilGrpXNewEventDataP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpXICRP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpXICRP11S;
+  wire 				     XpiGilGrpXICRWrP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpXISRP15C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpXISRP15S;
+  wire 				     XpiGilGrpXISRWrP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpXWrClrDataP11C;
+  wire [`CFG_WIDTH-1:0] 	     XpiGilGrpXNewIntrP10C;
+  wire 				     XpiGilGrpXNewIntrP11C;
+  
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpAWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpBWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpCWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpDWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpEWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpFWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpGWrClrDataP11C;
+  wire [`GIL_DATA_WIDTH-1:0] 	     XpiGilGrpHWrClrDataP11C;
+  
+  wire [3:0] 			     XpiGilAssertCntP10S;
+  wire 				     XpiGilNewIntrEventP12S;
+  wire 				     XpiGilNewIntrEventP13S;
+  wire 				     XpiGilNewIntrEventP14S;
+  wire 				     XpiGilNewIntrEventP15C;
+  wire 				     XpiGilNewIntrEventP15S;
+  wire 				     XpiGilNewIntrEventP16S;
+    
+  //---- Register Declaration ----
+  
+  reg [1:0] 			XpiGilGrpAMuxSelP11C;
+  reg [1:0] 			XpiGilGrpBMuxSelP11C;
+  reg [1:0] 			XpiGilGrpCMuxSelP11C;
+  reg [1:0] 			XpiGilGrpDMuxSelP11C;
+  reg [1:0] 			XpiGilGrpEMuxSelP11C;
+  reg [1:0] 			XpiGilGrpFMuxSelP11C;
+  reg [1:0] 			XpiGilGrpGMuxSelP11C;
+  reg [1:0] 			XpiGilGrpHMuxSelP11C;
+  reg [1:0] 			XpiGilGrpAMuxSelP14C;
+  reg [1:0] 			XpiGilGrpBMuxSelP14C;
+  reg [1:0] 			XpiGilGrpCMuxSelP14C;
+  reg [1:0] 			XpiGilGrpDMuxSelP14C;
+  reg [1:0] 			XpiGilGrpEMuxSelP14C;
+  reg [1:0] 			XpiGilGrpFMuxSelP14C;
+  reg [1:0] 			XpiGilGrpGMuxSelP14C;
+  reg [1:0] 			XpiGilGrpHMuxSelP14C;
+  reg [1:0] 			XpiGilGrpXMuxSelP14C;
+
+  reg [`GIL_DATA_WIDTH-1:0] 	XpiGilPciDataP11C;
+  reg 				XpiGilNewIntrEventP12C;
+  reg 				XpiGilAssertCntEnP10C;
+  reg [3:0] 			XpiGilAssertCntP10C;
+
+  
+  //=========================
+  //==== CORE CLK DOMAIN ====
+  //=========================
+
+  
+  //--------------------------------------------------
+  //---- Edge Detect of Incoming Interrupt Events ----
+  //--------------------------------------------------
+
+DFFR #(256,256'b0) U1_dff (.q(XpiGilIntrEventsP11S),.d(XpiGilIntrEventsP10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Splitting 256b into 8x32b bus
+  assign XpiGilGrpAIntrEventsP11C = XpiGilIntrEventsP11S[31:0];
+  assign XpiGilGrpBIntrEventsP11C = XpiGilIntrEventsP11S[63:32];
+  assign XpiGilGrpCIntrEventsP11C = XpiGilIntrEventsP11S[95:64];
+  assign XpiGilGrpDIntrEventsP11C = XpiGilIntrEventsP11S[127:96];
+  assign XpiGilGrpEIntrEventsP11C = XpiGilIntrEventsP11S[159:128];
+  assign XpiGilGrpFIntrEventsP11C = XpiGilIntrEventsP11S[191:160];
+  assign XpiGilGrpGIntrEventsP11C = XpiGilIntrEventsP11S[223:192];
+  assign XpiGilGrpHIntrEventsP11C = XpiGilIntrEventsP11S[`GIL_INTR_EVENTS-1:224];
+
+  // Resetting the Pulse Detect Logic during ISR Clearing Operation
+  // This will catch a situation where software thinks it has corrected the
+  // underlying reason of previous interrupt, however the Unit Interrput
+  // Pulse is still active indicating that interrupt condition is not cleared
+
+  // NANDing Write Clear Pulse with Data
+  
+  assign XpiGilGrpAWrClrEnP14C = (~({32{XpiGilGrpAISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpBWrClrEnP14C = (~({32{XpiGilGrpBISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpCWrClrEnP14C = (~({32{XpiGilGrpCISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpDWrClrEnP14C = (~({32{XpiGilGrpDISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpEWrClrEnP14C = (~({32{XpiGilGrpEISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpFWrClrEnP14C = (~({32{XpiGilGrpFISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpGWrClrEnP14C = (~({32{XpiGilGrpGISRWrP14S}} & XpiGilWrClrDataP14S));
+  assign XpiGilGrpHWrClrEnP14C = (~({32{XpiGilGrpHISRWrP14S}} & XpiGilWrClrDataP14S));
+
+  // ANDing Interrupt Pulse with Write Clear Data
+
+  assign XpiGilGrpAIntrEventsP12C = (XpiGilGrpAIntrEventsP11C & XpiGilGrpAWrClrEnP14C);
+  assign XpiGilGrpBIntrEventsP12C = (XpiGilGrpBIntrEventsP11C & XpiGilGrpBWrClrEnP14C);
+  assign XpiGilGrpCIntrEventsP12C = (XpiGilGrpCIntrEventsP11C & XpiGilGrpCWrClrEnP14C);
+  assign XpiGilGrpDIntrEventsP12C = (XpiGilGrpDIntrEventsP11C & XpiGilGrpDWrClrEnP14C);
+  assign XpiGilGrpEIntrEventsP12C = (XpiGilGrpEIntrEventsP11C & XpiGilGrpEWrClrEnP14C);
+  assign XpiGilGrpFIntrEventsP12C = (XpiGilGrpFIntrEventsP11C & XpiGilGrpFWrClrEnP14C);
+  assign XpiGilGrpGIntrEventsP12C = (XpiGilGrpGIntrEventsP11C & XpiGilGrpGWrClrEnP14C);
+  assign XpiGilGrpHIntrEventsP12C = (XpiGilGrpHIntrEventsP11C & XpiGilGrpHWrClrEnP14C);
+
+  // Pulse Generation Logic, Second Stage Flop
+
+DFFR #(32,32'b0) U2_dff (.q(XpiGilGrpAIntrEventsP12S),.d(XpiGilGrpAIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U3_dff (.q(XpiGilGrpBIntrEventsP12S),.d(XpiGilGrpBIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U4_dff (.q(XpiGilGrpCIntrEventsP12S),.d(XpiGilGrpCIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U5_dff (.q(XpiGilGrpDIntrEventsP12S),.d(XpiGilGrpDIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U6_dff (.q(XpiGilGrpEIntrEventsP12S),.d(XpiGilGrpEIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U7_dff (.q(XpiGilGrpFIntrEventsP12S),.d(XpiGilGrpFIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U8_dff (.q(XpiGilGrpGIntrEventsP12S),.d(XpiGilGrpGIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U9_dff (.q(XpiGilGrpHIntrEventsP12S),.d(XpiGilGrpHIntrEventsP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Pulse Generation
+
+  assign XpiGilGrpAIntrEventsP13C = (XpiGilGrpAIntrEventsP11C & (~XpiGilGrpAIntrEventsP12S));
+  assign XpiGilGrpBIntrEventsP13C = (XpiGilGrpBIntrEventsP11C & (~XpiGilGrpBIntrEventsP12S));
+  assign XpiGilGrpCIntrEventsP13C = (XpiGilGrpCIntrEventsP11C & (~XpiGilGrpCIntrEventsP12S));
+  assign XpiGilGrpDIntrEventsP13C = (XpiGilGrpDIntrEventsP11C & (~XpiGilGrpDIntrEventsP12S));
+  assign XpiGilGrpEIntrEventsP13C = (XpiGilGrpEIntrEventsP11C & (~XpiGilGrpEIntrEventsP12S));
+  assign XpiGilGrpFIntrEventsP13C = (XpiGilGrpFIntrEventsP11C & (~XpiGilGrpFIntrEventsP12S));
+  assign XpiGilGrpGIntrEventsP13C = (XpiGilGrpGIntrEventsP11C & (~XpiGilGrpGIntrEventsP12S));
+  assign XpiGilGrpHIntrEventsP13C = (XpiGilGrpHIntrEventsP11C & (~XpiGilGrpHIntrEventsP12S));
+  
+  // BitWise OR to Detect a New Event Occurrence
+  
+  assign XpiGilGrpANewIntrEventP11C = (|XpiGilGrpAIntrEventsP13C);
+  assign XpiGilGrpBNewIntrEventP11C = (|XpiGilGrpBIntrEventsP13C);
+  assign XpiGilGrpCNewIntrEventP11C = (|XpiGilGrpCIntrEventsP13C);
+  assign XpiGilGrpDNewIntrEventP11C = (|XpiGilGrpDIntrEventsP13C);
+  assign XpiGilGrpENewIntrEventP11C = (|XpiGilGrpEIntrEventsP13C);
+  assign XpiGilGrpFNewIntrEventP11C = (|XpiGilGrpFIntrEventsP13C);
+  assign XpiGilGrpGNewIntrEventP11C = (|XpiGilGrpGIntrEventsP13C);
+  assign XpiGilGrpHNewIntrEventP11C = (|XpiGilGrpHIntrEventsP13C);
+  
+  //------------------------------------------------
+  //---- Interrupt Status Register Update Logic ----
+  //------------------------------------------------
+
+  // BitWise OR of ISR Contents and New Event
+  assign XpiGilGrpANewEventDataP11C = (XpiGilGrpAISRP11S | XpiGilGrpAIntrEventsP13C);
+  assign XpiGilGrpBNewEventDataP11C = (XpiGilGrpBISRP11S | XpiGilGrpBIntrEventsP13C);
+  assign XpiGilGrpCNewEventDataP11C = (XpiGilGrpCISRP11S | XpiGilGrpCIntrEventsP13C);
+  assign XpiGilGrpDNewEventDataP11C = (XpiGilGrpDISRP11S | XpiGilGrpDIntrEventsP13C);
+  assign XpiGilGrpENewEventDataP11C = (XpiGilGrpEISRP11S | XpiGilGrpEIntrEventsP13C);
+  assign XpiGilGrpFNewEventDataP11C = (XpiGilGrpFISRP11S | XpiGilGrpFIntrEventsP13C);
+  assign XpiGilGrpGNewEventDataP11C = (XpiGilGrpGISRP11S | XpiGilGrpGIntrEventsP13C);
+  assign XpiGilGrpHNewEventDataP11C = (XpiGilGrpHISRP11S | XpiGilGrpHIntrEventsP13C);
+
+  // BitWise XOR of ISR Contents and Write Clear Data
+  assign XpiGilGrpAWrClrDataP14C = (XpiGilGrpAISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpBWrClrDataP14C = (XpiGilGrpBISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpCWrClrDataP14C = (XpiGilGrpCISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpDWrClrDataP14C = (XpiGilGrpDISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpEWrClrDataP14C = (XpiGilGrpEISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpFWrClrDataP14C = (XpiGilGrpFISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpGWrClrDataP14C = (XpiGilGrpGISRP11S ^ XpiGilWrClrDataP14S);
+  assign XpiGilGrpHWrClrDataP14C = (XpiGilGrpHISRP11S ^ XpiGilWrClrDataP14S);
+
+  //---- Mux Select Logic ----
+
+  always @(/*AS*/XpiGilGrpAISRWrP14S or XpiGilGrpANewIntrEventP11C)
+    begin
+      if (XpiGilGrpANewIntrEventP11C)
+	XpiGilGrpAMuxSelP11C = 2'b01;
+      else if (XpiGilGrpAISRWrP14S)
+	XpiGilGrpAMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpAMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpBISRWrP14S or XpiGilGrpBNewIntrEventP11C)
+    begin
+      if (XpiGilGrpBNewIntrEventP11C)
+	XpiGilGrpBMuxSelP11C = 2'b01;
+      else if (XpiGilGrpBISRWrP14S)
+	XpiGilGrpBMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpBMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpCISRWrP14S or XpiGilGrpCNewIntrEventP11C)
+    begin
+      if (XpiGilGrpCNewIntrEventP11C)
+	XpiGilGrpCMuxSelP11C = 2'b01;
+      else if (XpiGilGrpCISRWrP14S)
+	XpiGilGrpCMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpCMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpDISRWrP14S or XpiGilGrpDNewIntrEventP11C)
+    begin
+      if (XpiGilGrpDNewIntrEventP11C)
+	XpiGilGrpDMuxSelP11C = 2'b01;
+      else if (XpiGilGrpDISRWrP14S)
+	XpiGilGrpDMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpDMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpEISRWrP14S or XpiGilGrpENewIntrEventP11C)
+    begin
+      if (XpiGilGrpENewIntrEventP11C)
+	XpiGilGrpEMuxSelP11C = 2'b01;
+      else if (XpiGilGrpEISRWrP14S)
+	XpiGilGrpEMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpEMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpFISRWrP14S or XpiGilGrpFNewIntrEventP11C)
+    begin
+      if (XpiGilGrpFNewIntrEventP11C)
+	XpiGilGrpFMuxSelP11C = 2'b01;
+      else if (XpiGilGrpFISRWrP14S)
+	XpiGilGrpFMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpFMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpGISRWrP14S or XpiGilGrpGNewIntrEventP11C)
+    begin
+      if (XpiGilGrpGNewIntrEventP11C)
+	XpiGilGrpGMuxSelP11C = 2'b01;
+      else if (XpiGilGrpGISRWrP14S)
+	XpiGilGrpGMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpGMuxSelP11C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpHISRWrP14S or XpiGilGrpHNewIntrEventP11C)
+    begin
+      if (XpiGilGrpHNewIntrEventP11C)
+	XpiGilGrpHMuxSelP11C = 2'b01;
+      else if (XpiGilGrpHISRWrP14S)
+	XpiGilGrpHMuxSelP11C = 2'b10;
+      else
+	XpiGilGrpHMuxSelP11C = 2'b00;
+    end
+  
+  //---- ISR Register Set ----
+
+MUX4S2 #(32) U10_mux4 (.mo(XpiGilGrpAISRP11C),.in0(XpiGilGrpAISRP11S),.in1(XpiGilGrpANewEventDataP11C),.in2(XpiGilGrpAWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpAMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U11_dff (.q(XpiGilGrpAISRP11S),.d(XpiGilGrpAISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U12_mux4 (.mo(XpiGilGrpBISRP11C),.in0(XpiGilGrpBISRP11S),.in1(XpiGilGrpBNewEventDataP11C),.in2(XpiGilGrpBWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpBMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U13_dff (.q(XpiGilGrpBISRP11S),.d(XpiGilGrpBISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U14_mux4 (.mo(XpiGilGrpCISRP11C),.in0(XpiGilGrpCISRP11S),.in1(XpiGilGrpCNewEventDataP11C),.in2(XpiGilGrpCWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpCMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U15_dff (.q(XpiGilGrpCISRP11S),.d(XpiGilGrpCISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U16_mux4 (.mo(XpiGilGrpDISRP11C),.in0(XpiGilGrpDISRP11S),.in1(XpiGilGrpDNewEventDataP11C),.in2(XpiGilGrpDWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpDMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U17_dff (.q(XpiGilGrpDISRP11S),.d(XpiGilGrpDISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U18_mux4 (.mo(XpiGilGrpEISRP11C),.in0(XpiGilGrpEISRP11S),.in1(XpiGilGrpENewEventDataP11C),.in2(XpiGilGrpEWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpEMuxSelP11C));
+
+
+  
+DFFR #(32,32'b0) U19_dff (.q(XpiGilGrpEISRP11S),.d(XpiGilGrpEISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U20_mux4 (.mo(XpiGilGrpFISRP11C),.in0(XpiGilGrpFISRP11S),.in1(XpiGilGrpFNewEventDataP11C),.in2(XpiGilGrpFWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpFMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U21_dff (.q(XpiGilGrpFISRP11S),.d(XpiGilGrpFISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U22_mux4 (.mo(XpiGilGrpGISRP11C),.in0(XpiGilGrpGISRP11S),.in1(XpiGilGrpGNewEventDataP11C),.in2(XpiGilGrpGWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpGMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U23_dff (.q(XpiGilGrpGISRP11S),.d(XpiGilGrpGISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U24_mux4 (.mo(XpiGilGrpHISRP11C),.in0(XpiGilGrpHISRP11S),.in1(XpiGilGrpHNewEventDataP11C),.in2(XpiGilGrpHWrClrDataP14C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpHMuxSelP11C));
+
+
+
+DFFR #(32,32'b0) U25_dff (.q(XpiGilGrpHISRP11S),.d(XpiGilGrpHISRP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //==========================
+  //==== PCI CLOCK DOMAIN ====
+  //==========================
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+
+  //-----------------------------------------------------
+  //--- Edge Detect of DMA, RX or TX Interrupt Event ----
+  //-----------------------------------------------------
+  
+  assign XpiGilDRTIntrEventsP13C = 
+	 {XpiPciAppIntrP11S, XpiPktTxPciIntrPsn13S, XpiPktRxPciIntrPsn13S, 
+	  XpiDescDmaPciIntrPsn13S, XpiDma1PciIntrPsn13S, XpiDma0PciIntrPsn13S};
+  
+DFFR #(32,32'b0) U26_dff (.q(XpiGilDRTIntrEventsP13S),.d(XpiGilDRTIntrEventsP13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilDRTIntrEventsP14C = (XpiGilDRTIntrEventsP13C &
+				    (~XpiGilDRTIntrEventsP13S));
+  
+  // Reduction OR to detect occurence of New Interrupt Event
+  assign XpiGilGrpXNewIntrEventP14C = {|XpiGilDRTIntrEventsP14C};
+  
+  // BitWise OR of ISR Contents and New Event
+  assign XpiGilGrpXNewEventDataP11C = (XpiGilGrpXISRP15S | XpiGilDRTIntrEventsP14C);
+    
+  //-------------------------------------------
+  //---- Interrupt Control Register Update ----
+  //-------------------------------------------
+
+  // Group X : ICR & ISR corresponds to DMA0, DMA1, DESCDMA, 
+  // PKTRX & PKTTX Interrupts
+  
+  // Offset 0x00 -> 0x20 is reserved for 8x32b Control Registers
+  // Offset 0x20 -> 0x40 is reserved for 8x32b Status Registers
+  
+DFFR #(1,1'b0) U27_dff (.q(XpiGilPciAddrIrdyP10S),.d(XpiPciAppGilAddrIrdyP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(5,5'b0) U28_dff (.q(XpiGilPciOffsetP10S),.d(XpiPciAppGilOffsetP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U29_dff (.q(XpiGilPciCmdP10S),.d(XpiPciAppGilCmdP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilValidCfgWrP11C = (XpiGilPciAddrIrdyP10S && XpiPciAppGilDataIrdyP11S &&
+				 (XpiGilPciCmdP10S==`CTRLWR));
+  
+  assign XpiGilGrpAICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h00));
+  assign XpiGilGrpBICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h01));
+  assign XpiGilGrpCICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h02));
+  assign XpiGilGrpDICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h03));  
+  assign XpiGilGrpEICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h04));
+  assign XpiGilGrpFICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h05));
+  assign XpiGilGrpGICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h06));
+  assign XpiGilGrpHICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h07));  
+  assign XpiGilGrpXICRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h10));
+
+  //---- Interrupt Control Register Set ----
+  
+  assign XpiGilGrpAICRP11C = XpiGilGrpAICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpAICRP11S;
+DFFR #(32,32'b0) U30_dff (.q(XpiGilGrpAICRP11S),.d(XpiGilGrpAICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpBICRP11C = XpiGilGrpBICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpBICRP11S;
+DFFR #(32,32'b0) U31_dff (.q(XpiGilGrpBICRP11S),.d(XpiGilGrpBICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpCICRP11C = XpiGilGrpCICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpCICRP11S;
+DFFR #(32,32'b0) U32_dff (.q(XpiGilGrpCICRP11S),.d(XpiGilGrpCICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpDICRP11C = XpiGilGrpDICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpDICRP11S;
+DFFR #(32,32'b0) U33_dff (.q(XpiGilGrpDICRP11S),.d(XpiGilGrpDICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpEICRP11C = XpiGilGrpEICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpEICRP11S;
+DFFR #(32,32'b0) U34_dff (.q(XpiGilGrpEICRP11S),.d(XpiGilGrpEICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpFICRP11C = XpiGilGrpFICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpFICRP11S;
+DFFR #(32,32'b0) U35_dff (.q(XpiGilGrpFICRP11S),.d(XpiGilGrpFICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpGICRP11C = XpiGilGrpGICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpGICRP11S;
+DFFR #(32,32'b0) U36_dff (.q(XpiGilGrpGICRP11S),.d(XpiGilGrpGICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpHICRP11C = XpiGilGrpHICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpHICRP11S;
+DFFR #(32,32'b0) U37_dff (.q(XpiGilGrpHICRP11S),.d(XpiGilGrpHICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpXICRP11C = XpiGilGrpXICRWrP11C ? 
+	 XpiPciAppGilDataP11S : XpiGilGrpXICRP11S;
+DFFR #(32,32'b0) U38_dff (.q(XpiGilGrpXICRP11S),.d(XpiGilGrpXICRP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //-----------------------------------
+  //---- ISR Data Mux Select Logic ----
+  //-----------------------------------
+
+  assign XpiGilGrpAISRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h08));
+  assign XpiGilGrpBISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h09));
+  assign XpiGilGrpCISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0a));
+  assign XpiGilGrpDISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0b));
+  assign XpiGilGrpEISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0c));
+  assign XpiGilGrpFISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0d));
+  assign XpiGilGrpGISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0e));
+  assign XpiGilGrpHISRWrP11C =
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h0f));
+  assign XpiGilGrpXISRWrP11C = 
+	 (XpiGilValidCfgWrP11C && (XpiGilPciOffsetP10S == `GIL_OFFSET_WIDTH'h11));
+  
+  // BitWise XOR of ISR Contents and Write Clear Data
+  assign XpiGilGrpAWrClrDataP11C = (XpiGilGrpAISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpBWrClrDataP11C = (XpiGilGrpBISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpCWrClrDataP11C = (XpiGilGrpCISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpDWrClrDataP11C = (XpiGilGrpDISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpEWrClrDataP11C = (XpiGilGrpEISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpFWrClrDataP11C = (XpiGilGrpFISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpGWrClrDataP11C = (XpiGilGrpGISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpHWrClrDataP11C = (XpiGilGrpHISRP15S ^ XpiPciAppGilDataP11S);
+  assign XpiGilGrpXWrClrDataP11C = (XpiGilGrpXISRP15S ^ XpiPciAppGilDataP11S);
+  
+  // Setting Mux Select for Interrupt Assertion or Write Transaction
+  
+  always @(/*AS*/XpiGilGrpAISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpAMuxSelP14C = 2'b01;
+      else if (XpiGilGrpAISRWrP11C)
+	XpiGilGrpAMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpAMuxSelP14C = 2'b00;
+    end
+  
+  always @(/*AS*/XpiGilGrpBISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpBMuxSelP14C = 2'b01;
+      else if (XpiGilGrpBISRWrP11C)
+	XpiGilGrpBMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpBMuxSelP14C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpCISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpCMuxSelP14C = 2'b01;
+      else if (XpiGilGrpCISRWrP11C)
+	XpiGilGrpCMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpCMuxSelP14C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpDISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpDMuxSelP14C = 2'b01;
+      else if (XpiGilGrpDISRWrP11C)
+	XpiGilGrpDMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpDMuxSelP14C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpEISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpEMuxSelP14C = 2'b01;
+      else if (XpiGilGrpEISRWrP11C)
+	XpiGilGrpEMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpEMuxSelP14C = 2'b00;
+    end
+  
+  always @(/*AS*/XpiGilGrpFISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpFMuxSelP14C = 2'b01;
+      else if (XpiGilGrpFISRWrP11C)
+	XpiGilGrpFMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpFMuxSelP14C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpGISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpGMuxSelP14C = 2'b01;
+      else if (XpiGilGrpGISRWrP11C)
+	XpiGilGrpGMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpGMuxSelP14C = 2'b00;
+    end
+
+  always @(/*AS*/XpiGilGrpHISRWrP11C or XpiGilNewIntrEventP15S)
+    begin
+      if (XpiGilNewIntrEventP15S)
+	XpiGilGrpHMuxSelP14C = 2'b01;
+      else if (XpiGilGrpHISRWrP11C)
+	XpiGilGrpHMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpHMuxSelP14C = 2'b00;
+    end
+    
+  always @(/*AS*/XpiGilGrpXISRWrP11C or XpiGilGrpXNewIntrEventP14C)
+    begin
+      if (XpiGilGrpXNewIntrEventP14C)
+	XpiGilGrpXMuxSelP14C = 2'b01;
+      else if (XpiGilGrpXISRWrP11C)
+	XpiGilGrpXMuxSelP14C = 2'b10;
+      else
+	XpiGilGrpXMuxSelP14C = 2'b00;
+    end
+    
+  //---- ISR Data Muxing ----
+  
+MUX4S2 #(32) U39_mux4 (.mo(XpiGilGrpAISRP15C),.in0(XpiGilGrpAISRP15S),.in1(XpiGilGrpAISRP14S),.in2(XpiGilGrpAWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpAMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U40_dff (.q(XpiGilGrpAISRP15S),.d(XpiGilGrpAISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U41_mux4 (.mo(XpiGilGrpBISRP15C),.in0(XpiGilGrpBISRP15S),.in1(XpiGilGrpBISRP14S),.in2(XpiGilGrpBWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpBMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U42_dff (.q(XpiGilGrpBISRP15S),.d(XpiGilGrpBISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U43_mux4 (.mo(XpiGilGrpCISRP15C),.in0(XpiGilGrpCISRP15S),.in1(XpiGilGrpCISRP14S),.in2(XpiGilGrpCWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpCMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U44_dff (.q(XpiGilGrpCISRP15S),.d(XpiGilGrpCISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U45_mux4 (.mo(XpiGilGrpDISRP15C),.in0(XpiGilGrpDISRP15S),.in1(XpiGilGrpDISRP14S),.in2(XpiGilGrpDWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpDMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U46_dff (.q(XpiGilGrpDISRP15S),.d(XpiGilGrpDISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+MUX4S2 #(32) U47_mux4 (.mo(XpiGilGrpEISRP15C),.in0(XpiGilGrpEISRP15S),.in1(XpiGilGrpEISRP14S),.in2(XpiGilGrpEWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpEMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U48_dff (.q(XpiGilGrpEISRP15S),.d(XpiGilGrpEISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U49_mux4 (.mo(XpiGilGrpFISRP15C),.in0(XpiGilGrpFISRP15S),.in1(XpiGilGrpFISRP14S),.in2(XpiGilGrpFWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpFMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U50_dff (.q(XpiGilGrpFISRP15S),.d(XpiGilGrpFISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U51_mux4 (.mo(XpiGilGrpGISRP15C),.in0(XpiGilGrpGISRP15S),.in1(XpiGilGrpGISRP14S),.in2(XpiGilGrpGWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpGMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U52_dff (.q(XpiGilGrpGISRP15S),.d(XpiGilGrpGISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U53_mux4 (.mo(XpiGilGrpHISRP15C),.in0(XpiGilGrpHISRP15S),.in1(XpiGilGrpHISRP14S),.in2(XpiGilGrpHWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpHMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U54_dff (.q(XpiGilGrpHISRP15S),.d(XpiGilGrpHISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+MUX4S2 #(32) U55_mux4 (.mo(XpiGilGrpXISRP15C),.in0(XpiGilGrpXISRP15S),.in1(XpiGilGrpXNewEventDataP11C),.in2(XpiGilGrpXWrClrDataP11C),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiGilGrpXMuxSelP14C));
+
+
+  
+DFFR #(32,32'b0) U56_dff (.q(XpiGilGrpXISRP15S),.d(XpiGilGrpXISRP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //----------------------------------
+  //---- Register Read Completion ----
+  //----------------------------------
+  
+  assign XpiGilValidCfgRdP11C = 
+	 (XpiGilPciAddrIrdyP10S && (XpiGilPciCmdP10S==`CTRLRD));
+
+  always @(/*AS*/XpiGilGrpAICRP11S or XpiGilGrpAISRP15S
+	   or XpiGilGrpBICRP11S or XpiGilGrpBISRP15S
+	   or XpiGilGrpCICRP11S or XpiGilGrpCISRP15S
+	   or XpiGilGrpDICRP11S or XpiGilGrpDISRP15S
+	   or XpiGilGrpEICRP11S or XpiGilGrpEISRP15S
+	   or XpiGilGrpFICRP11S or XpiGilGrpFISRP15S
+	   or XpiGilGrpGICRP11S or XpiGilGrpGISRP15S
+	   or XpiGilGrpHICRP11S or XpiGilGrpHISRP15S
+	   or XpiGilGrpXICRP11S or XpiGilGrpXISRP15S
+	   or XpiGilPciOffsetP10S)
+    begin
+
+      case (XpiGilPciOffsetP10S)
+	
+	`GIL_OFFSET_WIDTH'h00 : XpiGilPciDataP11C = XpiGilGrpAICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h01 : XpiGilPciDataP11C = XpiGilGrpBICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h02 : XpiGilPciDataP11C = XpiGilGrpCICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h03 : XpiGilPciDataP11C = XpiGilGrpDICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h04 : XpiGilPciDataP11C = XpiGilGrpEICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h05 : XpiGilPciDataP11C = XpiGilGrpFICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h06 : XpiGilPciDataP11C = XpiGilGrpGICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h07 : XpiGilPciDataP11C = XpiGilGrpHICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h10 : XpiGilPciDataP11C = XpiGilGrpXICRP11S;
+	
+	`GIL_OFFSET_WIDTH'h08 : XpiGilPciDataP11C = XpiGilGrpAISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h09 : XpiGilPciDataP11C = XpiGilGrpBISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0a : XpiGilPciDataP11C = XpiGilGrpCISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0b : XpiGilPciDataP11C = XpiGilGrpDISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0c : XpiGilPciDataP11C = XpiGilGrpEISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0d : XpiGilPciDataP11C = XpiGilGrpFISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0e : XpiGilPciDataP11C = XpiGilGrpGISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h0f : XpiGilPciDataP11C = XpiGilGrpHISRP15S;
+	
+	`GIL_OFFSET_WIDTH'h11: XpiGilPciDataP11C = XpiGilGrpXISRP15S;
+
+	default: XpiGilPciDataP11C = {`CFG_WIDTH{1'b0}};
+
+      endcase // case(XpiGilPciOffsetP10S)
+      
+    end // always @ (...
+  
+DFFR #(1,1'b0) U57_dff (.q(XpiGilPciDataIrdyP11S),.d(XpiGilValidCfgRdP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U58_dff (.q(XpiGilPciDataP11S),.d(XpiGilPciDataP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //------------------------------------------
+  //---- Interrupt Pulse Generation Logic ----
+  //------------------------------------------
+
+  // BitWise ANDing ICR & ISR
+  assign XpiGilGrpANewIntrP10C = (XpiGilGrpAICRP11S & XpiGilGrpAISRP15S);
+  assign XpiGilGrpBNewIntrP10C = (XpiGilGrpBICRP11S & XpiGilGrpBISRP15S);
+  assign XpiGilGrpCNewIntrP10C = (XpiGilGrpCICRP11S & XpiGilGrpCISRP15S);
+  assign XpiGilGrpDNewIntrP10C = (XpiGilGrpDICRP11S & XpiGilGrpDISRP15S);
+  assign XpiGilGrpENewIntrP10C = (XpiGilGrpEICRP11S & XpiGilGrpEISRP15S);
+  assign XpiGilGrpFNewIntrP10C = (XpiGilGrpFICRP11S & XpiGilGrpFISRP15S);
+  assign XpiGilGrpGNewIntrP10C = (XpiGilGrpGICRP11S & XpiGilGrpGISRP15S);
+  assign XpiGilGrpHNewIntrP10C = (XpiGilGrpHICRP11S & XpiGilGrpHISRP15S);
+  assign XpiGilGrpXNewIntrP10C = (XpiGilGrpXICRP11S & XpiGilGrpXISRP15S);
+
+  // Reduction ORing to detect a New Interrupt
+  assign XpiGilGrpANewIntrP11C = (|XpiGilGrpANewIntrP10C);
+  assign XpiGilGrpBNewIntrP11C = (|XpiGilGrpBNewIntrP10C);
+  assign XpiGilGrpCNewIntrP11C = (|XpiGilGrpCNewIntrP10C);
+  assign XpiGilGrpDNewIntrP11C = (|XpiGilGrpDNewIntrP10C);
+  assign XpiGilGrpENewIntrP11C = (|XpiGilGrpENewIntrP10C);
+  assign XpiGilGrpFNewIntrP11C = (|XpiGilGrpFNewIntrP10C);
+  assign XpiGilGrpGNewIntrP11C = (|XpiGilGrpGNewIntrP10C);
+  assign XpiGilGrpHNewIntrP11C = (|XpiGilGrpHNewIntrP10C);
+  assign XpiGilGrpXNewIntrP11C = (|XpiGilGrpXNewIntrP10C);
+
+  assign XpiGilNewIntrP11C = (XpiGilGrpANewIntrP11C || XpiGilGrpBNewIntrP11C ||
+			      XpiGilGrpCNewIntrP11C || XpiGilGrpDNewIntrP11C ||
+			      XpiGilGrpENewIntrP11C || XpiGilGrpFNewIntrP11C ||
+			      XpiGilGrpGNewIntrP11C || XpiGilGrpHNewIntrP11C ||
+			      XpiGilGrpXNewIntrP11C);
+
+DFFR #(1,1'b0) U59_dff (.q(XpiGilINTAP11S),.d(XpiGilNewIntrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilINTBP11S = 1'b0;
+  assign XpiGilINTCP11S = 1'b0;
+  assign XpiGilINTDP11S = 1'b0;
+
+  assign XpiGilINTAENP11S = 1'b1;
+  assign XpiGilINTBENP11S = 1'b1;
+  assign XpiGilINTCENP11S = 1'b1;
+  assign XpiGilINTDENP11S = 1'b1;
+  
+  //---------------------------------------------
+  //---- Core Clk -> Pci Clk Synchronization ----
+  //---------------------------------------------
+
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+  // Grouping all 8 ISR Write Enables into single Enable to save up
+  // on duplicate logic. A single Interrupt Enable is going to update all 8 ISR's
+  // in PCI domain, however since only the ISR in Core Clock domain
+  // corresponding to Interrupting event is updated, the contents of remaining
+  // 7 ISR's in PCI domain remain unchanged.
+
+  assign XpiGilNewIntrEventP11C = 
+	 (XpiGilGrpANewIntrEventP11C || XpiGilGrpBNewIntrEventP11C ||
+	  XpiGilGrpCNewIntrEventP11C || XpiGilGrpDNewIntrEventP11C ||
+	  XpiGilGrpENewIntrEventP11C || XpiGilGrpFNewIntrEventP11C ||
+	  XpiGilGrpGNewIntrEventP11C || XpiGilGrpHNewIntrEventP11C);
+				       
+  //-------------------------------------
+  //---- Synchronizing State Machine ----
+  //-------------------------------------
+  //** 5*CoreClk (333MHz) == PciClk(66MHz)
+  //** 10*CoreClk (333MHz) == PciClk(33MHz)  
+  //** A single CoreClk Pulse is to be asserted for 5+1=6
+  //** Core Clk cycles to result into a single PCI Clk Pulse
+
+`define XPIGILCPSYNCIDLE   1'b0
+`define XPIGILCPSYNCASSERT 1'b1
+
+  // Internal State Variables
+  wire 	 xpigilcpsyncstate;
+  reg 	 next_xpigilcpsyncstate;
+
+  //---- State Change ----
+  
+DFFR #(1,1'b0) U60_dff (.q(xpigilcpsyncstate),.d(next_xpigilcpsyncstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+
+  always @(/*AS*/xpigilcpsyncstate)
+    begin
+
+      XpiGilAssertCntEnP10C  = 1'b0;
+      XpiGilNewIntrEventP12C = 1'b0;
+
+      case (xpigilcpsyncstate)
+
+	`XPIGILCPSYNCIDLE :
+	  begin
+	    XpiGilAssertCntEnP10C  = 1'b0;
+	    XpiGilNewIntrEventP12C = 1'b0;
+	  end
+
+	`XPIGILCPSYNCASSERT :
+	  begin
+	    XpiGilAssertCntEnP10C  = 1'b1;
+	    XpiGilNewIntrEventP12C = 1'b1;
+	  end
+	
+	default:
+	  begin
+	    XpiGilAssertCntEnP10C  = 1'b0;
+	    XpiGilNewIntrEventP12C = 1'b0;
+	  end
+
+      endcase // case(xpigilcpsyncstate)
+    end // always @ (...
+
+  //---- State Transition ----
+  
+  always @(/*AS*/XpiGilAssertCntP10S or XpiGilNewIntrEventP11C
+	   or XpiPciAppFreq133P11S or XpiPciAppFreq33P11S
+	   or XpiPciAppFreq66P11S or xpigilcpsyncstate)
+    begin
+      
+      case (xpigilcpsyncstate)
+	
+	`XPIGILCPSYNCIDLE:
+	  begin
+	    if (XpiGilNewIntrEventP11C)
+	      next_xpigilcpsyncstate = `XPIGILCPSYNCASSERT;
+	    else
+	      next_xpigilcpsyncstate = `XPIGILCPSYNCIDLE;
+	  end
+	    
+	`XPIGILCPSYNCASSERT:
+	  begin
+	    if ((XpiPciAppFreq133P11S && (XpiGilAssertCntP10S == 4'b0011)) ||
+		(XpiPciAppFreq66P11S && (XpiGilAssertCntP10S == 4'b0110))  ||
+		(XpiPciAppFreq33P11S && (XpiGilAssertCntP10S == 4'b1100)))
+	      next_xpigilcpsyncstate = `XPIGILCPSYNCIDLE;
+	    else
+	      next_xpigilcpsyncstate = `XPIGILCPSYNCASSERT;
+	  end
+
+	default : next_xpigilcpsyncstate = `XPIGILCPSYNCIDLE;
+
+      endcase // case(xpigilcpsyncstate)
+    end // always @ (...
+    
+  //---- Signal Assertion Counter ----
+  
+  always @(/*AS*/XpiGilAssertCntEnP10C or XpiGilAssertCntP10S)
+    begin
+      if (XpiGilAssertCntEnP10C)
+	XpiGilAssertCntP10C = {XpiGilAssertCntP10S + 4'b1};
+      else if (XpiGilAssertCntP10S == 4'hf)
+	XpiGilAssertCntP10C = 4'h0;
+      else
+	XpiGilAssertCntP10C = 4'h0;
+    end
+
+DFFR #(4,4'b0) U61_dff (.q(XpiGilAssertCntP10S),.d(XpiGilAssertCntP10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U62_dff (.q(XpiGilNewIntrEventP12S),.d(XpiGilNewIntrEventP12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  // First PCI Clock Sync Stage
+
+DFFR #(1,1'b0) U63_dff (.q(XpiGilNewIntrEventP13S),.d(XpiGilNewIntrEventP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+DFFR #(32,32'b0) U64_dff (.q(XpiGilGrpAISRP12S),.d(XpiGilGrpAISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U65_dff (.q(XpiGilGrpBISRP12S),.d(XpiGilGrpBISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U66_dff (.q(XpiGilGrpCISRP12S),.d(XpiGilGrpCISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U67_dff (.q(XpiGilGrpDISRP12S),.d(XpiGilGrpDISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U68_dff (.q(XpiGilGrpEISRP12S),.d(XpiGilGrpEISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U69_dff (.q(XpiGilGrpFISRP12S),.d(XpiGilGrpFISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U70_dff (.q(XpiGilGrpGISRP12S),.d(XpiGilGrpGISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U71_dff (.q(XpiGilGrpHISRP12S),.d(XpiGilGrpHISRP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Second PCI Clock Sync Stage
+
+DFFR #(1,1'b0) U72_dff (.q(XpiGilNewIntrEventP14S),.d(XpiGilNewIntrEventP13S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+DFFR #(32,32'b0) U73_dff (.q(XpiGilGrpAISRP13S),.d(XpiGilGrpAISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U74_dff (.q(XpiGilGrpBISRP13S),.d(XpiGilGrpBISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U75_dff (.q(XpiGilGrpCISRP13S),.d(XpiGilGrpCISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U76_dff (.q(XpiGilGrpDISRP13S),.d(XpiGilGrpDISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U77_dff (.q(XpiGilGrpEISRP13S),.d(XpiGilGrpEISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U78_dff (.q(XpiGilGrpFISRP13S),.d(XpiGilGrpFISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U79_dff (.q(XpiGilGrpGISRP13S),.d(XpiGilGrpGISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U80_dff (.q(XpiGilGrpHISRP13S),.d(XpiGilGrpHISRP12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Pulse Generation Logic
+
+DFFR #(1,1'b0) U81_dff (.q(XpiGilNewIntrEventP16S),.d(XpiGilNewIntrEventP14S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilNewIntrEventP15C = (XpiGilNewIntrEventP14S && (~XpiGilNewIntrEventP16S));
+
+DFFR #(1,1'b0) U82_dff (.q(XpiGilNewIntrEventP15S),.d(XpiGilNewIntrEventP15C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Muxing the Synchronized Data
+
+  assign XpiGilGrpAISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpAISRP13S : XpiGilGrpAISRP14S;
+DFFR #(32,32'b0) U83_dff (.q(XpiGilGrpAISRP14S),.d(XpiGilGrpAISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpBISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpBISRP13S : XpiGilGrpBISRP14S;
+DFFR #(32,32'b0) U84_dff (.q(XpiGilGrpBISRP14S),.d(XpiGilGrpBISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpCISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpCISRP13S : XpiGilGrpCISRP14S;
+DFFR #(32,32'b0) U85_dff (.q(XpiGilGrpCISRP14S),.d(XpiGilGrpCISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpDISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpDISRP13S : XpiGilGrpDISRP14S;
+DFFR #(32,32'b0) U86_dff (.q(XpiGilGrpDISRP14S),.d(XpiGilGrpDISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiGilGrpEISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpEISRP13S : XpiGilGrpEISRP14S;
+DFFR #(32,32'b0) U87_dff (.q(XpiGilGrpEISRP14S),.d(XpiGilGrpEISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpFISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpFISRP13S : XpiGilGrpFISRP14S;
+DFFR #(32,32'b0) U88_dff (.q(XpiGilGrpFISRP14S),.d(XpiGilGrpFISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpGISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpGISRP13S : XpiGilGrpGISRP14S;
+DFFR #(32,32'b0) U89_dff (.q(XpiGilGrpGISRP14S),.d(XpiGilGrpGISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiGilGrpHISRP14C = XpiGilNewIntrEventP15C ?
+	 XpiGilGrpHISRP13S : XpiGilGrpHISRP14S;
+DFFR #(32,32'b0) U90_dff (.q(XpiGilGrpHISRP14S),.d(XpiGilGrpHISRP14C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-----------------------------------------
+  //---- PCI -> CORE CLK Synchronization ----
+  //-----------------------------------------
+
+  // PCI Clk Sync Flop
+  
+  // Flopping the Write Clear Enable
+DFFR #(1,1'b0) U91_dff (.q(XpiGilGrpAISRWrP11S),.d(XpiGilGrpAISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U92_dff (.q(XpiGilGrpBISRWrP11S),.d(XpiGilGrpBISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U93_dff (.q(XpiGilGrpCISRWrP11S),.d(XpiGilGrpCISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U94_dff (.q(XpiGilGrpDISRWrP11S),.d(XpiGilGrpDISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U95_dff (.q(XpiGilGrpEISRWrP11S),.d(XpiGilGrpEISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U96_dff (.q(XpiGilGrpFISRWrP11S),.d(XpiGilGrpFISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U97_dff (.q(XpiGilGrpGISRWrP11S),.d(XpiGilGrpGISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U98_dff (.q(XpiGilGrpHISRWrP11S),.d(XpiGilGrpHISRWrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Flopping the Write Clear Data
+DFFR #(32,32'b0) U99_dff (.q(XpiGilWrClrDataP11S),.d(XpiPciAppGilDataP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+  // First Core Clock Sync Flop
+DFFR #(1,1'b0) U100_dff (.q(XpiGilGrpAISRWrP12S),.d(XpiGilGrpAISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U101_dff (.q(XpiGilGrpBISRWrP12S),.d(XpiGilGrpBISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U102_dff (.q(XpiGilGrpCISRWrP12S),.d(XpiGilGrpCISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U103_dff (.q(XpiGilGrpDISRWrP12S),.d(XpiGilGrpDISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U104_dff (.q(XpiGilGrpEISRWrP12S),.d(XpiGilGrpEISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U105_dff (.q(XpiGilGrpFISRWrP12S),.d(XpiGilGrpFISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U106_dff (.q(XpiGilGrpGISRWrP12S),.d(XpiGilGrpGISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U107_dff (.q(XpiGilGrpHISRWrP12S),.d(XpiGilGrpHISRWrP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U108_dff (.q(XpiGilWrClrDataP12S),.d(XpiGilWrClrDataP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Second Core Clock Sync Flop
+DFFR #(1,1'b0) U109_dff (.q(XpiGilGrpAISRWrP13S),.d(XpiGilGrpAISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U110_dff (.q(XpiGilGrpBISRWrP13S),.d(XpiGilGrpBISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U111_dff (.q(XpiGilGrpCISRWrP13S),.d(XpiGilGrpCISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U112_dff (.q(XpiGilGrpDISRWrP13S),.d(XpiGilGrpDISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U113_dff (.q(XpiGilGrpEISRWrP13S),.d(XpiGilGrpEISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U114_dff (.q(XpiGilGrpFISRWrP13S),.d(XpiGilGrpFISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U115_dff (.q(XpiGilGrpGISRWrP13S),.d(XpiGilGrpGISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U116_dff (.q(XpiGilGrpHISRWrP13S),.d(XpiGilGrpHISRWrP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U117_dff (.q(XpiGilWrClrDataP13S),.d(XpiGilWrClrDataP12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Flopping the Write Clear Enable
+DFFR #(1,1'b0) U118_dff (.q(XpiGilGrpAISRWrP15S),.d(XpiGilGrpAISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U119_dff (.q(XpiGilGrpBISRWrP15S),.d(XpiGilGrpBISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U120_dff (.q(XpiGilGrpCISRWrP15S),.d(XpiGilGrpCISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U121_dff (.q(XpiGilGrpDISRWrP15S),.d(XpiGilGrpDISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U122_dff (.q(XpiGilGrpEISRWrP15S),.d(XpiGilGrpEISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U123_dff (.q(XpiGilGrpFISRWrP15S),.d(XpiGilGrpFISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U124_dff (.q(XpiGilGrpGISRWrP15S),.d(XpiGilGrpGISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U125_dff (.q(XpiGilGrpHISRWrP15S),.d(XpiGilGrpHISRWrP13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Pulse Generation Logic
+
+  assign XpiGilGrpAISRWrP13C = (XpiGilGrpAISRWrP13S && (~XpiGilGrpAISRWrP15S));
+  assign XpiGilGrpBISRWrP13C = (XpiGilGrpBISRWrP13S && (~XpiGilGrpBISRWrP15S));
+  assign XpiGilGrpCISRWrP13C = (XpiGilGrpCISRWrP13S && (~XpiGilGrpCISRWrP15S));
+  assign XpiGilGrpDISRWrP13C = (XpiGilGrpDISRWrP13S && (~XpiGilGrpDISRWrP15S));
+  assign XpiGilGrpEISRWrP13C = (XpiGilGrpEISRWrP13S && (~XpiGilGrpEISRWrP15S));
+  assign XpiGilGrpFISRWrP13C = (XpiGilGrpFISRWrP13S && (~XpiGilGrpFISRWrP15S));
+  assign XpiGilGrpGISRWrP13C = (XpiGilGrpGISRWrP13S && (~XpiGilGrpGISRWrP15S));
+  assign XpiGilGrpHISRWrP13C = (XpiGilGrpHISRWrP13S && (~XpiGilGrpHISRWrP15S));
+
+DFFR #(1,1'b0) U126_dff (.q(XpiGilGrpAISRWrP14S),.d(XpiGilGrpAISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U127_dff (.q(XpiGilGrpBISRWrP14S),.d(XpiGilGrpBISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U128_dff (.q(XpiGilGrpCISRWrP14S),.d(XpiGilGrpCISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U129_dff (.q(XpiGilGrpDISRWrP14S),.d(XpiGilGrpDISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U130_dff (.q(XpiGilGrpEISRWrP14S),.d(XpiGilGrpEISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U131_dff (.q(XpiGilGrpFISRWrP14S),.d(XpiGilGrpFISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U132_dff (.q(XpiGilGrpGISRWrP14S),.d(XpiGilGrpGISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U133_dff (.q(XpiGilGrpHISRWrP14S),.d(XpiGilGrpHISRWrP13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Muxing the Synchronized Data
+  assign XpiGilWrClrEnP14C = (XpiGilGrpAISRWrP13C || XpiGilGrpBISRWrP13C ||
+			      XpiGilGrpCISRWrP13C || XpiGilGrpDISRWrP13C ||
+			      XpiGilGrpEISRWrP13C || XpiGilGrpFISRWrP13C ||
+			      XpiGilGrpGISRWrP13C || XpiGilGrpHISRWrP13C);
+  
+  assign XpiGilWrClrDataP14C = XpiGilWrClrEnP14C ?
+	 XpiGilWrClrDataP13S : XpiGilWrClrDataP14S;
+DFFR #(32,32'b0) U134_dff (.q(XpiGilWrClrDataP14S),.d(XpiGilWrClrDataP14C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+endmodule // xpigils
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:	

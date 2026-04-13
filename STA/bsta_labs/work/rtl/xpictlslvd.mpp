@@ -1,0 +1,928 @@
+
+`include "xpiuc.vh"
+
+//mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+
+module xpictlslvd ( /*AUTOARG*/
+  // Outputs
+  XpiCtlSlvPciDataIrdyPsn13S, XpiCtlSlvPciDataPsn13S, 
+  XpiCtlSlvPciCmdPsn13S, XpiCtlSlvPciArbReqPsn13S, 
+  XpiCtlSlvRbIrdyPns13S, XpiCtlSlvRbArbReqPns13S, 
+  XpiCtlSlvRbAddrPns13S, XpiCtlSlvRbCmdPns13S, 
+  XpiCtlSlvRbDataLenPns13S, XpiCtlSlvRbTxnIDPns13S, 
+  XpiCtlSlvRbTrdyPns13S, 
+  // Inputs
+  XpiPciClk, XpiCoreClk, GlCoreResetR00C, XpiPciAppFreq33P11S, 
+  XpiPciAppFreq66P11S, XpiPciAppFreq133P11S, 
+  XpiPciAppCtlSlvAddrIrdyP11S, XpiPciAppCtlSlvAddrP11S, 
+  XpiPciAppCtlSlvDataIrdyP11S, XpiPciAppCtlSlvDataP11S, 
+  XpiPciAppCtlSlvCmdP11S, XpiPciAppCtlSlvAttrP11S, 
+  XpiPciAppCtlSlvByteEnP11S, XpiPciAppCtlSlvLengthP11S, 
+  XpiPciAppCtlSlvValidTxnP11S, XpiPciArbCtlSlvStopP11S, 
+  XpiPciArbCtlSlvBusyP11S, XpiPciArbCtlSlvSrvP11S, 
+  XpiRbiCtlSlvGntPsn11S, XpiRbiCtlSlvStopPsn11S, 
+  XpiRbiCtlSlvIrdyPsn11S, XpiRbiCtlSlvCmdPsn11S, 
+  XpiRbiCtlSlvDataPsn11S, XpiRbiCtlSlvTrdyPsn11S, 
+  XpiRbiCtlSlvValidXfrPsn11S
+  );
+
+  parameter [2:0] TXNID = 3'b110;
+  
+  // Output Declaration
+  output                         XpiCtlSlvPciDataIrdyPsn13S;
+  output [`PCI_DATA_WIDTH-1:0] 	 XpiCtlSlvPciDataPsn13S;  
+  output [3:0] 			 XpiCtlSlvPciCmdPsn13S;   
+  output 			 XpiCtlSlvPciArbReqPsn13S;
+  
+  output 			 XpiCtlSlvRbIrdyPns13S;
+  output 			 XpiCtlSlvRbArbReqPns13S;
+  output [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvRbAddrPns13S;
+  output [3:0]                   XpiCtlSlvRbCmdPns13S; 
+  output [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataLenPns13S;
+  output [2:0]                   XpiCtlSlvRbTxnIDPns13S;
+  output                         XpiCtlSlvRbTrdyPns13S;
+  
+  // Input Declaration
+  input 			 XpiPciClk;
+  input 			 XpiCoreClk;
+  input 			 GlCoreResetR00C;
+
+  input 			 XpiPciAppFreq33P11S;
+  input 			 XpiPciAppFreq66P11S;
+  input 			 XpiPciAppFreq133P11S;
+  
+  input 			 XpiPciAppCtlSlvAddrIrdyP11S;
+  input [`PCI_ADDR_WIDTH-1:0] 	 XpiPciAppCtlSlvAddrP11S;  
+  input 			 XpiPciAppCtlSlvDataIrdyP11S;
+  input [`PCI_DATA_WIDTH-1:0] 	 XpiPciAppCtlSlvDataP11S;  
+  input [3:0] 			 XpiPciAppCtlSlvCmdP11S;   
+  input [`PCI_ATTR_WIDTH-1:0] 	 XpiPciAppCtlSlvAttrP11S;  
+  input [7:0] 			 XpiPciAppCtlSlvByteEnP11S;
+  input [`RQ_BYTECNT_WIDTH-1:0]  XpiPciAppCtlSlvLengthP11S;
+  input 			 XpiPciAppCtlSlvValidTxnP11S;
+
+  input 			 XpiPciArbCtlSlvStopP11S;
+  input 			 XpiPciArbCtlSlvBusyP11S;
+  input 			 XpiPciArbCtlSlvSrvP11S;
+  
+  input 			 XpiRbiCtlSlvGntPsn11S;
+  input 			 XpiRbiCtlSlvStopPsn11S;
+  input 			 XpiRbiCtlSlvIrdyPsn11S;
+  input [3:0] 			 XpiRbiCtlSlvCmdPsn11S; 
+  input [`RB_DATA_WIDTH-1:0] 	 XpiRbiCtlSlvDataPsn11S;
+  input 			 XpiRbiCtlSlvTrdyPsn11S;
+  input 			 XpiRbiCtlSlvValidXfrPsn11S;
+  
+  // Wire Declaration
+  wire 				 XpiCtlSlvRbIrdyPns13S;
+  
+  wire [`PCI_ADDR_WIDTH-1:0] 	 XpiCtlSlvPciAddrPns10S;
+
+  wire [`PCI_DATA_WIDTH-1:0] 	 XpiCtlSlvPciDataPns10S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvCoreSyncDataPns11S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvCoreSyncDataPns12S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataPns12C;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataPns12S;
+
+  wire [`BYTECNT_WIDTH-1:0] 	 XpiCtlSlvPciLengthPns10S;
+  wire [`BYTECNT_WIDTH-1:0] 	 XpiCtlSlvCoreSyncLengthPns11S;
+  wire [`BYTECNT_WIDTH-1:0] 	 XpiCtlSlvCoreSyncLengthPns12S;
+  wire [`BYTECNT_WIDTH-1:0] 	 XpiCtlSlvRbLengthPns12C;
+  wire [`BYTECNT_WIDTH-1:0] 	 XpiCtlSlvRbLengthPns12S;
+  
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvPciAddrPns11C;
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvCoreSyncAddrPns11S;
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvCoreSyncAddrPns12S;
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvRbAddrPns12C;
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvRbAddrPns12S;
+
+  wire 				 XpiCtlSlvRbIrdyPsn10S;
+  wire [3:0] 			 XpiCtlSlvRbCmdPsn10S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataPsn10S;
+  wire [3:0] 			 XpiCtlSlvRbCmdPsn11C;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataPsn11C;
+  wire [3:0] 			 XpiCtlSlvRbCmdPsn11S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataPsn11S;
+
+  wire                           XpiCtlSlvPciSyncIrdyPsn11S;
+  wire                           XpiCtlSlvPciSyncIrdyPsn12S;
+  wire                           XpiCtlSlvPciIrdyPsn12C;
+  wire                           XpiCtlSlvPciIrdyPsn12S;
+  wire                           XpiCtlSlvPciIrdyPsn13C;
+  wire                           XpiCtlSlvPciIrdyPsn13S;
+  wire                           XpiCtlSlvPciIrdyPsn14S;
+
+  wire [3:0]                     XpiCtlSlvPciSyncCmdPsn11S;
+  wire [3:0]                     XpiCtlSlvPciSyncCmdPsn12S;
+  wire [3:0]                     XpiCtlSlvPciCmdPsn12C;
+  wire [3:0]                     XpiCtlSlvPciCmdPsn12S;
+
+  wire [`RB_DATA_WIDTH-1:0]      XpiCtlSlvPciSyncDataPsn11S;
+  wire [`RB_DATA_WIDTH-1:0]      XpiCtlSlvPciSyncDataPsn12S;
+  wire [`RB_DATA_WIDTH-1:0]      XpiCtlSlvPciDataPsn12C;
+  wire [`RB_DATA_WIDTH-1:0]      XpiCtlSlvPciDataPsn12S;
+  
+  wire 				 XpiCtlSlvRbIrdyPsn10C;
+  wire [`PCI_DATA_WIDTH-1:0] 	 XpiCtlSlvPciDataPsn13C;
+  
+  wire [3:0] 			 XpiCtlSlvPciCmdPsn13S;
+  wire [`PCI_DATA_WIDTH-1:0] 	 XpiCtlSlvPciDataPsn13S;
+  
+  wire [`XPI_ADDR_WIDTH-1:0] 	 XpiCtlSlvRbAddrPns13S;
+  wire [3:0] 			 XpiCtlSlvRbCmdPns13S;
+  wire [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvRbDataLenPns13S;
+  wire 				 XpiCtlSlvRbTrdyPns13S;
+  wire [2:0] 			 XpiCtlSlvRbTxnIDPns13S;
+
+  wire 				 XpiCtlSlvIssueRbWrPns10S;
+  wire 				 XpiCtlSlvCoreSyncIssueRbWrPns11S;
+  wire 				 XpiCtlSlvCoreSyncIssueRbWrPns12S;
+  wire 				 XpiCtlSlvIssueRbWrPns12C;
+  wire 				 XpiCtlSlvIssueRbWrPns12S;
+  wire 				 XpiCtlSlvIssueRbWrPns13S;
+  wire 				 XpiCtlSlvRbWrEnPns13C;
+  wire 				 XpiCtlSlvRbWrEnPns13S;
+
+  wire 				 XpiCtlSlvIssueRbRdPns10S;
+  wire 				 XpiCtlSlvCoreSyncIssueRbRdPns11S;
+  wire 				 XpiCtlSlvCoreSyncIssueRbRdPns12S;
+  wire 				 XpiCtlSlvIssueRbRdPns12C;
+  wire 				 XpiCtlSlvIssueRbRdPns12S;
+  wire 				 XpiCtlSlvIssueRbRdPns13S;
+  wire 				 XpiCtlSlvRbRdEnPns13C;
+  wire 				 XpiCtlSlvRbRdEnPns13S;
+
+  wire 				 XpiCtlSlvRbWrRdRdyPns12C;
+  wire [3:0] 			 XpiCtlSlvAssertCntPsn10S;
+  
+  // Register Declaration
+  reg 				 XpiCtlSlvRbIrdyPsn11S;
+  reg   			 XpiCtlSlvRbArbReqPns13S;
+  
+  reg 				 XpiCtlSlvPciArbReqPsn13S;
+  reg 				 XpiCtlSlvPciDataIrdyPsn13S;
+  
+  reg 				 XpiCtlSlvIssueRbWrPns10C;
+  reg 				 XpiCtlSlvIssueRbRdPns10C;
+
+  reg [3:0] 			 XpiCtlSlvCmdPns13C ;
+  reg [`RB_DATA_WIDTH-1:0] 	 XpiCtlSlvDataLenPns13C;
+
+  reg 				 XpiCtlSlvAssertCntEnPsn10S;
+  reg [3:0] 			 XpiCtlSlvAssertCntPsn10C;
+
+  reg 				 XpiCtlSlvIssueRbWrPns13C;
+  reg 				 XpiCtlSlvIssueRbRdPns13C;
+  reg 				 XpiCtlSlvRbWrEnPns12C;
+  reg 				 XpiCtlSlvRbRdEnPns12C;
+  
+  
+  //===========================
+  //==== PCI CLOCK DOMAIN =====
+  //===========================
+
+  //------------------------------
+  //---- PCI->RB REQUEST PIPE ----
+  //------------------------------
+
+  //---- Input PCI CLK Register Stage ---
+  
+DFFR #(64,64'b0) U1_dff (.q(XpiCtlSlvPciAddrPns10S),.d(XpiPciAppCtlSlvAddrP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U2_dff (.q(XpiCtlSlvPciDataPns10S),.d(XpiPciAppCtlSlvDataP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U3_dff (.q(XpiCtlSlvPciLengthPns10S),.d(XpiPciAppCtlSlvLengthP11S[11:0]),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------
+  //---- Extracting Control Register Address ----
+  //---------------------------------------------
+  // Address[1:0]   account for 4B/register and are ignored.
+  // Address[10:2]  provides Offset to one of the possible 512 registers
+  // Address[15:11] indicates AGTID for one of the RBB out of
+  //                possible 32 RBB's
+  
+  assign XpiCtlSlvPciAddrPns11C = {3'b000,XpiCtlSlvPciAddrPns10S[15:2]};
+  
+  //-----------------------------------------------
+  //---- Ring Bus Control Reg Wr/Rd Control SM ----
+  //-----------------------------------------------
+  //** This State Machine services the Control Register
+  //** Write/Read Operations targeted to one of the Ring
+  //** Bus Agents. It asserts appropriate IRDY signal to
+  //** the RBI to inform a new transaction.
+  
+`define XPICTLSLVCNTLIDLE         2'b00
+`define XPICTLSLVCNTLWRADDR       2'b01
+`define XPICTLSLVCNTLWRDATA       2'b11
+`define XPICTLSLVCNTLRD           2'b10
+  
+  // Internal xpictlslvcntlstate variables
+  wire [1:0] 			 xpictlslvcntlstate;
+  reg [1:0] 			 next_xpictlslvcntlstate;
+  
+  //---- State Change ----
+  
+DFFR #(2,2'b0) U4_dff (.q(xpictlslvcntlstate),.d(next_xpictlslvcntlstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(xpictlslvcntlstate)
+    begin
+      
+      XpiCtlSlvIssueRbWrPns10C = 1'b0;
+      XpiCtlSlvIssueRbRdPns10C = 1'b0;
+      
+      case(xpictlslvcntlstate)
+	
+	`XPICTLSLVCNTLIDLE:
+	  begin
+	    XpiCtlSlvIssueRbWrPns10C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns10C = 1'b0;
+	  end
+	
+	`XPICTLSLVCNTLWRADDR: XpiCtlSlvIssueRbWrPns10C = 1'b0;
+	
+	`XPICTLSLVCNTLWRDATA: XpiCtlSlvIssueRbWrPns10C = 1'b1;
+	
+	`XPICTLSLVCNTLRD: XpiCtlSlvIssueRbRdPns10C = 1'b1;
+
+	default:
+	  begin
+	    XpiCtlSlvIssueRbWrPns10C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns10C = 1'b0;
+	  end
+
+      endcase // case(xpictlslvcntlstate)
+    end // always @ (xpictlslvcntlstate)
+
+  // State  Transitions
+
+  always @(/*AS*/XpiPciAppCtlSlvAddrIrdyP11S or XpiPciAppCtlSlvCmdP11S
+	   or XpiPciAppCtlSlvDataIrdyP11S
+	   or XpiPciAppCtlSlvValidTxnP11S or xpictlslvcntlstate)
+    begin
+    
+      case (xpictlslvcntlstate)
+
+	`XPICTLSLVCNTLIDLE:
+	  begin
+	    if ((XpiPciAppCtlSlvAddrIrdyP11S) && 
+		(XpiPciAppCtlSlvValidTxnP11S) &&
+		(XpiPciAppCtlSlvCmdP11S==`CTRLWR))
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLWRADDR;
+	    else if ((XpiPciAppCtlSlvAddrIrdyP11S) && 
+		     (XpiPciAppCtlSlvValidTxnP11S) &&
+		     (XpiPciAppCtlSlvCmdP11S==`CTRLRD))
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLRD;
+	    else
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLIDLE;
+	  end
+
+	`XPICTLSLVCNTLWRADDR:
+	  begin
+	    if (XpiPciAppCtlSlvDataIrdyP11S && XpiPciAppCtlSlvValidTxnP11S )
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLWRDATA;
+	    else
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLWRADDR;
+	  end
+	
+	`XPICTLSLVCNTLWRDATA:
+	  begin
+	    if (~XpiPciAppCtlSlvDataIrdyP11S)
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLIDLE;
+	    else
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLWRDATA;
+	  end
+
+	`XPICTLSLVCNTLRD:
+	  begin
+	    if (~XpiPciAppCtlSlvAddrIrdyP11S)
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLIDLE;
+	    else
+	      next_xpictlslvcntlstate = `XPICTLSLVCNTLRD;
+	  end
+
+	default: next_xpictlslvcntlstate = `XPICTLSLVCNTLIDLE;
+	
+      endcase // case(xpictlslvcntlstate)
+    end // always @ (...
+
+  // Note:: Attribute and ByteEn Field are not anticipated
+  // to be used on the Ring Bus
+  
+  //===========================
+  //==== CORE CLOCK DOMAIN ====
+  //===========================
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+  //----------------------------------------
+  //---- Pulse Generating State Machine ----
+  //----------------------------------------
+  // IssueWr & IssueRd Control Signals can be asserted for multiple Core
+  // Clock cycles out of Synchronization Logic, generating a Single Pulse
+
+`define XPICTLSLVPULSEIDLE     2'b00
+`define XPICTLSLVWRPULSEASSERT 2'b01
+`define XPICTLSLVRDPULSEASSERT 2'b10
+`define XPICTLSLVPULSEDEASSERT 2'b11
+
+  // Internal State Variables
+  wire [1:0] xpictlslvpulsestate;
+  reg [1:0]  next_xpictlslvpulsestate;
+  
+  //---- State Change ----
+DFFR #(2,2'b0) U5_dff (.q(xpictlslvpulsestate),.d(next_xpictlslvpulsestate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(xpictlslvpulsestate)
+    begin
+      
+      XpiCtlSlvRbWrEnPns12C = 1'b0;
+      XpiCtlSlvRbRdEnPns12C = 1'b0;
+      
+      case(xpictlslvpulsestate)
+
+	`XPICTLSLVPULSEIDLE:
+	  begin
+	    XpiCtlSlvRbWrEnPns12C = 1'b0;
+	    XpiCtlSlvRbRdEnPns12C = 1'b0;
+	  end
+	
+	`XPICTLSLVWRPULSEASSERT:
+	  begin
+	    XpiCtlSlvRbWrEnPns12C = 1'b1;
+	    XpiCtlSlvRbRdEnPns12C = 1'b0;
+	  end
+	
+	`XPICTLSLVRDPULSEASSERT:
+	  begin
+	    XpiCtlSlvRbWrEnPns12C = 1'b0;
+	    XpiCtlSlvRbRdEnPns12C = 1'b1;
+	  end
+	
+	`XPICTLSLVPULSEDEASSERT:
+	  begin
+	    XpiCtlSlvRbWrEnPns12C = 1'b0;
+	    XpiCtlSlvRbRdEnPns12C = 1'b0;
+	  end
+
+	default:
+	  begin
+	    XpiCtlSlvRbWrEnPns12C = 1'b0;
+	    XpiCtlSlvRbRdEnPns12C = 1'b0;
+	  end
+
+      endcase // case(xpictlslvirdystate)
+    end // always @ (xpictlslvirdystate)
+
+  //---- State Transitions ----
+
+  always @(/*AS*/XpiCtlSlvIssueRbRdPns12S or XpiCtlSlvIssueRbWrPns12S
+	   or xpictlslvpulsestate)
+    begin
+
+      case(xpictlslvpulsestate)
+
+	`XPICTLSLVPULSEIDLE:
+	  begin
+	    if (XpiCtlSlvIssueRbWrPns12S)
+	      next_xpictlslvpulsestate = `XPICTLSLVWRPULSEASSERT;
+	    else if (XpiCtlSlvIssueRbRdPns12S)
+	      next_xpictlslvpulsestate = `XPICTLSLVRDPULSEASSERT;
+	    else
+	      next_xpictlslvpulsestate = `XPICTLSLVPULSEIDLE;
+	  end
+
+	`XPICTLSLVWRPULSEASSERT:
+	  begin
+	    next_xpictlslvpulsestate = `XPICTLSLVPULSEDEASSERT;
+	  end
+
+	`XPICTLSLVRDPULSEASSERT:
+	  begin
+	    next_xpictlslvpulsestate = `XPICTLSLVPULSEDEASSERT;
+	  end
+
+	`XPICTLSLVPULSEDEASSERT:
+	  begin
+	    if ((~XpiCtlSlvIssueRbWrPns12S) && (~XpiCtlSlvIssueRbRdPns12S))
+	      next_xpictlslvpulsestate = `XPICTLSLVPULSEIDLE;
+	    else
+	      next_xpictlslvpulsestate = `XPICTLSLVPULSEDEASSERT;
+	  end
+
+	default : next_xpictlslvpulsestate = `XPICTLSLVPULSEIDLE;
+
+      endcase // case(xpictlslvpulsestate)
+    end // always @ (...
+  
+
+  //----------------------------------------------------------------------
+  //---- ReCirculating Write/Read Enables till Post Arbitration Phase ----
+  //----------------------------------------------------------------------
+
+  // Multi Cycle Delay for guaranting that En falls outside of 
+  // synchronization window
+  
+  assign XpiCtlSlvRbRdEnPns13C = (XpiCtlSlvRbRdEnPns12C || XpiCtlSlvIssueRbRdPns13C) ?
+				   XpiCtlSlvRbRdEnPns12C : XpiCtlSlvRbRdEnPns13S;
+  
+DFFR #(1,1'b0) U6_dff (.q(XpiCtlSlvRbRdEnPns13S),.d(XpiCtlSlvRbRdEnPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiCtlSlvRbWrEnPns13C = (XpiCtlSlvRbWrEnPns12C || XpiCtlSlvIssueRbWrPns13C) ?
+				   XpiCtlSlvRbWrEnPns12C : XpiCtlSlvRbWrEnPns13S;
+  
+DFFR #(1,1'b0) U7_dff (.q(XpiCtlSlvRbWrEnPns13S),.d(XpiCtlSlvRbWrEnPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //------------------------------
+  //---- Output Stage Control ----
+  //------------------------------
+  
+  // Qualifying Signals XpiCtlSlvIssueRbWrPns11S & XpiCtlSlvIssueRbRdPns11S
+  // can be asserted across multiple 333 MHz Core Clocks, this state
+  // machine absorbs the remaining cycles, and drives Irdy for only
+  // one clock cycle
+  
+`define XPICTLSLVIRDYIDLE      3'b000
+`define XPICTLSLVARBREQ        3'b001
+`define XPICTLSLVASSGRBWRIRDY  3'b011
+`define XPICTLSLVASSGRBRDIRDY  3'b101
+`define XPICTLSLVDEASSGIRDY    3'b111
+  
+  // Internal xpictlslvirdystate variables
+  wire [2:0] 			 xpictlslvirdystate;
+  reg [2:0] 			 next_xpictlslvirdystate;
+  
+  //---- State Change ----
+DFFR #(3,3'b0) U8_dff (.q(xpictlslvirdystate),.d(next_xpictlslvirdystate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(xpictlslvirdystate)
+    begin
+      
+      XpiCtlSlvIssueRbWrPns13C = 1'b0;
+      XpiCtlSlvIssueRbRdPns13C = 1'b0;
+      XpiCtlSlvRbArbReqPns13S  = 1'b0;
+      
+      case(xpictlslvirdystate)
+	
+	`XPICTLSLVIRDYIDLE: 
+	  begin
+	    XpiCtlSlvIssueRbWrPns13C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns13C = 1'b0;
+	    XpiCtlSlvRbArbReqPns13S  = 1'b0;
+	  end	    
+	
+	`XPICTLSLVARBREQ:
+	  begin
+	    XpiCtlSlvRbArbReqPns13S = 1'b1;
+	  end
+	
+	`XPICTLSLVASSGRBWRIRDY: 
+	  begin
+	    XpiCtlSlvRbArbReqPns13S  = 1'b0;
+	    XpiCtlSlvIssueRbWrPns13C = 1'b1;
+	    XpiCtlSlvIssueRbRdPns13C = 1'b0;
+	  end
+	
+	`XPICTLSLVASSGRBRDIRDY: 
+	  begin
+	    XpiCtlSlvRbArbReqPns13S  = 1'b0;
+	    XpiCtlSlvIssueRbWrPns13C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns13C = 1'b1;
+	  end
+	
+	`XPICTLSLVDEASSGIRDY: 
+	  begin
+	    XpiCtlSlvIssueRbWrPns13C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns13C = 1'b0;
+	  end
+
+	default:
+	  begin
+	    XpiCtlSlvIssueRbWrPns13C = 1'b0;
+	    XpiCtlSlvIssueRbRdPns13C = 1'b0;
+	    XpiCtlSlvRbArbReqPns13S  = 1'b0;
+	  end	    
+
+      endcase // case(xpictlslvirdystate)
+      
+    end // always @ (xpictlslvirdystate)
+  
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiCtlSlvIssueRbRdPns12S or XpiCtlSlvIssueRbWrPns12S
+	   or XpiCtlSlvRbRdEnPns13S or XpiCtlSlvRbWrEnPns13S
+	   or XpiRbiCtlSlvGntPsn11S or XpiRbiCtlSlvStopPsn11S
+	   or xpictlslvirdystate)
+    begin
+      
+      case (xpictlslvirdystate)
+
+	`XPICTLSLVIRDYIDLE:
+	  begin
+	    if ((XpiCtlSlvIssueRbWrPns12S || XpiCtlSlvIssueRbRdPns12S) &&
+		(~XpiRbiCtlSlvStopPsn11S))
+	      next_xpictlslvirdystate = `XPICTLSLVARBREQ;
+	    else
+	      next_xpictlslvirdystate = `XPICTLSLVIRDYIDLE;
+	  end
+	
+	`XPICTLSLVARBREQ:
+	  begin
+	    if (XpiCtlSlvRbWrEnPns13S && XpiRbiCtlSlvGntPsn11S)
+	      next_xpictlslvirdystate = `XPICTLSLVASSGRBWRIRDY;
+	    else if  (XpiCtlSlvRbRdEnPns13S && XpiRbiCtlSlvGntPsn11S)
+	      next_xpictlslvirdystate = `XPICTLSLVASSGRBRDIRDY;
+	    else
+	      next_xpictlslvirdystate = `XPICTLSLVARBREQ;
+	  end
+	
+	`XPICTLSLVASSGRBWRIRDY: next_xpictlslvirdystate = `XPICTLSLVDEASSGIRDY;
+	
+	`XPICTLSLVASSGRBRDIRDY: next_xpictlslvirdystate = `XPICTLSLVDEASSGIRDY;
+
+	`XPICTLSLVDEASSGIRDY:
+	  begin
+	    if( ~(XpiCtlSlvRbWrEnPns13S || XpiCtlSlvRbRdEnPns13S) )
+	      next_xpictlslvirdystate = `XPICTLSLVIRDYIDLE;
+	    else
+	      next_xpictlslvirdystate = `XPICTLSLVDEASSGIRDY;
+	  end
+	
+	default: next_xpictlslvirdystate = `XPICTLSLVIRDYIDLE;
+	
+      endcase // case(xpictlslvirdystate)
+    end // always @ (...
+
+  
+  //---- Command Selection ----
+  
+  always @(/*AS*/XpiCtlSlvIssueRbRdPns13C or XpiCtlSlvIssueRbWrPns13C)
+    begin
+      if (XpiCtlSlvIssueRbWrPns13C)
+	XpiCtlSlvCmdPns13C = `CTRLWR;
+      else if (XpiCtlSlvIssueRbRdPns13C)
+	XpiCtlSlvCmdPns13C = `CTRLRD;
+      else
+	XpiCtlSlvCmdPns13C = `NULL;
+    end
+  
+  //---- Data or Length Selection ----
+
+  always @(/*AS*/XpiCtlSlvIssueRbRdPns13C or XpiCtlSlvIssueRbWrPns13C
+	   or XpiCtlSlvRbDataPns12S or XpiCtlSlvRbLengthPns12S)
+    begin
+      if (XpiCtlSlvIssueRbWrPns13C)
+	XpiCtlSlvDataLenPns13C = XpiCtlSlvRbDataPns12S;
+      else if (XpiCtlSlvIssueRbRdPns13C)
+	XpiCtlSlvDataLenPns13C = {20'h00000,XpiCtlSlvRbLengthPns12S};
+      else
+	XpiCtlSlvDataLenPns13C = `RB_DATA_WIDTH'h00000000;
+    end
+
+  //-------------------------------
+  //---- Output Register Stage ----
+  //-------------------------------
+  
+  assign XpiCtlSlvRbIrdyPns13S = (XpiCtlSlvIssueRbWrPns13C || 
+				  XpiCtlSlvIssueRbRdPns13C);
+  
+  assign XpiCtlSlvRbAddrPns13S    = XpiCtlSlvRbAddrPns12S;
+  assign XpiCtlSlvRbCmdPns13S     = XpiCtlSlvCmdPns13C;
+  assign XpiCtlSlvRbDataLenPns13S = XpiCtlSlvDataLenPns13C;
+  
+  assign XpiCtlSlvRbTxnIDPns13S = TXNID;
+  assign XpiCtlSlvRbTrdyPns13S = 1'b1;
+  
+  //-------------------------------
+  //---- RB->PCI RESPONSE PIPE ----
+  //-------------------------------
+  
+  assign XpiCtlSlvRbIrdyPsn10C = (XpiRbiCtlSlvIrdyPsn11S && XpiRbiCtlSlvValidXfrPsn11S);
+  
+  //----- Input Register Stage ----
+
+DFFR #(1,1'b0) U9_dff (.q(XpiCtlSlvRbIrdyPsn10S),.d(XpiCtlSlvRbIrdyPsn10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U10_dff (.q(XpiCtlSlvRbCmdPsn10S),.d(XpiRbiCtlSlvCmdPsn11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U11_dff (.q(XpiCtlSlvRbDataPsn10S),.d(XpiRbiCtlSlvDataPsn11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  //-----------------------------------------------------------
+  //---- Control Slave PCI Interface Control State Machine ----
+  //-----------------------------------------------------------
+  //** This SM Arbitrates for PCI Access and upon receiving Grant
+  //** from the PCI Arbiter issues Control Read Completion
+
+  // ReCirculating IRDY until completion is issued
+  assign XpiCtlSlvPciIrdyPsn13C = (XpiCtlSlvPciIrdyPsn12C || XpiCtlSlvPciArbReqPsn13S) ?
+				    XpiCtlSlvPciIrdyPsn12C : XpiCtlSlvPciIrdyPsn13S;
+  
+DFFR #(1,1'b0) U12_dff (.q(XpiCtlSlvPciIrdyPsn13S),.d(XpiCtlSlvPciIrdyPsn13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+`define XPICTLSLVPCIINFIDLE    2'b00
+`define XPICTLSLVPCIINFARBREQ  2'b01
+`define XPICTLSLVPCIINFRDCMP   2'b11
+  
+  // Internal xpictlslvpciinfstate variables
+  wire [1:0] xpictlslvpciinfstate;
+  reg [1:0]  next_xpictlslvpciinfstate;
+  
+  //---- State Change ----
+DFFR #(2,2'b0) U13_dff (.q(xpictlslvpciinfstate),.d(next_xpictlslvpciinfstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(xpictlslvpciinfstate)
+    begin
+     
+      XpiCtlSlvPciArbReqPsn13S   = 1'b0;
+      XpiCtlSlvPciDataIrdyPsn13S = 1'b0;
+      
+      case(xpictlslvpciinfstate)
+	
+	`XPICTLSLVPCIINFIDLE: 
+	  begin
+	    XpiCtlSlvPciArbReqPsn13S   = 1'b0;
+	    XpiCtlSlvPciDataIrdyPsn13S = 1'b0;
+	  end
+	
+	`XPICTLSLVPCIINFARBREQ:
+	  begin
+	    XpiCtlSlvPciArbReqPsn13S   = 1'b1;
+	    XpiCtlSlvPciDataIrdyPsn13S = 1'b0;
+	  end
+
+	`XPICTLSLVPCIINFRDCMP:
+	  begin
+	    XpiCtlSlvPciArbReqPsn13S   = 1'b0;
+	    XpiCtlSlvPciDataIrdyPsn13S = 1'b1;
+	  end
+
+	default:
+	  begin
+	    XpiCtlSlvPciArbReqPsn13S   = 1'b0;
+	    XpiCtlSlvPciDataIrdyPsn13S = 1'b0;
+	  end
+	
+      endcase // case(xpictlslvpciinfstate)
+    end // always @ (xpictlslvpciinfstate)
+    
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiCtlSlvPciIrdyPsn13S or XpiPciArbCtlSlvBusyP11S
+	   or XpiPciArbCtlSlvSrvP11S or XpiPciArbCtlSlvStopP11S
+	   or xpictlslvpciinfstate)
+    begin
+      
+      case (xpictlslvpciinfstate)
+
+	`XPICTLSLVPCIINFIDLE:
+	  begin
+	    if (XpiCtlSlvPciIrdyPsn13S && (~XpiPciArbCtlSlvStopP11S) && 
+		(~XpiPciArbCtlSlvBusyP11S))
+	      next_xpictlslvpciinfstate = `XPICTLSLVPCIINFARBREQ;
+	    else
+	      next_xpictlslvpciinfstate = `XPICTLSLVPCIINFIDLE;
+	  end
+	
+	`XPICTLSLVPCIINFARBREQ:
+	  begin
+	    if (XpiPciArbCtlSlvSrvP11S && (~XpiPciArbCtlSlvBusyP11S))
+	      next_xpictlslvpciinfstate = `XPICTLSLVPCIINFRDCMP;
+	    else
+	      next_xpictlslvpciinfstate = `XPICTLSLVPCIINFARBREQ;
+	  end
+	
+	`XPICTLSLVPCIINFRDCMP: next_xpictlslvpciinfstate = `XPICTLSLVPCIINFIDLE;
+	
+	default: next_xpictlslvpciinfstate = `XPICTLSLVPCIINFIDLE;
+	
+      endcase // case(xpictlslvpciinfstate)
+    end // always @ (...
+  
+  //------------------------------------
+  //---- PCI Output Register Stage -----  
+  //------------------------------------
+  
+  assign XpiCtlSlvPciDataPsn13C = {`RB_DATA_WIDTH'h00000000,XpiCtlSlvPciDataPsn12S};
+  
+  assign XpiCtlSlvPciCmdPsn13S  = XpiCtlSlvPciCmdPsn12S;
+  assign XpiCtlSlvPciDataPsn13S = XpiCtlSlvPciDataPsn13C;
+  
+  //==============================
+  //==== SYNCHRONIZATION LOGIC====
+  //==============================
+
+  //---------------------------------------------
+  //---- PCI CLK -> CORE CLK Synchronization ----
+  //---------------------------------------------
+
+  //---- PCI Sync Flop ----
+  
+DFFR #(1,1'b0) U14_dff (.q(XpiCtlSlvIssueRbWrPns10S),.d(XpiCtlSlvIssueRbWrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U15_dff (.q(XpiCtlSlvIssueRbRdPns10S),.d(XpiCtlSlvIssueRbRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+  
+  //---- First CORE CLK (333MHz) Synchronizing Flop Stage ----
+  
+DFFR #(1,1'b0) U16_dff (.q(XpiCtlSlvCoreSyncIssueRbWrPns11S),.d(XpiCtlSlvIssueRbWrPns10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U17_dff (.q(XpiCtlSlvCoreSyncIssueRbRdPns11S),.d(XpiCtlSlvIssueRbRdPns10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(17,17'b0) U18_dff (.q(XpiCtlSlvCoreSyncAddrPns11S),.d(XpiCtlSlvPciAddrPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U19_dff (.q(XpiCtlSlvCoreSyncDataPns11S),.d(XpiCtlSlvPciDataPns10S[`RB_DATA_WIDTH-1:0]),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U20_dff (.q(XpiCtlSlvCoreSyncLengthPns11S),.d(XpiCtlSlvPciLengthPns10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Second CORE CLK (CoreSyncMHz) Synchronizing Flop Stage ----
+  
+DFFR #(1,1'b0) U21_dff (.q(XpiCtlSlvCoreSyncIssueRbWrPns12S),.d(XpiCtlSlvCoreSyncIssueRbWrPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U22_dff (.q(XpiCtlSlvCoreSyncIssueRbRdPns12S),.d(XpiCtlSlvCoreSyncIssueRbRdPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(17,17'b0) U23_dff (.q(XpiCtlSlvCoreSyncAddrPns12S),.d(XpiCtlSlvCoreSyncAddrPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U24_dff (.q(XpiCtlSlvCoreSyncDataPns12S),.d(XpiCtlSlvCoreSyncDataPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U25_dff (.q(XpiCtlSlvCoreSyncLengthPns12S),.d(XpiCtlSlvCoreSyncLengthPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Synchronized Control Signals ----
+  
+DFFR #(1,1'b0) U26_dff (.q(XpiCtlSlvIssueRbWrPns12S),.d(XpiCtlSlvCoreSyncIssueRbWrPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U27_dff (.q(XpiCtlSlvIssueRbRdPns12S),.d(XpiCtlSlvCoreSyncIssueRbRdPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- Pulse Generation Logic ----
+
+DFFR #(1,1'b0) U28_dff (.q(XpiCtlSlvIssueRbWrPns13S),.d(XpiCtlSlvIssueRbWrPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U29_dff (.q(XpiCtlSlvIssueRbRdPns13S),.d(XpiCtlSlvIssueRbRdPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  assign XpiCtlSlvIssueRbWrPns12C = (XpiCtlSlvIssueRbWrPns12S && (~XpiCtlSlvIssueRbWrPns13S));
+  assign XpiCtlSlvIssueRbRdPns12C = (XpiCtlSlvIssueRbRdPns12S && (~XpiCtlSlvIssueRbRdPns13S));
+  
+  //---- Muxing the Synchronized Data ----
+  
+  assign XpiCtlSlvRbWrRdRdyPns12C = (XpiCtlSlvIssueRbWrPns12C || 
+				     XpiCtlSlvIssueRbRdPns12C);
+  
+  assign XpiCtlSlvRbAddrPns12C = XpiCtlSlvRbWrRdRdyPns12C ?
+	 XpiCtlSlvCoreSyncAddrPns12S : XpiCtlSlvRbAddrPns12S;
+DFFR #(17,17'b0) U30_dff (.q(XpiCtlSlvRbAddrPns12S),.d(XpiCtlSlvRbAddrPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiCtlSlvRbDataPns12C = XpiCtlSlvRbWrRdRdyPns12C ?
+	 XpiCtlSlvCoreSyncDataPns12S : XpiCtlSlvRbDataPns12S;
+DFFR #(32,32'b0) U31_dff (.q(XpiCtlSlvRbDataPns12S),.d(XpiCtlSlvRbDataPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiCtlSlvRbLengthPns12C = XpiCtlSlvRbWrRdRdyPns12C ?
+	 XpiCtlSlvCoreSyncLengthPns12S : XpiCtlSlvRbLengthPns12S;
+DFFR #(12,12'b0) U32_dff (.q(XpiCtlSlvRbLengthPns12S),.d(XpiCtlSlvRbLengthPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------
+  //---- CORE CLK -> PCI CLK Synchronization ----
+  //---------------------------------------------
+  
+  //-------------------------------------
+  //---- Synchronizing State Machine ----
+  //-------------------------------------
+  //** 2.5*CoreClk (333MHz) == PciClk(133MHz)
+  //** 5*CoreClk (333MHz) == PciClk(66MHz)
+  //** 10*CoreClk (333MHz) == PciClk(33MHz)  
+  //** A single CoreClk Pulse is to be asserted for 5+1=6
+  //** Core Clk cycles to result into a single PCI Clk Pulse
+  
+`define XPICTLSLVCPSYNCIDLE        1'b0
+`define XPICTLSLVCPSYNCIRDYASSERT  1'b1
+  
+  // Internal xpipktrxcpsyncstate variables
+  wire 	 xpipktrxcpsyncstate;
+  reg 	 next_xpipktrxcpsyncstate;
+  
+  //---- State Change ----
+  
+DFFR #(1,1'b0) U33_dff (.q(xpipktrxcpsyncstate),.d(next_xpipktrxcpsyncstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+  
+  always @(/*AS*/xpipktrxcpsyncstate)
+    begin
+
+      XpiCtlSlvRbIrdyPsn11S      = 1'b0;
+      XpiCtlSlvAssertCntEnPsn10S = 1'b0;
+      
+      case(xpipktrxcpsyncstate)
+	
+        `XPICTLSLVCPSYNCIDLE:
+	  begin
+	    XpiCtlSlvRbIrdyPsn11S      = 1'b0;
+	    XpiCtlSlvAssertCntEnPsn10S = 1'b0;
+	  end
+
+	`XPICTLSLVCPSYNCIRDYASSERT:
+	  begin
+	    XpiCtlSlvRbIrdyPsn11S      = 1'b1;
+	    XpiCtlSlvAssertCntEnPsn10S = 1'b1;
+	  end
+
+	default:
+	  begin
+	    XpiCtlSlvRbIrdyPsn11S      = 1'b0;
+	    XpiCtlSlvAssertCntEnPsn10S = 1'b0;
+	  end
+
+      endcase // case(xpipktrxcpsyncstate)
+    end // always @ (...
+  
+  //---- State Transition ----
+  
+  always @(/*AS*/XpiCtlSlvAssertCntPsn10S or XpiCtlSlvRbIrdyPsn10S
+	   or XpiPciAppFreq133P11S or XpiPciAppFreq33P11S
+	   or XpiPciAppFreq66P11S or xpipktrxcpsyncstate)
+    begin
+      
+      case (xpipktrxcpsyncstate)
+        
+	`XPICTLSLVCPSYNCIDLE:
+	  begin
+	    if (XpiCtlSlvRbIrdyPsn10S)
+	      next_xpipktrxcpsyncstate = `XPICTLSLVCPSYNCIRDYASSERT;
+	    else
+	      next_xpipktrxcpsyncstate = `XPICTLSLVCPSYNCIDLE;
+	  end
+	
+	`XPICTLSLVCPSYNCIRDYASSERT:
+	  begin
+	    if ((XpiPciAppFreq133P11S && (XpiCtlSlvAssertCntPsn10S == 4'b0011)) ||
+		(XpiPciAppFreq66P11S  && (XpiCtlSlvAssertCntPsn10S == 4'b0110)) ||
+		(XpiPciAppFreq33P11S  && (XpiCtlSlvAssertCntPsn10S ==4'b1100)))
+	      next_xpipktrxcpsyncstate = `XPICTLSLVCPSYNCIDLE;
+	    else
+	      next_xpipktrxcpsyncstate = `XPICTLSLVCPSYNCIRDYASSERT;
+	  end
+	
+	default: next_xpipktrxcpsyncstate = `XPICTLSLVCPSYNCIDLE;
+	
+      endcase // case(xpipktrxcpsyncstate)
+    end // always @ (...
+
+  //---- Signal Assertion Counter ----
+
+  always @(/*AS*/XpiCtlSlvAssertCntEnPsn10S
+	   or XpiCtlSlvAssertCntPsn10S)
+    begin
+      if (XpiCtlSlvAssertCntEnPsn10S)
+	XpiCtlSlvAssertCntPsn10C = {XpiCtlSlvAssertCntPsn10S + 4'h1};
+      else if (XpiCtlSlvAssertCntPsn10S == 4'hf)
+	XpiCtlSlvAssertCntPsn10C = {4{1'b0}};
+      else
+	XpiCtlSlvAssertCntPsn10C = {4{1'b0}};
+    end
+
+DFFR #(4,4'b0) U34_dff (.q(XpiCtlSlvAssertCntPsn10S),.d(XpiCtlSlvAssertCntPsn10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- ReCirculating Data & Command ----
+  //** Data and Command received from the Rbi are active only for one Core
+  //** Clk, however Data & Cmd are required to have same value until
+  //** Core Clock to Pci Clk synchronization occurs and correct
+  //** value is latched in Pci Clk Domain.
+  
+  assign XpiCtlSlvRbCmdPsn11C = XpiCtlSlvRbIrdyPsn10S ?
+				XpiCtlSlvRbCmdPsn10S : XpiCtlSlvRbCmdPsn11S;
+DFFR #(4,4'b0) U35_dff (.q(XpiCtlSlvRbCmdPsn11S),.d(XpiCtlSlvRbCmdPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiCtlSlvRbDataPsn11C = XpiCtlSlvRbIrdyPsn10S ?
+	 XpiCtlSlvRbDataPsn10S : XpiCtlSlvRbDataPsn11S;
+DFFR #(32,32'b0) U36_dff (.q(XpiCtlSlvRbDataPsn11S),.d(XpiCtlSlvRbDataPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  //----- First PCI CLK Synchronizing flop ----
+DFFR #(1,1'b0) U37_dff (.q(XpiCtlSlvPciSyncIrdyPsn11S),.d(XpiCtlSlvRbIrdyPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(4,4'b0) U38_dff (.q(XpiCtlSlvPciSyncCmdPsn11S),.d(XpiCtlSlvRbCmdPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U39_dff (.q(XpiCtlSlvPciSyncDataPsn11S),.d(XpiCtlSlvRbDataPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //----- Second PCI CLK Synchronizing flop ----
+DFFR #(1,1'b0) U40_dff (.q(XpiCtlSlvPciSyncIrdyPsn12S),.d(XpiCtlSlvPciSyncIrdyPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(4,4'b0) U41_dff (.q(XpiCtlSlvPciSyncCmdPsn12S),.d(XpiCtlSlvPciSyncCmdPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U42_dff (.q(XpiCtlSlvPciSyncDataPsn12S),.d(XpiCtlSlvPciSyncDataPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Synchronized Control Signals ----
+DFFR #(1,1'b0) U43_dff (.q(XpiCtlSlvPciIrdyPsn12S),.d(XpiCtlSlvPciSyncIrdyPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Pulse Generation Logic ----
+DFFR #(1,1'b0) U44_dff (.q(XpiCtlSlvPciIrdyPsn14S),.d(XpiCtlSlvPciIrdyPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  assign XpiCtlSlvPciIrdyPsn12C = (XpiCtlSlvPciIrdyPsn12S && (~XpiCtlSlvPciIrdyPsn14S));
+  
+  //---- Muxing Synchronized Data ----
+  assign XpiCtlSlvPciDataPsn12C = XpiCtlSlvPciIrdyPsn12C ?
+	 XpiCtlSlvPciSyncDataPsn12S : XpiCtlSlvPciDataPsn12S;
+DFFR #(32,32'b0) U45_dff (.q(XpiCtlSlvPciDataPsn12S),.d(XpiCtlSlvPciDataPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiCtlSlvPciCmdPsn12C = XpiCtlSlvPciIrdyPsn12C ?
+	 XpiCtlSlvPciSyncCmdPsn12S : XpiCtlSlvPciCmdPsn12S;
+DFFR #(4,4'b0) U46_dff (.q(XpiCtlSlvPciCmdPsn12S),.d(XpiCtlSlvPciCmdPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  
+endmodule
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:

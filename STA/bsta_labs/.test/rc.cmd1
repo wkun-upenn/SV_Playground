@@ -1,0 +1,9 @@
+# Cadence Encounter(R) RTL Compiler
+#   version v08.10-s203_1 (32-bit) built Nov 20 2008
+#
+# Run with the following arguments:
+#   -files ./.test/script1.cmd
+#   -logfile ./.test/rc.log
+#   -cmdfile ./.test/rc.cmd
+
+source ./.test/script1.cmd

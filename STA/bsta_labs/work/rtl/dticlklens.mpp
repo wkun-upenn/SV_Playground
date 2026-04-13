@@ -1,0 +1,312 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dticlklens (
+   /*AUTOARG*/
+   // Outputs
+   DtiPrefOverSelS, DtiPrefOverSelReadyS, DtiClkLenCtrlS, 
+   // Inputs
+   DtiCsixClk, DtiCsixSoftResetSynZ01SL, DtiDoTrainingC, DtiPosMaskS, 
+   DtiNegMaskS, DtiClkLenWrEnC, DtiWrDataS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Output signals
+   output [`DTI_OSAMPLE_SEL_WIDTH-1:0] DtiPrefOverSelS;
+   output                              DtiPrefOverSelReadyS;
+
+   // Register read value
+   output [`DTI_CLKLEN_CTRL_WIDTH-1:0] DtiClkLenCtrlS;
+
+
+   // Common inputs
+   input                               DtiCsixClk;
+   input                               DtiCsixSoftResetSynZ01SL;
+   input                               DtiDoTrainingC;
+
+   // Clock phase overlap masks for the positive & negative phases.
+   // These have not yet been synchronized to DtiCsixClk.
+   input [`DTI_CLK_MASK_WIDTH-1:0]     DtiPosMaskS;
+   input [`DTI_CLK_MASK_WIDTH-1:0]     DtiNegMaskS;
+
+   // Register write controls
+   input                               DtiClkLenWrEnC;
+   input [10:0]                        DtiWrDataS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [`DTI_CLK_MASK_WIDTH-1:0]      DtiPosMaskLocalS;
+   wire [`DTI_CLK_MASK_WIDTH-1:0]      DtiNegMaskLocalS;
+
+   wire [`DTI_CLK_PHASE_WIDTH-1:0]      DtiPosLenC;
+   wire [`DTI_CLK_PHASE_WIDTH-1:0]      DtiNegLenC;
+
+   wire [`DTI_CLK_PHASE_WIDTH-1:0]      DtiPosLenS;
+   wire [`DTI_CLK_PHASE_WIDTH-1:0]      DtiNegLenS;
+
+   wire [`DTI_CLK_CYCLE_WIDTH-1:0]      DtiClkLenC;
+   wire [`DTI_CLK_CYCLE_WIDTH-1:0]      DtiClkLenS;
+
+   wire [`DTI_CLK_LEN_AVG_WIDTH-1:0]    DtiAdjAvgClkLenC;
+   wire [`DTI_CLK_LEN_AVG_WIDTH-1:0]    DtiNewAvgClkLenC;
+   wire [`DTI_CLK_LEN_AVG_WIDTH-1:0]    DtiAvgClkLenS;
+   wire [`DTI_CLK_LEN_AVG_WIDTH-`DTI_CLK_LEN_IGNORE_LOW-1:0] DtiAvgClkLenC;
+   wire [`DTI_CLK_LEN_AVG_WIDTH-`DTI_CLK_LEN_IGNORE_LOW-1:0] DtiChoppedLenS;
+
+   wire [`DTI_CLK_AVG_PERIOD_WIDTH-1:0] DtiNewClkCountC;
+   wire [`DTI_CLK_AVG_PERIOD_WIDTH-1:0] DtiClkCountS;
+
+   wire [`DTI_RESET_LENGTH_WIDTH-1:0]   DtiResetCountC;
+   wire [`DTI_RESET_LENGTH_WIDTH-1:0]   DtiResetCountS;
+   wire                                 DtiEnResetCountC;
+
+   wire                                 DtiLastCycleOfPeriodC;
+   wire                                 DtiFirstCycleOfPeriodS;
+   wire                                 DtiNextPrefOverSelReadyC;
+   wire                                 DtiPrefOverSelReadyS;
+
+   reg [`DTI_OSAMPLE_SEL_WIDTH-1:0]     DtiPrefOverSelC;
+   wire [`DTI_OSAMPLE_SEL_WIDTH-1:0]    DtiPrefOverSelS;
+
+// surefire lint_off UDDSDN
+   wire                                 DtiDummyCarryC;
+// surefire lint_on UDDSDN
+
+   // I can't make lint happy without involving an extra wire.
+// surefire lint_off UDDSCU
+   wire                                 DtiZeroJnC = 1'b0;
+// surefire lint_on UDDSCU
+
+   wire [`DTI_CLKLEN_CTRL_WIDTH-1:0]    DtiClkLenCtrlS;
+   wire [`DTI_CLKLEN_CTRL_WIDTH-1:0]    DtiNextClkLenCtrlC;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // Synchronize masks to DtiCsixClk.
+   // We assume that DtiCsixClk has a convenient
+   // timing relationship to the source clock.
+
+DFF #(31) U1_dff (.q(DtiPosMaskLocalS),.d(DtiPosMaskS),.clk(DtiCsixClk));
+DFF #(31) U2_dff (.q(DtiNegMaskLocalS),.d(DtiNegMaskS),.clk(DtiCsixClk));
+
+
+   // stage 1
+
+   dtimasktolens U0_dtimasktolens (
+      // Outputs
+      .DtiPhaseLenC  (DtiPosLenC[`DTI_CLK_PHASE_WIDTH-1:0]),
+      // Inputs
+      .DtiPhaseMaskS (DtiPosMaskLocalS[`DTI_CLK_MASK_WIDTH-1:0])
+   );
+
+   dtimasktolens U1_dtimasktolens (
+      // Outputs
+      .DtiPhaseLenC  (DtiNegLenC[`DTI_CLK_PHASE_WIDTH-1:0]),
+      // Inputs
+      .DtiPhaseMaskS (~DtiNegMaskLocalS[`DTI_CLK_MASK_WIDTH-1:0])
+   );
+
+
+   // stage 2
+
+DFF #(5) U3_dff (.q(DtiPosLenS),.d(DtiPosLenC),.clk(DtiCsixClk));
+DFF #(5) U4_dff (.q(DtiNegLenS),.d(DtiNegLenC),.clk(DtiCsixClk));
+
+ADD #(5) U5_add (.s(DtiClkLenC),.a(DtiPosLenS),.b(DtiNegLenS),.ci(DtiZeroJnC));
+
+
+
+
+
+
+
+   // stage 3
+
+DFF #(6) U6_dff (.q(DtiClkLenS),.d(DtiClkLenC),.clk(DtiCsixClk));
+
+   assign DtiAdjAvgClkLenC =
+          (~|DtiClkCountS) ? {`DTI_CLK_LEN_AVG_WIDTH{1'b0}} : DtiAvgClkLenS;
+
+ADD #(13) U7_add (.s({DtiDummyCarryC, DtiNewAvgClkLenC}),.a(DtiAdjAvgClkLenC),.b({{`DTI_CLK_AVG_PERIOD_WIDTH{1'b0}}, DtiClkLenS}),.ci(DtiZeroJnC));
+
+
+
+
+
+
+INC #(7) U8_inc (.s(DtiNewClkCountC),.a(DtiClkCountS));
+
+
+
+
+DFF #(13) U9_dff (.q(DtiAvgClkLenS),.d(DtiNewAvgClkLenC),.clk(DtiCsixClk));
+DFFR #(7,`DTI_CLK_SKIP) U10_dff (.q(DtiClkCountS),.d(DtiNewClkCountC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+   // stage 4: convert the average clock length to an oversample selection
+   // and save it for future use
+
+   assign DtiChoppedLenS = DtiAvgClkLenS[`DTI_CLK_LEN_AVG_WIDTH-1:
+                                         `DTI_CLK_LEN_IGNORE_LOW];
+
+   // If software is forcing a particular clock length, use that one instead
+   // of the measured value.
+   assign DtiAvgClkLenC =
+          DtiClkLenCtrlS[0] ? DtiClkLenCtrlS[10:1] : DtiChoppedLenS;
+
+
+   always @(/*AUTOSENSE*/DtiAvgClkLenC) begin
+      case (1'b1) // 0in case -default -active DtiFirstCycleOfPeriodS -clock DtiCsixClk
+// surefire lint_off CWECSB CWECSM ASWCBS ASWCBM
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_0_M): DtiPrefOverSelC = 0;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_1_M): DtiPrefOverSelC = 1;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_2_M): DtiPrefOverSelC = 2;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_3_M): DtiPrefOverSelC = 3;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_4_M): DtiPrefOverSelC = 4;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_5_M): DtiPrefOverSelC = 5;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_6_M): DtiPrefOverSelC = 6;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_7_M): DtiPrefOverSelC = 7;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_8_M): DtiPrefOverSelC = 8;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_9_M): DtiPrefOverSelC = 9;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_10_M): DtiPrefOverSelC = 10;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_11_M): DtiPrefOverSelC = 11;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_12_M): DtiPrefOverSelC = 12;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_13_M): DtiPrefOverSelC = 13;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_14_M): DtiPrefOverSelC = 14;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_15_M): DtiPrefOverSelC = 15;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_16_M): DtiPrefOverSelC = 16;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_17_M): DtiPrefOverSelC = 17;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_18_M): DtiPrefOverSelC = 18;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_19_M): DtiPrefOverSelC = 19;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_20_M): DtiPrefOverSelC = 20;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_21_M): DtiPrefOverSelC = 21;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_22_M): DtiPrefOverSelC = 22;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_23_M): DtiPrefOverSelC = 23;
+        (DtiAvgClkLenC <= `DTI_OSAMPLE_24_M): DtiPrefOverSelC = 24;
+// surefire lint_on CWECSB CWECSM ASWCBS ASWCBM
+        default:              DtiPrefOverSelC = {`DTI_OSAMPLE_SEL_WIDTH{1'bx}};
+      endcase // case(1'b1)
+   end // always @(...)
+
+
+   // Count off the required number of clock periods after reset to allow
+   // the supersample synchronization logic to settle down.
+
+INC #(1) U11_inc (.s(DtiResetCountC),.a(DtiResetCountS));
+
+// surefire lint_off CWECSM
+   assign DtiEnResetCountC = &DtiClkCountS &
+                             (DtiResetCountS != `DTI_RESET_LENGTH);
+// surefire lint_on CWECSM
+
+EDFFR #(1,0) U12_dff (.q(DtiResetCountS),.d(DtiResetCountC),.en(DtiEnResetCountC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+
+   // The first preferred oversample selection is ready one cycle after the
+   // counter reaches the maximum value.
+
+// surefire lint_off CWECSM
+   assign DtiLastCycleOfPeriodC = &DtiClkCountS &
+                                  (DtiResetCountS == `DTI_RESET_LENGTH);
+// surefire lint_on CWECSM
+
+DFF #(1) U13_dff (.q(DtiFirstCycleOfPeriodS),.d(DtiLastCycleOfPeriodC),.clk(DtiCsixClk));
+
+
+
+   // DtiPrefOverSelS is the preferred select signal.  When the logic for
+   // each bit is ready, it will flop DtiPrefOverSelS as DtiOverSelS, to
+   // be used to select oversamples from the supersamples.
+EDFF #(5) U14_dff (.q(DtiPrefOverSelS),.d(DtiPrefOverSelC),.en(DtiFirstCycleOfPeriodS),.clk(DtiCsixClk));
+
+
+
+
+   // DtiPrefOverSelReadyS is asserted when DtiPrefOverSelS is ready to use.
+   // Or it can be overridden by a forced value from software.
+   assign DtiNextPrefOverSelReadyC =
+          DtiDoTrainingC & (DtiPrefOverSelReadyS |
+                            DtiFirstCycleOfPeriodS |
+                            DtiClkLenCtrlS[0]);
+
+DFFR #(1,1'b0) U15_dff (.q(DtiPrefOverSelReadyS),.d(DtiNextPrefOverSelReadyC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // The phase length control/status register.
+   //
+   // [0]    - RW  - force bit
+   // [10:1] - RWS - phase length total
+   //                when not forced, this value tracks the measured length
+   //                when forced, this value overrides the measured length
+   // [11]   - RO  - phase length ready
+   //                when not forced, tracks the value of DtiPrefOverSelReadyS
+   //                when forced, DtiPrefOverSelReadyS is always forced to 1
+
+DFFR #(12,12'b0_000_0_0_00000_0) dff_DtiClkLenCtrlS (.q(DtiClkLenCtrlS),.d(DtiNextClkLenCtrlC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+
+   assign DtiNextClkLenCtrlC[0]   = DtiClkLenWrEnC      ? DtiWrDataS[0] :
+                                                          DtiClkLenCtrlS[0];
+
+   assign DtiNextClkLenCtrlC[10:1] =
+          (DtiClkLenWrEnC & DtiWrDataS[0])              ? DtiWrDataS[10:1] :
+          (DtiFirstCycleOfPeriodS & ~DtiClkLenCtrlS[0]) ? DtiChoppedLenS :
+                                                          DtiClkLenCtrlS[10:1];
+
+   assign DtiNextClkLenCtrlC[11]  = DtiClkLenWrEnC      ? DtiWrDataS[0] :
+                                    DtiClkLenCtrlS[0]   ? 1'b1 :
+                                                          DtiPrefOverSelReadyS;
+
+endmodule // dticlklens
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon May 31 12:00:00 2002 : created
+//
+// $Log: dticlklens.v,v $
+// Revision 1.6  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.5  2002/08/08 20:07:09  chris
+// Fix zero-in assertions to use the right clock
+//
+// Revision 1.4  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.3  2002/08/01 06:29:43  surya
+// ), removed
+//
+// Revision 1.2  2002/07,/29 18:44:10  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

@@ -1,0 +1,259 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpimemrdctls(/*AUTOARG*/
+  // Outputs
+  RdEn, RdAddr, WrEn, WrAddr, WrData, TOut, RexGmiDataRdyP10S, 
+  RexGmiDataP10S, RexGmiRdy4MemTxnP10S, RexGmiStatusP10S, 
+  // Inputs
+  XpiCoreClk, GlCoreResetR00C, XpiGmiRdEnP15S, XpiGmiDataLenP15S, 
+  XpiGmiAddrP15S, XpiGmiWrEnP15S, XpiGmiRdy4DataP15S, XpiGmiTOutP15S, 
+  Rdy4Txn, RdRdy, RdData, RdStatus
+  );
+
+  parameter GMI_DATA_WIDTH = 32;     // Possible Values = 32,64,96,128
+  parameter GMI_ADDR_WIDTH = 32;
+  parameter GMI_RDEN_DELAY_CNT = (GMI_DATA_WIDTH==32) ? 1 : (GMI_DATA_WIDTH/32-1);  
+  // Possible Values = 1,2,3
+  
+  // signals from gmi block
+  input                       XpiCoreClk;
+  input 		      GlCoreResetR00C;
+  input 		      XpiGmiRdEnP15S;
+  input [GMI_DATA_WIDTH-1:0]  XpiGmiDataLenP15S;
+  input [GMI_ADDR_WIDTH-1:0]  XpiGmiAddrP15S;
+  input 		      XpiGmiWrEnP15S;
+  input 		      XpiGmiRdy4DataP15S;
+  input 		      XpiGmiTOutP15S;
+  
+  // Blk signals
+  input 		      Rdy4Txn;
+  input 		      RdRdy;
+  input [GMI_DATA_WIDTH-1:0]  RdData;
+  input [`GMI_STATUS_WIDTH-1:0] RdStatus;
+  
+  output 		      RdEn;
+  output [GMI_ADDR_WIDTH-1:0] RdAddr;
+  output 		      WrEn;
+  output [GMI_ADDR_WIDTH-1:0] WrAddr;
+  output [GMI_DATA_WIDTH-1:0] WrData;
+  output 		      TOut;
+  
+  // signals to gmi block
+  output 		      RexGmiDataRdyP10S;
+  output [GMI_DATA_WIDTH-1:0] RexGmiDataP10S;
+  output 		      RexGmiRdy4MemTxnP10S;
+  output [`GMI_STATUS_WIDTH-1:0] RexGmiStatusP10S;
+  
+  // Wire Declaration
+  wire 			      RdEn;
+  wire [GMI_ADDR_WIDTH-1:0]   RdAddr;
+  wire 			      WrEn;
+  wire [GMI_ADDR_WIDTH-1:0]   WrAddr;
+  wire [GMI_DATA_WIDTH-1:0]   WrData;
+
+  wire 			      XpiRdDone;
+  wire [2:0] 		      XpiIdleCntP10S;
+  wire [`BYTECNT_WIDTH-1:0]   XpiRdCntP10S;
+  wire [`BYTECNT_WIDTH-1:0]   XpiRdLenP10S;
+  wire [GMI_ADDR_WIDTH-1:0]   XpiRdAddrP10S;
+  wire 			      XpiRdErrP10C;
+  
+  // Register Declaration
+  reg 			      XpiIssueRd;
+  reg 			      XpiRdStall;
+  reg [2:0] 		      XpiIdleCntP10C;
+  reg [`BYTECNT_WIDTH-1:0]    XpiRdCntP10C;
+  reg [GMI_ADDR_WIDTH-1:0]    XpiRdAddrP10C;
+  reg [`BYTECNT_WIDTH-1:0]    XpiRdLenP10C;
+
+  // This file contains comparisons between parts of
+  // a 32-bit parameter and a wire so:
+  // surefire lint_off PRMPTS
+
+  assign 		     WrEn   = XpiGmiWrEnP15S;
+  assign 		     WrAddr = XpiGmiAddrP15S;
+  assign 		     WrData = XpiGmiDataLenP15S;
+  assign 		     RdEn   = XpiIssueRd;
+  assign 		     RdAddr = XpiRdAddrP10S;
+  assign 	             TOut   = XpiGmiTOutP15S;
+	
+  assign 		     RexGmiRdy4MemTxnP10S = Rdy4Txn;
+  assign 		     RexGmiDataRdyP10S    = RdRdy;
+  assign 		     RexGmiDataP10S       = RdData;
+  assign                     RexGmiStatusP10S     = RdStatus;
+
+  //------------------------------------
+  //---- Read Control State Machine ----
+  //------------------------------------
+
+`define XPIMEMRDIDLE  2'b00
+`define XPIMEMRDISSUE  2'b01
+`define XPIMEMRDSTALL  2'b11
+
+  wire [1:0] 		     xpirdctlstate;
+  reg [1:0] 		     next_xpirdctlstate;
+  
+  //---- State Change ----
+  
+  DFFR #(2,{2{1'b0}}) U1_dff (.q(xpirdctlstate), .d(next_xpirdctlstate),
+                              .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  //---- State Assignment ----
+  
+  always @(/*AS*/xpirdctlstate)
+    begin     
+      
+      XpiIssueRd = 1'b0;
+      XpiRdStall = 1'b0;
+      
+      case (xpirdctlstate)
+
+	`XPIMEMRDIDLE:  
+	  begin
+	    XpiIssueRd = 1'b0;
+	    XpiRdStall = 1'b0;
+	  end
+	
+	`XPIMEMRDISSUE: 
+	  begin
+	    XpiIssueRd = 1'b1;
+	    XpiRdStall = 1'b0;
+	  end
+	
+	`XPIMEMRDSTALL: 
+	  begin
+	    XpiIssueRd = 1'b0;
+	    XpiRdStall = 1'b1;
+	  end
+	
+	default: XpiIssueRd = 1'b0;
+	
+      endcase // case(xpirdctlstate)
+    end // always @ (...
+
+  //---- State Transitions ----
+
+  always @(/*AS*/Rdy4Txn or XpiGmiRdEnP15S or XpiGmiTOutP15S
+	   or XpiIdleCntP10S or XpiRdDone or XpiRdErrP10C
+	   or xpirdctlstate)
+    begin
+
+      case(xpirdctlstate)
+
+	  `XPIMEMRDIDLE:
+	    begin
+	      if (XpiGmiRdEnP15S)
+		next_xpirdctlstate = `XPIMEMRDISSUE;
+	      else
+		next_xpirdctlstate = `XPIMEMRDIDLE;
+	    end
+
+	`XPIMEMRDISSUE: next_xpirdctlstate = `XPIMEMRDSTALL;
+
+	`XPIMEMRDSTALL:
+	  begin
+	    if (XpiRdDone || XpiGmiTOutP15S || XpiRdErrP10C)
+	      next_xpirdctlstate = `XPIMEMRDIDLE;
+	    else if ({XpiIdleCntP10S >= GMI_RDEN_DELAY_CNT[2:0]} && Rdy4Txn)
+	      next_xpirdctlstate = `XPIMEMRDISSUE;
+	    else
+	      next_xpirdctlstate = `XPIMEMRDSTALL;
+	  end
+
+	default : next_xpirdctlstate = 2'b00;
+
+      endcase // case(xpirdctlstate)
+    end // always @ (...
+
+  //-----------------------------
+  //---- Stall Cycle Counter ----
+  //-----------------------------
+
+  always @(/*AS*/XpiIdleCntP10S or XpiIssueRd or XpiRdStall)
+    begin
+      if (XpiIssueRd)
+	XpiIdleCntP10C = {3{1'b0}};
+      else if (XpiRdStall)
+	XpiIdleCntP10C = {XpiIdleCntP10S + 1'b1};
+      else if (XpiIdleCntP10S == 3'b111)
+	XpiIdleCntP10C = {3{1'b0}};
+      else 
+	XpiIdleCntP10C = XpiIdleCntP10S;
+    end
+
+  DFFR #(3,{3{1'b0}}) U2_dff
+    (.q(XpiIdleCntP10S), .d(XpiIdleCntP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Determining Read to UnImplemented Memory Location Condition
+  assign XpiRdErrP10C = (RdRdy && (RdStatus == `GMI_STATUS_WIDTH'b01));
+     
+  //------------------------------ 
+  //---- Read Request Counter ----
+  //------------------------------ 
+
+  always @(/*AS*/XpiGmiTOutP15S or XpiIssueRd or XpiRdCntP10S
+	   or XpiRdDone or XpiRdErrP10C)
+    begin
+      if (XpiRdDone || XpiGmiTOutP15S || XpiRdErrP10C)
+	XpiRdCntP10C = {`BYTECNT_WIDTH{1'b0}};
+      else if (XpiIssueRd)
+	XpiRdCntP10C = {XpiRdCntP10S + 1'b1};
+      else
+	XpiRdCntP10C = XpiRdCntP10S;
+    end
+  
+  DFFR #(`BYTECNT_WIDTH,{`BYTECNT_WIDTH{1'b0}}) U3_dff
+    (.q(XpiRdCntP10S), .d(XpiRdCntP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Storing Read Request Total Length ----
+
+  always @(/*AS*/XpiGmiDataLenP15S or XpiGmiRdEnP15S or XpiGmiTOutP15S
+	   or XpiRdErrP10C or XpiRdLenP10S)
+    begin
+      if (XpiGmiRdEnP15S)
+	XpiRdLenP10C = XpiGmiDataLenP15S[`BYTECNT_WIDTH-1:0];
+      else if (XpiGmiTOutP15S || XpiRdErrP10C)
+	XpiRdLenP10C = {`BYTECNT_WIDTH{1'b0}};
+      else
+	XpiRdLenP10C = XpiRdLenP10S;
+    end
+    
+  DFFR #(`BYTECNT_WIDTH,{`BYTECNT_WIDTH{1'b0}}) U4_dff
+    (.q(XpiRdLenP10S), .d(XpiRdLenP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Read Done Indication ----
+  
+  assign XpiRdDone = (XpiRdLenP10S == XpiRdCntP10S);
+
+  //---------------------------
+  //---- Address Increment ----
+  //---------------------------
+
+  always @(/*AS*/XpiGmiAddrP15S or XpiGmiRdEnP15S or XpiIssueRd
+	   or XpiRdAddrP10S)
+    begin
+      if (XpiGmiRdEnP15S)
+	XpiRdAddrP10C = XpiGmiAddrP15S;
+      else if (XpiIssueRd)
+	XpiRdAddrP10C = {XpiRdAddrP10S + 1'b1};
+      else
+	XpiRdAddrP10C = XpiRdAddrP10S;
+    end
+  
+  DFFR #(GMI_ADDR_WIDTH, {GMI_ADDR_WIDTH{1'b0}}) U5_dff
+    (.q(XpiRdAddrP10S), .d(XpiRdAddrP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+endmodule
+
+// surefire lint_on PRMPTS
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:

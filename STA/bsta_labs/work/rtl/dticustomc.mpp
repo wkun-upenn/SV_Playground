@@ -1,0 +1,284 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+module dticustomc (
+   /*AUTOARG*/
+   // Outputs
+   DtiSuperTwo9S, DtiSuperTwo8S, DtiSuperTwo7S, DtiSuperTwo6S, 
+   DtiSuperTwo5S, DtiSuperTwo4S, DtiSuperTwo3S, DtiSuperTwo2S, 
+   DtiSuperTwo1S, DtiSuperTwo16S, DtiSuperTwo15S, DtiSuperTwo14S, 
+   DtiSuperTwo13S, DtiSuperTwo12S, DtiSuperTwo11S, DtiSuperTwo10S, 
+   DtiSuperTwo0S, DtiSuperOne9S, DtiSuperOne8S, DtiSuperOne7S, 
+   DtiSuperOne6S, DtiSuperOne5S, DtiSuperOne4S, DtiSuperOne3S, 
+   DtiSuperOne2S, DtiSuperOne1S, DtiSuperOne16S, DtiSuperOne15S, 
+   DtiSuperOne14S, DtiSuperOne13S, DtiSuperOne12S, DtiSuperOne11S, 
+   DtiSuperOne10S, DtiSuperOne0S, DtiPosMaskS, DtiNegMaskS, 
+   // Inputs
+   xxin_IDCLK, xxin_IDAT, xxin_ICTL
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                xxin_ICTL;              // To U16_dtisuperc of dtisuperc.v
+   input [15:0]         xxin_IDAT;              // To U0_dtisuperc of dtisuperc.v, ...
+   input                xxin_IDCLK;             // To U_dticlkmaskc of dticlkmaskc.v, ...
+   // End of automatics
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [30:0]        DtiNegMaskS;            // From U_dticlkmaskc of dticlkmaskc.v
+   output [30:0]        DtiPosMaskS;            // From U_dticlkmaskc of dticlkmaskc.v
+   output [19:0]        DtiSuperOne0S;          // From U0_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne10S;         // From U10_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne11S;         // From U11_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne12S;         // From U12_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne13S;         // From U13_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne14S;         // From U14_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne15S;         // From U15_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne16S;         // From U16_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne1S;          // From U1_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne2S;          // From U2_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne3S;          // From U3_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne4S;          // From U4_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne5S;          // From U5_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne6S;          // From U6_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne7S;          // From U7_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne8S;          // From U8_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperOne9S;          // From U9_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo0S;          // From U0_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo10S;         // From U10_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo11S;         // From U11_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo12S;         // From U12_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo13S;         // From U13_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo14S;         // From U14_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo15S;         // From U15_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo16S;         // From U16_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo1S;          // From U1_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo2S;          // From U2_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo3S;          // From U3_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo4S;          // From U4_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo5S;          // From U5_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo6S;          // From U6_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo7S;          // From U7_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo8S;          // From U8_dtisuperc of dtisuperc.v
+   output [19:0]        DtiSuperTwo9S;          // From U9_dtisuperc of dtisuperc.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   // End of automatics
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   // Module Name: dticlkmaskc
+   // Instance Name: U_dticlkmaskc
+   // Description: Create a phase-offset mask for each delayed clock
+
+   dticlkmaskc U_dticlkmaskc (/*AUTOINST*/
+                              // Outputs
+                              .DtiNegMaskS(DtiNegMaskS[30:0]),
+                              .DtiPosMaskS(DtiPosMaskS[30:0]),
+                              // Inputs
+                              .xxin_IDCLK(xxin_IDCLK));
+
+
+   // Module Name: dtisuperc
+   // Instance Name: U*_dtisuperc
+   // Description: Capture supersamples for each bit with all delayed clocks
+
+/* dtisuperc AUTO_TEMPLATE (
+      // Outputs
+      .DtiSuperOneS (DtiSuperOne@S[]),
+      .DtiSuperTwoS (DtiSuperTwo@S[]),
+      // Inputs
+      .xxin_IDCLK   (xxin_IDCLK),
+      .xxin_IDAT    (xxin_IDAT[@]));
+*/
+
+   dtisuperc U0_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne0S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo0S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[0]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U1_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne1S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo1S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[1]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U2_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne2S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo2S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[2]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U3_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne3S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo3S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[3]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U4_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne4S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo4S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[4]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U5_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne5S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo5S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[5]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U6_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne6S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo6S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[6]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U7_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne7S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo7S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[7]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U8_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne8S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo8S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[8]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U9_dtisuperc (/*AUTOINST*/
+                           // Outputs
+                           .DtiSuperOneS(DtiSuperOne9S[19:0]),   // Templated
+                           .DtiSuperTwoS(DtiSuperTwo9S[19:0]),   // Templated
+                           // Inputs
+                           .xxin_IDAT   (xxin_IDAT[9]),          // Templated
+                           .xxin_IDCLK  (xxin_IDCLK));            // Templated
+
+   dtisuperc U10_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne10S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo10S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[10]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+   dtisuperc U11_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne11S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo11S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[11]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+   dtisuperc U12_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne12S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo12S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[12]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+   dtisuperc U13_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne13S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo13S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[13]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+   dtisuperc U14_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne14S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo14S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[14]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+   dtisuperc U15_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne15S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo15S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_IDAT[15]),         // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+/* dtisuperc AUTO_TEMPLATE (
+      // Outputs
+      .DtiSuperOneS (DtiSuperOne@S[]),
+      .DtiSuperTwoS (DtiSuperTwo@S[]),
+      // Inputs
+      .xxin_IDCLK   (xxin_IDCLK),
+      .xxin_IDAT    (xxin_ICTL));
+*/
+
+   dtisuperc U16_dtisuperc (/*AUTOINST*/
+                            // Outputs
+                            .DtiSuperOneS(DtiSuperOne16S[19:0]), // Templated
+                            .DtiSuperTwoS(DtiSuperTwo16S[19:0]), // Templated
+                            // Inputs
+                            .xxin_IDAT  (xxin_ICTL),             // Templated
+                            .xxin_IDCLK (xxin_IDCLK));            // Templated
+
+
+endmodule // dticustomc
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jun 11 12:00:00 2002 : created
+//
+// $Log: dticustomc.v,v $
+// Revision 1.4  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.3  2002/07/26 18:32:22  chris
+// Use separate delay chains for each superc & clkmaskc
+//
+// Revision 1.2  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

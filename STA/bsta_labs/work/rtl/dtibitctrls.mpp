@@ -1,0 +1,140 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtibitctrls (
+   /*AUTOARG*/
+   // Outputs
+   DtiBitCtrlS, DtiSuperSelForceEnS, DtiSuperSelForceValueS, 
+   DtiDeskewSelForceEnS, DtiDeskewSelForceValueS, 
+   // Inputs
+   DtiCsixClk, DtiCsixSoftResetSynZ01SL, DtiBitWrEnC, DtiWrDataS, 
+   DtiPrefPrimarySelS, DtiPrimarySelReadyS, DtiDeskewPointS, 
+   DtiDeskewReadyS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+
+   // Register read value
+   output [`DTI_BIT_CTRL_WIDTH-1:0] DtiBitCtrlS;
+
+   // Force supersample selection
+   output                           DtiSuperSelForceEnS;
+   output [`DTI_SSAMPLE_WIDTH-1:0]  DtiSuperSelForceValueS;
+
+   // Force deskew selection
+   output                           DtiDeskewSelForceEnS;
+   output [2:0]                     DtiDeskewSelForceValueS;
+
+
+   // Common inputs
+   input                            DtiCsixClk;
+   input                            DtiCsixSoftResetSynZ01SL;
+
+   // Register write controls
+   input                            DtiBitWrEnC;
+// surefire lint_off UDDIDN
+   input [10:0]                     DtiWrDataS;
+// surefire lint_on UDDIDN
+
+   // "Normal" supersample selection
+   input [`DTI_SSAMPLE_WIDTH-1:0]   DtiPrefPrimarySelS;
+   input                            DtiPrimarySelReadyS;
+
+   // "Normal" deskew selection
+   input [2:0]                      DtiDeskewPointS;
+   input                            DtiDeskewReadyS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]   DtiNextBitCtrlC;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // The control/status register (instantiated once for each input signal).
+   //
+   // [0]    - RW  - force bit for supersample selection and supersample ready
+   // [5:1]  - RWS - supersample selection
+   //                when not forced, this value tracks the PREFERRED selection
+   //                when forced, this value overrides the CURRENT selection
+   // [6]    - RO  - supersample ready
+   //                when not forced, tracks the value of DtiPrimarySelReadyS
+   //                when forced, DtiPrimarySelReadyS is always forced to 1
+   //
+   // [7]    - RW  - force bit for deskew selection
+   // [10:8] - RWS - deskew selection
+   //                when not forced, this value tracks the deskew selection
+   //                when forced, this value overrides the deskew selection
+   // [11]   - RO  - deskew ready
+   //                tracks whether a TCW to TDW transition has been found
+   //                cannot be forced
+   //                is normally same value in all BitCtrl registers,
+   //                unless one or bits had a deskew failure during training
+
+DFFR #(12,12'b0_000_0_0_00000_0) dff_DtiBitCtrlS (.q(DtiBitCtrlS),.d(DtiNextBitCtrlC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+
+   assign DtiNextBitCtrlC[0]    = DtiBitWrEnC         ? DtiWrDataS[0] :
+                                                        DtiBitCtrlS[0];
+
+   // When not forced and not ready, read as 0 to avoid confusing the ring bus.
+   assign DtiNextBitCtrlC[5:1]  = DtiBitWrEnC         ? DtiWrDataS[5:1] :
+                                  DtiBitCtrlS[0]      ? DtiBitCtrlS[5:1] :
+                                  DtiPrimarySelReadyS ? DtiPrefPrimarySelS :
+                                                        5'd0;
+
+   assign DtiNextBitCtrlC[6]    = DtiBitWrEnC         ? DtiWrDataS[0] :
+                                  DtiBitCtrlS[0]      ? 1'b1 :
+                                                        DtiPrimarySelReadyS;
+
+   assign DtiNextBitCtrlC[7]    = DtiBitWrEnC         ? DtiWrDataS[7] :
+                                                        DtiBitCtrlS[7];
+
+   // When not forced and not ready, read as 0 to avoid confusing the ring bus.
+   assign DtiNextBitCtrlC[10:8] = DtiBitWrEnC         ? DtiWrDataS[10:8] :
+                                  DtiDeskewReadyS     ? DtiDeskewPointS :
+                                                        3'd0;
+
+   assign DtiNextBitCtrlC[11]   = DtiDeskewReadyS;
+
+
+   // Send forcing outputs to the appropriate modules.
+   assign DtiSuperSelForceEnS     = DtiBitCtrlS[0];
+   assign DtiSuperSelForceValueS  = DtiBitCtrlS[5:1];
+
+   assign DtiDeskewSelForceEnS    = DtiBitCtrlS[7];
+   assign DtiDeskewSelForceValueS = DtiBitCtrlS[10:8];
+
+
+endmodule // dtibitctrls
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul  2 12:00:00 2002 : created
+//
+// $Log: dtibitctrls.v,v $
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

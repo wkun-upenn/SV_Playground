@@ -1,0 +1,243 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+module dtiuc (
+   /*AUTOARG*/
+   // Outputs
+   DtiTrainedS, DtiTrainS, DtiTrainRdValidS, DtiTrainRdDataS, 
+   DtiDataS, DtiCtrlS, 
+   // Inputs
+   xxin_IDCLK, xxin_IDAT, xxin_ICTL, TmiTrainWrEnS, TmiTrainWrDataS, 
+   TmiTrainRdEnS, TmiTrainAddrS, GlInitDoneR00C, 
+   GlCoreSoftResetSynR00C, EnqGlPortVld, DtiCoreClk
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                DtiCoreClk;             // To U_dtigenericc of dtigenericc.v
+   input                EnqGlPortVld;           // To U_dtigenericc of dtigenericc.v
+   input                GlCoreSoftResetSynR00C; // To U_dtigenericc of dtigenericc.v
+   input                GlInitDoneR00C;         // To U_dtigenericc of dtigenericc.v
+   input [4:0]          TmiTrainAddrS;          // To U_dtigenericc of dtigenericc.v
+   input                TmiTrainRdEnS;          // To U_dtigenericc of dtigenericc.v
+   input [`DTI_WRDATA_WIDTH-1:0]TmiTrainWrDataS;// To U_dtigenericc of dtigenericc.v
+   input                TmiTrainWrEnS;          // To U_dtigenericc of dtigenericc.v
+   input                xxin_ICTL;              // To U_dticustomc of dticustomc.v
+   input [15:0]         xxin_IDAT;              // To U_dticustomc of dticustomc.v
+   input                xxin_IDCLK;             // To U_dticustomc of dticustomc.v, ...
+   // End of automatics
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [1:0]         DtiCtrlS;               // From U_dtigenericc of dtigenericc.v
+   output [31:0]        DtiDataS;               // From U_dtigenericc of dtigenericc.v
+   output [`DTI_RDDATA_WIDTH-1:0]DtiTrainRdDataS;// From U_dtigenericc of dtigenericc.v
+   output               DtiTrainRdValidS;       // From U_dtigenericc of dtigenericc.v
+   output               DtiTrainS;              // From U_dtigenericc of dtigenericc.v
+   output               DtiTrainedS;            // From U_dtigenericc of dtigenericc.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [30:0]          DtiNegMaskS;            // From U_dticustomc of dticustomc.v
+   wire [30:0]          DtiPosMaskS;            // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne0S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne10S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne11S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne12S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne13S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne14S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne15S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne16S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne1S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne2S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne3S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne4S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne5S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne6S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne7S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne8S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperOne9S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo0S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo10S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo11S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo12S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo13S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo14S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo15S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo16S;         // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo1S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo2S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo3S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo4S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo5S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo6S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo7S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo8S;          // From U_dticustomc of dticustomc.v
+   wire [19:0]          DtiSuperTwo9S;          // From U_dticustomc of dticustomc.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   /* 0in kndr -var xxin_ICTL -clock xxin_IDCLK
+               -areset ~U_dtigenericc.DtiCsixSoftResetSynZ01SL */
+   /* 0in kndr -var xxin_IDAT -clock xxin_IDCLK
+               -areset ~U_dtigenericc.DtiCsixSoftResetSynZ01SL */
+
+
+   // Module Name: dticustomc
+   // Instance Name: U_dticustomc
+   // Description: Container for all hand-placed and custom logic in the DTI
+
+   dticustomc U_dticustomc (/*AUTOINST*/
+                            // Outputs
+                            .DtiNegMaskS(DtiNegMaskS[30:0]),
+                            .DtiPosMaskS(DtiPosMaskS[30:0]),
+                            .DtiSuperOne0S(DtiSuperOne0S[19:0]),
+                            .DtiSuperOne10S(DtiSuperOne10S[19:0]),
+                            .DtiSuperOne11S(DtiSuperOne11S[19:0]),
+                            .DtiSuperOne12S(DtiSuperOne12S[19:0]),
+                            .DtiSuperOne13S(DtiSuperOne13S[19:0]),
+                            .DtiSuperOne14S(DtiSuperOne14S[19:0]),
+                            .DtiSuperOne15S(DtiSuperOne15S[19:0]),
+                            .DtiSuperOne16S(DtiSuperOne16S[19:0]),
+                            .DtiSuperOne1S(DtiSuperOne1S[19:0]),
+                            .DtiSuperOne2S(DtiSuperOne2S[19:0]),
+                            .DtiSuperOne3S(DtiSuperOne3S[19:0]),
+                            .DtiSuperOne4S(DtiSuperOne4S[19:0]),
+                            .DtiSuperOne5S(DtiSuperOne5S[19:0]),
+                            .DtiSuperOne6S(DtiSuperOne6S[19:0]),
+                            .DtiSuperOne7S(DtiSuperOne7S[19:0]),
+                            .DtiSuperOne8S(DtiSuperOne8S[19:0]),
+                            .DtiSuperOne9S(DtiSuperOne9S[19:0]),
+                            .DtiSuperTwo0S(DtiSuperTwo0S[19:0]),
+                            .DtiSuperTwo10S(DtiSuperTwo10S[19:0]),
+                            .DtiSuperTwo11S(DtiSuperTwo11S[19:0]),
+                            .DtiSuperTwo12S(DtiSuperTwo12S[19:0]),
+                            .DtiSuperTwo13S(DtiSuperTwo13S[19:0]),
+                            .DtiSuperTwo14S(DtiSuperTwo14S[19:0]),
+                            .DtiSuperTwo15S(DtiSuperTwo15S[19:0]),
+                            .DtiSuperTwo16S(DtiSuperTwo16S[19:0]),
+                            .DtiSuperTwo1S(DtiSuperTwo1S[19:0]),
+                            .DtiSuperTwo2S(DtiSuperTwo2S[19:0]),
+                            .DtiSuperTwo3S(DtiSuperTwo3S[19:0]),
+                            .DtiSuperTwo4S(DtiSuperTwo4S[19:0]),
+                            .DtiSuperTwo5S(DtiSuperTwo5S[19:0]),
+                            .DtiSuperTwo6S(DtiSuperTwo6S[19:0]),
+                            .DtiSuperTwo7S(DtiSuperTwo7S[19:0]),
+                            .DtiSuperTwo8S(DtiSuperTwo8S[19:0]),
+                            .DtiSuperTwo9S(DtiSuperTwo9S[19:0]),
+                            // Inputs
+                            .xxin_ICTL  (xxin_ICTL),
+                            .xxin_IDAT  (xxin_IDAT[15:0]),
+                            .xxin_IDCLK (xxin_IDCLK));
+
+
+   // Module Name: dtigenericc
+   // Instance Name: U_dtigenericc
+   // Description: Container for generic synthesized logic in the DTI
+
+/* dtigenericc AUTO_TEMPLATE (
+      // Inputs
+      .DtiCsixClk (xxin_IDCLK));
+*/
+   dtigenericc U_dtigenericc (/*AUTOINST*/
+                              // Outputs
+                              .DtiTrainRdDataS(DtiTrainRdDataS[`DTI_RDDATA_WIDTH-1:0]),
+                              .DtiTrainRdValidS(DtiTrainRdValidS),
+                              .DtiTrainS(DtiTrainS),
+                              .DtiTrainedS(DtiTrainedS),
+                              .DtiCtrlS (DtiCtrlS[1:0]),
+                              .DtiDataS (DtiDataS[31:0]),
+                              // Inputs
+                              .DtiCoreClk(DtiCoreClk),
+                              .DtiCsixClk(xxin_IDCLK),           // Templated
+                              .DtiNegMaskS(DtiNegMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+                              .DtiPosMaskS(DtiPosMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+                              .DtiSuperOne0S(DtiSuperOne0S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne10S(DtiSuperOne10S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne11S(DtiSuperOne11S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne12S(DtiSuperOne12S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne13S(DtiSuperOne13S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne14S(DtiSuperOne14S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne15S(DtiSuperOne15S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne16S(DtiSuperOne16S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne1S(DtiSuperOne1S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne2S(DtiSuperOne2S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne3S(DtiSuperOne3S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne4S(DtiSuperOne4S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne5S(DtiSuperOne5S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne6S(DtiSuperOne6S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne7S(DtiSuperOne7S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne8S(DtiSuperOne8S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne9S(DtiSuperOne9S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo0S(DtiSuperTwo0S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo10S(DtiSuperTwo10S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo11S(DtiSuperTwo11S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo12S(DtiSuperTwo12S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo13S(DtiSuperTwo13S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo14S(DtiSuperTwo14S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo15S(DtiSuperTwo15S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo16S(DtiSuperTwo16S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo1S(DtiSuperTwo1S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo2S(DtiSuperTwo2S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo3S(DtiSuperTwo3S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo4S(DtiSuperTwo4S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo5S(DtiSuperTwo5S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo6S(DtiSuperTwo6S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo7S(DtiSuperTwo7S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo8S(DtiSuperTwo8S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo9S(DtiSuperTwo9S[`DTI_SSAMPLES-1:0]),
+                              .EnqGlPortVld(EnqGlPortVld),
+                              .GlCoreSoftResetSynR00C(GlCoreSoftResetSynR00C),
+                              .GlInitDoneR00C(GlInitDoneR00C),
+                              .TmiTrainRdEnS(TmiTrainRdEnS),
+                              .TmiTrainWrDataS(TmiTrainWrDataS[`DTI_WRDATA_WIDTH-1:0]),
+                              .TmiTrainWrEnS(TmiTrainWrEnS),
+                              .TmiTrainAddrS(TmiTrainAddrS[4:0]));
+
+
+endmodule // dtiuc
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Mar 18 12:00:00 2002 : created
+//
+// $Log: dtiuc.v,v $
+// Revision 1.5  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.4  2002/07/26 18:32:56  chris
+// Use PortVld for stretched reset
+//
+// Revision 1.3  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.2  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//
+// Revision 1.1  2002/03/19 22:10:52  chris
+// Initial check-in
+//

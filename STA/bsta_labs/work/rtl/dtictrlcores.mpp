@@ -1,0 +1,245 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCoreClk, reset=DtiCoreSoftResetSynZ01SL>
+
+module dtictrlcores (
+   /*AUTOARG*/
+   // Outputs
+   DtiTrainRdValidS, DtiTrainRdDataS, DtiCoreSoftResetSynZ01SL, 
+   DtiDoneStretchingZnS, DtiWrEnTransS, DtiRdEnTransS, DtiAddrCoreS, 
+   DtiWrDataCoreS, 
+   // Inputs
+   DtiCoreClk, GlCoreSoftResetSynR00C, EnqGlPortVld, GlInitDoneR00C, 
+   TmiTrainWrEnS, TmiTrainRdEnS, TmiTrainAddrS, TmiTrainWrDataS, 
+   DtiRdValidTransS, DtiRdDataCsixS
+);
+
+   parameter DTI_ADDR_WIDTH = 5;
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+
+   // Unit outputs to the CBI (TMI)
+   output                         DtiTrainRdValidS;
+   output [`DTI_RDDATA_WIDTH-1:0] DtiTrainRdDataS;
+
+   // Reset for core modules (used in FTI, but not DTI)
+   output                         DtiCoreSoftResetSynZ01SL;
+
+   // Reset to be synchronized for the fast domain
+   output                         DtiDoneStretchingZnS;
+
+   // Controls suitable for synchronization to the fast clock domain
+   output                         DtiWrEnTransS;
+   output                         DtiRdEnTransS;
+   output [DTI_ADDR_WIDTH-1:0]    DtiAddrCoreS;
+   output [`DTI_WRDATA_WIDTH-1:0] DtiWrDataCoreS;
+
+
+   // Common inputs
+   input                          DtiCoreClk;
+   input                          GlCoreSoftResetSynR00C;
+   input                          EnqGlPortVld;
+   input                          GlInitDoneR00C;
+
+   // Unit inputs from the CBI (TMI)
+   input                          TmiTrainWrEnS;
+   input                          TmiTrainRdEnS;
+   input [DTI_ADDR_WIDTH-1:0]     TmiTrainAddrS;
+   input [`DTI_WRDATA_WIDTH-1:0]  TmiTrainWrDataS;
+
+   // Read results returned from the fast clock domain
+   input                          DtiRdValidTransS;
+   input [`DTI_RDDATA_WIDTH-1:0]  DtiRdDataCsixS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire                           DtiPortVldZ01S;
+   wire                           DtiInitDoneZ01S;
+   wire [`DTI_STRETCH_WIDTH-1:0]  DtiStretchCountZnS;
+   wire                           DtiDoneStretchingZnC;
+   wire [`DTI_STRETCH_WIDTH-1:0]  DtiIncStretchCountZnC;
+   wire [`DTI_STRETCH_WIDTH-1:0]  DtiNextStretchCountZnC;
+   wire                           DtiUseResultsZnC;
+
+   wire                           DtiWrEnS;
+   wire                           DtiRdEnS;
+   wire [DTI_ADDR_WIDTH-1:0]      DtiAddrS;
+   wire [`DTI_WRDATA_WIDTH-1:0]   DtiWrDataS;
+
+   wire                           DtiNextWrEnTransC;
+   wire                           DtiNextRdEnTransC;
+
+   wire                           DtiWrEnTransS;
+   wire                           DtiRdEnTransS;
+
+   wire                           DtiEnC;
+
+
+   wire [3:0]                     DtiIncCountC;
+   wire [3:0]                     DtiNextCountC;
+   wire [3:0]                     DtiCountS;
+
+
+   wire                           DtiRdValidTransD1S;
+   wire                           DtiRdValidTransD2S;
+   wire                           DtiRdValidTransD3S;
+   wire                           DtiRdValidTransD4S;
+   wire [`DTI_RDDATA_WIDTH-1:0]   DtiRdDataD1S;
+   wire [`DTI_RDDATA_WIDTH-1:0]   DtiRdDataD2S;
+
+   wire                           DtiRdValidPulseC;
+   wire                           DtiRdValidC;
+   wire [`DTI_RDDATA_WIDTH-1:0]   DtiRdDataC;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Flop the reset value.
+
+   RESETSYNC U_RESETSYNC (// Outputs
+                          .syncreset (DtiCoreSoftResetSynZ01SL),
+                          // Inputs
+                          .inreset   (GlCoreSoftResetSynR00C),
+                          .clk       (DtiCoreClk));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Stretch PortVld for two purposes:
+   //   - to hold reset in the non-core clock domain until a clock arrives, and
+   //   - to ignore data from the non-core clock domain until it resets.
+
+DFF #(1) U1_dff (.q(DtiPortVldZ01S),.d(EnqGlPortVld),.clk(DtiCoreClk));
+DFF #(1) U2_dff (.q(DtiInitDoneZ01S),.d(GlInitDoneR00C),.clk(DtiCoreClk));
+
+DFFR #(8,0) U3_dff (.q(DtiStretchCountZnS),.d(DtiNextStretchCountZnC),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+   assign DtiDoneStretchingZnC = &DtiStretchCountZnS;
+
+INC #(8) U4_inc (.s(DtiIncStretchCountZnC),.a(DtiStretchCountZnS));
+
+   assign DtiNextStretchCountZnC =
+          ~DtiPortVldZ01S       ? {`DTI_STRETCH_WIDTH{1'b0}} :
+          ~DtiDoneStretchingZnC ? DtiIncStretchCountZnC :
+                                  {`DTI_STRETCH_WIDTH{1'b1}};
+
+DFFR #(1,1'b0) U5_dff (.q(DtiDoneStretchingZnS),.d(DtiDoneStretchingZnC),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+   assign DtiUseResultsZnC = DtiDoneStretchingZnS & DtiInitDoneZ01S;
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Start a transaction
+
+   // 0in kndr -var TmiTrainWrEnS
+   // 0in kndr -var TmiTrainRdEnS
+   // 0in kndr -var TmiTrainAddrS -active (TmiTrainWrEnS | TmiTrainRdEnS)
+   // 0in kndr -var TmiTrainWrDataS -active TmiTrainWrEnS
+
+DFF #(1) U6_dff (.q(DtiWrEnS),.d(TmiTrainWrEnS),.clk(DtiCoreClk));
+DFF #(1) U7_dff (.q(DtiRdEnS),.d(TmiTrainRdEnS),.clk(DtiCoreClk));
+DFF #(DTI_ADDR_WIDTH) U0_xdff (.q(DtiAddrS), .d(TmiTrainAddrS), .clk(DtiCoreClk));
+
+DFF #(11) U8_dff (.q(DtiWrDataS),.d(TmiTrainWrDataS),.clk(DtiCoreClk));
+
+
+   // Create signals which transition on each new read or write.
+   // This transition can be synchronized to the fast clock domain,
+   // where it will be seen as exactly one event.
+   assign DtiNextWrEnTransC = DtiWrEnTransS ^ DtiWrEnS;
+   assign DtiNextRdEnTransC = DtiRdEnTransS ^ DtiRdEnS;
+
+DFFR #(1,1'b0) U9_dff (.q(DtiWrEnTransS),.d(DtiNextWrEnTransC),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+DFFR #(1,1'b0) U10_dff (.q(DtiRdEnTransS),.d(DtiNextRdEnTransC),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+   // Hold the address and write data steady
+   assign DtiEnC = DtiWrEnS | DtiRdEnS;
+
+   EDFF #(DTI_ADDR_WIDTH) U1_xdff(.q(DtiAddrCoreS),
+                                  .d(DtiAddrS),
+                                  .en(DtiEnC),
+                                  .clk(DtiCoreClk));
+EDFF #(11) U11_dff (.q(DtiWrDataCoreS),.d(DtiWrDataS),.en(DtiWrEnS),.clk(DtiCoreClk));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Keep a timeout counter in case the fast clock isn't running
+
+INC #(4) U12_inc (.s(DtiIncCountC),.a(DtiCountS));
+
+   assign DtiNextCountC = DtiRdEnS            ? 4'd1 :
+                          (DtiCountS != 4'd0) ? DtiIncCountC :
+                                                4'd0;
+
+DFFR #(4,4'd0) U13_dff (.q(DtiCountS),.d(DtiNextCountC),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // End a (read) transaction
+
+DFFR #(1,1'b0) U14_dff (.q(DtiRdValidTransD1S),.d(DtiRdValidTransS),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+DFFR #(1,1'b0) U15_dff (.q(DtiRdValidTransD2S),.d(DtiRdValidTransD1S),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+DFFR #(1,1'b0) U16_dff (.q(DtiRdValidTransD3S),.d(DtiRdValidTransD2S),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+DFFR #(1,1'b0) U17_dff (.q(DtiRdValidTransD4S),.d(DtiRdValidTransD3S),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+DFFR #(12,12'b0) U18_dff (.q(DtiRdDataD1S),.d(DtiRdDataCsixS),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+DFFR #(12,12'b0) U19_dff (.q(DtiRdDataD2S),.d(DtiRdDataD1S),.clk(DtiCoreClk),.reset(DtiCoreSoftResetSynZ01SL));
+
+
+   // Convert a transition into a pulse.  We wait an extra cycle to do this
+   // in order to make sure that the read data has completely synchronized.
+   assign DtiRdValidPulseC = (DtiRdValidTransD3S ^ DtiRdValidTransD4S) &
+                             DtiUseResultsZnC;
+
+   // End a read when the RdValid transition comes through, so long as timeout
+   // did not previously occur.  Also end a read when timeout occurs.
+   assign DtiRdValidC =
+          ((DtiCountS != 4'd0) & DtiRdValidPulseC) | (DtiCountS == 4'd15);
+
+   // Force the read data to 0 if the read times out.
+   assign DtiRdDataC =
+          (DtiCountS == 4'd15) ? {`DTI_RDDATA_WIDTH{1'b0}} : DtiRdDataD2S;
+
+   // Send read results back to the CBI (TMI)
+DFF #(1) U20_dff (.q(DtiTrainRdValidS),.d(DtiRdValidC),.clk(DtiCoreClk));
+DFF #(12) U21_dff (.q(DtiTrainRdDataS),.d(DtiRdDataC),.clk(DtiCoreClk));
+
+   // 0in kndr -var DtiTrainRdValidS -reset ~DtiCoreSoftResetSynZ01SL
+   // 0in kndr -var DtiTrainRdDataS -active DtiTrainRdValidS
+
+
+endmodule // dtictrlcores
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul  2 12:00:00 2002 : created
+//
+// $Log: dtictrlcores.v,v $
+// Revision 1.3  2002/07/26 18:32:56  chris
+// Use PortVld for stretched reset
+//
+// Revision 1.2  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

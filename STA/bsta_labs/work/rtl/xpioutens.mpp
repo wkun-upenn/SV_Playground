@@ -1,0 +1,96 @@
+
+`include "xpiuc.vh"
+
+module xpioutens
+  (/*AUTOARG*/
+  // Outputs
+  xxen_PCI_ACK64, xxen_PCI_AD, xxen_PCI_C_BE, xxen_PCI_DEVSEL, 
+  xxen_PCI_FRAME, xxen_PCI_IRDY, xxen_PCI_PAR64, xxen_PCI_PAR, 
+  xxen_PCI_PERR, xxen_PCI_REQ64, xxen_PCI_REQ, xxen_PCI_SERR, 
+  xxen_PCI_STOP, xxen_PCI_TRDY, xxen_PCI_M66EN, xxen_PCI_IDSEL, 
+  xxen_PCI_GNT, xxout_PCI_M66EN, xxout_PCI_IDSEL, xxout_PCI_GNT_N, 
+  // Inputs
+  xxen_PCI_ACK64_N, xxen_PCI_AD_N, xxen_PCI_C_BE_N, 
+  xxen_PCI_DEVSEL_N, xxen_PCI_FRAME_N, xxen_PCI_IRDY_N, 
+  xxen_PCI_PAR64_N, xxen_PCI_PAR_N, xxen_PCI_PERR_N, 
+  xxen_PCI_REQ64_N, xxen_PCI_REQ_N, xxen_PCI_SERR_N, xxen_PCI_STOP_N, 
+  xxen_PCI_TRDY_N
+  );
+
+  input          		xxen_PCI_ACK64_N;       
+  input [`ad_width-1:0] 	xxen_PCI_AD_N;       
+  input [`c_be_width-1:0] 	xxen_PCI_C_BE_N;        
+  input 			xxen_PCI_DEVSEL_N;      
+  input 			xxen_PCI_FRAME_N;       
+  input 			xxen_PCI_IRDY_N;        
+  input 			xxen_PCI_PAR64_N;       
+  input 			xxen_PCI_PAR_N;         
+  input 			xxen_PCI_PERR_N;        
+  input 			xxen_PCI_REQ64_N;       
+  input 			xxen_PCI_REQ_N;         
+  input 			xxen_PCI_SERR_N;        
+  input 			xxen_PCI_STOP_N;        
+  input 			xxen_PCI_TRDY_N;        
+
+  output          		xxen_PCI_ACK64;	
+  output [`ad_width-1:0] 	xxen_PCI_AD;	
+  output [`c_be_width-1:0] 	xxen_PCI_C_BE;	
+  output 			xxen_PCI_DEVSEL;	
+  output 			xxen_PCI_FRAME;	
+  output 			xxen_PCI_IRDY;	
+  output 			xxen_PCI_PAR64;	
+  output 			xxen_PCI_PAR;		
+  output 			xxen_PCI_PERR;	
+  output 			xxen_PCI_REQ64;	
+  output 			xxen_PCI_REQ;		
+  output 			xxen_PCI_SERR;	
+  output 			xxen_PCI_STOP;	
+  output 			xxen_PCI_TRDY;	
+
+  output 			xxen_PCI_M66EN;
+  output 			xxen_PCI_IDSEL;
+  output 			xxen_PCI_GNT;
+  
+  output 			xxout_PCI_M66EN;
+  output 			xxout_PCI_IDSEL;
+  output 			xxout_PCI_GNT_N;
+  
+  wire          		xxen_PCI_ACK64;	
+  wire [`ad_width-1:0] 		xxen_PCI_AD;	
+  wire [`c_be_width-1:0] 	xxen_PCI_C_BE;	
+  wire 				xxen_PCI_DEVSEL;	
+  wire 				xxen_PCI_FRAME;	
+  wire 				xxen_PCI_IRDY;	
+  wire 				xxen_PCI_PAR64;	
+  wire 				xxen_PCI_PAR;		
+  wire 				xxen_PCI_PERR;	
+  wire 				xxen_PCI_REQ64;	
+  wire 				xxen_PCI_REQ;		
+  wire 				xxen_PCI_SERR;	
+  wire 				xxen_PCI_STOP;	
+  wire 				xxen_PCI_TRDY;	
+  
+  assign 			xxen_PCI_ACK64  = (~xxen_PCI_ACK64_N);
+  assign 			xxen_PCI_AD     = (~xxen_PCI_AD_N);       
+  assign 			xxen_PCI_C_BE   = (~xxen_PCI_C_BE_N);
+  assign 			xxen_PCI_DEVSEL = (~xxen_PCI_DEVSEL_N);
+  assign 			xxen_PCI_FRAME  = (~xxen_PCI_FRAME_N);
+  assign 			xxen_PCI_IRDY   = (~xxen_PCI_IRDY_N);
+  assign 			xxen_PCI_PAR64  = (~xxen_PCI_PAR64_N);
+  assign 			xxen_PCI_PAR    = (~xxen_PCI_PAR_N);
+  assign 			xxen_PCI_PERR   = (~xxen_PCI_PERR_N);
+  assign 			xxen_PCI_REQ64  = (~xxen_PCI_REQ64_N);
+  assign 			xxen_PCI_REQ    = (~xxen_PCI_REQ_N);
+  assign 			xxen_PCI_SERR   = (~xxen_PCI_SERR_N);
+  assign 			xxen_PCI_STOP   = (~xxen_PCI_STOP_N);
+  assign 			xxen_PCI_TRDY   = (~xxen_PCI_TRDY_N);
+
+  assign 			xxen_PCI_M66EN = 1'b0;
+  assign 			xxen_PCI_IDSEL = 1'b0;
+  assign 			xxen_PCI_GNT   = 1'b0;
+  
+  assign 			xxout_PCI_M66EN = 1'bz;
+  assign 			xxout_PCI_IDSEL = 1'bz;
+  assign 			xxout_PCI_GNT_N = 1'bz;
+
+endmodule // xpioutens

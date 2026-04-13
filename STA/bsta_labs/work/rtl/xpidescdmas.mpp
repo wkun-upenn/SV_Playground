@@ -1,0 +1,2348 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpidescdmas
+  (/*AUTOARG*/
+   // Outputs
+   XpiDescDmaPciArbReqPsn13S, XpiDescDmaPciTxnIDPsn13S, 
+   XpiDescDmaPciAddrIrdyPsn13S, XpiDescDmaPciAddrPsn13S, 
+   XpiDescDmaPciDataIrdyPsn13S, XpiDescDmaPciDataPsn13S, 
+   XpiDescDmaPciCmdPsn13S, XpiDescDmaPciAttrPsn13S, 
+   XpiDescDmaPciByteEnPsn13S, XpiDescDmaPciLengthPsn13S, 
+   XpiDescDmaPciTrdyPsn13S, XpiDescDmaRbArbReqPns13S, 
+   XpiDescDmaRbIrdyPns13S, XpiDescDmaRbAddrPns13S, 
+   XpiDescDmaRbCmdPns13S, XpiDescDmaRbDataLenPns13S, 
+   XpiDescDmaRbTxnIDPns13S, XpiDescDmaRbTrdyPns13S, 
+   XpiDescDmaPciIntrPsn13S, 
+   // Inputs
+   XpiPciClk, XpiCoreClk, GlCoreResetR00C, 
+   XpiPciAppDescDmaFreq33P11S, XpiPciAppDescDmaFreq66P11S, 
+   XpiPciAppDescDmaFreq133P11S, XpiPciAppDescDmaAddrIrdyP11S, 
+   XpiPciAppDescDmaAddrP11S, XpiPciAppDescDmaCmdP11S, 
+   XpiPciAppDescDmaAttrP11S, XpiPciAppDescDmaByteEnP11S, 
+   XpiPciAppDescDmaLengthP11S, XpiPciAppDescDmaDataIrdyP11S, 
+   XpiPciAppDescDmaDataP11S, XpiPciAppDescDmaTrdyP10S, 
+   XpiPciAppDescDmaTrdyP11S, XpiPciAppDescDmaValidTxnP11S, 
+   XpiPciAppDescDmaRdStopP11S, XpiPciArbDescDmaStopP11S, 
+   XpiPciArbDescDmaBusyP11S, XpiPciArbDescDmaSrvP11S, 
+   XpiPciArbDescDmaReqAbortP11S, XpiPciArbDescDmaSplitAbortP11S, 
+   XpiRbiDescDmaGntPsn11S, XpiRbiDescDmaStopPsn11S, 
+   XpiRbiDescDmaIrdyPsn11S, XpiRbiDescDmaCmdPsn11S, 
+   XpiRbiDescDmaDataPsn11S, XpiRbiDescDmaTrdyPsn11S, 
+   XpiRbiDescDmaValidXfrPsn11S
+   );
+
+  parameter [2:0] TXNID = 3'b010;
+  
+  //----------------------------------
+  //---- Input/Output Declaration ----
+  //----------------------------------
+  
+  //---- Global Signals ----
+  
+  input                           XpiPciClk;
+  input 			  XpiCoreClk;
+  input 			  GlCoreResetR00C;
+  
+  //---- PKT RX - PCI-X Interface Signals ----
+  
+  input 			  XpiPciAppDescDmaFreq33P11S;
+  input 			  XpiPciAppDescDmaFreq66P11S;
+  input 			  XpiPciAppDescDmaFreq133P11S;
+  input 			  XpiPciAppDescDmaAddrIrdyP11S;
+  input [`PCI_ADDR_WIDTH-1:0] 	  XpiPciAppDescDmaAddrP11S;
+  input [3:0] 			  XpiPciAppDescDmaCmdP11S;
+  input [`PCI_ATTR_WIDTH-1:0] 	  XpiPciAppDescDmaAttrP11S;
+  input [7:0] 			  XpiPciAppDescDmaByteEnP11S;
+  input [`RQ_BYTECNT_WIDTH-1:0]   XpiPciAppDescDmaLengthP11S;
+  input 			  XpiPciAppDescDmaDataIrdyP11S;
+  input [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDescDmaDataP11S;
+  input 			  XpiPciAppDescDmaTrdyP10S;
+  input 			  XpiPciAppDescDmaTrdyP11S;
+  input 			  XpiPciAppDescDmaValidTxnP11S;
+  input 			  XpiPciAppDescDmaRdStopP11S;
+  
+  input 			  XpiPciArbDescDmaStopP11S;
+  input 			  XpiPciArbDescDmaBusyP11S;
+  input 			  XpiPciArbDescDmaSrvP11S;
+  input 			  XpiPciArbDescDmaReqAbortP11S;
+  input 			  XpiPciArbDescDmaSplitAbortP11S;
+  
+  output 			  XpiDescDmaPciArbReqPsn13S;
+  output [2:0] 			  XpiDescDmaPciTxnIDPsn13S;
+  output 			  XpiDescDmaPciAddrIrdyPsn13S;
+  output [`PCI_ADDR_WIDTH-1:0] 	  XpiDescDmaPciAddrPsn13S;
+  output 			  XpiDescDmaPciDataIrdyPsn13S;
+  output [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaPciDataPsn13S;
+  output [3:0] 			  XpiDescDmaPciCmdPsn13S;
+  output [`PCI_ATTR_WIDTH-1:0] 	  XpiDescDmaPciAttrPsn13S;
+  output [7:0] 			  XpiDescDmaPciByteEnPsn13S;
+  output [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciLengthPsn13S;
+  output 			  XpiDescDmaPciTrdyPsn13S;
+  
+  
+  //---- PKT RX - RBI Interface Signals ----
+  input 			  XpiRbiDescDmaGntPsn11S;
+  input 			  XpiRbiDescDmaStopPsn11S;
+  input 			  XpiRbiDescDmaIrdyPsn11S;
+  input [3:0] 			  XpiRbiDescDmaCmdPsn11S;
+  input [`RB_DATA_WIDTH-1:0] 	  XpiRbiDescDmaDataPsn11S;
+  input 			  XpiRbiDescDmaTrdyPsn11S;
+  input 			  XpiRbiDescDmaValidXfrPsn11S;
+  
+  output 			  XpiDescDmaRbArbReqPns13S;
+  output 			  XpiDescDmaRbIrdyPns13S;
+  output [`XPI_ADDR_WIDTH-1:0] 	  XpiDescDmaRbAddrPns13S;
+  output [3:0] 			  XpiDescDmaRbCmdPns13S;
+  output [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataLenPns13S;
+  output [2:0] 			  XpiDescDmaRbTxnIDPns13S;
+  output 			  XpiDescDmaRbTrdyPns13S;
+  output [`DMA_INTR_EVENTS-1:0]   XpiDescDmaPciIntrPsn13S;
+  
+  //--------------------------
+  //---- Wire Declaration ----
+  //--------------------------
+  wire 				  XpiPciAppDescDmaFreq33P11S;
+  wire 				  XpiPciAppDescDmaFreq66P11S;
+  wire 				  XpiPciAppDescDmaFreq133P11S;
+  wire 				  XpiDescDma96MemEnablePns11C;
+  wire 				  XpiDescDma96MemEnablePns12C;
+  wire 				  XpiDescDma160MemEnablePns11C;
+  wire 				  XpiDescDma160MemEnablePns12C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciMTUPns10C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciFIRSTMEMRDLENPns10C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaRbMTUPns12C;
+  
+  wire [2:0] 			  XpiDescDmaPciTxnIDPsn13S;
+  wire 				  XpiDescDmaPciAddrIrdyPsn13S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiDescDmaPciAddrPsn13S;
+  wire [`PCI_ATTR_WIDTH-1:0] 	  XpiDescDmaPciAttrPsn13S;
+  wire [7:0] 			  XpiDescDmaPciByteEnPsn13S;
+  wire [3:0] 			  XpiDescDmaPciCmdPsn13S;
+  wire 				  XpiDescDmaPciDataIrdyPsn13S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaPciDataPsn13S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciLengthPsn13S;
+  wire 				  XpiDescDmaPciTrdyPsn13S;
+  wire [`XPI_ADDR_WIDTH-1:0] 	  XpiDescDmaRbAddrPns13S;
+  wire [3:0] 			  XpiDescDmaRbCmdPns13S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataLenPns13S;
+  wire 				  XpiDescDmaRbIrdyPns13S;
+  wire 				  XpiDescDmaRbTrdyPns13S;
+  wire [2:0] 			  XpiDescDmaRbTxnIDPns13S;
+  wire [`DMA_INTR_EVENTS-1:0] 	  XpiDescDmaPciIntrPsn13S;
+  
+
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaPciDataPns10S;
+  wire [`PCI_CMD_WIDTH-1:0] 	  XpiDescDmaPciCmdPns10S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiDescDmaPciAddrPns10S;
+  wire 				  XpiDescDmaPciAddrIrdyPns10S;
+  wire 				  XpiDescDmaPciValidTxnPns10S;
+  wire 				  XpiDescDmaPciRegRdPns10C;
+  wire 				  XpiDescDmaPciRegRdPns11C;
+  wire 				  XpiDescDmaPciRegRdPns11S;
+  wire 				  XpiDescDmaLenLessEqMtuPns11C;
+  wire 				  XpiDescDmaLenGrMtuPns11C;
+  wire 				  XpiDescDmaLenGr2MtuPns11C;
+  wire 				  XpiDescDmaLenZeroPns11C;
+  wire 				  XpiDescDmaPciFirstDescRdPns10C;
+  wire 				  XpiDescDmaPciFirstDescRdPns11C;
+  wire 				  XpiDescDmaPciFirstDescRdPns11S;
+  wire 				  XpiDescDmaNextDescRdPns11C;
+  wire 				  XpiDescDmaNextDescRdPns11S;
+  wire 				  XpiDescDmaPci2MtuMemRdPns11C;
+  wire 				  XpiDescDmaPciMtuMemRdPns11C;
+  wire 				  XpiDescDmaFifoLessHalfPns11C;
+  wire 				  XpiDescDmaPciFinalMemRdTxnPns11C;
+  wire 				  XpiDescDmaDescRdPendingPns11C;
+  wire 				  XpiDescDmaDescRdPendingPns11S;
+  wire 				  XpiDescDmaMemRdPendingPns11C;
+  wire 				  XpiDescDmaMemRdPendingPns11S;
+  wire 				  XpiDescDmaReadStreamPns11C;
+  wire 				  XpiDescDmaReadStreamPns11S;
+  
+  wire 				  XpiDescDmaCmdRegWrValidPns10C;
+  wire 				  XpiDescDmaCmdRegWrValidPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaCommandRegPns10C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaCommandRegPns10S;
+  wire 				  XpiDescDmaSrvCfgWrPns10C;
+  wire 				  XpiDescDmaAddrRegWrValidPns10C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaAddressRegPns10C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaAddressRegPns10S;
+  wire 				  XpiDescDmaTOutRegWrPns10C;
+  wire 				  XpiDescDmaTOutRegWrPns10S;
+  wire 				  XpiDescDmaCoreTOutRegWrPns11S;
+  wire 				  XpiDescDmaCoreTOutRegWrPns12S;
+  wire 				  XpiDescDmaTOutRegWrPns13C;
+  wire 				  XpiDescDmaTOutRegWrPns13S;
+  wire 				  XpiDescDmaTOutRegWrPns14S;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaTOutRegPns10C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaTOutRegPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaCoreTOutRegPns11S;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaCoreTOutRegPns12S;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaTOutRegPns13C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaTOutRegPns13S;
+
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaStatusRegPns10S;  
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaDescRegLSBPns10C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaDescRegLSBPns10S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaDescRegMSBPns10C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaDescRegMSBPns10S;
+  wire [`DESC_WIDTH-1:0] 	  XpiDescDmaDescRegPns11S;
+  wire 				  XpiDescDmaPciDescPh2WrEnPns11S;
+  wire 				  XpiDescDmaPciDescPh2WrEnPns12S;
+  wire [`MAX_BUFFER_SIZE-1:0] 	  XpiDescDmaPciMemRdLenPsn11S;
+  wire 				  XpiDescDmaRunPns11C;
+  wire 				  XpiDescDmaEndPns11C;
+  wire 				  XpiDescDmaIntrEnPns11C;
+  wire [`MAX_BUFFER_SIZE-1:0] 	  XpiDescDmaTotalLenPns11C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaNextDescAddrPns11C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaDataBufAddrPns11C;
+  wire [42:0] 			  XpiDescDmaAddrModeInfoPns11C;
+  wire 				  XpiDescDmaIssueFirstMemRdPns11S;
+  wire 				  XpiDescDmaIssueMemRdPns11S;
+  wire [`MAX_BUFFER_SIZE-1:0] 	  XpiDescDmaPciMemRdLenPns11C;
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaRdAddressPsn11S;
+  wire 				  XpiDescDmaPciAddrIrdyPsn12C;
+  wire 				  XpiDescDmaPciDataIrdyPsn12S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaPciDataPsn12C;
+  
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaFifoRdDataPns11S;
+  wire 				  XpiDescDmaFifoEFPns11C;
+  wire 				  XpiDescDmaFifoFFPns10C;  
+  wire [5:0] 			  XpiDescDmaFifoWrPtrPns10C;
+  wire [5:0] 			  XpiDescDmaFifoRdPtrPns10C;
+  wire [5:0] 			  XpiDescDmaFifoWrPtrPns10S;
+  wire [5:0] 			  XpiDescDmaFifoRdPtrPns10S;
+  wire [5:0] 			  XpiDescDmaFifoWrPtrPns11C;
+  wire [5:0] 			  XpiDescDmaFifoRdPtrPns11C;
+  wire [5:0] 			  XpiDescDmaFifoWrPtrPns11S;
+  wire [5:0] 			  XpiDescDmaFifoRdPtrPns11S;
+
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaASICAddrRegPns12C; 
+  wire [`CFG_WIDTH-1:0] 	  XpiDescDmaModeRegPns12C;     
+  wire [`DMA_TARGETID_WIDTH-1:0]  XpiDescDmaTargetIDPns12C;    
+  wire [2:0] 			  XpiDescDmaMemoryIDPns12C;    
+  wire 				  XpiDescDmaRepeatEnPns12C;    
+  wire 				  XpiDescDmaRbWrTxnPns11C;
+  wire 				  XpiDescDmaASICAddrRegWrPns11C;  
+  wire 				  XpiDescDmaASICAddrRegWrPns12C;  
+  wire 				  XpiDescDmaASICAddrRegWrPns12S;
+  wire 				  XpiDescDmaCreditRefreshPsn11C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataPns11S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataPns12C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataPns12S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbLSBDataPns12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbMSBDataPns12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbMSBDataPns12S;
+  wire 				  XpiDescDmaFifoEFPns11S;
+  wire 				  XpiDescDmaFifoEFPns12S;
+  wire 				  XpiDescDmaRbIrdyPns12C;
+  wire 				  XpiDescDmaCoreDescPh2WrEnPns11S;
+  wire 				  XpiDescDmaCoreDescPh2WrEnPns12S;
+  wire 				  XpiDescDmaDescPh2WrEnPns13C;
+  wire 				  XpiDescDmaDescPh2WrEnPns13S;
+  wire 				  XpiDescDmaDescPh2WrEnPns14S;
+  wire [42:0] 			  XpiDescDmaCoreAddrModeInfoPns11S;
+  wire [42:0] 			  XpiDescDmaCoreAddrModeInfoPns12S;
+  wire [42:0] 			  XpiDescDmaAddrModeInfoPns13C;
+  wire [42:0] 			  XpiDescDmaAddrModeInfoPns13S;
+  wire 				  XpiDescDmaFinalMemRdPns11C;
+  wire 				  XpiDescDmaFinalMemRdPns11S;
+  wire 				  XpiDescDmaXfrCmpltPns11C;
+  wire 				  XpiDescDmaXfrCmpltPns11S;
+  wire 				  XpiDescDmaXfrCmpltPns12C;
+  wire 				  XpiDescDmaXfrCmpltPns12S;
+  
+  wire 				  XpiDescDmaTOutCntEnPsn10C;
+  wire 				  XpiDescDmaTOutCntEnPsn10S;
+  wire 				  XpiDescDmaTimeOutPsn10C;
+  wire 				  XpiDescDmaTimeOutPsn10S;
+  wire 				  XpiDescDmaTimeOutPns11C;
+  wire 				  XpiDescDmaTimeOutPns11S;
+  wire 				  XpiDescDmaPciSyncUpdateStatusPsn11S;
+  wire 				  XpiDescDmaPciSyncUpdateStatusPsn12S;
+  wire 				  XpiDescDmaPciUpdateStatusPsn12S;
+  wire 				  XpiDescDmaPciUpdateStatusPsn13C;
+  wire 				  XpiDescDmaPciUpdateStatusPsn13S;
+  wire 				  XpiDescDmaPciSyncTimeOutPsn11S;
+  wire 				  XpiDescDmaPciSyncTimeOutPsn12S;
+  wire 				  XpiDescDmaPciTimeOutPsn12S;
+  wire 				  XpiDescDmaPciTimeOutPsn12C;
+  
+  wire [4:0] 			  XpiDescDmaDataCntPns12S;
+  wire [`TOUT_CNTR_WIDTH-1:0] 	  XpiDescDmaTimeOutCntPsn10S;
+  wire [3:0] 			  XpiDescDmaAssertCntPsn11S;
+
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciCmpDataCntPns11S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciExptDataCntPns10C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciExptDataCntPns11C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciExptDataCntPns12C;
+  wire 				  XpiDescDmaPciAllDataRecvdPns11C;
+  
+  wire 				  XpiDescDmaPciReqTriggerPsn11C;
+  wire 				  XpiDescDmaPciRespTriggerPns11C;
+  wire 				  XpiDescDmaPciTOutCntEnPsn11C;
+  wire 				  XpiDescDmaPciTOutCntEnPsn11S;
+  wire 				  XpiDescDmaPciTimeOutPsn13C;
+  wire 				  XpiDescDmaPciTimeOutPsn13S;
+  wire [`TOUT_CNTR_WIDTH-1:0] 	  XpiDescDmaPciTimeOutCntPsn12S;
+  wire 				  XpiDescDmaIssueTOutPns11S;
+  wire 				  XpiDescDmaIssueTOutPns12C;
+  
+  wire 				  XpiDescDmaCPURdEndPns10C;
+  wire 				  XpiDescDmaCPURdEndPns10S;
+  wire 				  XpiDescDmaCPURdEndPns11C;
+  wire 				  XpiDescDmaCoreCPURdEndPns11S;
+  wire 				  XpiDescDmaCoreCPURdEndPns12S;
+  wire 				  XpiDescDmaCPURdEndPns12S;
+  wire 				  XpiDescDmaCPURdEndPns13C;
+  wire 				  XpiDescDmaCPURdEndPns13S;
+  wire 				  XpiDescDmaCPURdEndPns14S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaCoreMemRdLenPns11S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaCoreMemRdLenPns12S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaMemRdLenPns12S;
+
+  wire [5:0] 			  XpiDescDmaFifoFillPns12C;
+  wire 				  XpiDescDmaWrPendingPns12C;
+  wire 				  XpiDescDmaWrPendingPns13C;
+  wire 				  XpiDescDmaWrPendingPns13S;
+  wire 				  XpiDescDmaRbLastWrPns12C;
+  wire 				  XpiDescDmaRbLastWrPns12S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaRbWrLenPns12S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaNumDataEntriesPns12C;
+  wire 				  XpiDescDmaRbWrDonePns12C;
+  wire 				  XpiDescDmaRbWrDonePns12S;
+  wire 				  XpiDescDmaFifoDataRecvdPns12C;
+  wire 				  XpiDescDmaFifoDataRecvdPns13C;
+  wire 				  XpiDescDmaFifoDataRecvdPns13S;
+  wire 				  XpiDescDmaRbAddrIrdyPns12S;
+  wire 				  XpiDescDmaRbAddrIrdyPns13C;
+  
+  //------------------------------
+  //---- Register Declaration ----
+  //------------------------------
+  reg 				  XpiDescDmaPciArbReqPsn13S;
+  reg 				  XpiDescDmaRbArbReqPns13S;
+  reg [`DMA_INTR_EVENTS-1:0] 	  XpiDescDmaPciIntrPsn13C;
+
+  reg 				  XpiDescDmaPciIdlePns10C;
+  reg 				  XpiDescDmaFifoWrEnPns10C;        
+  reg 				  XpiDescDmaIssueFirstMemRdPns10C; 
+  reg 				  XpiDescDmaIssueMemRdPns10C;      
+  reg 				  XpiDescDmaIssueFinalMemRdPns10C; 
+  reg 				  XpiDescDmaInitialDescRdPns10C;   
+  reg 				  XpiDescDmaIssueDescRdPns10C;     
+  reg 				  XpiDescDmaSrvCfgRdPns10C;        
+  reg 				  XpiDescDmaPciTrdyPns13S;         
+  reg 				  XpiDescDmaDescRdPendingPns10C;   
+  reg 				  XpiDescDmaMemRdPendingPns10C;    
+  reg 				  XpiDescDmaDescPh1WrEnPns10C;     
+  reg 				  XpiDescDmaDescPh2WrEnPns10C;     
+  reg 				  XpiDescDmaMemRdCmpWaitPns10C;
+  reg 				  XpiDescDmaNextDescRdPns10C;
+  reg 				  XpiDescDmaKillPns10C;
+  reg 				  XpiDescDmaReadStreamPns10C;
+  
+  reg [1:0] 			  XpiDescDmaMemRdLenMuxSelPns10S;
+  reg [`MAX_BUFFER_SIZE-1:0] 	  XpiDescDmaMemRdLenSubPns11C;
+  reg [`CFG_WIDTH-1:0] 		  XpiDescDmaRdAddressPsn11C;
+  reg [`PCI_ADDR_WIDTH-1:0] 	  XpiDescDmaPciAddrPsn12C;
+  reg [`PCI_CMD_WIDTH-1:0] 	  XpiDescDmaPciCmdPsn12C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciLengthPsn12C;
+  reg [`CFG_WIDTH-1:0] 		  XpiDescDmaPciCfgDataPsn12C;
+  
+  reg 				  XpiDescDmaFifoRdEnPns11S;
+  reg 				  XpiDescDmaRbAddrIrdyPns11S;
+  reg 				  XpiDescDmaIssueASICAddrWrPns11S;
+  reg 				  XpiDescDmaIssueModeWrPns11S;
+  reg 				  XpiDescDmaUpdateStatusPns11S;
+  reg 				  XpiDescDmaIssueTOutPns11C;
+  reg [4:0] 			  XpiDescDmaDataCntPns12C;
+  reg 				  XpiDescDmaRbMuxSelPns12S;
+  reg [`RB_DATA_WIDTH-1:0] 	  XpiDescDmaRbDataPns13C;
+  reg [`RB_ADDR_WIDTH-1:0] 	  XpiDescDmaASICMemAddrPns12C;
+  reg [`RB_ADDR_WIDTH-1:0] 	  XpiDescDmaModeRegAddrPns12C;
+  reg [`RB_CMD_WIDTH-1:0] 	  XpiDescDmaRbCmdPns12C;
+  reg [`XPI_ADDR_WIDTH-1:0] 	  XpiDescDmaRbAddrPns12C;
+  reg [`CFG_WIDTH-1:0] 		  XpiDescDmaStatusRegPns10C;
+  reg [`TOUT_CNTR_WIDTH-1:0] 	  XpiDescDmaTimeOutCntPsn10C;
+  reg [`TOUT_CNTR_WIDTH-1:0] 	  XpiDescDmaPciTimeOutCntPsn12C;
+  reg 				  XpiDescDmaUpdateStatusPsn11S;
+  reg 				  XpiDescDmaTimeOutPsn11S;
+  reg 				  XpiDescDmaAssertCntEnPsn11S;
+  reg [3:0] 			  XpiDescDmaAssertCntPsn11C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaPciCmpDataCntPns11C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiDescDmaRbWrLenPns12C;
+
+  reg 				  XpiDescDmaValidPns10C;
+
+  //==================================
+  //======== PCI CLOCK DOMAIN ========
+  //==================================
+
+  assign XpiDescDma96MemEnablePns11C  = XpiDescDmaDescRegPns11S[3];
+  assign XpiDescDma160MemEnablePns11C = XpiDescDmaDescRegPns11S[4];
+  
+  assign XpiDescDmaPciMTUPns10C = 
+	 (XpiDescDma96MemEnablePns11C ||  XpiDescDma160MemEnablePns11C) ?
+	   `MTU96 : `MTU;				 
+
+  assign XpiDescDmaPciFIRSTMEMRDLENPns10C =
+	 (XpiDescDma96MemEnablePns11C ||  XpiDescDma160MemEnablePns11C) ?
+	   `FIRSTMEMRDLEN96 : `FIRSTMEMRDLEN;
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  //---------------------------------------------
+  //---- PCI-App to DMA Input Register Stage ----
+  //---------------------------------------------
+  
+DFFR #(1,1'b0) U1_dff (.q(XpiDescDmaPciAddrIrdyPns10S),.d(XpiPciAppDescDmaAddrIrdyP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+       
+DFFR #(64,64'b0) U2_dff (.q(XpiDescDmaPciDataPns10S),.d(XpiPciAppDescDmaDataP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+       			      
+DFFR #(4,4'b0) U3_dff (.q(XpiDescDmaPciCmdPns10S),.d(XpiPciAppDescDmaCmdP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+       			      
+DFFR #(64,64'b0) U4_dff (.q(XpiDescDmaPciAddrPns10S),.d(XpiPciAppDescDmaAddrP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U5_dff (.q(XpiDescDmaPciValidTxnPns10S),.d(XpiPciAppDescDmaValidTxnP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //----------------------------------------------
+  //---- DMA Head Descriptor Address Register ----
+  //----------------------------------------------
+
+  
+  assign XpiDescDmaSrvCfgWrPns10C = 
+	 (XpiDescDmaPciAddrIrdyPns10S && (XpiDescDmaPciCmdPns10S == `CTRLWR) &&
+	  XpiDescDmaPciValidTxnPns10S);
+  
+  //---- Command Register ----
+  // Offset = 0x00
+  assign XpiDescDmaCmdRegWrValidPns10C = 
+	 (XpiDescDmaSrvCfgWrPns10C && (XpiDescDmaPciAddrPns10S[3:2]==2'b00));
+  
+  assign XpiDescDmaCommandRegPns10C = XpiDescDmaCmdRegWrValidPns10C ?
+	 XpiPciAppDescDmaDataP11S[`CFG_WIDTH-1:0] : XpiDescDmaCommandRegPns10S;
+  
+DFFR #(32,32'b0) U6_dff (.q(XpiDescDmaCommandRegPns10S),.d(XpiDescDmaCommandRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Address Register ----
+  // Offset = 0x04
+  
+  assign XpiDescDmaAddrRegWrValidPns10C = 
+	 (XpiDescDmaSrvCfgWrPns10C && (XpiDescDmaPciAddrPns10S[3:2]==2'b01));
+  
+  assign XpiDescDmaAddressRegPns10C = XpiDescDmaAddrRegWrValidPns10C ?
+	 XpiPciAppDescDmaDataP11S[`CFG_WIDTH-1:0] : XpiDescDmaAddressRegPns10S;
+  
+DFFR #(32,32'b0) U7_dff (.q(XpiDescDmaAddressRegPns10S),.d(XpiDescDmaAddressRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiDescDmaRunPns11C = XpiDescDmaCommandRegPns10S[0];
+  
+  //--------------------------------
+  //---- Status Register Update ----
+  //--------------------------------
+  // Status Register is Read Only, Offset = 0x08
+  
+  // ReCirculating Final Read Indicator till Data is written into ASIC memory
+  assign XpiDescDmaFinalMemRdPns11C = 
+	 (XpiDescDmaIssueFinalMemRdPns10C  || 
+	  (XpiDescDmaPciUpdateStatusPsn13C && XpiDescDmaFifoEFPns11C)) ? 
+	   XpiDescDmaIssueFinalMemRdPns10C : XpiDescDmaFinalMemRdPns11S;
+  
+DFFR #(1,1'b0) U8_dff (.q(XpiDescDmaFinalMemRdPns11S),.d(XpiDescDmaFinalMemRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+	 
+  // Final Data Transfer Completion Indication
+  assign XpiDescDmaXfrCmpltPns11C = 
+	 (XpiDescDmaFinalMemRdPns11S && 
+	  XpiDescDmaPciUpdateStatusPsn13C &&
+	  XpiDescDmaFifoEFPns11C);
+
+DFFR #(1,1'b0) U9_dff (.q(XpiDescDmaXfrCmpltPns11S),.d(XpiDescDmaXfrCmpltPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiDescDmaXfrCmpltPns12C = 
+	 (XpiDescDmaXfrCmpltPns11S || XpiDescDmaNextDescRdPns10C) ?
+	   XpiDescDmaXfrCmpltPns11S : XpiDescDmaXfrCmpltPns12S;
+  
+DFFR #(1,1'b0) U10_dff (.q(XpiDescDmaXfrCmpltPns12S),.d(XpiDescDmaXfrCmpltPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Status Update Data
+  // Status Register Stores cumulative number of Bytes transferred
+  // during entire Descriptor Dma operation
+  
+  always @(/*AS*/XpiDescDmaCmdRegWrValidPns10S or XpiDescDmaEndPns11C
+	   or XpiDescDmaPciMTUPns10C or XpiDescDmaPciMemRdLenPsn11S
+	   or XpiDescDmaPciTimeOutPsn12C or XpiDescDmaPciTimeOutPsn13S
+	   or XpiDescDmaPciUpdateStatusPsn13C or XpiDescDmaRunPns11C
+	   or XpiDescDmaStatusRegPns10S or XpiDescDmaValidPns10C
+	   or XpiDescDmaXfrCmpltPns11S)
+    begin
+      if (XpiDescDmaCmdRegWrValidPns10S && XpiDescDmaRunPns11C && XpiDescDmaValidPns10C)
+	// Resetting Status Register upon commencement of new Desc Dma operation
+	XpiDescDmaStatusRegPns10C= `CFG_WIDTH'h00000001;
+      else if (XpiDescDmaXfrCmpltPns11S && XpiDescDmaEndPns11C)
+	// All Data Transfers complete, Set Done Bit
+	XpiDescDmaStatusRegPns10C = {{XpiDescDmaStatusRegPns10S[31:12]+
+				      XpiDescDmaPciMemRdLenPsn11S},12'h002};
+      else if (XpiDescDmaXfrCmpltPns11S && (~XpiDescDmaEndPns11C))
+	// Intermediate Data Transfers complete i.e. current Descriptor operation complete, 
+	// Update the Byte Count
+	XpiDescDmaStatusRegPns10C = {{XpiDescDmaStatusRegPns10S[31:12]+
+				      XpiDescDmaPciMemRdLenPsn11S},
+				     XpiDescDmaStatusRegPns10S[11:0]};
+      else if (XpiDescDmaPciUpdateStatusPsn13C)
+	// MTU Data Tranferred, but more transfers pending
+	XpiDescDmaStatusRegPns10C = {{XpiDescDmaStatusRegPns10S[31:12]+
+				      {8'h00,XpiDescDmaPciMTUPns10C}},12'h001};
+      else if (XpiDescDmaPciTimeOutPsn12C)
+	// ASIC Request TimeOut Occured
+	XpiDescDmaStatusRegPns10C = {XpiDescDmaStatusRegPns10S[`CFG_WIDTH-1:3],3'b110};
+      else if (XpiDescDmaPciTimeOutPsn13S)
+	// CPU Request TimeOut Occured
+	XpiDescDmaStatusRegPns10C = {XpiDescDmaStatusRegPns10S[`CFG_WIDTH-1:4],4'b1010};
+      else
+	XpiDescDmaStatusRegPns10C = XpiDescDmaStatusRegPns10S;
+    end // always @ (...
+
+DFFR #(32,32'b0) U11_dff (.q(XpiDescDmaStatusRegPns10S),.d(XpiDescDmaStatusRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //--------------------------------
+  //---- TimeOut Value Register ----
+  //--------------------------------
+  // Offset = 0x0c
+  
+  assign XpiDescDmaTOutRegWrPns10C = (XpiDescDmaPciAddrIrdyPns10S &&
+				      (XpiDescDmaPciCmdPns10S == `CTRLWR) &&
+				      (XpiDescDmaPciAddrPns10S[3:2]==2'b11) &&
+				      XpiDescDmaPciValidTxnPns10S);			      
+  
+  assign XpiDescDmaTOutRegPns10C = XpiDescDmaTOutRegWrPns10C ?
+	 XpiPciAppDescDmaDataP11S[`CFG_WIDTH-1:0] : XpiDescDmaTOutRegPns10S;
+  
+DFFR #(32,`CFG_WIDTH'h0000ffff) U12_dff (.q(XpiDescDmaTOutRegPns10S),.d(XpiDescDmaTOutRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Control Register Read Data ----
+
+  always @(/*AS*/XpiDescDmaAddressRegPns10S
+	   or XpiDescDmaCommandRegPns10S or XpiDescDmaPciAddrPns10S
+	   or XpiDescDmaStatusRegPns10S or XpiDescDmaTOutRegPns10S)
+    begin
+
+      case (XpiDescDmaPciAddrPns10S[3:2])
+
+	2'b00 : XpiDescDmaPciCfgDataPsn12C = XpiDescDmaCommandRegPns10S;
+	
+	2'b01 : XpiDescDmaPciCfgDataPsn12C = XpiDescDmaAddressRegPns10S;
+
+	2'b10 : XpiDescDmaPciCfgDataPsn12C = XpiDescDmaStatusRegPns10S;
+
+	2'b11 : XpiDescDmaPciCfgDataPsn12C = XpiDescDmaTOutRegPns10S;
+
+	default : XpiDescDmaPciCfgDataPsn12C = {`CFG_WIDTH{1'b0}};
+
+      endcase // case(XpiDescDmaPciAddrPns10S[3:2])
+    end // always @ (...
+
+  //----------------------------------------------------------------
+  //---- Command & Status Register Update Control State Machine ----
+  //----------------------------------------------------------------
+
+`define XPIDESCDMACMDIDLE  2'b00
+`define XPIDESCDMACMDVALID 2'b01
+`define XPIDESCDMACMDHALT  2'b11
+`define XPIDESCDMACMDSET   2'b10
+  
+  // State Variables
+  wire [1:0] xpidescdmacmdstate;
+  reg [1:0]  next_xpidescdmacmdstate;
+  
+  // State Change
+DFFR #(2,2'b0) U13_dff (.q(xpidescdmacmdstate),.d(next_xpidescdmacmdstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Output Assignment
+  
+  always @(/*AS*/xpidescdmacmdstate)
+    begin
+
+      XpiDescDmaValidPns10C = 1'b0;
+
+      case(xpidescdmacmdstate)
+	
+	`XPIDESCDMACMDIDLE: 
+	  begin
+	    XpiDescDmaValidPns10C = 1'b0;
+	  end	  
+
+	`XPIDESCDMACMDVALID: XpiDescDmaValidPns10C = 1'b1;
+
+	`XPIDESCDMACMDHALT: ;
+	
+	`XPIDESCDMACMDSET:
+	  begin
+	    XpiDescDmaValidPns10C = 1'b0;
+	  end	  
+
+	default:
+	  begin
+	    XpiDescDmaValidPns10C = 1'b0;
+	  end	  
+
+      endcase // case(xpidescdmacmdstate)
+    end // always @ (...
+  
+  // State Transitions
+
+  always @(/*AS*/XpiDescDmaCmdRegWrValidPns10S or XpiDescDmaEndPns11C
+	   or XpiDescDmaRunPns11C or XpiDescDmaXfrCmpltPns12S
+	   or xpidescdmacmdstate)
+    begin
+
+      case (xpidescdmacmdstate)
+
+	`XPIDESCDMACMDIDLE:
+	  begin
+	    if (XpiDescDmaCmdRegWrValidPns10S && XpiDescDmaRunPns11C)	
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDVALID;
+	    else
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDIDLE;
+	  end
+	
+	`XPIDESCDMACMDVALID:
+	  begin
+	    if (XpiDescDmaXfrCmpltPns12S && XpiDescDmaEndPns11C)
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDIDLE;
+	    else if (XpiDescDmaCmdRegWrValidPns10S && (~XpiDescDmaRunPns11C))
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDHALT;
+	    else
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDVALID;
+	  end
+
+	`XPIDESCDMACMDHALT:
+	  begin
+	    if (XpiDescDmaCmdRegWrValidPns10S && XpiDescDmaRunPns11C)
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDSET;
+	    else
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDHALT;
+	  end
+	
+	`XPIDESCDMACMDSET:
+	  begin
+	    if (XpiDescDmaXfrCmpltPns12S && XpiDescDmaEndPns11C)
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDIDLE;
+	    else if (XpiDescDmaCmdRegWrValidPns10S && (~XpiDescDmaRunPns11C))
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDHALT;
+	    else
+	      next_xpidescdmacmdstate = `XPIDESCDMACMDSET;
+	  end
+	
+	default: next_xpidescdmacmdstate = `XPIDESCDMACMDIDLE;
+	
+      endcase // case(xpidescdmacmdstate)
+    end // always @ (...
+  
+  //-----------------------------------
+  //---- DMA CONTROL STATE MACHINE ----
+  //-----------------------------------
+  // This SM controls following functionality:
+  // (a) Command, Address and Status Register Accesses
+  // (b) Reading the Descriptor from the CPU memory,
+  //     parsing the descriptor contents and issuing
+  //     Reads to Buffer in CPU memory
+  // (c) Accepting Read Completion Data and storing into
+  //     ASYNCFIFO
+
+  //-----------------------------------------------
+  //---- Control Signals for State Transitions ----
+  //-----------------------------------------------
+  
+  // Control Reg Read Qualifier
+  assign XpiDescDmaPciRegRdPns10C = (XpiPciAppDescDmaAddrIrdyP11S &&
+				     (XpiPciAppDescDmaCmdP11S == `CTRLRD) &&
+				     XpiPciAppDescDmaValidTxnP11S);
+  
+  assign XpiDescDmaPciRegRdPns11C =
+         (XpiDescDmaPciRegRdPns10C || XpiDescDmaSrvCfgRdPns10C) ?
+           XpiDescDmaPciRegRdPns10C : XpiDescDmaPciRegRdPns11S;
+  
+DFFR #(1,1'b0) U14_dff (.q(XpiDescDmaPciRegRdPns11S),.d(XpiDescDmaPciRegRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Request Length Classification
+  assign XpiDescDmaLenLessEqMtuPns11C = 
+	 {{XpiDescDmaPciMemRdLenPsn11S <= {4'h0,XpiDescDmaPciMTUPns10C}} &&
+	  {XpiDescDmaPciMemRdLenPsn11S > {4'h0,`ZEROLEN}}};
+  
+  assign XpiDescDmaLenGrMtuPns11C = 
+	 {XpiDescDmaPciMemRdLenPsn11S > {4'h0,XpiDescDmaPciMTUPns10C}};
+  
+  assign XpiDescDmaLenGr2MtuPns11C = 
+	 {XpiDescDmaPciMemRdLenPsn11S > {4'h0,{{`BYTECNT_WIDTH'h002}*XpiDescDmaPciMTUPns10C}}};
+  
+  assign XpiDescDmaLenZeroPns11C = {XpiDescDmaPciMemRdLenPsn11S == {4'h0,`ZEROLEN}};
+  
+  //---- Descriptor Read Qualifier ----
+
+  // Head Descriptor Read Indication
+  
+DFFR #(1,1'b0) U15_dff (.q(XpiDescDmaCmdRegWrValidPns10S),.d(XpiDescDmaCmdRegWrValidPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaPciFirstDescRdPns10C = 
+	 (XpiDescDmaCmdRegWrValidPns10S && XpiDescDmaRunPns11C && XpiDescDmaValidPns10C);
+  
+  assign XpiDescDmaPciFirstDescRdPns11C =
+	 (XpiDescDmaPciFirstDescRdPns10C || XpiDescDmaMemRdCmpWaitPns10C) ?
+	   XpiDescDmaPciFirstDescRdPns10C : XpiDescDmaPciFirstDescRdPns11S;
+  
+DFFR #(1,1'b0) U16_dff (.q(XpiDescDmaPciFirstDescRdPns11S),.d(XpiDescDmaPciFirstDescRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Subsequent Descriptor Read Indication
+
+  assign XpiDescDmaNextDescRdPns11C = 
+	 (XpiDescDmaNextDescRdPns10C || XpiDescDmaIssueDescRdPns10C) ?
+	   XpiDescDmaNextDescRdPns10C : XpiDescDmaNextDescRdPns11S;
+
+DFFR #(1,1'b0) U17_dff (.q(XpiDescDmaNextDescRdPns11S),.d(XpiDescDmaNextDescRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+    
+  // 2 MTU Memory Read Indication
+  assign XpiDescDmaPci2MtuMemRdPns11C = 
+	 (XpiDescDmaRunPns11C && XpiDescDmaLenGr2MtuPns11C && XpiDescDmaFifoEFPns11C);
+    
+  // Determining that Fifo is Half (MTU size) Empty
+
+DFFR #(6,6'b0) U18_dff (.q(XpiDescDmaFifoWrPtrPns10S),.d(XpiDescDmaFifoWrPtrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(6,6'b0) U19_dff (.q(XpiDescDmaFifoRdPtrPns10S),.d(XpiDescDmaFifoRdPtrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaFifoLessHalfPns11C = 
+	 ((XpiDescDmaFifoWrPtrPns10S - XpiDescDmaFifoRdPtrPns10S) <= 6'b010000);
+  
+  // MTU size Memory Read Indication
+  
+  assign XpiDescDmaPciMtuMemRdPns11C = 
+	 (XpiDescDmaRunPns11C && XpiDescDmaLenGrMtuPns11C && XpiDescDmaFifoLessHalfPns11C);
+  
+  // Last Memory Read Indication
+
+  assign XpiDescDmaPciFinalMemRdTxnPns11C = 
+	 (XpiDescDmaRunPns11C && XpiDescDmaLenLessEqMtuPns11C && XpiDescDmaFifoLessHalfPns11C);
+  
+  // Descriptor Read Pending Indication 
+  
+  assign XpiDescDmaDescRdPendingPns11C = 
+	 (XpiDescDmaDescRdPendingPns10C || XpiDescDmaDescPh1WrEnPns10C) ?
+	   XpiDescDmaDescRdPendingPns10C : XpiDescDmaDescRdPendingPns11S;
+  
+DFFR #(1,1'b0) U20_dff (.q(XpiDescDmaDescRdPendingPns11S),.d(XpiDescDmaDescRdPendingPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Memory Read Pending Indication
+  
+  assign XpiDescDmaMemRdPendingPns11C = 
+	 (XpiDescDmaMemRdPendingPns10C || XpiDescDmaPciAllDataRecvdPns11C) ?
+	   XpiDescDmaMemRdPendingPns10C : XpiDescDmaMemRdPendingPns11S;
+  
+DFFR #(1,1'b0) U21_dff (.q(XpiDescDmaMemRdPendingPns11S),.d(XpiDescDmaMemRdPendingPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Read Stream State Transition Indicator
+  assign XpiDescDmaReadStreamPns11C = 
+	 (XpiDescDmaReadStreamPns10C || XpiDescDmaSrvCfgRdPns10C || XpiDescDmaPciIdlePns10C) ?
+	   XpiDescDmaReadStreamPns10C : XpiDescDmaReadStreamPns11S;
+  
+DFFR #(1,1'b0) U22_dff (.q(XpiDescDmaReadStreamPns11S),.d(XpiDescDmaReadStreamPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //--------------------------
+  //---- State Definition ----
+  //--------------------------
+  
+`define XPIDESCDMAIDLE          4'b0000
+`define XPIDESCDMAARBREQ        4'b0001
+`define XPIDESCDMACTLRD         4'b1000
+`define XPIDESCDMAINITIALDESCRD 4'b0010
+`define XPIDESCDMADESCRD        4'b0011
+`define XPIDESCDMADESCWRPH1     4'b0110
+`define XPIDESCDMADESCWRPH2     4'b1110
+`define XPIDESCDMA2MTUMEMRD     4'b0100
+`define XPIDESCDMAMTUMEMRD      4'b0101
+`define XPIDESCDMAFINALMEMRD    4'b1001
+`define XPIDESCDMACMPWAIT       4'b1111
+`define XPIDESCDMACMPRECVD      4'b1100
+`define XPIDESCDMAREADSTREAM    4'b1101
+`define XPIDESCDMANEXTDESCRD    4'b0111
+`define XPIDESCDMAABORT         4'b1011
+  
+  // Internal state variables
+  wire [3:0] xpidescdmastate;
+  reg [3:0]  next_xpidescdmastate;
+  
+  //---- State Change ----
+DFFR #(4,4'b0) U23_dff (.q(xpidescdmastate),.d(next_xpidescdmastate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------
+  //---- Output Assignment ----
+  //---------------------------
+  
+  always @(/*AS*/xpidescdmastate)
+    begin
+      
+      XpiDescDmaPciArbReqPsn13S       = 1'b0;
+      XpiDescDmaPciIdlePns10C         = 1'b0;
+      XpiDescDmaFifoWrEnPns10C        = 1'b0;
+      XpiDescDmaIssueFirstMemRdPns10C = 1'b0;
+      XpiDescDmaIssueMemRdPns10C      = 1'b0;
+      XpiDescDmaIssueFinalMemRdPns10C = 1'b0;
+      XpiDescDmaInitialDescRdPns10C   = 1'b0;
+      XpiDescDmaIssueDescRdPns10C     = 1'b0;
+      XpiDescDmaSrvCfgRdPns10C        = 1'b0;
+      XpiDescDmaPciTrdyPns13S         = 1'b1;
+      XpiDescDmaDescRdPendingPns10C   = 1'b0;
+      XpiDescDmaMemRdPendingPns10C    = 1'b0;
+      XpiDescDmaDescPh1WrEnPns10C     = 1'b0;
+      XpiDescDmaDescPh2WrEnPns10C     = 1'b0;
+      XpiDescDmaMemRdCmpWaitPns10C    = 1'b0;
+      XpiDescDmaNextDescRdPns10C      = 1'b0;
+      XpiDescDmaKillPns10C            = 1'b0;
+      XpiDescDmaReadStreamPns10C      = 1'b0;
+      
+      case(xpidescdmastate)
+	
+	`XPIDESCDMAIDLE:  
+	  begin
+	    XpiDescDmaPciIdlePns10C         = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S       = 1'b0;
+	    XpiDescDmaFifoWrEnPns10C        = 1'b0;
+	    XpiDescDmaIssueFirstMemRdPns10C = 1'b0;
+	    XpiDescDmaIssueMemRdPns10C      = 1'b0;
+	    XpiDescDmaIssueFinalMemRdPns10C = 1'b0;
+	    XpiDescDmaInitialDescRdPns10C   = 1'b0;
+	    XpiDescDmaIssueDescRdPns10C     = 1'b0;
+	    XpiDescDmaSrvCfgRdPns10C        = 1'b0;
+	    XpiDescDmaPciTrdyPns13S         = 1'b1;
+	    XpiDescDmaDescRdPendingPns10C   = 1'b0;
+	    XpiDescDmaMemRdPendingPns10C    = 1'b0;
+	    XpiDescDmaDescPh1WrEnPns10C     = 1'b0;
+	    XpiDescDmaDescPh2WrEnPns10C     = 1'b0;
+	    XpiDescDmaMemRdCmpWaitPns10C    = 1'b0;
+	    XpiDescDmaNextDescRdPns10C      = 1'b0;
+	    XpiDescDmaKillPns10C            = 1'b0;
+	    XpiDescDmaReadStreamPns10C      = 1'b0;
+	  end
+	
+	`XPIDESCDMAARBREQ: XpiDescDmaPciArbReqPsn13S = 1'b1;
+	
+	`XPIDESCDMACTLRD: XpiDescDmaSrvCfgRdPns10C = 1'b1;
+	
+	`XPIDESCDMAINITIALDESCRD: 
+	  begin
+	    XpiDescDmaInitialDescRdPns10C = 1'b1;
+	    XpiDescDmaDescRdPendingPns10C = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIDESCDMADESCRD: 
+	  begin
+	    XpiDescDmaIssueDescRdPns10C   = 1'b1;
+	    XpiDescDmaDescRdPendingPns10C = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIDESCDMADESCWRPH1: XpiDescDmaDescPh1WrEnPns10C = 1'b1;
+	
+	`XPIDESCDMADESCWRPH2: 
+	  begin
+	    XpiDescDmaDescPh1WrEnPns10C = 1'b0;
+	    XpiDescDmaDescPh2WrEnPns10C = 1'b1;
+	  end
+
+	`XPIDESCDMA2MTUMEMRD:
+	  begin
+	    XpiDescDmaIssueFirstMemRdPns10C = 1'b1;
+	    XpiDescDmaMemRdPendingPns10C    = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S       = 1'b0;
+	  end
+	
+	`XPIDESCDMAMTUMEMRD: 
+	  begin
+	    XpiDescDmaIssueMemRdPns10C    = 1'b1;
+	    XpiDescDmaMemRdPendingPns10C  = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIDESCDMAFINALMEMRD: 
+	  begin
+	    XpiDescDmaIssueFinalMemRdPns10C = 1'b1;
+	    XpiDescDmaMemRdPendingPns10C    = 1'b1;
+	    XpiDescDmaPciArbReqPsn13S       = 1'b0;
+	  end
+	
+	`XPIDESCDMACMPWAIT:
+	  begin
+	    XpiDescDmaIssueFirstMemRdPns10C = 1'b0;
+	    XpiDescDmaIssueMemRdPns10C      = 1'b0;
+	    XpiDescDmaIssueFinalMemRdPns10C = 1'b0;
+	    XpiDescDmaInitialDescRdPns10C   = 1'b0;
+	    XpiDescDmaIssueDescRdPns10C     = 1'b0;
+	    XpiDescDmaMemRdCmpWaitPns10C    = 1'b1;
+	    XpiDescDmaMemRdPendingPns10C    = 1'b0;
+	    XpiDescDmaDescRdPendingPns10C   = 1'b0;
+	  end
+	
+	`XPIDESCDMACMPRECVD: XpiDescDmaFifoWrEnPns10C = 1'b1;
+	
+	`XPIDESCDMAREADSTREAM: 
+	  begin
+	    XpiDescDmaMemRdCmpWaitPns10C = 1'b0;
+	    XpiDescDmaReadStreamPns10C   = 1'b1;
+	  end
+	
+	`XPIDESCDMANEXTDESCRD: XpiDescDmaNextDescRdPns10C = 1'b1;
+	  
+	`XPIDESCDMAABORT: XpiDescDmaKillPns10C = 1'b1;
+
+	default:
+	  begin
+	    XpiDescDmaPciIdlePns10C         = 1'b0;
+	    XpiDescDmaPciArbReqPsn13S       = 1'b0;
+	    XpiDescDmaFifoWrEnPns10C        = 1'b0;
+	    XpiDescDmaIssueFirstMemRdPns10C = 1'b0;
+	    XpiDescDmaIssueMemRdPns10C      = 1'b0;
+	    XpiDescDmaIssueFinalMemRdPns10C = 1'b0;
+	    XpiDescDmaInitialDescRdPns10C   = 1'b0;
+	    XpiDescDmaIssueDescRdPns10C     = 1'b0;
+	    XpiDescDmaSrvCfgRdPns10C        = 1'b0;
+	    XpiDescDmaPciTrdyPns13S         = 1'b1;
+	    XpiDescDmaDescRdPendingPns10C   = 1'b0;
+	    XpiDescDmaMemRdPendingPns10C    = 1'b0;
+	    XpiDescDmaDescPh1WrEnPns10C     = 1'b0;
+	    XpiDescDmaDescPh2WrEnPns10C     = 1'b0;
+	    XpiDescDmaMemRdCmpWaitPns10C    = 1'b0;
+	    XpiDescDmaNextDescRdPns10C      = 1'b0;
+	    XpiDescDmaKillPns10C            = 1'b0;
+	    XpiDescDmaReadStreamPns10C      = 1'b0;
+	  end
+
+      endcase // case(xpidescdmastate)
+    end // always @ (...
+
+  //---------------------------
+  //---- State Transitions ----
+  //---------------------------
+
+  always @(/*AS*/XpiDescDmaCmdRegWrValidPns10S
+	   or XpiDescDmaDescRdPendingPns11S or XpiDescDmaEndPns11C
+	   or XpiDescDmaFinalMemRdPns11S
+	   or XpiDescDmaMemRdPendingPns11S
+	   or XpiDescDmaNextDescRdPns11S
+	   or XpiDescDmaPci2MtuMemRdPns11C
+	   or XpiDescDmaPciAllDataRecvdPns11C
+	   or XpiDescDmaPciFinalMemRdTxnPns11C
+	   or XpiDescDmaPciFirstDescRdPns11S
+	   or XpiDescDmaPciMtuMemRdPns11C or XpiDescDmaPciRegRdPns11S
+	   or XpiDescDmaReadStreamPns11S or XpiDescDmaRunPns11C
+	   or XpiDescDmaSrvCfgWrPns10C or XpiDescDmaXfrCmpltPns11S
+	   or XpiDescDmaXfrCmpltPns12S or XpiPciAppDescDmaDataIrdyP11S
+	   or XpiPciAppDescDmaRdStopP11S
+	   or XpiPciAppDescDmaValidTxnP11S or XpiPciArbDescDmaBusyP11S
+	   or XpiPciArbDescDmaReqAbortP11S
+	   or XpiPciArbDescDmaSplitAbortP11S
+	   or XpiPciArbDescDmaSrvP11S or XpiPciArbDescDmaStopP11S
+	   or xpidescdmastate)
+    begin
+      
+      case (xpidescdmastate)
+	
+	`XPIDESCDMAIDLE:
+	  begin 
+	    if (XpiDescDmaPciRegRdPns11S            ||
+		((XpiDescDmaPciFirstDescRdPns11S    ||
+		  XpiDescDmaNextDescRdPns11S        ||
+		  XpiDescDmaPci2MtuMemRdPns11C      ||
+		  XpiDescDmaPciMtuMemRdPns11C       ||
+		  XpiDescDmaPciFinalMemRdTxnPns11C) &&
+		 (~XpiPciAppDescDmaRdStopP11S))     &&
+		(~XpiPciArbDescDmaStopP11S)         && 
+		(~XpiPciArbDescDmaBusyP11S)         &&
+		(~XpiPciArbDescDmaSrvP11S))
+	      next_xpidescdmastate = `XPIDESCDMAARBREQ;
+	    else
+	      next_xpidescdmastate = `XPIDESCDMAIDLE;
+	  end // case: `XPIDESCDMAIDLE
+	
+	`XPIDESCDMAARBREQ:
+	  begin
+	    if (XpiPciAppDescDmaDataIrdyP11S && 
+		XpiPciAppDescDmaValidTxnP11S &&
+		XpiDescDmaDescRdPendingPns11S &&
+		(~XpiDescDmaSrvCfgWrPns10C))
+	      // Receipt of Pending Descriptor Read Completion
+	      next_xpidescdmastate = `XPIDESCDMADESCWRPH1;
+	    else if (XpiPciAppDescDmaDataIrdyP11S && 
+		     XpiPciAppDescDmaValidTxnP11S &&
+		     XpiDescDmaMemRdPendingPns11S &&
+		     (~XpiDescDmaSrvCfgWrPns10C))
+	      // Receipt of Pending Memory Read Completion
+	      next_xpidescdmastate = `XPIDESCDMACMPRECVD;
+	    else if (XpiDescDmaPciRegRdPns11S && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S))
+	      next_xpidescdmastate = `XPIDESCDMACTLRD;
+	    else if (XpiDescDmaPciFirstDescRdPns11S && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S))
+	      next_xpidescdmastate = `XPIDESCDMAINITIALDESCRD;
+	    else if (XpiDescDmaNextDescRdPns11S && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S))
+	      next_xpidescdmastate = `XPIDESCDMADESCRD;	      
+	    else if (XpiDescDmaPci2MtuMemRdPns11C && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S)) 
+	      next_xpidescdmastate = `XPIDESCDMA2MTUMEMRD;
+	    else if (XpiDescDmaPciMtuMemRdPns11C && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S)) 
+	      next_xpidescdmastate = `XPIDESCDMAMTUMEMRD;
+	    else if (XpiDescDmaPciFinalMemRdTxnPns11C && XpiPciArbDescDmaSrvP11S &&
+		     (~XpiPciArbDescDmaBusyP11S))
+	      next_xpidescdmastate = `XPIDESCDMAFINALMEMRD;
+	    else
+	      next_xpidescdmastate = `XPIDESCDMAARBREQ;
+	  end // case: `XPIDESCDMAARBREQ
+		
+	`XPIDESCDMACTLRD: 
+	  begin
+	    if (XpiDescDmaMemRdPendingPns11S)
+	      // Read Completion Pending
+	      next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	    else if (XpiDescDmaReadStreamPns11S)
+	      next_xpidescdmastate = `XPIDESCDMAREADSTREAM;	      
+	    else
+	      next_xpidescdmastate = `XPIDESCDMAIDLE;
+	  end
+	
+	`XPIDESCDMAINITIALDESCRD: next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	
+	`XPIDESCDMADESCRD: next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+
+	`XPIDESCDMA2MTUMEMRD: next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	
+	`XPIDESCDMAMTUMEMRD: next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	
+	`XPIDESCDMAFINALMEMRD: next_xpidescdmastate = `XPIDESCDMACMPWAIT;	
+	
+	`XPIDESCDMADESCWRPH1: next_xpidescdmastate = `XPIDESCDMADESCWRPH2;
+	
+	`XPIDESCDMADESCWRPH2: next_xpidescdmastate = `XPIDESCDMAIDLE;
+
+	`XPIDESCDMACMPWAIT:
+	  begin
+	    if (XpiPciAppDescDmaDataIrdyP11S  && 
+		XpiDescDmaDescRdPendingPns11S &&
+		XpiPciAppDescDmaValidTxnP11S  &&
+		(~XpiDescDmaSrvCfgWrPns10C)) 
+	      next_xpidescdmastate = `XPIDESCDMADESCWRPH1;
+	    else if (XpiPciAppDescDmaDataIrdyP11S && 
+		     XpiDescDmaMemRdPendingPns11S &&
+		     XpiPciAppDescDmaValidTxnP11S &&
+		     (~XpiDescDmaSrvCfgWrPns10C))
+	      next_xpidescdmastate = `XPIDESCDMACMPRECVD;
+	    else if (XpiDescDmaPciRegRdPns11S && (~XpiPciArbDescDmaSrvP11S) &&
+		     (~XpiPciArbDescDmaBusyP11S))
+	      next_xpidescdmastate = `XPIDESCDMAARBREQ;
+	    else if (XpiPciArbDescDmaReqAbortP11S || XpiPciArbDescDmaSplitAbortP11S)
+	      // Request received Abort completion
+	      next_xpidescdmastate = `XPIDESCDMAABORT;
+	    else
+	      next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	  end
+	
+   `XPIDESCDMAABORT:
+     begin
+      if (XpiDescDmaCmdRegWrValidPns10S && XpiDescDmaRunPns11C)
+        // After transfer is terminated, wait for a new Command Register Write
+        next_xpidescdmastate = `XPIDESCDMAIDLE;
+      else
+        next_xpidescdmastate = `XPIDESCDMAABORT;
+     end
+ 
+	`XPIDESCDMACMPRECVD:
+	  begin
+	    if ((~XpiPciAppDescDmaDataIrdyP11S) && (~XpiDescDmaPciAllDataRecvdPns11C))
+	      next_xpidescdmastate = `XPIDESCDMACMPWAIT;
+	    else if ((~XpiPciAppDescDmaDataIrdyP11S) && XpiDescDmaPciAllDataRecvdPns11C)
+	      next_xpidescdmastate = `XPIDESCDMAREADSTREAM;
+	    else
+	      next_xpidescdmastate = `XPIDESCDMACMPRECVD;
+	  end
+	
+	`XPIDESCDMAREADSTREAM:
+	  begin
+	    if ((XpiDescDmaXfrCmpltPns11S || XpiDescDmaXfrCmpltPns12S) && 
+		(~XpiDescDmaEndPns11C))
+	      // Current Buffer Transfer Complete, but more Buffers exists in the List.
+	      next_xpidescdmastate = `XPIDESCDMANEXTDESCRD;
+	    else if ((XpiDescDmaXfrCmpltPns11S || XpiDescDmaXfrCmpltPns12S) && 
+		     XpiDescDmaEndPns11C)
+	      // All Transfers Complete, End Bit Set, transition to Idle
+	      next_xpidescdmastate = `XPIDESCDMAIDLE;
+	    else if ((((XpiDescDmaPci2MtuMemRdPns11C     || XpiDescDmaPciMtuMemRdPns11C ||
+			XpiDescDmaPciFinalMemRdTxnPns11C || XpiDescDmaNextDescRdPns11S) && 
+		       (~XpiDescDmaFinalMemRdPns11S) && (~XpiPciAppDescDmaRdStopP11S)) || 
+		      XpiDescDmaPciRegRdPns11S) && (~XpiPciArbDescDmaSrvP11S) && 
+		     (~XpiPciArbDescDmaBusyP11S))
+	      // More Data to Read in Current DMA Transfer, transition to ARBREQ state
+	      next_xpidescdmastate = `XPIDESCDMAARBREQ;
+	    else
+	      next_xpidescdmastate = `XPIDESCDMAREADSTREAM;
+	  end // case: `XPIDESCDMAREADSTREAM
+	
+	`XPIDESCDMANEXTDESCRD: 
+	  begin
+	    if ((~XpiPciArbDescDmaSrvP11S) && (~XpiPciArbDescDmaBusyP11S))
+	      // Waiting for the previous Request to complete
+	      next_xpidescdmastate = `XPIDESCDMAARBREQ;
+	    else 
+	      next_xpidescdmastate = `XPIDESCDMANEXTDESCRD;
+	  end
+	
+	default: next_xpidescdmastate = `XPIDESCDMAIDLE;
+	
+      endcase // case(xpidescdmastate)
+    end // always @ (...
+
+  //-------------------------------------------
+  //---- Two Phase Buffer Descriptor Write ----
+  //-------------------------------------------
+  
+  assign XpiDescDmaDescRegLSBPns10C = XpiDescDmaDescPh1WrEnPns10C ?
+	 XpiDescDmaPciDataPns10S : XpiDescDmaDescRegLSBPns10S;
+  
+  assign XpiDescDmaDescRegMSBPns10C = XpiDescDmaDescPh2WrEnPns10C ?
+	 XpiDescDmaPciDataPns10S : XpiDescDmaDescRegMSBPns10S;
+  
+DFFR #(64,64'b0) U24_dff (.q(XpiDescDmaDescRegLSBPns10S),.d(XpiDescDmaDescRegLSBPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U25_dff (.q(XpiDescDmaDescRegMSBPns10S),.d(XpiDescDmaDescRegMSBPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaDescRegPns11S = {XpiDescDmaDescRegMSBPns10S,
+				    XpiDescDmaDescRegLSBPns10S};
+    
+DFFR #(1,1'b0) U26_dff (.q(XpiDescDmaPciDescPh2WrEnPns11S),.d(XpiDescDmaDescPh2WrEnPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U27_dff (.q(XpiDescDmaPciDescPh2WrEnPns12S),.d(XpiDescDmaPciDescPh2WrEnPns11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //-------------------------------------
+  //---- Parsing Descriptor Contents ----
+  //-------------------------------------
+  
+  assign XpiDescDmaEndPns11C          = XpiDescDmaDescRegPns11S[0];
+  assign XpiDescDmaIntrEnPns11C       = XpiDescDmaDescRegPns11S[2];
+  assign XpiDescDmaTotalLenPns11C     = XpiDescDmaDescRegPns11S[31:16];
+  assign XpiDescDmaNextDescAddrPns11C = XpiDescDmaDescRegPns11S[95:64];
+  assign XpiDescDmaDataBufAddrPns11C  = XpiDescDmaDescRegPns11S[127:96];
+  assign XpiDescDmaAddrModeInfoPns11C = {XpiDescDmaDescRegPns11S[63:32],
+					 XpiDescDmaDescRegPns11S[13:3]};
+  
+  //--------------------------------------
+  //---- Read Completion Data Counter ----
+  //--------------------------------------
+  // Counts Number of 8B chunks received in Read Completion
+  
+  always @(/*AS*/XpiDescDmaIssueFinalMemRdPns10C
+	   or XpiDescDmaIssueFirstMemRdPns10C
+	   or XpiDescDmaIssueMemRdPns10C
+	   or XpiDescDmaPciCmpDataCntPns11S
+	   or XpiDescDmaSrvCfgWrPns10C or XpiPciAppDescDmaDataIrdyP11S
+	   or XpiPciAppDescDmaValidTxnP11S)
+    begin
+      if (XpiDescDmaIssueFirstMemRdPns10C || XpiDescDmaIssueMemRdPns10C ||
+	  XpiDescDmaIssueFinalMemRdPns10C)
+	// Reset Count upon issuance of Read Request
+	XpiDescDmaPciCmpDataCntPns11C = {`BYTECNT_WIDTH{1'b0}};
+      else if (XpiPciAppDescDmaDataIrdyP11S && XpiPciAppDescDmaValidTxnP11S &&
+	       (~XpiDescDmaSrvCfgWrPns10C))
+	XpiDescDmaPciCmpDataCntPns11C = {XpiDescDmaPciCmpDataCntPns11S + 1'b1};
+      else if (XpiDescDmaPciCmpDataCntPns11S == `BYTECNT_WIDTH'hfff)
+	XpiDescDmaPciCmpDataCntPns11C = {`BYTECNT_WIDTH{1'b0}};
+      else
+	XpiDescDmaPciCmpDataCntPns11C = XpiDescDmaPciCmpDataCntPns11S;
+    end
+  
+DFFR #(12,12'b0) U28_dff (.q(XpiDescDmaPciCmpDataCntPns11S),.d(XpiDescDmaPciCmpDataCntPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Expected Data Count in Completion = Read Request (Bytes) / 8
+  assign XpiDescDmaPciExptDataCntPns10C = {XpiDescDmaPciLengthPsn13S >> 3};
+  
+  assign XpiDescDmaPciExptDataCntPns11C = {XpiDescDmaPciExptDataCntPns10C + 1'b1};
+	 
+  assign XpiDescDmaPciExptDataCntPns12C = XpiDescDmaPciLengthPsn13S[2] ?
+	 XpiDescDmaPciExptDataCntPns11C : XpiDescDmaPciExptDataCntPns10C;
+  
+  assign XpiDescDmaPciAllDataRecvdPns11C = 
+	 {XpiDescDmaPciCmpDataCntPns11S == XpiDescDmaPciExptDataCntPns12C};
+  
+  //---- Determining Completion of All CPU Reads ----
+
+  assign XpiDescDmaCPURdEndPns10C = 
+	 (XpiDescDmaIssueFinalMemRdPns10C || XpiDescDmaPciAllDataRecvdPns11C) ?
+	   XpiDescDmaIssueFinalMemRdPns10C : XpiDescDmaCPURdEndPns10S;
+  
+DFFR #(1,1'b0) U29_dff (.q(XpiDescDmaCPURdEndPns10S),.d(XpiDescDmaCPURdEndPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiDescDmaCPURdEndPns11C = ((~XpiDescDmaCPURdEndPns10C) && XpiDescDmaCPURdEndPns10S);
+  
+  //------------------------------------
+  //---- CPU Read TimeOut Mechanism ----
+  //------------------------------------
+  // 32b Counter counting the Number of PCI Clocks between
+  // Read Issuance and receipt of Completion Data
+  // If no response if observed after programmed value
+  // of the timer, TimeOut is trigerred, 
+  // which eventually results into Interrupt Assertion
+
+  // TimeOut Counter Enable Logic
+  
+  assign XpiDescDmaPciReqTriggerPsn11C = (XpiDescDmaIssueFirstMemRdPns10C ||
+					  XpiDescDmaIssueMemRdPns10C      ||
+					  XpiDescDmaIssueFinalMemRdPns10C ||
+					  XpiDescDmaInitialDescRdPns10C   ||
+					  XpiDescDmaIssueDescRdPns10C);
+
+  assign XpiDescDmaPciRespTriggerPns11C = XpiDescDmaPciAllDataRecvdPns11C;
+
+  assign XpiDescDmaPciTOutCntEnPsn11C = 
+	 (XpiDescDmaPciReqTriggerPsn11C || XpiDescDmaPciRespTriggerPns11C) ?
+	   XpiDescDmaPciReqTriggerPsn11C : XpiDescDmaPciTOutCntEnPsn11S;
+
+DFFR #(1,1'b0) U30_dff (.q(XpiDescDmaPciTOutCntEnPsn11S),.d(XpiDescDmaPciTOutCntEnPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiDescDmaPciTOutCntEnPsn11S
+	   or XpiDescDmaPciTimeOutCntPsn12S or XpiDescDmaTOutRegPns10S)
+    begin
+      if (XpiDescDmaPciTOutCntEnPsn11S)
+	XpiDescDmaPciTimeOutCntPsn12C = {XpiDescDmaPciTimeOutCntPsn12S + 1'b1};
+      else if (XpiDescDmaPciTimeOutCntPsn12S == XpiDescDmaTOutRegPns10S)
+	XpiDescDmaPciTimeOutCntPsn12C = {`TOUT_CNTR_WIDTH{1'b0}};
+      else
+	XpiDescDmaPciTimeOutCntPsn12C = {`TOUT_CNTR_WIDTH{1'b0}};
+    end // always @ (...
+  
+DFFR #(32,32'b0) U31_dff (.q(XpiDescDmaPciTimeOutCntPsn12S),.d(XpiDescDmaPciTimeOutCntPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Detecting occurence of TimeOut
+  assign XpiDescDmaPciTimeOutPsn13C = (XpiDescDmaPciTimeOutCntPsn12S == XpiDescDmaTOutRegPns10S);
+  
+DFFR #(1,1'b0) U32_dff (.q(XpiDescDmaPciTimeOutPsn13S),.d(XpiDescDmaPciTimeOutPsn13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-----------------------------------
+  //---- Interrupt Assertion Logic ----
+  //-----------------------------------
+
+  always @(/*AS*/XpiDescDmaIntrEnPns11C or XpiDescDmaPciTimeOutPsn12C
+	   or XpiDescDmaPciTimeOutPsn13S or XpiDescDmaXfrCmpltPns11S)
+    begin
+      if (XpiDescDmaIntrEnPns11C && XpiDescDmaXfrCmpltPns11S)
+	// Generate Interrupt after completion of DMA Xfer
+	XpiDescDmaPciIntrPsn13C = `DESCDMA_INTR_EVENTS'b01;
+      else if ((XpiDescDmaPciTimeOutPsn12C || XpiDescDmaPciTimeOutPsn13S) &&
+	       XpiDescDmaIntrEnPns11C)
+	// Generate Interrupt after ASIC or CPU Request Timing Out 
+	XpiDescDmaPciIntrPsn13C = `DESCDMA_INTR_EVENTS'b10;
+      else
+	XpiDescDmaPciIntrPsn13C = `DESCDMA_INTR_EVENTS'b00;
+    end // always @ (...  
+  
+DFFR #(2,2'b0) U33_dff (.q(XpiDescDmaPciIntrPsn13S),.d(XpiDescDmaPciIntrPsn13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------
+  //---- Length Computation for PCI Read Request ----
+  //-------------------------------------------------
+  //**This State Machine controls Splitting of a Single Read
+  //**Request with Length>MTU into different Read Requests of
+  //**MTU granularity. At issuance of a new PCI Read Request
+  //**the total Read Length is subtracted by MTU, the reminder
+  //**is the length in Dwords that still needs to be serviced.
+  
+  //---- State Machine Control for Subtraction Operation ----
+  
+`define XPIDESCDMAMEMRDLENIDLE    3'b000
+`define XPIDESCDMAMEMRDLENASSG    3'b001
+`define XPIDESCDMAMEMRDLENSUB     3'b011
+`define XPIDESCDMAMEMRDLENHOLD    3'b010
+`define XPIDESCDMAMEMRDLENZERO    3'b110
+  
+  // Internal State variables
+  wire [2:0] xpidescdmardlenstate;
+  reg [2:0]  next_xpidescdmardlenstate;
+  
+  //---- State Change ----
+  
+DFFR #(3,3'b0) U34_dff (.q(xpidescdmardlenstate),.d(next_xpidescdmardlenstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+  
+  always @(xpidescdmardlenstate)
+    begin
+      
+      XpiDescDmaMemRdLenMuxSelPns10S = 2'b11;
+      
+      case(xpidescdmardlenstate)
+	
+        `XPIDESCDMAMEMRDLENIDLE: XpiDescDmaMemRdLenMuxSelPns10S = 2'b11;
+	
+	`XPIDESCDMAMEMRDLENASSG: XpiDescDmaMemRdLenMuxSelPns10S = 2'b00;
+	
+	`XPIDESCDMAMEMRDLENSUB:  XpiDescDmaMemRdLenMuxSelPns10S = 2'b01;
+	
+	`XPIDESCDMAMEMRDLENHOLD: XpiDescDmaMemRdLenMuxSelPns10S = 2'b11;
+
+	`XPIDESCDMAMEMRDLENZERO: XpiDescDmaMemRdLenMuxSelPns10S = 2'b10;
+
+	default: XpiDescDmaMemRdLenMuxSelPns10S = 2'b11;
+	
+      endcase // case(xpidescdmardlenstate)
+      
+    end // always @ (xpidescdmardlenstate)
+  
+  //---- State Transition ----
+  
+  always @(/*AS*/XpiDescDmaIssueFinalMemRdPns10C
+	   or XpiDescDmaIssueFirstMemRdPns10C
+	   or XpiDescDmaIssueMemRdPns10C
+	   or XpiDescDmaPciDescPh2WrEnPns11S
+	   or XpiDescDmaXfrCmpltPns11C or xpidescdmardlenstate)
+    begin
+      
+      case (xpidescdmardlenstate)
+        
+	`XPIDESCDMAMEMRDLENIDLE:
+	  begin
+	    if (XpiDescDmaPciDescPh2WrEnPns11S)
+	      // Assign Total Length after Descriptor Update
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENASSG;
+	    else
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENIDLE;
+	  end
+	
+	`XPIDESCDMAMEMRDLENASSG:
+	  begin
+	    if (XpiDescDmaIssueFirstMemRdPns10C || XpiDescDmaIssueMemRdPns10C)
+	      // Subtract Length after issuance of Read Request
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENSUB;
+	    else if (XpiDescDmaIssueFinalMemRdPns10C)
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENHOLD;	      
+	    else
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENASSG;
+	  end
+	
+	`XPIDESCDMAMEMRDLENSUB: next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENHOLD;
+	
+	`XPIDESCDMAMEMRDLENHOLD:
+	  begin
+	    if (XpiDescDmaIssueFirstMemRdPns10C || XpiDescDmaIssueMemRdPns10C)
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENSUB;
+	    else if (XpiDescDmaXfrCmpltPns11C)
+	      // Wait until Final read completion is received
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENZERO;
+	    else
+	      next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENHOLD;
+	  end
+	
+	`XPIDESCDMAMEMRDLENZERO: next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENIDLE;
+	
+	default: next_xpidescdmardlenstate = `XPIDESCDMAMEMRDLENIDLE;
+	
+      endcase // case(xpidescdmardlenstate)
+    end // always @ (...
+
+  //-------------------------------------------------------------
+  //---- Subtraction Operation on issuance of a read request ----
+  //-------------------------------------------------------------
+  
+DFFR #(1,1'b0) U35_dff (.q(XpiDescDmaIssueFirstMemRdPns11S),.d(XpiDescDmaIssueFirstMemRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U36_dff (.q(XpiDescDmaIssueMemRdPns11S),.d(XpiDescDmaIssueMemRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiDescDmaIssueFirstMemRdPns11S
+	   or XpiDescDmaIssueMemRdPns11S
+	   or XpiDescDmaPciFIRSTMEMRDLENPns10C
+	   or XpiDescDmaPciMTUPns10C or XpiDescDmaPciMemRdLenPsn11S)
+    begin
+      if (XpiDescDmaIssueFirstMemRdPns11S)
+	XpiDescDmaMemRdLenSubPns11C = {XpiDescDmaPciMemRdLenPsn11S - 
+				       XpiDescDmaPciFIRSTMEMRDLENPns10C};
+      else if (XpiDescDmaIssueMemRdPns11S)
+	XpiDescDmaMemRdLenSubPns11C = {XpiDescDmaPciMemRdLenPsn11S - XpiDescDmaPciMTUPns10C};
+      else
+	XpiDescDmaMemRdLenSubPns11C = XpiDescDmaPciMemRdLenPsn11S;
+    end
+  
+  // Muxing between output of Subtracter and Total length in Buffer Descriptor
+  
+MUX4S2 #(16) U37_mux4 (.mo(XpiDescDmaPciMemRdLenPns11C),.in0(XpiDescDmaTotalLenPns11C),.in1(XpiDescDmaMemRdLenSubPns11C),.in2({`MAX_BUFFER_SIZE{1'b0}}),.in3(XpiDescDmaPciMemRdLenPsn11S),.sel(XpiDescDmaMemRdLenMuxSelPns10S));
+
+
+  
+DFFR #(16,16'b0) U38_dff (.q(XpiDescDmaPciMemRdLenPsn11S),.d(XpiDescDmaPciMemRdLenPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------
+  //---- DESC DMA ASYNCHROUNOUS FIFO ----
+  //-------------------------------------
+  
+ASYNCFIFO #(`DESCDMA_FIFO_WIDTH, `DESCDMA_FIFO_DEPTH, `DESCDMA_FIFO_PTR) XPIDESCDMAFIFO ( .RESET_RDCLK(GlCoreResetR00C), .RESET_WRCLK(GlCoreResetR00C), .WRCLK(XpiPciClk), .RDCLK(XpiCoreClk), .WRITE(XpiDescDmaFifoWrEnPns10C), .READ(XpiDescDmaFifoRdEnPns11S), .WRDATA(XpiDescDmaPciDataPns10S), .RDDATA(XpiDescDmaFifoRdDataPns11S), .EMPTY(XpiDescDmaFifoEFPns11C), .FULL(XpiDescDmaFifoFFPns10C), .RDPTR_WRCLK(XpiDescDmaFifoRdPtrPns10C), .WRPTR_WRCLK(XpiDescDmaFifoWrPtrPns10C), .RDPTR_RDCLK(XpiDescDmaFifoRdPtrPns11C), .WRPTR_RDCLK(XpiDescDmaFifoWrPtrPns11C));
+
+
+
+
+
+
+
+  //-----------------------------------------------
+  //---- Address Increment after Read Issuance ----
+  //-----------------------------------------------
+  // Incrementing the Address to next Buffer Location after Issuance of Current Read
+
+  always @(/*AS*/XpiDescDmaDataBufAddrPns11C
+	   or XpiDescDmaIssueFirstMemRdPns11S
+	   or XpiDescDmaIssueMemRdPns11S
+	   or XpiDescDmaPciDescPh2WrEnPns12S
+	   or XpiDescDmaPciFIRSTMEMRDLENPns10C
+	   or XpiDescDmaPciMTUPns10C or XpiDescDmaRdAddressPsn11S)
+    begin
+      if (XpiDescDmaPciDescPh2WrEnPns12S)
+	XpiDescDmaRdAddressPsn11C = XpiDescDmaDataBufAddrPns11C;
+      else if (XpiDescDmaIssueFirstMemRdPns11S)
+        XpiDescDmaRdAddressPsn11C = {XpiDescDmaRdAddressPsn11S + 
+				     XpiDescDmaPciFIRSTMEMRDLENPns10C};
+      else if (XpiDescDmaIssueMemRdPns11S)
+        XpiDescDmaRdAddressPsn11C = {XpiDescDmaRdAddressPsn11S + XpiDescDmaPciMTUPns10C};
+      else
+        XpiDescDmaRdAddressPsn11C = XpiDescDmaRdAddressPsn11S;
+    end // always @ (...
+  
+DFFR #(32,32'b0) U39_dff (.q(XpiDescDmaRdAddressPsn11S),.d(XpiDescDmaRdAddressPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //------------------------------------------
+  //---- DMA -> PCI Output Register Stage ----
+  //------------------------------------------
+
+  // Address Ready Qualifier
+  
+  assign XpiDescDmaPciAddrIrdyPsn12C = (XpiDescDmaIssueFirstMemRdPns10C ||
+					XpiDescDmaIssueMemRdPns10C      ||
+					XpiDescDmaIssueFinalMemRdPns10C ||
+					XpiDescDmaInitialDescRdPns10C   ||
+					XpiDescDmaIssueDescRdPns10C );
+
+  // Address
+
+  always @(/*AS*/XpiDescDmaAddressRegPns10S
+	   or XpiDescDmaInitialDescRdPns10C
+	   or XpiDescDmaIssueDescRdPns10C
+	   or XpiDescDmaIssueFinalMemRdPns10C
+	   or XpiDescDmaIssueFirstMemRdPns10C
+	   or XpiDescDmaIssueMemRdPns10C
+	   or XpiDescDmaNextDescAddrPns11C or XpiDescDmaPciAddrPsn13S
+	   or XpiDescDmaRdAddressPsn11S)
+    begin
+      if (XpiDescDmaInitialDescRdPns10C)
+        XpiDescDmaPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiDescDmaAddressRegPns10S};
+      else if (XpiDescDmaIssueDescRdPns10C)
+        XpiDescDmaPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiDescDmaNextDescAddrPns11C};
+      else if (XpiDescDmaIssueFirstMemRdPns10C ||
+               XpiDescDmaIssueMemRdPns10C      ||
+               XpiDescDmaIssueFinalMemRdPns10C)
+        XpiDescDmaPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiDescDmaRdAddressPsn11S};
+      else
+        XpiDescDmaPciAddrPsn12C = XpiDescDmaPciAddrPsn13S;
+    end
+  
+  // Command 
+
+  always @(/*AS*/XpiDescDmaPciAddrIrdyPsn12C or XpiDescDmaPciCmdPsn13S
+	   or XpiDescDmaPciDataIrdyPsn12S)
+    begin
+      if (XpiDescDmaPciAddrIrdyPsn12C)
+        XpiDescDmaPciCmdPsn12C = `MEMRDLINE;
+      else if (XpiDescDmaPciDataIrdyPsn12S)
+        XpiDescDmaPciCmdPsn12C = `RDCMP;
+      else
+        XpiDescDmaPciCmdPsn12C = XpiDescDmaPciCmdPsn13S;
+    end
+
+  // Length 
+
+  always @(/*AS*/XpiDescDmaInitialDescRdPns10C
+	   or XpiDescDmaIssueDescRdPns10C
+	   or XpiDescDmaIssueFinalMemRdPns10C
+	   or XpiDescDmaIssueFirstMemRdPns10C
+	   or XpiDescDmaIssueMemRdPns10C
+	   or XpiDescDmaPciFIRSTMEMRDLENPns10C
+	   or XpiDescDmaPciLengthPsn13S or XpiDescDmaPciMTUPns10C
+	   or XpiDescDmaPciMemRdLenPsn11S)
+    begin
+      if (XpiDescDmaInitialDescRdPns10C || XpiDescDmaIssueDescRdPns10C)
+        XpiDescDmaPciLengthPsn12C = `BYTECNT_WIDTH'h010;
+      else if (XpiDescDmaIssueFirstMemRdPns10C)
+        XpiDescDmaPciLengthPsn12C = XpiDescDmaPciFIRSTMEMRDLENPns10C;
+      else if (XpiDescDmaIssueMemRdPns10C)
+        XpiDescDmaPciLengthPsn12C = XpiDescDmaPciMTUPns10C;
+      else if (XpiDescDmaIssueFinalMemRdPns10C)
+        XpiDescDmaPciLengthPsn12C = XpiDescDmaPciMemRdLenPsn11S[`BYTECNT_WIDTH-1:0];
+      else
+        XpiDescDmaPciLengthPsn12C = XpiDescDmaPciLengthPsn13S;
+    end
+    
+  // Data Irdy 
+  
+DFFR #(1,1'b0) U40_dff (.q(XpiDescDmaPciDataIrdyPsn12S),.d(XpiDescDmaSrvCfgRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+    
+  // Data 
+
+  assign XpiDescDmaPciDataPsn12C = {{`RB_DATA_WIDTH{1'b0}},XpiDescDmaPciCfgDataPsn12C};
+  
+DFFR #(1,1'b0) U41_dff (.q(XpiDescDmaPciAddrIrdyPsn13S),.d(XpiDescDmaPciAddrIrdyPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U42_dff (.q(XpiDescDmaPciAddrPsn13S),.d(XpiDescDmaPciAddrPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U43_dff (.q(XpiDescDmaPciCmdPsn13S),.d(XpiDescDmaPciCmdPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U44_dff (.q(XpiDescDmaPciLengthPsn13S),.d(XpiDescDmaPciLengthPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U45_dff (.q(XpiDescDmaPciDataIrdyPsn13S),.d(XpiDescDmaPciDataIrdyPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U46_dff (.q(XpiDescDmaPciDataPsn13S),.d(XpiDescDmaPciDataPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  assign XpiDescDmaPciByteEnPsn13S = 8'h00;
+  assign XpiDescDmaPciTxnIDPsn13S  = TXNID[2:0];
+  assign XpiDescDmaPciAttrPsn13S = {`PCI_ATTR_WIDTH{1'b0}};
+  assign XpiDescDmaPciTrdyPsn13S = 1'b1;
+  
+  //===================================
+  //======== CORE CLOCK DOMAIN ========
+  //===================================
+
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+  // Extracting ASIC Address and Mode Register Write Data
+  assign XpiDescDmaASICAddrRegPns12C  = {{10{1'b0}},XpiDescDmaAddrModeInfoPns13S[42:21]};
+  assign XpiDescDmaModeRegPns12C      = {{19{1'b0}},XpiDescDmaAddrModeInfoPns13S[20:11],
+	                                 XpiDescDmaAddrModeInfoPns13S[2:0]};
+  assign XpiDescDmaTargetIDPns12C     = XpiDescDmaAddrModeInfoPns13S[10:3];
+  assign XpiDescDmaMemoryIDPns12C     = XpiDescDmaAddrModeInfoPns13S[10:8];
+  assign XpiDescDmaRepeatEnPns12C     = XpiDescDmaAddrModeInfoPns13S[2];
+  assign XpiDescDma96MemEnablePns12C  = XpiDescDmaAddrModeInfoPns13S[1];
+  assign XpiDescDma160MemEnablePns12C = XpiDescDmaAddrModeInfoPns13S[0];
+
+  assign XpiDescDmaRbMTUPns12C =
+	 (XpiDescDma96MemEnablePns12C || XpiDescDma160MemEnablePns12C) ?
+	   `MTU96: `MTU;
+  
+  //----------------------------------------------------------
+  //---- DMA Fifo Read & ASIC/Mode Register Write Control ----
+  //----------------------------------------------------------
+
+  // ASIC Memory Address Register Write Qualifier
+  
+  assign XpiDescDmaASICAddrRegWrPns11C = XpiDescDmaDescPh2WrEnPns13C;
+  
+  assign XpiDescDmaASICAddrRegWrPns12C = 
+	 (XpiDescDmaASICAddrRegWrPns11C || XpiDescDmaIssueASICAddrWrPns11S) ?
+	   XpiDescDmaASICAddrRegWrPns11C : XpiDescDmaASICAddrRegWrPns12S;
+  
+DFFR #(1,1'b0) U47_dff (.q(XpiDescDmaASICAddrRegWrPns12S),.d(XpiDescDmaASICAddrRegWrPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //----------------------------------------
+  //---- Write Data Ready Determination ----
+  //----------------------------------------
+  // For 32b,64b, 128b & 256b mode, Fifo Half Full = MTU/8 = 16 entries
+  // For 96b & 160b mode, Fifo Half Full = MTU96/8B = 15 entries
+  
+DFFR #(6,6'b0) U48_dff (.q(XpiDescDmaFifoWrPtrPns11S),.d(XpiDescDmaFifoWrPtrPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(6,6'b0) U49_dff (.q(XpiDescDmaFifoRdPtrPns11S),.d(XpiDescDmaFifoRdPtrPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaFifoFillPns12C = {XpiDescDmaFifoWrPtrPns11S - XpiDescDmaFifoRdPtrPns11S};
+  
+  // Determining condition when all CPU Reads are complete, however
+  // last 2 Ring Bus Writes are pending. Condition derived from two conditions
+  // (i) Fifo is greater than Half full while CPU Read completed
+  // (ii) Penultimate Write in Progress while CPU Read completed
+  
+  assign XpiDescDmaWrPendingPns12C = (XpiDescDmaCPURdEndPns13C && 
+				      (XpiDescDmaRbAddrIrdyPns11S ||
+				       {XpiDescDmaFifoFillPns12C > 6'b010000}));
+  
+  assign XpiDescDmaWrPendingPns13C = (XpiDescDmaWrPendingPns12C || XpiDescDmaRbAddrIrdyPns13C) ?
+				       XpiDescDmaWrPendingPns12C : XpiDescDmaWrPendingPns13S;
+  
+DFFR #(1,1'b0) U50_dff (.q(XpiDescDmaWrPendingPns13S),.d(XpiDescDmaWrPendingPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // If penultimate write is pending while CPU Reads are complete,
+  // Change Write Length only after issuing penultimate write
+  
+DFFR #(1,1'b0) U51_dff (.q(XpiDescDmaCPURdEndPns14S),.d(XpiDescDmaCPURdEndPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaRbLastWrPns12C = XpiDescDmaWrPendingPns13S ?
+	 (XpiDescDmaWrPendingPns13S && XpiDescDmaRbAddrIrdyPns13C) : XpiDescDmaCPURdEndPns14S;
+  
+DFFR #(1,1'b0) U52_dff (.q(XpiDescDmaRbLastWrPns12S),.d(XpiDescDmaRbLastWrPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- Write Length Assignment ----
+  
+  always @(/*AS*/XpiDescDmaDescPh2WrEnPns13C
+	   or XpiDescDmaMemRdLenPns12S or XpiDescDmaRbLastWrPns12S
+	   or XpiDescDmaRbMTUPns12C or XpiDescDmaRbWrLenPns12S)
+    begin
+      if (XpiDescDmaRbLastWrPns12S)
+	// All CPU reads are complete & Last Ring Bus Write remaining
+	XpiDescDmaRbWrLenPns12C = XpiDescDmaMemRdLenPns12S[`BYTECNT_WIDTH-1:0];
+      else if (XpiDescDmaDescPh2WrEnPns13C)
+	XpiDescDmaRbWrLenPns12C = XpiDescDmaRbMTUPns12C;
+      else
+	XpiDescDmaRbWrLenPns12C = XpiDescDmaRbWrLenPns12S;
+    end // always @ (...
+  
+DFFR #(12,12'b0) U53_dff (.q(XpiDescDmaRbWrLenPns12S),.d(XpiDescDmaRbWrLenPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Write Data Transfer Complete indication ----
+
+  // Write Data Transfer on RB completes when:
+  // (i)  Data Cnt equals expected number of bytes 
+  // (ii) Requested number of bytes are odd sized 4B aligned, 
+  //      Data Cnt = (Expected Fifo Entries + 1)
+  // (iii) If only 4B are valid, expected data count is zero
+  
+  // Total Number of Fifo Entries Filled by CPU Memory Read Completion = Length/8B
+  assign XpiDescDmaNumDataEntriesPns12C = {XpiDescDmaRbWrLenPns12S >> 3};
+  
+  assign XpiDescDmaRbWrDonePns12C = {XpiDescDmaDataCntPns12S == XpiDescDmaNumDataEntriesPns12C[4:0]};
+  
+DFFR #(1,1'b0) U54_dff (.q(XpiDescDmaRbWrDonePns12S),.d(XpiDescDmaRbWrDonePns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Expected Amount of Data Received Indication
+    
+  assign XpiDescDmaFifoDataRecvdPns12C = 
+	 (XpiDescDmaRunPns11C && (~XpiDescDmaFifoEFPns11C) &&
+	  {XpiDescDmaFifoFillPns12C >= XpiDescDmaNumDataEntriesPns12C[5:0]});
+  
+  // ReCirculating Qualifier until Data Read from Fifo is complete
+  
+  assign XpiDescDmaFifoDataRecvdPns13C = 
+	 (XpiDescDmaFifoDataRecvdPns12C || XpiDescDmaUpdateStatusPns11S) ?
+	   XpiDescDmaFifoDataRecvdPns12C : XpiDescDmaFifoDataRecvdPns13S;
+  
+DFFR #(1,1'b0) U55_dff (.q(XpiDescDmaFifoDataRecvdPns13S),.d(XpiDescDmaFifoDataRecvdPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // ASIC Write Transaction Qualifier
+  assign XpiDescDmaRbWrTxnPns11C  = (XpiDescDmaFifoDataRecvdPns13S && (~XpiDescDmaFifoEFPns11C));
+
+  
+  // Credit Refresh Indication
+  assign XpiDescDmaCreditRefreshPsn11C = (XpiRbiDescDmaIrdyPsn11S && XpiRbiDescDmaValidXfrPsn11S &&
+					  (XpiRbiDescDmaCmdPsn11S==`CRDTREF));
+
+  // TimeOut Indication
+  assign XpiDescDmaTimeOutPns11C = (XpiDescDmaTimeOutPsn10S || XpiDescDmaIssueTOutPns11C) ?
+				     XpiDescDmaTimeOutPsn10S : XpiDescDmaTimeOutPns11S;
+
+DFFR #(1,1'b0) U56_dff (.q(XpiDescDmaTimeOutPns11S),.d(XpiDescDmaTimeOutPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- State Definition ----
+  
+`define XPIDESCDMACTLIDLE           4'b0000
+`define XPIDESCDMACTLARBREQ         4'b0001
+`define XPIDESCDMACTLASICMEMWR      4'b0011
+`define XPIDESCDMACTLMODEWR         4'b0010
+`define XPIDESCDMACTLFIFOLSBDATARD  4'b0101
+`define XPIDESCDMACTLFIFOMSBDATARD  4'b0100
+`define XPIDESCDMACTLWAIT4CRDT      4'b0110
+`define XPIDESCDMACTLUPDATESTATUS   4'b0111
+`define XPIDESCDMACTLTIMEOUT        4'b1100
+  
+  // Internal state variables
+  wire [3:0] xpidescdmardctlstate;
+  reg [3:0]  next_xpidescdmardctlstate;
+  
+  //---- State Change ----
+  
+DFFR #(4,4'b0) U57_dff (.q(xpidescdmardctlstate),.d(next_xpidescdmardctlstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(xpidescdmardctlstate)
+    begin
+      
+      XpiDescDmaFifoRdEnPns11S        = 1'b0;
+      XpiDescDmaRbAddrIrdyPns11S      = 1'b0;
+      XpiDescDmaRbArbReqPns13S        = 1'b0;
+      XpiDescDmaIssueASICAddrWrPns11S = 1'b0;
+      XpiDescDmaIssueModeWrPns11S     = 1'b0;
+      XpiDescDmaUpdateStatusPns11S    = 1'b0;
+      XpiDescDmaIssueTOutPns11C       = 1'b0;
+      
+      case(xpidescdmardctlstate)
+	
+	`XPIDESCDMACTLIDLE: 
+	  begin
+	    XpiDescDmaFifoRdEnPns11S        = 1'b0;
+	    XpiDescDmaRbAddrIrdyPns11S      = 1'b0;
+	    XpiDescDmaRbArbReqPns13S        = 1'b0;
+	    XpiDescDmaIssueASICAddrWrPns11S = 1'b0;
+	    XpiDescDmaIssueModeWrPns11S     = 1'b0;
+	    XpiDescDmaUpdateStatusPns11S    = 1'b0;
+	    XpiDescDmaIssueTOutPns11C       = 1'b0;
+	  end
+
+	`XPIDESCDMACTLARBREQ: XpiDescDmaRbArbReqPns13S = 1'b1;
+
+	`XPIDESCDMACTLASICMEMWR: XpiDescDmaIssueASICAddrWrPns11S =1'b1;
+
+	`XPIDESCDMACTLMODEWR: XpiDescDmaIssueModeWrPns11S = 1'b1;
+	  
+	`XPIDESCDMACTLFIFOLSBDATARD:      
+	  begin
+	    XpiDescDmaFifoRdEnPns11S   = 1'b1;
+	    XpiDescDmaRbAddrIrdyPns11S = 1'b1;
+	  end
+	
+	`XPIDESCDMACTLFIFOMSBDATARD:
+	  begin
+	    XpiDescDmaFifoRdEnPns11S   = 1'b0;
+	    XpiDescDmaRbAddrIrdyPns11S = 1'b1;
+	  end
+	
+	`XPIDESCDMACTLWAIT4CRDT:
+	  begin
+	    XpiDescDmaFifoRdEnPns11S   = 1'b0;
+	    XpiDescDmaRbAddrIrdyPns11S = 1'b0;
+	  end
+
+	`XPIDESCDMACTLUPDATESTATUS: XpiDescDmaUpdateStatusPns11S = 1'b1;
+
+	`XPIDESCDMACTLTIMEOUT: XpiDescDmaIssueTOutPns11C = 1'b1;
+	
+	default:
+	  begin
+	    XpiDescDmaFifoRdEnPns11S        = 1'b0;
+	    XpiDescDmaRbAddrIrdyPns11S      = 1'b0;
+	    XpiDescDmaRbArbReqPns13S        = 1'b0;
+	    XpiDescDmaIssueASICAddrWrPns11S = 1'b0;
+	    XpiDescDmaIssueModeWrPns11S     = 1'b0;
+	    XpiDescDmaUpdateStatusPns11S    = 1'b0;
+	    XpiDescDmaIssueTOutPns11C       = 1'b0;
+	  end
+
+      endcase // case(xpidescdmardctlstate)
+    end // always @ (xpidescdmardctlstate)
+  	
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiDescDmaASICAddrRegWrPns11C
+	   or XpiDescDmaASICAddrRegWrPns12S
+	   or XpiDescDmaCreditRefreshPsn11C
+	   or XpiDescDmaDescPh2WrEnPns13C or XpiDescDmaRbMTUPns12C
+	   or XpiDescDmaRbWrDonePns12C or XpiDescDmaRbWrLenPns12S
+	   or XpiDescDmaRbWrTxnPns11C or XpiDescDmaRepeatEnPns12C
+	   or XpiDescDmaTimeOutPns11S or XpiDescDmaTimeOutPsn10S
+	   or XpiRbiDescDmaGntPsn11S or XpiRbiDescDmaStopPsn11S
+	   or xpidescdmardctlstate)
+    begin
+      case (xpidescdmardctlstate)
+	
+	`XPIDESCDMACTLIDLE:
+	  begin
+	    if ((XpiDescDmaRbWrTxnPns11C || XpiDescDmaASICAddrRegWrPns11C) &&
+		(~XpiRbiDescDmaStopPsn11S))
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLARBREQ;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+	  end
+	
+	`XPIDESCDMACTLARBREQ:
+	  begin
+	    if (XpiDescDmaRbWrTxnPns11C && XpiRbiDescDmaGntPsn11S)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLFIFOLSBDATARD;
+	    else if (XpiDescDmaASICAddrRegWrPns12S && XpiRbiDescDmaGntPsn11S)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLASICMEMWR;
+	    else if (XpiDescDmaTimeOutPns11S && XpiRbiDescDmaGntPsn11S)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLTIMEOUT;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLARBREQ;
+	  end
+	
+	`XPIDESCDMACTLASICMEMWR:
+	  begin
+	    if (XpiDescDmaRepeatEnPns12C)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLMODEWR;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+	  end
+	
+	`XPIDESCDMACTLMODEWR: next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+	  
+	`XPIDESCDMACTLFIFOLSBDATARD: 
+	  begin
+	    if (XpiDescDmaRbWrDonePns12C && {XpiDescDmaRbWrLenPns12S[2] == 1'b1})
+	      // If Requested amount of Data Ends at Odd sized 4B boundary
+	      // for final fifo entry, read only 32b (4B) LSB Data from the Fifo.
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLWAIT4CRDT;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLFIFOMSBDATARD;
+	  end
+	
+	`XPIDESCDMACTLFIFOMSBDATARD:
+	  begin
+	    if (XpiDescDmaRbWrDonePns12C && {XpiDescDmaRbWrLenPns12S < XpiDescDmaRbMTUPns12C} && 
+		{XpiDescDmaRbWrLenPns12S[2] == 1'b1})
+	      // Odd Sized Write, read one more entry
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLFIFOLSBDATARD;
+	    else if (XpiDescDmaRbWrDonePns12C)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLWAIT4CRDT;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLFIFOLSBDATARD;
+	  end
+
+	`XPIDESCDMACTLWAIT4CRDT:
+	  begin
+	    if (XpiDescDmaCreditRefreshPsn11C)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLUPDATESTATUS;
+	    else if (XpiDescDmaTimeOutPsn10S)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLARBREQ;	      
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLWAIT4CRDT;
+	  end
+
+	`XPIDESCDMACTLUPDATESTATUS: next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+
+	`XPIDESCDMACTLTIMEOUT :
+	  begin
+	    if (XpiDescDmaDescPh2WrEnPns13C)
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+	    else
+	      next_xpidescdmardctlstate = `XPIDESCDMACTLTIMEOUT;
+	  end
+	
+	default: next_xpidescdmardctlstate = `XPIDESCDMACTLIDLE;
+	
+      endcase // case(xpidescdmardctlstate)
+    end // always @ (...
+
+  //--------------------------------
+  //---- Fifo Data Read Counter ----
+  //--------------------------------
+  
+  always @(/*AS*/XpiDescDmaDataCntPns12S or XpiDescDmaFifoRdEnPns11S
+	   or XpiDescDmaRbAddrIrdyPns11S)
+    begin
+      if (XpiDescDmaFifoRdEnPns11S)
+        XpiDescDmaDataCntPns12C = {XpiDescDmaDataCntPns12S + 5'b00001};
+      else if (~XpiDescDmaRbAddrIrdyPns11S)
+        XpiDescDmaDataCntPns12C = {5{1'b0}};
+      else
+        XpiDescDmaDataCntPns12C = XpiDescDmaDataCntPns12S;
+    end
+
+DFFR #(5,5'b0) U58_dff (.q(XpiDescDmaDataCntPns12S),.d(XpiDescDmaDataCntPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------
+  //---- Write TimeOut Mechanism ----
+  //---------------------------------
+  // 12b counter couting number of core clocks between issuance
+  // of write and receipt of Credit Refresh
+
+  // Counter Enable Assertion Logic
+  assign XpiDescDmaTOutCntEnPsn10C = (XpiDescDmaRbAddrIrdyPns11S || XpiDescDmaCreditRefreshPsn11C) ?
+				     XpiDescDmaRbAddrIrdyPns11S : XpiDescDmaTOutCntEnPsn10S;
+  
+DFFR #(1,1'b0) U59_dff (.q(XpiDescDmaTOutCntEnPsn10S),.d(XpiDescDmaTOutCntEnPsn10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiDescDmaTOutCntEnPsn10S or XpiDescDmaTOutRegPns13S
+	   or XpiDescDmaTimeOutCntPsn10S)
+    begin
+      if (XpiDescDmaTOutCntEnPsn10S)
+        XpiDescDmaTimeOutCntPsn10C = {XpiDescDmaTimeOutCntPsn10S + 1'b1};
+      else if (XpiDescDmaTimeOutCntPsn10S == XpiDescDmaTOutRegPns13S)
+        XpiDescDmaTimeOutCntPsn10C = {`TOUT_CNTR_WIDTH{1'b0}};
+      else
+        XpiDescDmaTimeOutCntPsn10C = {`TOUT_CNTR_WIDTH{1'b0}};
+    end // always @ (...
+
+DFFR #(32,32'b0) U60_dff (.q(XpiDescDmaTimeOutCntPsn10S),.d(XpiDescDmaTimeOutCntPsn10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Detecting occurence of TimeOut
+  assign XpiDescDmaTimeOutPsn10C = (XpiDescDmaTimeOutCntPsn10S == XpiDescDmaTOutRegPns13S);
+  
+DFFR #(1,1'b0) U61_dff (.q(XpiDescDmaTimeOutPsn10S),.d(XpiDescDmaTimeOutPsn10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+    
+  //---------------------------------------
+  //---- Data Mux Select State Machine ----
+  //---------------------------------------
+  //** This state machine drives Mux Select control signal
+  //** use to read the LSB & MSB data of the 64b Fifo data
+  //** at every other clock cycle.
+      
+`define XPIDESCDMAMUXSELIDLE     2'b00
+`define XPIDESCDMAFIFOLSBDATA    2'b01
+`define XPIDESCDMAFIFOMSBDATA    2'b11
+  
+  // Internal xpidescdmadatamuxselstate variables
+  wire [1:0] xpidescdmadatamuxselstate;
+  reg [1:0]  next_xpidescdmadatamuxselstate;
+  
+  //---- State Change ----
+  
+DFFR #(2,2'b0) U62_dff (.q(xpidescdmadatamuxselstate),.d(next_xpidescdmadatamuxselstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+  
+  always @(xpidescdmadatamuxselstate)
+    
+    begin
+      
+      XpiDescDmaRbMuxSelPns12S = 1'b0;
+      
+      case(xpidescdmadatamuxselstate)
+	
+	`XPIDESCDMAMUXSELIDLE:  XpiDescDmaRbMuxSelPns12S = 1'b0;
+	
+	`XPIDESCDMAFIFOLSBDATA: XpiDescDmaRbMuxSelPns12S = 1'b0;
+	
+	`XPIDESCDMAFIFOMSBDATA: XpiDescDmaRbMuxSelPns12S = 1'b1;
+
+	default: XpiDescDmaRbMuxSelPns12S = 1'b0;
+	
+      endcase // case(xpidescdmadatamuxselstate)
+
+    end // always @ (xpidescdmadatamuxselstate)
+
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiDescDmaFifoRdEnPns11S or xpidescdmadatamuxselstate)
+    begin
+  
+      case (xpidescdmadatamuxselstate)
+      
+	`XPIDESCDMAMUXSELIDLE:
+	  begin
+	    if (XpiDescDmaFifoRdEnPns11S)
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAFIFOLSBDATA;
+	    else
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAMUXSELIDLE;
+	  end // case: `XPIDESCDMAMUXSELIDLE
+	
+	`XPIDESCDMAFIFOLSBDATA:
+	  begin
+	    if (~XpiDescDmaFifoRdEnPns11S) 
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAFIFOMSBDATA;
+	    else
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAFIFOLSBDATA;
+	  end
+	
+	`XPIDESCDMAFIFOMSBDATA:
+	  begin
+	    if (XpiDescDmaFifoRdEnPns11S)
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAFIFOLSBDATA;
+	    else
+	      next_xpidescdmadatamuxselstate = `XPIDESCDMAMUXSELIDLE;
+	  end
+	
+	default: next_xpidescdmadatamuxselstate = `XPIDESCDMAMUXSELIDLE;
+	
+      endcase // case(xpidescdmadatamuxselstate)
+      
+    end // always @ (...
+
+  //------------------------------------
+  //---- DMA FIFO Output Data Stage ----
+  //------------------------------------
+  
+DFFR #(64,64'b0) U63_dff (.q(XpiDescDmaRbDataPns11S),.d(XpiDescDmaFifoRdDataPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaRbDataPns12C = XpiDescDmaFifoRdEnPns11S ?
+         XpiDescDmaRbDataPns11S : XpiDescDmaRbDataPns12S;
+  
+DFFR #(64,64'b0) U64_dff (.q(XpiDescDmaRbDataPns12S),.d(XpiDescDmaRbDataPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+    
+  // Flopping MSB Data
+  assign XpiDescDmaRbMSBDataPns12C[`RB_DATA_WIDTH-1:0] = 
+	 XpiDescDmaRbDataPns12S[`PCI_DATA_WIDTH-1:`RB_DATA_WIDTH];
+  
+  assign XpiDescDmaRbLSBDataPns12C[`RB_DATA_WIDTH-1:0] = 
+	 XpiDescDmaRbDataPns12S[`RB_DATA_WIDTH-1:0];
+  
+DFFR #(32,32'b0) U65_dff (.q(XpiDescDmaRbMSBDataPns12S),.d(XpiDescDmaRbMSBDataPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //------------------------------------------------------------------------
+  //---- Data Mux : Alternating between LSB & MSB Data or Register Data ----
+  //------------------------------------------------------------------------
+      
+  always @(/*AS*/XpiDescDmaASICAddrRegPns12C
+	   or XpiDescDmaIssueASICAddrWrPns11S
+	   or XpiDescDmaIssueModeWrPns11S or XpiDescDmaModeRegPns12C
+	   or XpiDescDmaRbLSBDataPns12C or XpiDescDmaRbMSBDataPns12S
+	   or XpiDescDmaRbMuxSelPns12S)
+    begin
+      if (XpiDescDmaIssueASICAddrWrPns11S)
+        // ASIC Memory Register Write Data
+        XpiDescDmaRbDataPns13C = XpiDescDmaASICAddrRegPns12C;
+      else if (XpiDescDmaIssueModeWrPns11S)
+        // Mode Register Write Data
+        XpiDescDmaRbDataPns13C = XpiDescDmaModeRegPns12C;
+      else if (XpiDescDmaRbMuxSelPns12S)
+        // MSB of Fifo Data
+        XpiDescDmaRbDataPns13C = XpiDescDmaRbMSBDataPns12S;
+      else
+	// LSB of Fifo Data
+        XpiDescDmaRbDataPns13C = XpiDescDmaRbLSBDataPns12C;
+      
+    end // always @ (...
+
+  //-----------------------------------------
+  //---- DMA -> RB Output Register Stage ----
+  //-----------------------------------------
+  
+DFFR #(1,1'b0) U66_dff (.q(XpiDescDmaFifoEFPns11S),.d(XpiDescDmaFifoEFPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U67_dff (.q(XpiDescDmaFifoEFPns12S),.d(XpiDescDmaFifoEFPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Address Ready Pulse Detect
+DFFR #(1,1'b0) U68_dff (.q(XpiDescDmaRbAddrIrdyPns12S),.d(XpiDescDmaRbAddrIrdyPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaRbAddrIrdyPns13C = ((~XpiDescDmaRbAddrIrdyPns11S) &&
+				       XpiDescDmaRbAddrIrdyPns12S);
+
+  // Issue TimeOut Pulse Detect
+DFFR #(1,1'b0) U69_dff (.q(XpiDescDmaIssueTOutPns11S),.d(XpiDescDmaIssueTOutPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaIssueTOutPns12C = 
+	 (XpiDescDmaIssueTOutPns11C && (~XpiDescDmaIssueTOutPns11S));
+  
+  //---- Address Irdy ----
+  
+  assign XpiDescDmaRbIrdyPns12C = 
+	 (XpiDescDmaIssueASICAddrWrPns11S || XpiDescDmaIssueModeWrPns11S ||
+	  XpiDescDmaIssueTOutPns12C || (XpiDescDmaRbAddrIrdyPns12S && (~XpiDescDmaFifoEFPns12S)));
+  
+  //---- Detecting ASIC Memory Address Register Address based on Memory ID ----
+
+  always @(/*AS*/XpiDescDmaMemoryIDPns12C)
+    begin
+
+      case(XpiDescDmaMemoryIDPns12C)
+
+        3'b000:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f0;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f1;
+          end
+
+        3'b001:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f2;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f3;
+          end
+
+        3'b010:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f4;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f5;
+          end
+
+        3'b011:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f6;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f7;
+          end
+
+        3'b100:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f8;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f9;
+          end
+
+	3'b101:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1fa;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1fb;
+          end
+
+        3'b110:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1fc;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1fd;
+          end
+
+        3'b111:
+          begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1fe;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1ff;
+          end
+
+	default:
+	  begin
+            XpiDescDmaASICMemAddrPns12C = `RB_ADDR_WIDTH'h1f0;
+            XpiDescDmaModeRegAddrPns12C = `RB_ADDR_WIDTH'h1f1;
+          end
+
+      endcase // case(XpiDescDmaMemoryIDPns12C)
+
+    end // always @ (...
+
+
+  //---- Address & Command Selection ----
+
+  always @(/*AS*/XpiDescDmaASICMemAddrPns12C or XpiDescDmaFifoEFPns12S
+	   or XpiDescDmaIssueASICAddrWrPns11S
+	   or XpiDescDmaIssueModeWrPns11S or XpiDescDmaIssueTOutPns11C
+	   or XpiDescDmaModeRegAddrPns12C
+	   or XpiDescDmaRbAddrIrdyPns12S or XpiDescDmaTargetIDPns12C)
+    begin
+      if (XpiDescDmaRbAddrIrdyPns12S && (~XpiDescDmaFifoEFPns12S))
+	// Data Write
+        begin
+          XpiDescDmaRbCmdPns12C = `RBWR;
+          XpiDescDmaRbAddrPns12C = {XpiDescDmaTargetIDPns12C,{`RB_ADDR_WIDTH{1'b0}} };
+        end
+      else if (XpiDescDmaIssueASICAddrWrPns11S)
+	// Address Register Write
+        begin
+          XpiDescDmaRbCmdPns12C = `CTRLWR;
+          XpiDescDmaRbAddrPns12C = {XpiDescDmaTargetIDPns12C,XpiDescDmaASICMemAddrPns12C};
+        end
+      else if (XpiDescDmaIssueModeWrPns11S)
+	// Mode Register Write
+        begin
+          XpiDescDmaRbCmdPns12C = `CTRLWR;
+          XpiDescDmaRbAddrPns12C = {XpiDescDmaTargetIDPns12C,XpiDescDmaModeRegAddrPns12C};
+        end
+      else if (XpiDescDmaIssueTOutPns11C)
+        begin
+          XpiDescDmaRbCmdPns12C = `TOUT;
+          XpiDescDmaRbAddrPns12C = {XpiDescDmaTargetIDPns12C,{`RB_ADDR_WIDTH{1'b0}} };
+        end
+      else
+        begin
+          XpiDescDmaRbCmdPns12C  = `NULL;
+          XpiDescDmaRbAddrPns12C = {`XPI_ADDR_WIDTH{1'b0}};
+        end // else: !if(XpiDescDmaIssueRbRdPns11S)
+    end // always @ (...
+
+  
+  // RB Interface
+  
+DFFR #(1,1'b0) U70_dff (.q(XpiDescDmaRbIrdyPns13S),.d(XpiDescDmaRbIrdyPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(4,4'b0) U71_dff (.q(XpiDescDmaRbCmdPns13S),.d(XpiDescDmaRbCmdPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(17,17'b0) U72_dff (.q(XpiDescDmaRbAddrPns13S),.d(XpiDescDmaRbAddrPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U73_dff (.q(XpiDescDmaRbDataLenPns13S),.d(XpiDescDmaRbDataPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaRbTxnIDPns13S   = TXNID[2:0];
+  assign XpiDescDmaRbTrdyPns13S = 1'b1;
+  
+  //---------------------------------------------
+  //---- PCI CLK -> CORE CLK Synchronization ----
+  //---------------------------------------------
+
+DFFR #(1,1'b0) U74_dff (.q(XpiDescDmaTOutRegWrPns10S),.d(XpiDescDmaTOutRegWrPns10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+  
+  //---- First Core Clk Synchronizing Flop Stage ----
+
+DFFR #(1,1'b0) U75_dff (.q(XpiDescDmaCoreDescPh2WrEnPns11S),.d(XpiDescDmaPciDescPh2WrEnPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(43,43'b0) U76_dff (.q(XpiDescDmaCoreAddrModeInfoPns11S),.d(XpiDescDmaAddrModeInfoPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(1,1'b0) U77_dff (.q(XpiDescDmaCoreTOutRegWrPns11S),.d(XpiDescDmaTOutRegWrPns10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U78_dff (.q(XpiDescDmaCoreTOutRegPns11S),.d(XpiDescDmaTOutRegPns10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U79_dff (.q(XpiDescDmaCoreCPURdEndPns11S),.d(XpiDescDmaCPURdEndPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U80_dff (.q(XpiDescDmaCoreMemRdLenPns11S),.d(XpiDescDmaPciMemRdLenPsn11S[`BYTECNT_WIDTH-1:0]),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Second Core Clk Synchronizing Flop Stage ----
+
+DFFR #(1,1'b0) U81_dff (.q(XpiDescDmaCoreDescPh2WrEnPns12S),.d(XpiDescDmaCoreDescPh2WrEnPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(43,43'b0) U82_dff (.q(XpiDescDmaCoreAddrModeInfoPns12S),.d(XpiDescDmaCoreAddrModeInfoPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U83_dff (.q(XpiDescDmaCoreTOutRegWrPns12S),.d(XpiDescDmaCoreTOutRegWrPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U84_dff (.q(XpiDescDmaCoreTOutRegPns12S),.d(XpiDescDmaCoreTOutRegPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U85_dff (.q(XpiDescDmaCoreCPURdEndPns12S),.d(XpiDescDmaCoreCPURdEndPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U86_dff (.q(XpiDescDmaCoreMemRdLenPns12S),.d(XpiDescDmaCoreMemRdLenPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- Core Clk Domain Synchronized Control Signals ----
+  
+DFFR #(1,1'b0) U87_dff (.q(XpiDescDmaDescPh2WrEnPns13S),.d(XpiDescDmaCoreDescPh2WrEnPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(1,1'b0) U88_dff (.q(XpiDescDmaTOutRegWrPns13S),.d(XpiDescDmaCoreTOutRegWrPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U89_dff (.q(XpiDescDmaCPURdEndPns12S),.d(XpiDescDmaCoreCPURdEndPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U90_dff (.q(XpiDescDmaMemRdLenPns12S),.d(XpiDescDmaCoreMemRdLenPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- Pulse Generation Logic ----
+
+DFFR #(1,1'b0) U91_dff (.q(XpiDescDmaCPURdEndPns13S),.d(XpiDescDmaCPURdEndPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaCPURdEndPns13C = (XpiDescDmaCPURdEndPns12S && (~XpiDescDmaCPURdEndPns13S));
+
+DFFR #(1,1'b0) U92_dff (.q(XpiDescDmaDescPh2WrEnPns14S),.d(XpiDescDmaDescPh2WrEnPns13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaDescPh2WrEnPns13C = (XpiDescDmaDescPh2WrEnPns13S && (~XpiDescDmaDescPh2WrEnPns14S));
+  
+DFFR #(1,1'b0) U93_dff (.q(XpiDescDmaTOutRegWrPns14S),.d(XpiDescDmaTOutRegWrPns13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  assign XpiDescDmaTOutRegWrPns13C = (XpiDescDmaTOutRegWrPns13S && (~XpiDescDmaTOutRegWrPns14S));
+  
+  //---- Muxing the Synchronized Data ----
+
+  assign XpiDescDmaAddrModeInfoPns13C = XpiDescDmaDescPh2WrEnPns13C ?
+	 XpiDescDmaCoreAddrModeInfoPns12S : XpiDescDmaAddrModeInfoPns13S;
+  
+DFFR #(43,43'b0) U94_dff (.q(XpiDescDmaAddrModeInfoPns13S),.d(XpiDescDmaAddrModeInfoPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaTOutRegPns13C = XpiDescDmaTOutRegWrPns13C ?
+	 XpiDescDmaCoreTOutRegPns12S : XpiDescDmaTOutRegPns13S;
+  
+DFFR #(32,`CFG_WIDTH'h0000ffff) U95_dff (.q(XpiDescDmaTOutRegPns13S),.d(XpiDescDmaTOutRegPns13C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------
+  //---- Core Clk -> PCI Clk Synchronization ----
+  //---------------------------------------------
+  
+  //-------------------------------------
+  //---- Synchronizing State Machine ----
+  //-------------------------------------
+  //** 5*CoreClk (333MHz) == PciClk(66MHz)
+  //** 10*CoreClk (333MHz) == PciClk(33MHz)  
+  //** A single CoreClk Pulse is to be asserted for 5+2=7 or 10+2=12
+  //** Core Clk cycles to result into a single PCI Clk Pulse
+  
+`define XPIDESCDMACPSYNCIDLE          2'b00
+`define XPIDESCDMACPSYNCSTATUSASSERT  2'b01
+`define XPIDESCDMACPSYNCTOUTASSERT    2'b11
+  
+  // Internal State variables 
+  wire [1:0] xpidescdmacpsyncstate;
+  reg [1:0]  next_xpidescdmacpsyncstate;
+
+  //---- State Change ----
+
+DFFR #(2,2'b0) U96_dff (.q(xpidescdmacpsyncstate),.d(next_xpidescdmacpsyncstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- State Assignment ----
+  
+  always @(/*AS*/xpidescdmacpsyncstate)
+    begin
+      
+      XpiDescDmaUpdateStatusPsn11S = 1'b0;
+      XpiDescDmaTimeOutPsn11S      = 1'b0;
+      XpiDescDmaAssertCntEnPsn11S  = 1'b0;
+
+      case(xpidescdmacpsyncstate)
+
+        `XPIDESCDMACPSYNCIDLE:
+          begin
+            XpiDescDmaUpdateStatusPsn11S = 1'b0;
+            XpiDescDmaTimeOutPsn11S      = 1'b0;
+            XpiDescDmaAssertCntEnPsn11S  = 1'b0;
+          end
+
+        `XPIDESCDMACPSYNCSTATUSASSERT:
+          begin
+            XpiDescDmaUpdateStatusPsn11S = 1'b1;
+            XpiDescDmaAssertCntEnPsn11S  = 1'b1;
+          end
+
+	`XPIDESCDMACPSYNCTOUTASSERT:
+          begin
+            XpiDescDmaTimeOutPsn11S      = 1'b1;
+            XpiDescDmaAssertCntEnPsn11S  = 1'b1;
+          end
+
+	default:
+	  begin
+            XpiDescDmaUpdateStatusPsn11S = 1'b0;
+            XpiDescDmaTimeOutPsn11S      = 1'b0;
+            XpiDescDmaAssertCntEnPsn11S  = 1'b0;
+          end
+
+      endcase // case(xpidescdmacpsyncstate)
+    end // always @ (...
+
+  //---- State Transition ----
+
+  always @(/*AS*/XpiDescDmaAssertCntPsn11S or XpiDescDmaTimeOutPsn10S
+	   or XpiDescDmaUpdateStatusPns11S
+	   or XpiPciAppDescDmaFreq133P11S
+	   or XpiPciAppDescDmaFreq33P11S or XpiPciAppDescDmaFreq66P11S
+	   or xpidescdmacpsyncstate)
+    begin
+
+      case (xpidescdmacpsyncstate)
+
+        `XPIDESCDMACPSYNCIDLE:
+          begin
+            if (XpiDescDmaUpdateStatusPns11S)
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCSTATUSASSERT;
+            else if (XpiDescDmaTimeOutPsn10S)
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCTOUTASSERT;
+            else
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCIDLE;
+          end
+
+        `XPIDESCDMACPSYNCSTATUSASSERT:
+          begin
+            if ((XpiPciAppDescDmaFreq133P11S && (XpiDescDmaAssertCntPsn11S == 4'b0011)) ||
+		(XpiPciAppDescDmaFreq66P11S && (XpiDescDmaAssertCntPsn11S == 4'b0110))  ||
+                (XpiPciAppDescDmaFreq33P11S && (XpiDescDmaAssertCntPsn11S == 4'b1100)))
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCIDLE;
+            else
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCSTATUSASSERT;
+          end
+	
+        `XPIDESCDMACPSYNCTOUTASSERT:
+          begin
+            if ((XpiPciAppDescDmaFreq133P11S && (XpiDescDmaAssertCntPsn11S == 4'b0011)) ||
+		(XpiPciAppDescDmaFreq66P11S && (XpiDescDmaAssertCntPsn11S == 4'b0110))  ||
+                (XpiPciAppDescDmaFreq33P11S && (XpiDescDmaAssertCntPsn11S == 4'b1100)))
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCIDLE;
+            else
+              next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCTOUTASSERT;
+          end
+
+        default : next_xpidescdmacpsyncstate = `XPIDESCDMACPSYNCIDLE;
+
+      endcase // case(xpidescdmacpsyncstate)
+
+      end // always @ (...
+
+  //---- Signal Assertion Counter ----
+  
+  always @(/*AS*/XpiDescDmaAssertCntEnPsn11S
+	   or XpiDescDmaAssertCntPsn11S)
+    begin
+      if (XpiDescDmaAssertCntEnPsn11S)
+        XpiDescDmaAssertCntPsn11C = {XpiDescDmaAssertCntPsn11S + 4'h1};
+      else if (XpiDescDmaAssertCntPsn11S == 4'hf)
+        XpiDescDmaAssertCntPsn11C = {4{1'b0}};
+      else
+        XpiDescDmaAssertCntPsn11C = {4{1'b0}};
+    end
+
+DFFR #(4,4'b0) U97_dff (.q(XpiDescDmaAssertCntPsn11S),.d(XpiDescDmaAssertCntPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+
+  //---- First PCI CLK Sync flop ----  
+  
+DFFR #(1,1'b0) U98_dff (.q(XpiDescDmaPciSyncUpdateStatusPsn11S),.d(XpiDescDmaUpdateStatusPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U99_dff (.q(XpiDescDmaPciSyncTimeOutPsn11S),.d(XpiDescDmaTimeOutPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Second PCI CLK Sync flop ----
+
+DFFR #(1,1'b0) U100_dff (.q(XpiDescDmaPciSyncUpdateStatusPsn12S),.d(XpiDescDmaPciSyncUpdateStatusPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U101_dff (.q(XpiDescDmaPciSyncTimeOutPsn12S),.d(XpiDescDmaPciSyncTimeOutPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Synchronized Signal
+DFFR #(1,1'b0) U102_dff (.q(XpiDescDmaPciUpdateStatusPsn12S),.d(XpiDescDmaPciSyncUpdateStatusPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U103_dff (.q(XpiDescDmaPciTimeOutPsn12S),.d(XpiDescDmaPciSyncTimeOutPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Pulse Detect
+  assign XpiDescDmaPciTimeOutPsn12C = 
+	 (XpiDescDmaPciSyncTimeOutPsn12S && (~XpiDescDmaPciTimeOutPsn12S));
+  
+DFFR #(1,1'b0) U104_dff (.q(XpiDescDmaPciUpdateStatusPsn13S),.d(XpiDescDmaPciUpdateStatusPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiDescDmaPciUpdateStatusPsn13C = (XpiDescDmaPciUpdateStatusPsn12S &&
+					    (~XpiDescDmaPciUpdateStatusPsn13S));
+  
+endmodule // xpidescdmas
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:

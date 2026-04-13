@@ -1,0 +1,474 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+`include "rswuc.vh"
+
+module ftigenericc (
+   /*AUTOARG*/
+   // Outputs
+   RswTrainIntrXnnS, RswRddataFcFifoXnnC, RswLodsIntrXnnS, 
+   RswLodsDetXnnS, RswFcFifoEmptyXnnS, RswDip2IntrXnnS, RswDRdyXnnS, 
+   FtiTrainRdValidS, FtiTrainRdDataS, RswFcFifoFullXnnS, 
+   // Inputs
+   RswTrainWrEnS, RswTrainWrDataS, RswTrainRdEnS, RswReadFcFifoXnnC, 
+   RswLofcsEnX11S, RswDisVoqFlCtlX11S, RswDisLlFlCtlX11S, 
+   RswDip2OkThreshX11S, RswDip2ErrThreshX11S, GlInitDoneR00C, 
+   GlCoreSoftResetSynR00C, FtiCoreClk, EnqGlPortVld, DtiSuperTwo1S, 
+   DtiSuperTwo0S, DtiSuperOne1S, DtiSuperOne0S, DtiPosMaskS, 
+   DtiNegMaskS, DtiCsixClk, RswTrainAddrS
+);
+
+   parameter DTI_WORD_WIDTH = 2;
+   parameter DTI_TCW_VALUE  = 2'b11;
+   parameter DTI_ICW_VALUE  = 2'b11;
+   parameter DTI_ADDR_WIDTH = 2;
+
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                DtiCsixClk;             // To U_dticlklens of dticlklens.v, ...
+   input [`DTI_CLK_MASK_WIDTH-1:0]DtiNegMaskS;  // To U_dticlklens of dticlklens.v
+   input [`DTI_CLK_MASK_WIDTH-1:0]DtiPosMaskS;  // To U_dticlklens of dticlklens.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne0S;      // To U0_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne1S;      // To U1_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo0S;      // To U0_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo1S;      // To U1_dti1bitc of dti1bitc.v
+   input                EnqGlPortVld;           // To U_dtictrlcores of dtictrlcores.v
+   input                FtiCoreClk;             // To U_dtictrlcores of dtictrlcores.v
+   input                GlCoreSoftResetSynR00C; // To U_dtictrlcores of dtictrlcores.v
+   input                GlInitDoneR00C;         // To U_dtictrlcores of dtictrlcores.v
+   input [15:0]         RswDip2ErrThreshX11S;   // To U_rswflowctls of rswflowctls.v
+   input [15:0]         RswDip2OkThreshX11S;    // To U_rswflowctls of rswflowctls.v
+   input                RswDisLlFlCtlX11S;      // To U_rswflowctls of rswflowctls.v
+   input                RswDisVoqFlCtlX11S;     // To U_rswflowctls of rswflowctls.v
+   input                RswLofcsEnX11S;         // To U_rswflowctls of rswflowctls.v
+   input                RswReadFcFifoXnnC;      // To U_fcfifo of ASYNCFIFO.v
+   input                RswTrainRdEnS;          // To U_dtictrlcores of dtictrlcores.v
+   input [`DTI_WRDATA_WIDTH-1:0]RswTrainWrDataS;// To U_dtictrlcores of dtictrlcores.v
+   input                RswTrainWrEnS;          // To U_dtictrlcores of dtictrlcores.v
+   // End of automatics
+
+   // To avoid allowing its parameterized bus width to escape to higher
+   // levels of hierarchy, we give this input an explicit width.
+   input [1:0]          RswTrainAddrS;
+
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [`DTI_RDDATA_WIDTH-1:0]FtiTrainRdDataS;// From U_dtictrlcores of dtictrlcores.v
+   output               FtiTrainRdValidS;       // From U_dtictrlcores of dtictrlcores.v
+   output               RswDRdyXnnS;            // From U_rswflowctls of rswflowctls.v
+   output               RswDip2IntrXnnS;        // From U_rswflowctls of rswflowctls.v
+   output               RswFcFifoEmptyXnnS;     // From U_fcfifo of ASYNCFIFO.v
+   output               RswLodsDetXnnS;         // From U_rswflowctls of rswflowctls.v
+   output               RswLodsIntrXnnS;        // From U_rswflowctls of rswflowctls.v
+   output [`RSW_FCDEC_MESGWIDTH-1:0]RswRddataFcFifoXnnC;// From U_fcfifo of ASYNCFIFO.v
+   output               RswTrainIntrXnnS;       // From U_rswflowctls of rswflowctls.v
+   // End of automatics
+
+   // Make sure this signal goes out, even though it is also used internally
+   output               RswFcFifoFullXnnS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [DTI_ADDR_WIDTH-1:0]DtiAddrCoreS;       // From U_dtictrlcores of dtictrlcores.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit0CtrlS;  // From U0_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit1CtrlS;  // From U1_dti1bitc of dti1bitc.v
+   wire [DTI_WORD_WIDTH-1:0]DtiBitWrEnC;        // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [`DTI_CLKLEN_CTRL_WIDTH-1:0]DtiClkLenCtrlS;// From U_dticlklens of dticlklens.v
+   wire                 DtiClkLenWrEnC;         // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire                 DtiCoreSoftResetSynZ01SL;// From U_dtictrlcores of dtictrlcores.v
+   wire                 DtiCsixSoftResetSynZ01SL;// From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [`DTI_CYCLE_THRESHOLD_WIDTH-1:0]DtiCycleThresholdS;// From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [1:0]           DtiDeskewFailureC;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiDeskewedWord0C;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiDeskewedWord1C;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire                 DtiDoTrainingC;         // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire                 DtiDoneStretchingZnS;   // From U_dtictrlcores of dtictrlcores.v
+   wire                 DtiFirstTDWC;           // From U_dticombines of dticombines.v
+   wire                 DtiFoundPrefTCWC;       // From U_ftifindtcws of ftifindtcws.v
+   wire                 DtiGetNewPrimarySelC;   // From U_dticombines of dticombines.v
+   wire [1:0]           DtiHistoryWord3S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiHistoryWord4S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiHistoryWord5S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiHistoryWord6S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiHistoryWord7C;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [1:0]           DtiHistoryWord8C;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire                 DtiPrefOverSelReadyS;   // From U_dticlklens of dticlklens.v
+   wire [`DTI_OSAMPLE_SEL_WIDTH-1:0]DtiPrefOverSelS;// From U_dticlklens of dticlklens.v
+   wire [1:0]           DtiPrimarySelReadyS;    // From U0_dti1bitc of dti1bitc.v, ...
+   wire [`DTI_RDDATA_WIDTH-1:0]DtiRdDataCsixS;  // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire                 DtiRdEnTransS;          // From U_dtictrlcores of dtictrlcores.v
+   wire                 DtiRdValidTransS;       // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [DTI_WORD_WIDTH-1:0]DtiTCWC;            // From U_dticombines of dticombines.v
+   wire [`DTI_TRAINING_MODE_WIDTH-1:0]DtiTrainingModeS;// From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [`DTI_TRANS_THRESHOLD_WIDTH-1:0]DtiTransThresholdS;// From U_ftictrlcsixs of ftictrlcsixs.v
+   wire [`DTI_WRDATA_WIDTH-1:0]DtiWrDataCoreS;  // From U_dtictrlcores of dtictrlcores.v
+   wire [`DTI_WRDATA_WIDTH-1:0]DtiWrDataS;      // From U_ftictrlcsixs of ftictrlcsixs.v
+   wire                 DtiWrEnTransS;          // From U_dtictrlcores of dtictrlcores.v
+   wire [3:0]           FtiDataS;               // From U_dticombines of dticombines.v, ...
+   wire                 FtiTrainLevelS;         // From U_dticombines of dticombines.v
+   wire                 FtiTrainPulseS;         // From U_dticombines of dticombines.v
+   wire [`RSW_FCDEC_MESGWIDTH-1:0]RswWrdataFcFifoXnnC;// From U_rswflowctls of rswflowctls.v
+   wire                 RswWriteFcFifoXnnC;     // From U_rswflowctls of rswflowctls.v
+   // End of automatics
+
+   // surefire lint_off UDDSDN
+   wire [`RSW_FCAWIDTH:0] DtiDummyRdRd;
+   wire [`RSW_FCAWIDTH:0] DtiDummyRdWr;
+   wire [`RSW_FCAWIDTH:0] DtiDummyWrRd;
+   wire [`RSW_FCAWIDTH:0] DtiDummyWrWr;
+   // surefire lint_on UDDSDN
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   // Module Name: dticlklens
+   // Instance Name: U_dticlklens
+   // Description: Convert phase-overlap masks into average phase length
+
+   dticlklens U_dticlklens
+      (/*AUTOINST*/
+       // Outputs
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiClkLenCtrlS                  (DtiClkLenCtrlS[`DTI_CLKLEN_CTRL_WIDTH-1:0]),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiPosMaskS                     (DtiPosMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+       .DtiNegMaskS                     (DtiNegMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+       .DtiClkLenWrEnC                  (DtiClkLenWrEnC),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+
+   // Module Name: dti1bitc
+   // Instance Name: U*_dti1bitc
+   // Description: Do all training work that is local to each bit
+
+/* dti1bitc AUTO_TEMPLATE (
+      // Outputs
+      .DtiPrimarySelReadyS (DtiPrimarySelReadyS[@]),
+      .DtiHistoryBit\(.*\) (DtiHistoryWord\1[@]),
+      .DtiDeskewedBit0C    (DtiDeskewedWord0C[@]),
+      .DtiDeskewedBit1C    (DtiDeskewedWord1C[@]),
+      .DtiDeskewFailureC   (DtiDeskewFailureC[@]),
+      .DtiBitCtrlS         (DtiBit@CtrlS[]),
+      // Inputs
+      .DtiSuperOneS        (DtiSuperOne@S[]),
+      .DtiSuperTwoS        (DtiSuperTwo@S[]),
+      .DtiTCWBitC          (DtiTCWC[@]),
+      .DtiBitWrEnC         (DtiBitWrEnC[@]));
+*/
+
+   dti1bitc U0_dti1bitc
+       (/*AUTOINST*/
+        // Outputs
+        .DtiBitCtrlS                    (DtiBit0CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+        .DtiDeskewFailureC              (DtiDeskewFailureC[0]),  // Templated
+        .DtiDeskewedBit0C               (DtiDeskewedWord0C[0]),  // Templated
+        .DtiDeskewedBit1C               (DtiDeskewedWord1C[0]),  // Templated
+        .DtiHistoryBit3S                (DtiHistoryWord3S[0]),   // Templated
+        .DtiHistoryBit4S                (DtiHistoryWord4S[0]),   // Templated
+        .DtiHistoryBit5S                (DtiHistoryWord5S[0]),   // Templated
+        .DtiHistoryBit6S                (DtiHistoryWord6S[0]),   // Templated
+        .DtiHistoryBit7C                (DtiHistoryWord7C[0]),   // Templated
+        .DtiHistoryBit8C                (DtiHistoryWord8C[0]),   // Templated
+        .DtiPrimarySelReadyS            (DtiPrimarySelReadyS[0]), // Templated
+        // Inputs
+        .DtiBitWrEnC                    (DtiBitWrEnC[0]),        // Templated
+        .DtiCsixClk                     (DtiCsixClk),
+        .DtiCsixSoftResetSynZ01SL       (DtiCsixSoftResetSynZ01SL),
+        .DtiCycleThresholdS             (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+        .DtiDoTrainingC                 (DtiDoTrainingC),
+        .DtiFirstTDWC                   (DtiFirstTDWC),
+        .DtiGetNewPrimarySelC           (DtiGetNewPrimarySelC),
+        .DtiPrefOverSelReadyS           (DtiPrefOverSelReadyS),
+        .DtiPrefOverSelS                (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+        .DtiSuperOneS                   (DtiSuperOne0S[`DTI_SSAMPLES-1:0]), // Templated
+        .DtiSuperTwoS                   (DtiSuperTwo0S[`DTI_SSAMPLES-1:0]), // Templated
+        .DtiTCWBitC                     (DtiTCWC[0]),            // Templated
+        .DtiTransThresholdS             (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+        .DtiWrDataS                     (DtiWrDataS[10:0]));
+
+   dti1bitc U1_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit1CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[1]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[1]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[1]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[1]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[1]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[1]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[1]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[1]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[1]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[1]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[1]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne1S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo1S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[1]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+
+   // Module Name: ftifindtcws
+   // Instance Name: U_ftifindtcws
+   // Description: Look at the right amount of history to identify the TCW
+
+   ftifindtcws #(DTI_WORD_WIDTH) U_ftifindtcws
+      (/*AUTOINST*/
+       // Outputs
+       .DtiFoundPrefTCWC                (DtiFoundPrefTCWC),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord8C                (DtiHistoryWord8C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord7C                (DtiHistoryWord7C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord6S                (DtiHistoryWord6S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord5S                (DtiHistoryWord5S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord4S                (DtiHistoryWord4S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord3S                (DtiHistoryWord3S[DTI_WORD_WIDTH-1:0]),
+       .DtiTCWC                         (DtiTCWC[DTI_WORD_WIDTH-1:0]));
+
+
+   // Module Name: dticombines
+   // Instance Name: U_dticombines
+   // Description: Look at all bits to find the training pattern
+
+/* dticombines AUTO_TEMPLATE (
+      // Outputs
+      .DtiTrainS   (FtiTrainPulseS),
+      .DtiTrainedS (FtiTrainLevelS),
+      .DtiWord0S   (FtiDataS[3:2]),
+      .DtiWord1S   (FtiDataS[1:0]));
+*/
+
+   dticombines #(DTI_WORD_WIDTH, DTI_TCW_VALUE, DTI_ICW_VALUE) U_dticombines
+      (/*AUTOINST*/
+       // Outputs
+       .DtiWord0S                       (FtiDataS[3:2]),         // Templated
+       .DtiWord1S                       (FtiDataS[1:0]),         // Templated
+       .DtiTrainS                       (FtiTrainPulseS),        // Templated
+       .DtiTrainedS                     (FtiTrainLevelS),        // Templated
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiTCWC                         (DtiTCWC[DTI_WORD_WIDTH-1:0]),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiFoundPrefTCWC                (DtiFoundPrefTCWC),
+       .DtiDeskewedWord0C               (DtiDeskewedWord0C[DTI_WORD_WIDTH-1:0]),
+       .DtiDeskewedWord1C               (DtiDeskewedWord1C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord6S                (DtiHistoryWord6S[DTI_WORD_WIDTH-1:0]),
+       .DtiDeskewFailureC               (DtiDeskewFailureC[DTI_WORD_WIDTH-1:0]),
+       .DtiTrainingModeS                (DtiTrainingModeS[`DTI_TRAINING_MODE_WIDTH-1:0]));
+
+
+   // Module Name: dtictrlcores
+   // Instance Name: U_dtictrlcores
+   // Description: Handle core-clock surrogate RBB requests from the CBI (TMI)
+
+/* dtictrlcores AUTO_TEMPLATE (
+      // Outputs
+      .DtiTrainRdValidS (FtiTrainRdValidS),
+      .DtiTrainRdDataS  (FtiTrainRdDataS[]),
+      // Inputs
+      .DtiCoreClk       (FtiCoreClk),
+      .Tmi\(.*\)        (Rsw\1[]));
+*/
+
+   dtictrlcores #(DTI_ADDR_WIDTH) U_dtictrlcores
+      (/*AUTOINST*/
+       // Outputs
+       .DtiTrainRdValidS                (FtiTrainRdValidS),      // Templated
+       .DtiTrainRdDataS                 (FtiTrainRdDataS[`DTI_RDDATA_WIDTH-1:0]), // Templated
+       .DtiCoreSoftResetSynZ01SL        (DtiCoreSoftResetSynZ01SL),
+       .DtiDoneStretchingZnS            (DtiDoneStretchingZnS),
+       .DtiWrEnTransS                   (DtiWrEnTransS),
+       .DtiRdEnTransS                   (DtiRdEnTransS),
+       .DtiAddrCoreS                    (DtiAddrCoreS[DTI_ADDR_WIDTH-1:0]),
+       .DtiWrDataCoreS                  (DtiWrDataCoreS[`DTI_WRDATA_WIDTH-1:0]),
+       // Inputs
+       .DtiCoreClk                      (FtiCoreClk),            // Templated
+       .GlCoreSoftResetSynR00C          (GlCoreSoftResetSynR00C),
+       .EnqGlPortVld                    (EnqGlPortVld),
+       .GlInitDoneR00C                  (GlInitDoneR00C),
+       .TmiTrainWrEnS                   (RswTrainWrEnS),         // Templated
+       .TmiTrainRdEnS                   (RswTrainRdEnS),         // Templated
+       .TmiTrainAddrS                   (RswTrainAddrS[DTI_ADDR_WIDTH-1:0]), // Templated
+       .TmiTrainWrDataS                 (RswTrainWrDataS[`DTI_WRDATA_WIDTH-1:0]), // Templated
+       .DtiRdValidTransS                (DtiRdValidTransS),
+       .DtiRdDataCsixS                  (DtiRdDataCsixS[`DTI_RDDATA_WIDTH-1:0]));
+
+
+   // Module Name: ftictrlcsixs
+   // Instance Name: U_ftictrlcsixs
+   // Description: Handle RBB transactions synchronized from the core clock
+
+   ftictrlcsixs #(DTI_WORD_WIDTH, DTI_ADDR_WIDTH) U_ftictrlcsixs
+      (/*AUTOINST*/
+       // Outputs
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiRdValidTransS                (DtiRdValidTransS),
+       .DtiRdDataCsixS                  (DtiRdDataCsixS[`DTI_RDDATA_WIDTH-1:0]),
+       .DtiBitWrEnC                     (DtiBitWrEnC[DTI_WORD_WIDTH-1:0]),
+       .DtiClkLenWrEnC                  (DtiClkLenWrEnC),
+       .DtiWrDataS                      (DtiWrDataS[`DTI_WRDATA_WIDTH-1:0]),
+       .DtiTrainingModeS                (DtiTrainingModeS[`DTI_TRAINING_MODE_WIDTH-1:0]),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiDoneStretchingZnS            (DtiDoneStretchingZnS),
+       .DtiWrEnTransS                   (DtiWrEnTransS),
+       .DtiRdEnTransS                   (DtiRdEnTransS),
+       .DtiAddrCoreS                    (DtiAddrCoreS[DTI_ADDR_WIDTH-1:0]),
+       .DtiWrDataCoreS                  (DtiWrDataCoreS[`DTI_WRDATA_WIDTH-1:0]),
+       .DtiBit0CtrlS                    (DtiBit0CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit1CtrlS                    (DtiBit1CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiClkLenCtrlS                  (DtiClkLenCtrlS[`DTI_CLKLEN_CTRL_WIDTH-1:0]));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // The following code is taken from the RSW where it used to be instantiated
+   // in the rswchc module.  Now it is instantiated here so that the entire
+   // Csix input clock domain is contained in one place.  These modules are
+   // still in the tm/tmo/rsw portion of the CVS hierarchy, however.
+
+
+   // Module Name: rswflowctls
+   // Instance Name: U_rswflowctls
+   // Description: Flow Control Status input
+
+/* rswflowctls AUTO_TEMPLATE (
+      .RswCsixClk              (DtiCsixClk),
+      .RswNpsiSoftResetSynR00C (DtiCsixSoftResetSynZ01SL));
+*/
+
+   rswflowctls U_rswflowctls (/*AUTOINST*/
+                              // Outputs
+                              .RswTrainIntrXnnS(RswTrainIntrXnnS),
+                              .RswDip2IntrXnnS(RswDip2IntrXnnS),
+                              .RswLodsIntrXnnS(RswLodsIntrXnnS),
+                              .RswLodsDetXnnS(RswLodsDetXnnS),
+                              .RswDRdyXnnS(RswDRdyXnnS),
+                              .RswWriteFcFifoXnnC(RswWriteFcFifoXnnC),
+                              .RswWrdataFcFifoXnnC(RswWrdataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0]),
+                              // Inputs
+                              .RswCsixClk(DtiCsixClk),           // Templated
+                              .RswNpsiSoftResetSynR00C(DtiCsixSoftResetSynZ01SL), // Templated
+                              .FtiDataS (FtiDataS[`RSW_FCSTSWIDTH-1:0]),
+                              .FtiTrainLevelS(FtiTrainLevelS),
+                              .FtiTrainPulseS(FtiTrainPulseS),
+                              .RswFcFifoFullXnnS(RswFcFifoFullXnnS),
+                              .RswLofcsEnX11S(RswLofcsEnX11S),
+                              .RswDisLlFlCtlX11S(RswDisLlFlCtlX11S),
+                              .RswDisVoqFlCtlX11S(RswDisVoqFlCtlX11S),
+                              .RswDip2ErrThreshX11S(RswDip2ErrThreshX11S[15:0]),
+                              .RswDip2OkThreshX11S(RswDip2OkThreshX11S[15:0]));
+
+
+   // Module Name: ASYNCFIFO
+   // Instance Name: U_fcfifo
+   // Description: Async FIFO
+
+/* ASYNCFIFO AUTO_TEMPLATE (
+      .WRPTR_WRCLK ({DtiDummyWrWr[`RSW_FCAWIDTH:0]}),
+      .RDPTR_WRCLK ({DtiDummyRdWr[`RSW_FCAWIDTH:0]}),
+      .WRPTR_RDCLK ({DtiDummyWrRd[`RSW_FCAWIDTH:0]}),
+      .RDPTR_RDCLK ({DtiDummyRdRd[`RSW_FCAWIDTH:0]}),
+      .WRCLK       (DtiCsixClk),
+      .RESET_WRCLK (DtiCoreSoftResetSynZ01SL),
+      .RDCLK       (DtiCsixClk),
+      .RESET_RDCLK (DtiCsixSoftResetSynZ01SL),
+      .READ        (RswReadFcFifoXnnC),
+      .WRITE       (RswWriteFcFifoXnnC),
+      .WRDATA      (RswWrdataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0]),
+      .RDDATA      (RswRddataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0]),
+      .EMPTY       (RswFcFifoEmptyXnnS),
+      .FULL        (RswFcFifoFullXnnS));
+*/
+   
+   ASYNCFIFO #(`RSW_FCDEC_MESGWIDTH,`RSW_FCDEPTH,`RSW_FCAWIDTH,`RSW_SFRADDR) U_fcfifo (/*AUTOINST*/
+                                                                                       // Outputs
+                                                                                       .RDDATA(RswRddataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0]), // Templated
+                                                                                       .EMPTY(RswFcFifoEmptyXnnS), // Templated
+                                                                                       .FULL(RswFcFifoFullXnnS), // Templated
+                                                                                       .WRPTR_WRCLK({DtiDummyWrWr[`RSW_FCAWIDTH:0]}), // Templated
+                                                                                       .RDPTR_WRCLK({DtiDummyRdWr[`RSW_FCAWIDTH:0]}), // Templated
+                                                                                       .WRPTR_RDCLK({DtiDummyWrRd[`RSW_FCAWIDTH:0]}), // Templated
+                                                                                       .RDPTR_RDCLK({DtiDummyRdRd[`RSW_FCAWIDTH:0]}), // Templated
+                                                                                       // Inputs
+                                                                                       .RESET_RDCLK(DtiCsixSoftResetSynZ01SL), // Templated
+                                                                                       .RESET_WRCLK(DtiCoreSoftResetSynZ01SL), // Templated
+                                                                                       .RDCLK(DtiCsixClk), // Templated
+                                                                                       .READ(RswReadFcFifoXnnC), // Templated
+                                                                                       .WRCLK(DtiCsixClk), // Templated
+                                                                                       .WRITE(RswWriteFcFifoXnnC), // Templated
+                                                                                       .WRDATA(RswWrdataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0])); // Templated
+
+
+endmodule // ftigenericc
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul  5 12:00:00 2002 : created
+//
+// $Log: ftigenericc.v,v $
+// Revision 1.6  2002/08/08 17:15:22  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.5  2002/07/29 18:44:44  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.4  2002/07/26 18:55:47  chris
+// Use PortVld for stretched reset
+//
+// Revision 1.3  2002/07/16 15:54:16  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.2  2002/07/13 00:58:54  chris
+// Include RSW include directory
+//
+// Revision 1.1  2002/07/09 23:27:39  chris
+// Initial version
+//
+
+
+// Local Variables:
+// verilog-library-files:("../../../common/rtl/macros.v")
+// verilog-library-directories:("." "../../../common/dti/rtl" "../../tmo/rsw/rtl")
+// End:

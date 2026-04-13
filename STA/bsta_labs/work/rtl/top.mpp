@@ -1,0 +1,154 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+`include "rswuc.vh"
+
+module top (
+   /*AUTOARG*/
+   // Outputs
+   RswTrainIntrXnnS, RswRddataFcFifoXnnC, RswLodsIntrXnnS, 
+   RswLodsDetXnnS, RswFcFifoFullXnnS, RswFcFifoEmptyXnnS, 
+   RswDip2IntrXnnS, RswDRdyXnnS, FtiTrainRdValidS, FtiTrainRdDataS, 
+   // Inputs
+   xxin_ORSTAT, xxin_ORSCLK, RswTrainWrEnS, RswTrainWrDataS, 
+   RswTrainRdEnS, RswTrainAddrS, RswReadFcFifoXnnC, RswLofcsEnX11S, 
+   RswDisVoqFlCtlX11S, RswDisLlFlCtlX11S, RswDip2OkThreshX11S, 
+   RswDip2ErrThreshX11S, GlInitDoneR00C, GlCoreSoftResetSynR00C, 
+   FtiCoreClk, EnqGlPortVld
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                EnqGlPortVld;           // To U_ftigenericc of ftigenericc.v
+   input                FtiCoreClk;             // To U_ftigenericc of ftigenericc.v
+   input                GlCoreSoftResetSynR00C; // To U_ftigenericc of ftigenericc.v
+   input                GlInitDoneR00C;         // To U_ftigenericc of ftigenericc.v
+   input [15:0]         RswDip2ErrThreshX11S;   // To U_ftigenericc of ftigenericc.v
+   input [15:0]         RswDip2OkThreshX11S;    // To U_ftigenericc of ftigenericc.v
+   input                RswDisLlFlCtlX11S;      // To U_ftigenericc of ftigenericc.v
+   input                RswDisVoqFlCtlX11S;     // To U_ftigenericc of ftigenericc.v
+   input                RswLofcsEnX11S;         // To U_ftigenericc of ftigenericc.v
+   input                RswReadFcFifoXnnC;      // To U_ftigenericc of ftigenericc.v
+   input [1:0]          RswTrainAddrS;          // To U_ftigenericc of ftigenericc.v
+   input                RswTrainRdEnS;          // To U_ftigenericc of ftigenericc.v
+   input [`DTI_WRDATA_WIDTH-1:0]RswTrainWrDataS;// To U_ftigenericc of ftigenericc.v
+   input                RswTrainWrEnS;          // To U_ftigenericc of ftigenericc.v
+   input                xxin_ORSCLK;            // To U_fticustomc of fticustomc.v, ...
+   input [1:0]          xxin_ORSTAT;            // To U_fticustomc of fticustomc.v
+   // End of automatics
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [`DTI_RDDATA_WIDTH-1:0]FtiTrainRdDataS;// From U_ftigenericc of ftigenericc.v
+   output               FtiTrainRdValidS;       // From U_ftigenericc of ftigenericc.v
+   output               RswDRdyXnnS;            // From U_ftigenericc of ftigenericc.v
+   output               RswDip2IntrXnnS;        // From U_ftigenericc of ftigenericc.v
+   output               RswFcFifoEmptyXnnS;     // From U_ftigenericc of ftigenericc.v
+   output               RswFcFifoFullXnnS;      // From U_ftigenericc of ftigenericc.v
+   output               RswLodsDetXnnS;         // From U_ftigenericc of ftigenericc.v
+   output               RswLodsIntrXnnS;        // From U_ftigenericc of ftigenericc.v
+   output [`RSW_FCDEC_MESGWIDTH-1:0]RswRddataFcFifoXnnC;// From U_ftigenericc of ftigenericc.v
+   output               RswTrainIntrXnnS;       // From U_ftigenericc of ftigenericc.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [30:0]          DtiNegMaskS;            // From U_fticustomc of fticustomc.v
+   wire [30:0]          DtiPosMaskS;            // From U_fticustomc of fticustomc.v
+   wire [19:0]          DtiSuperOne0S;          // From U_fticustomc of fticustomc.v
+   wire [19:0]          DtiSuperOne1S;          // From U_fticustomc of fticustomc.v
+   wire [19:0]          DtiSuperTwo0S;          // From U_fticustomc of fticustomc.v
+   wire [19:0]          DtiSuperTwo1S;          // From U_fticustomc of fticustomc.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   /* 0in kndr -var xxin_ORSTAT -clock xxin_ORSCLK
+               -active (U_ftigenericc.DtiTrainingModeS != `DTI_FORCE_UNTRAINED)
+               -areset ~U_ftigenericc.DtiCsixSoftResetSynZ01SL */
+
+
+   // Module Name: fticustomc
+   // Instance Name: U_fticustomc
+   // Description: Container for all hand-placed and custom logic in the FTI
+
+   fticustomc U_fticustomc (/*AUTOINST*/
+                            // Outputs
+                            .DtiNegMaskS(DtiNegMaskS[30:0]),
+                            .DtiPosMaskS(DtiPosMaskS[30:0]),
+                            .DtiSuperOne0S(DtiSuperOne0S[19:0]),
+                            .DtiSuperOne1S(DtiSuperOne1S[19:0]),
+                            .DtiSuperTwo0S(DtiSuperTwo0S[19:0]),
+                            .DtiSuperTwo1S(DtiSuperTwo1S[19:0]),
+                            // Inputs
+                            .xxin_ORSCLK(xxin_ORSCLK),
+                            .xxin_ORSTAT(xxin_ORSTAT[1:0]));
+
+
+   // Module Name: ftigenericc
+   // Instance Name: U_ftigenericc
+   // Description: Container for generic synthesized logic in the FTI
+
+/* ftigenericc AUTO_TEMPLATE (
+      // Inputs
+      .DtiCsixClk (xxin_ORSCLK));
+*/
+   ftigenericc U_ftigenericc (/*AUTOINST*/
+                              // Outputs
+                              .FtiTrainRdDataS(FtiTrainRdDataS[`DTI_RDDATA_WIDTH-1:0]),
+                              .FtiTrainRdValidS(FtiTrainRdValidS),
+                              .RswDRdyXnnS(RswDRdyXnnS),
+                              .RswDip2IntrXnnS(RswDip2IntrXnnS),
+                              .RswFcFifoEmptyXnnS(RswFcFifoEmptyXnnS),
+                              .RswLodsDetXnnS(RswLodsDetXnnS),
+                              .RswLodsIntrXnnS(RswLodsIntrXnnS),
+                              .RswRddataFcFifoXnnC(RswRddataFcFifoXnnC[`RSW_FCDEC_MESGWIDTH-1:0]),
+                              .RswTrainIntrXnnS(RswTrainIntrXnnS),
+                              .RswFcFifoFullXnnS(RswFcFifoFullXnnS),
+                              // Inputs
+                              .DtiCsixClk(xxin_ORSCLK),          // Templated
+                              .DtiNegMaskS(DtiNegMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+                              .DtiPosMaskS(DtiPosMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+                              .DtiSuperOne0S(DtiSuperOne0S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperOne1S(DtiSuperOne1S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo0S(DtiSuperTwo0S[`DTI_SSAMPLES-1:0]),
+                              .DtiSuperTwo1S(DtiSuperTwo1S[`DTI_SSAMPLES-1:0]),
+                              .EnqGlPortVld(EnqGlPortVld),
+                              .FtiCoreClk(FtiCoreClk),
+                              .GlCoreSoftResetSynR00C(GlCoreSoftResetSynR00C),
+                              .GlInitDoneR00C(GlInitDoneR00C),
+                              .RswDip2ErrThreshX11S(RswDip2ErrThreshX11S[15:0]),
+                              .RswDip2OkThreshX11S(RswDip2OkThreshX11S[15:0]),
+                              .RswDisLlFlCtlX11S(RswDisLlFlCtlX11S),
+                              .RswDisVoqFlCtlX11S(RswDisVoqFlCtlX11S),
+                              .RswLofcsEnX11S(RswLofcsEnX11S),
+                              .RswReadFcFifoXnnC(RswReadFcFifoXnnC),
+                              .RswTrainRdEnS(RswTrainRdEnS),
+                              .RswTrainWrDataS(RswTrainWrDataS[`DTI_WRDATA_WIDTH-1:0]),
+                              .RswTrainWrEnS(RswTrainWrEnS),
+                              .RswTrainAddrS(RswTrainAddrS[1:0]));
+
+
+endmodule // top 
+
+

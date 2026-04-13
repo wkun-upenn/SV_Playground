@@ -1,0 +1,93 @@
+library(wireloadlib) {
+
+  /* general attributes */
+  delay_model : table_lookup;
+
+  /* unit attributes */
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1uA";
+  pulling_resistance_unit : "1kohm";
+  leakage_power_unit : "1pW";
+  capacitive_load_unit (1.0,pf);
+
+  /* operation conditions */
+  nom_process     : 1;
+  nom_temperature : 125;
+  nom_voltage     : 0.9;
+  operating_conditions(slow) {
+    process	: 1;
+    temperature	: 125;
+    voltage	: 0.9;
+    tree_type	: balanced_tree
+  }
+
+  wire_load("TSMC13_Conservative") {
+  resistance : 0 ;
+  capacitance : 1 ;
+  area : 1 ;
+  slope : 0.002993 ;
+  fanout_length(1, 0.001905);
+  fanout_length(2, 0.003538);
+  fanout_length(3, 0.005444);
+  fanout_length(4, 0.007621);
+  fanout_length(5, 0.01007);
+  fanout_length(6, 0.013063);
+  fanout_length(7, 0.016601);
+  fanout_length(8, 0.020684);
+  fanout_length(9, 0.025311);
+  fanout_length(10, 0.029938);
+  }
+
+  wire_load("custom_low") {
+  resistance : 0 ;
+  capacitance : 1 ;
+  area : 1 ;
+  slope : 0.002757 ;
+  fanout_length(1, 0.001993);
+  fanout_length(2, 0.003985);
+  fanout_length(3, 0.008270);
+  fanout_length(4, 0.011027);
+  fanout_length(5, 0.013784);
+  fanout_length(6, 0.016540);
+  fanout_length(7, 0.019297);
+  fanout_length(8, 0.022054);
+  fanout_length(9, 0.024811);
+  fanout_length(10, 0.027567);
+  }
+
+  wire_load("custom_medium") {
+  resistance : 0 ;
+  capacitance : 1 ;
+  area : 1 ;
+  slope : 0.003723 ;
+  fanout_length(1, 0.002997);
+  fanout_length(2, 0.005994);
+  fanout_length(3, 0.011046);
+  fanout_length(4, 0.014891);
+  fanout_length(5, 0.018613);
+  fanout_length(6, 0.022336);
+  fanout_length(7, 0.026059);
+  fanout_length(8, 0.029781);
+  fanout_length(9, 0.033504);
+  fanout_length(10, 0.037226);
+  }
+
+  wire_load("custom_high") {
+    resistance : 0 ;
+    capacitance : 1 ;
+    area : 1 ;
+    slope : 0.005082 ;
+    fanout_length(1, 0.002994);
+    fanout_length(2, 0.009987);
+    fanout_length(3, 0.014544);
+    fanout_length(4, 0.020028);
+    fanout_length(5, 0.025150);
+    fanout_length(6, 0.030394);
+    fanout_length(7, 0.035568);
+    fanout_length(8, 0.040749);
+    fanout_length(9, 0.045889);
+    fanout_length(10, 0.050823);
+  }
+
+}

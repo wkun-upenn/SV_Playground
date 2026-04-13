@@ -1,0 +1,1653 @@
+
+
+//mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpipciapps ( /*AUTOARG*/
+   // Outputs
+   app_adr_ld, app_adr, app2rdp_data, app_be, app_cmd, app_func_num, 
+   app_bytecnt, app_channel, app_sec_bus_num, app_back2back, 
+   app_flush_ini, app_bs32, app2rsm_data_rdy, app2rsm_rdy4data, 
+   app_relax_ord, app_no_snoop, app2cdp_data, app_split_bytecnt, 
+   app_snoop_hit, app2cdp_data_rdy, app2cdp_rdy4data, 
+   app_disable_posting, app_devsel, app_abort, app_disconnect, 
+   app_split_engaged, app_64bit_xfr, app_latrule_disable, 
+   app_early_rd, app_ioadr_nok, app_split_ld, app_split_seqid, 
+   app_remove_split, app_split_error, app_temp_busy, app_321_discon, 
+   app_split_bk2bk, app_bound_reached, app_serr, test_mode_n, 
+   app2cfg_adr, app2cfg_be, app2cfg_data, app2cfg_we, app_pme_status, 
+   XpiPciAppFreq66P11S, XpiPciAppFreq133P11S, XpiPciAppFreq33P11S, 
+   XpiPciAppAddrIrdyP11S, XpiPciAppAddrP11S, XpiPciAppCmdP11S, 
+   XpiPciAppAttrP11S, XpiPciAppByteEnP11S, XpiPciAppLengthP11S, 
+   XpiPciAppDataIrdyP11S, XpiPciAppDataP11S, XpiPciAppTrdyP11S, 
+   XpiPciAppTrdyP10S, XpiPciAppDeMuxSelP11S, XpiPciAppBusyP11S, 
+   XpiPciAppRdRetryP11S, XpiPciAppRdSplitP11S, XpiPciAppRdStopP11S, 
+   XpiPciAppReqAbortP11S, XpiPciAppSplitAbortP11S, XpiPciAppIntrP11S, 
+   XpiPciAppGilAddrIrdyP11S, XpiPciAppGilOffsetP11S, 
+   XpiPciAppGilDataIrdyP11S, XpiPciAppGilDataP11S, 
+   XpiPciAppGilCmdP11S, XpiPciAppGilTrdyP10S, 
+   // Inputs
+   XpiPciClk, GlCoreResetR00C, rdp2app_data, rsm2app_rdy4data, 
+   rsm_nextbe_ld, rsm2app_data_rdy, rsm_pci_xfr_dn, rsm_ini_abort, 
+   rsm_tar_abort, rsm_retry, rsm_discon, rsm_single_discon, 
+   rsm_discon_nxt_adb, rsm_split_response, rsm_split_in_pr, 
+   rap_split_msg_cyc, rap_split_err_det, rap_channel, 
+   rap_max_split_reached, rsm_lt_timeout, rsm_busy, cdp2app_data, 
+   cdp2app_be, cdp_data, com_status, cap_bar_sel, cap_adr, cap_cmd, 
+   cap_max_split_reached, cdp2app_bytecnt, ifc_adr, ifc_cmd, 
+   ifc_attr, ifc_int_ad, ifc_int_c_be, csm_dirdata_rdy, 
+   cdp2app_data_rdy, cdp2app_rdy4data, cdp_cyc_in_q, cdp_busy, 
+   cdp_64bit_xfr, cdp_adr_inc, cdp_ld_cyc, cap_exp_rom_xs, 
+   com_devsel, cap_iack_cyc, ifc_dac_cyc, ifc_spec_cyc, 
+   ifc_adr_phase, cap_321_to_adb, ifc_pcix_mode, ifc_ack64_n, 
+   ifc_bus64, ifc_pcix_66m, ifc_pcix_100m, ifc_pcix_133m, 
+   cdp_split_inprog, ifc_attr_phase, cfg_bar, cfg_cache_ln, cfg_cmd, 
+   cfg_data, cfg_pcix_status, cfg_pmi_pmcsr, cfg_status, 
+   cfg_pcix_cmd, cfg_msi_ctrl, cfg_msi_data, cfg_msi_adr_lo, 
+   cfg_msi_adr_hi, cfg_rom_bar, cfg_lt_timer, cfg_vpd_flag, 
+   cfg2app_sel, XpiDRTPciTxnIDPsn12S, XpiDRTPciAddrIrdyPsn12S, 
+   XpiDRTPciAddrPsn12S, XpiDRTPciDataIrdyPsn12S, XpiDRTPciDataPsn12S, 
+   XpiDRTPciCmdPsn12S, XpiDRTPciAttrPsn12S, XpiDRTPciByteEnPsn12S, 
+   XpiDRTPciLengthPsn12S, XpiDRTPciTrdyPsn12S, XpiGilPciDataIrdyP11S, 
+   XpiGilPciDataP11S
+   );
+
+  //---- Global Signals ----
+  input                           XpiPciClk;
+  input 			  GlCoreResetR00C;
+  
+  //---- PCI-X Requester Interface ----
+  
+  input [`PCI_DATA_WIDTH-1:0] 	  rdp2app_data;
+  input 			  rsm2app_rdy4data;
+  input 			  rsm_nextbe_ld;
+  input 			  rsm2app_data_rdy;
+  input 			  rsm_pci_xfr_dn;
+  input 			  rsm_ini_abort;
+  input 			  rsm_tar_abort;
+  input 			  rsm_retry;
+  input 			  rsm_discon;
+  input 			  rsm_single_discon;
+  input 			  rsm_discon_nxt_adb;
+  input 			  rsm_split_response;
+  input 			  rsm_split_in_pr;
+  input 			  rap_split_msg_cyc;
+  input 			  rap_split_err_det;
+  input [4:0] 			  rap_channel;
+  input 			  rap_max_split_reached;
+  input 			  rsm_lt_timeout;			  
+  input 			  rsm_busy;
+  
+  output 			  app_adr_ld;
+  output [`PCI_ADDR_WIDTH-1:0] 	  app_adr;
+  output [`PCI_DATA_WIDTH-1:0] 	  app2rdp_data;
+  output [7:0] 			  app_be;
+  output [3:0] 			  app_cmd;
+  output [2:0] 			  app_func_num;
+  output [`BYTECNT_WIDTH-1:0] 	  app_bytecnt;
+  output [4:0] 			  app_channel;
+  output [7:0] 			  app_sec_bus_num;
+  output 			  app_back2back;
+  output 			  app_flush_ini;
+  output 			  app_bs32;
+  output 			  app2rsm_data_rdy;
+  output 			  app2rsm_rdy4data;
+  output 			  app_relax_ord;
+  output 			  app_no_snoop;
+  
+  //---- PCI-X Completer Interface ----
+
+  input [`PCI_DATA_WIDTH-1:0] 	  cdp2app_data;
+  input [7:0] 			  cdp2app_be;
+  input [`PCI_DATA_WIDTH-1:0] 	  cdp_data;
+  input [20:0] 			  com_status;
+  input [5:0] 			  cap_bar_sel;
+  input [`PCI_ADDR_WIDTH-1:0] 	  cap_adr;
+  input [3:0] 			  cap_cmd;
+  input 			  cap_max_split_reached;
+  input [`RQ_BYTECNT_WIDTH-1:0]   cdp2app_bytecnt;
+  input [`PCI_ADDR_WIDTH-1:0] 	  ifc_adr;
+  input [3:0] 			  ifc_cmd;
+  input [`PCI_ATTR_WIDTH-1:0] 	  ifc_attr;
+  input [`PCI_ADDR_WIDTH-1:0] 	  ifc_int_ad;
+  input [`PCI_ADDR_WIDTH/8-1:0]   ifc_int_c_be;
+  input 			  csm_dirdata_rdy;
+  input 			  cdp2app_data_rdy;
+  input 			  cdp2app_rdy4data;
+  input 			  cdp_cyc_in_q;
+  input 			  cdp_busy;
+  input 			  cdp_64bit_xfr;
+  input 			  cdp_adr_inc;
+  input 			  cdp_ld_cyc;
+  input 			  cap_exp_rom_xs;
+  input 			  com_devsel;
+  input 			  cap_iack_cyc;
+  input 			  ifc_dac_cyc;
+  input 			  ifc_spec_cyc;
+  input 			  ifc_adr_phase;
+  input 			  cap_321_to_adb;
+  input 			  ifc_pcix_mode;
+  input 			  ifc_ack64_n;
+  input 			  ifc_bus64;
+  input 			  ifc_pcix_66m;
+  input 			  ifc_pcix_100m;
+  input 			  ifc_pcix_133m;
+  input 			  cdp_split_inprog;
+  input 			  ifc_attr_phase;
+    
+  output [`PCI_DATA_WIDTH-1:0] 	  app2cdp_data;
+  output [`BYTECNT_WIDTH-1:0] 	  app_split_bytecnt;
+  output 			  app_snoop_hit;
+  output 			  app2cdp_data_rdy;
+  output 			  app2cdp_rdy4data;
+  output 			  app_disable_posting;
+  
+  output 			  app_devsel;
+  output 			  app_abort;
+  output 			  app_disconnect;
+  output 			  app_split_engaged;
+  output 			  app_64bit_xfr;
+  output 			  app_latrule_disable;
+  output 			  app_early_rd;
+  output 			  app_ioadr_nok;
+  output 			  app_split_ld;
+  output [20:0] 		  app_split_seqid;
+  output 			  app_remove_split;
+  output 			  app_split_error;
+  output 			  app_temp_busy;
+  output 			  app_321_discon;
+  output 			  app_split_bk2bk;
+  output 			  app_bound_reached;
+  output 			  app_serr;
+  output 			  test_mode_n;
+
+
+  //---- PCI-X Configuration Interface ----
+  input [6*32-1:0] 		  cfg_bar;
+  input [7:0] 			  cfg_cache_ln;
+  input [15:0] 			  cfg_cmd;
+  input [`CFG_WIDTH-1:0] 	  cfg_data;
+  input [`CFG_WIDTH-1:0] 	  cfg_pcix_status;
+  input [15:0] 			  cfg_pmi_pmcsr;
+  input [15:0] 			  cfg_status;
+  input [15:0] 			  cfg_pcix_cmd;
+  input [15:0] 			  cfg_msi_ctrl;
+  input [15:0] 			  cfg_msi_data;
+  input [`CFG_WIDTH-1:0] 	  cfg_msi_adr_lo;
+  input [`CFG_WIDTH-1:0] 	  cfg_msi_adr_hi;
+  input [`CFG_WIDTH-1:0] 	  cfg_rom_bar;
+  input [7:0] 			  cfg_lt_timer;
+  input 			  cfg_vpd_flag;
+  input 			  cfg2app_sel;
+
+  output [8:0] 			  app2cfg_adr;
+  output [3:0] 			  app2cfg_be;
+  output [`CFG_WIDTH-1:0] 	  app2cfg_data;
+  output 			  app2cfg_we;
+  output 			  app_pme_status;
+  
+  //---- PCI-X Application -- DMA Interface ----
+
+  input [2:0] 			  XpiDRTPciTxnIDPsn12S;
+  input 			  XpiDRTPciAddrIrdyPsn12S;
+  input [`PCI_ADDR_WIDTH-1:0] 	  XpiDRTPciAddrPsn12S;
+  input 			  XpiDRTPciDataIrdyPsn12S;
+  input [`PCI_DATA_WIDTH-1:0] 	  XpiDRTPciDataPsn12S;
+  input [3:0] 			  XpiDRTPciCmdPsn12S;
+  input [`PCI_ATTR_WIDTH-1:0] 	  XpiDRTPciAttrPsn12S;
+  input [7:0] 			  XpiDRTPciByteEnPsn12S;
+  input [`BYTECNT_WIDTH-1:0]      XpiDRTPciLengthPsn12S;
+  input 			  XpiDRTPciTrdyPsn12S;
+  
+  output 			  XpiPciAppFreq66P11S; 
+  output 			  XpiPciAppFreq133P11S;
+  output 			  XpiPciAppFreq33P11S; 
+  output 			  XpiPciAppAddrIrdyP11S;
+  output [`PCI_ADDR_WIDTH-1:0] 	  XpiPciAppAddrP11S;
+  output [3:0] 			  XpiPciAppCmdP11S;
+  output [`PCI_ATTR_WIDTH-1:0] 	  XpiPciAppAttrP11S;
+  output [7:0] 			  XpiPciAppByteEnP11S;
+  output [`RQ_BYTECNT_WIDTH-1:0]  XpiPciAppLengthP11S;
+  output 			  XpiPciAppDataIrdyP11S;
+  output [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDataP11S;
+  output 			  XpiPciAppTrdyP11S;
+  output 			  XpiPciAppTrdyP10S;
+  output [2:0] 			  XpiPciAppDeMuxSelP11S;
+
+  output 			  XpiPciAppBusyP11S;
+  output 			  XpiPciAppRdRetryP11S;
+  output 			  XpiPciAppRdSplitP11S;
+  output 			  XpiPciAppRdStopP11S;
+  output 			  XpiPciAppReqAbortP11S;
+  output 			  XpiPciAppSplitAbortP11S;
+  output [`PCIAPP_INTR_EVENTS-1:0] XpiPciAppIntrP11S;
+  
+  //---- PCI APP -> GIL Interface ----
+
+  input 			  XpiGilPciDataIrdyP11S;
+  input [`GIL_DATA_WIDTH-1:0] 	  XpiGilPciDataP11S;
+  
+  output 			  XpiPciAppGilAddrIrdyP11S;
+  output [`GIL_OFFSET_WIDTH-1:0]  XpiPciAppGilOffsetP11S;
+  output 			  XpiPciAppGilDataIrdyP11S;
+  output [`GIL_DATA_WIDTH-1:0] 	  XpiPciAppGilDataP11S;
+  output [`GIL_CMD_WIDTH-1:0] 	  XpiPciAppGilCmdP11S;
+  output 			  XpiPciAppGilTrdyP10S;
+  
+  //---- Wire Declaration ----
+
+  wire 				  app2rsm_rdy4data;
+  wire [`PCI_DATA_WIDTH-1:0] 	  app2cdp_data;
+  wire 				  app2cdp_rdy4data;
+  wire 				  app_64bit_xfr;
+  wire 				  app_abort;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  app_adr;
+  wire [7:0] 			  app_be;
+  wire [`BYTECNT_WIDTH-1:0] 	  app_bytecnt;
+  wire [4:0] 			  app_channel;
+  wire [3:0] 			  app_cmd;
+  wire 				  app_devsel;
+  wire 				  app_disconnect;
+  wire [2:0] 			  app_func_num;
+  wire [7:0] 			  app_sec_bus_num;
+  wire 				  app_split_error;
+  wire 				  app_remove_split;
+  wire [20:0] 			  app_split_seqid;
+  wire 				  app_temp_busy;
+  wire 				  app_321_discon;
+  wire 				  app_back2back;
+  wire 				  app_bound_reached;
+  wire 				  app_bs32;
+  wire 				  app_disable_posting;
+  wire 				  app_early_rd;
+  wire 				  app_flush_ini;
+  wire 				  app_ioadr_nok;
+  wire 				  app_latrule_disable;
+  wire 				  app_no_snoop;
+  wire 				  app_relax_ord;
+  wire 				  app_serr;
+  wire 				  app_snoop_hit;
+  wire 				  app_split_bk2bk;
+  wire 				  test_mode_n;
+  wire [8:0] 			  app2cfg_adr;   
+  wire [`CFG_WIDTH-1:0] 	  app2cfg_data;  
+  wire 				  app2cfg_we;    
+  wire 				  app_pme_status;
+  wire [3:0] 			  app2cfg_be;
+  wire [`PCI_DATA_WIDTH-1:0] 	  app2rdp_data;
+  wire [`BYTECNT_WIDTH-1:0] 	  app_split_bytecnt;
+  
+  wire [`PCIAPP_INTR_EVENTS-1:0]  XpiPciAppIntrP11S;
+  wire  			  XpiPciAppBusyP11S;
+  wire 				  XpiPciAppRdRetryP11S;
+  wire 				  XpiPciAppRdStopP11S;
+  wire 				  XpiPciAppReqAbortP11S;
+  wire 				  XpiPciAppSplitAbortP11S;
+  wire 				  XpiPciAppReqAbortP11C;
+  wire 				  XpiPciAppSplitAbortP11C;
+  
+  wire 				  XpiPciAppGilAddrIrdyP11S;
+  wire [`GIL_OFFSET_WIDTH-1:0] 	  XpiPciAppGilOffsetP11S;
+  wire 				  XpiPciAppGilDataIrdyP11S;
+  wire [`GIL_DATA_WIDTH-1:0] 	  XpiPciAppGilDataP11S;
+  wire [`GIL_CMD_WIDTH-1:0] 	  XpiPciAppGilCmdP11S;
+  wire 				  XpiPciAppGilTrdyP10S;
+
+  wire [2:0] 			  XpiPciAppRqTxnIDPsn10S;
+  wire 				  XpiPciAppRqAddrIrdyPsn10S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPciAppRqAddrPsn10S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPciAppRqLengthPsn10S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPciAppRqLengthPsn11C;
+  
+  wire 				  XpiPciAppDataIrdyPsn10S;
+  wire [3:0] 			  XpiPciAppCmdPsn10S; 
+  wire [`RQ_BYTECNT_WIDTH-1:0] 	  XpiPciAppLengthP11S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPciAppSplitByteCntP10C;
+  
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciRqAppDataP11S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPciCpAppAddrP11S;
+  wire [3:0] 			  XpiPciCpAppCmdP11S ;
+  wire [`PCI_ATTR_WIDTH-1:0] 	  XpiPciCpAppAttrP11S;
+  wire [7:0] 			  XpiPciCpAppByteEnP11S;
+  wire [`RQ_BYTECNT_WIDTH-1:0] 	  XpiPciCpAppLengthP11S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciCpAppDataP11S;
+  wire 				  XpiPciAppDataIrdymoP11C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDatamoP11C;
+  
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDataPsn10C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDataPsn10S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppRqDataPsn11C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppRqDataPsn11S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppRqDataPsn12C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppRqDataPsn12S;
+
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppByteEnPsn10C;
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppByteEnPsn10S;
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppRqByteEnPsn11C;
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppRqByteEnPsn11S;
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppRqByteEnPsn12C;
+  wire [`CMD_BE_WIDTH-1:0] 	  XpiPciAppRqByteEnPsn12S;
+  
+  wire 				  XpiPciAppFreq66P11S; 
+  wire 				  XpiPciAppFreq133P11S;
+  wire 				  XpiPciAppFreq33P11S; 
+  wire 				  XpiPciAppAddrIrdyP11S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPciAppAddrP11S;
+  wire [`PCI_ATTR_WIDTH-1:0] 	  XpiPciAppAttrP11S;
+  wire [7:0] 			  XpiPciAppByteEnP11S;
+  wire [3:0] 			  XpiPciAppCmdP11S;
+  wire 				  XpiPciAppDataIrdyP11S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppDataP11S;
+  wire 				  XpiPciAppTrdyP11S;
+  wire 				  XpiPciAppTrdyP10S;
+
+  wire 				  XpiDRTDeMuxSelP11S;
+  wire [2:0] 			  XpiPciAppDeMuxSelP11S;
+  wire                            XpiPciRqAppTrdyP11S;
+  
+  wire 				  XpiPciAppDataPhaseP12C;
+  wire 				  XpiPciAppDataPhaseP12S;
+  wire 				  XpiPciAppCtlWrTxnP10C;
+  wire 				  XpiPciAppCtlRdTxnP10C;
+  wire 				  XpiPciAppCtlRdTxnP10S;
+  wire 				  XpiPciAppGilRegRdP10C;
+  wire 				  XpiPciAppGilRegRdP10S;
+  wire 				  XpiPciAppGilRegWrP10C;
+  wire 				  XpiPciAppGilRegWrP10S;
+  wire 				  XpiPciAppGilRegWrP11S;
+  wire 				  XpiPciAppGilReqP11C;
+  wire 				  XpiPciAppFakeCtlRdCmpP11C;
+ 
+  wire [`PCI_DATA_WIDTH-1:0]	  XpiPciAppCpDataPsn10S;
+  wire [20:0] 			  XpiPciAppCpAttrPsn11C;
+  wire [20:0] 			  XpiPciAppCpAttrPsn11S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPciAppCmpDataCntP10S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPciAppExptdDataCntP10C;
+  wire 				  XpiPciAppAllDataRecvdP10C;
+ 
+  wire 				  XpiPciAppRdRetryP11C;
+  wire [4:0] 			  XpiPciAppRqChannelPsn11C;
+  wire                            XpiPciRqAppDataIrdyP11C;
+  wire 				  XpiPciRqAppCmpDataIrdyP11S;
+  
+  wire 				  cdp_abort;
+  wire 				  csm_split_tarabt;
+  wire 				  csm_split_masabt;
+  
+  //---- Register Declaration ----
+  reg 				  app2cdp_data_rdy;
+  reg 				  app_split_ld;
+  reg 				  app_split_engaged;
+  reg 				  app2rsm_data_rdy;
+  reg 				  app_adr_ld;
+  
+  reg [2:0] 			  XpiPciAppDeMuxSelMoutP10C;
+  reg 				  XpiPciAppBusyP11C;
+  reg 				  XpiPciAppCpDataIrdyPsn10C;
+  reg [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppCpDataPsn10C;
+
+  reg 				  XpiPciAppRqDataIrdyPsn10C;
+  reg [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppRqDataPsn10C;
+  reg [`CMD_BE_WIDTH-1:0] 	  XpiPciAppRqByteEnPsn10C;
+  reg [3:0] 			  XpiPciAppRqCmdPsn10C;
+    
+  reg [2:0] 			  XpiPciAppDeMuxSelP10C;
+  reg 				  XpiPciAppCtlRegRdP10C;
+  reg 				  XpiPciAppFakeCtlRdCmpP10C;
+  reg 				  XpiPciAppGilRegTxnP10C;
+
+  reg 				  XpiPciAppRdSplitP11S;
+  reg 				  XpiPciRqAppRetryRespP11C;
+  reg                             XpiPciCpAppAddrIrdyP11C;
+  reg                             XpiPciCpAppDataIrdyP11C;
+  reg 				  XpiPciRqAppTrdyP10C;
+  reg                             XpiDRTDeMuxSelP10C;
+
+  reg 				  XpiPciAppDataStallP11C;
+  reg 				  XpiPciAppDataPhaseP11C;
+  reg 				  XpiPciRqAppCmpDataIrdyP11C;
+  reg [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppCpDataPsn11C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiPciAppCmpDataCntP10C;
+
+  reg [`PCIAPP_INTR_EVENTS-1:0]	  XpiPciAppIntrP11C;
+  
+  //---------------------------------------------
+  //--- Unused or Static Application Signals ----
+  //---------------------------------------------
+  
+  assign 			  app2rsm_rdy4data    = 1'b1;
+  assign 			  app2cdp_rdy4data    = 1'b1;  
+  assign 			  app_321_discon      = 1'b0;    
+  assign 			  app_64bit_xfr       = 1'b1;     
+  assign 			  app_back2back       = 1'b0;     
+  assign 			  app_bound_reached   = 1'b0; 
+  assign 			  app_bs32            = 1'b0;          
+  
+  assign 			  app_devsel          = 1'b0;        
+  assign 			  app_disable_posting = 1'b0;
+  assign 			  app_disconnect      = 1'b0;    
+  assign 			  app_early_rd        = 1'b0;      
+  assign 			  app_flush_ini       = 1'b0;     
+  assign 			  app_func_num        = {3{1'b0}};      
+  assign 			  app_ioadr_nok       = 1'b0;     
+  assign 			  app_latrule_disable = 1'b0;
+  assign 			  app_no_snoop        = 1'b0;  
+  assign 			  app_relax_ord       = 1'b0; 
+  assign 			  app_sec_bus_num     = {8{1'b0}};
+  assign 			  app_serr            = 1'b0;      
+  assign 			  app_snoop_hit       = 1'b0; 
+  assign 			  app_split_bk2bk     = 1'b0;
+  assign 			  app_remove_split    = 1'b0;
+  assign 			  app_split_error     = 1'b0;
+  assign 			  app_temp_busy       = 1'b0;
+  assign 			  test_mode_n         = 1'b1;
+  
+  assign 			  app_abort           = 1'b0;         
+  assign 			  app2cfg_adr         = {9{1'b0}};   
+  assign 			  app2cfg_data        = {`CFG_WIDTH{1'b0}};  
+  assign 			  app2cfg_we          = 1'b0;	
+  assign 			  app_pme_status      = 1'b0;
+  assign 			  app2cfg_be          = {4{1'b0}};
+
+  //---- Frequency Determination ----
+  
+  assign XpiPciAppFreq66P11S  = ifc_pcix_66m;
+  assign XpiPciAppFreq133P11S = (ifc_pcix_133m || ifc_pcix_100m);
+  assign XpiPciAppFreq33P11S  = (~(XpiPciAppFreq66P11S || XpiPciAppFreq133P11S));
+  
+  //-------------------------------------------------------
+  //---- PCI Application Logic in Target(Receive) Mode ----
+  //-------------------------------------------------------
+
+  //---- Combinatorial Control Logic for State Transitions ----
+  
+  assign XpiPciAppCtlRdTxnP10C = (XpiPciAppCtlRegRdP10C && (cap_cmd==`CTRLRD));
+  
+  assign XpiPciAppCtlWrTxnP10C = (XpiPciAppCtlRegRdP10C && (cap_cmd==`CTRLWR));
+
+  assign XpiPciAppGilRegRdP10C = (XpiPciAppGilRegTxnP10C && (cap_cmd==`CTRLRD));
+  
+  assign XpiPciAppGilRegWrP10C = (XpiPciAppGilRegTxnP10C && (cap_cmd==`CTRLWR));
+
+  assign XpiPciAppFakeCtlRdCmpP11C = (XpiPciAppFakeCtlRdCmpP10C && (cap_cmd==`CTRLRD));
+
+DFFR #(1,1'b0) U1_dff (.q(XpiPciAppCtlRdTxnP10S),.d(XpiPciAppCtlRdTxnP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U2_dff (.q(XpiPciAppGilRegRdP10S),.d(XpiPciAppGilRegRdP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U3_dff (.q(XpiPciAppGilRegWrP10S),.d(XpiPciAppGilRegWrP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U4_dff (.q(XpiPciAppGilRegWrP11S),.d(XpiPciAppGilRegWrP10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------------------
+  //---- PCI-X Application Completer Target Mode Control ----
+  //---------------------------------------------------------
+  // This State Machine Controls receiving of Memory Write and Read
+  // Requests from the PCI-X Core Completer, and issuing the request
+  // to targeted agent.
+    
+`define XPIPCICPAPPIDLE       3'b000   
+`define XPIPCICPAPPWAIT4RETRY 3'b001
+`define XPIPCICPAPPCYCSTALL   3'b011
+  
+`define XPIPCICPAPPCTLRDRQ    3'b010
+`define XPIPCICPAPPCTLGILRD   3'b101
+  
+`define XPIPCICPAPPCTLWRRQ    3'b110  
+`define XPIPCICPAPPWRDATAN    3'b100  
+`define XPIPCICPAPPREQDONE    3'b111
+  
+  // Internal state variables
+  wire [2:0] 			  xpipciappcpstate;
+  reg [2:0] 			  next_xpipciappcpstate;
+  
+  //---- State Change ----
+  
+DFFR #(3,3'b0) U5_dff (.q(xpipciappcpstate),.d(next_xpipciappcpstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @( /*AS*/xpipciappcpstate)
+    begin
+      
+      XpiPciCpAppAddrIrdyP11C = 1'b0;
+      XpiPciCpAppDataIrdyP11C = 1'b0;
+      app_split_engaged       = 1'b0;
+      
+      case(xpipciappcpstate)
+	
+	`XPIPCICPAPPIDLE:
+	  begin
+	    XpiPciCpAppAddrIrdyP11C = 1'b0;
+	    XpiPciCpAppDataIrdyP11C = 1'b0;
+	    app_split_engaged       = 1'b0;
+	  end
+
+	`XPIPCICPAPPWAIT4RETRY:
+	  begin
+	    XpiPciCpAppAddrIrdyP11C = 1'b0;
+	    XpiPciCpAppDataIrdyP11C = 1'b0;
+	    app_split_engaged       = 1'b0;
+	  end
+
+	`XPIPCICPAPPCYCSTALL:
+	  begin
+	    XpiPciCpAppAddrIrdyP11C = 1'b0;
+	    XpiPciCpAppDataIrdyP11C = 1'b0;
+	    app_split_engaged       = 1'b0;
+	  end
+	  
+	`XPIPCICPAPPCTLRDRQ: 
+	  begin
+	    XpiPciCpAppAddrIrdyP11C = 1'b1;
+	    app_split_engaged       = 1'b1;
+	  end
+	
+	`XPIPCICPAPPCTLGILRD: XpiPciCpAppAddrIrdyP11C = 1'b1;
+		
+	`XPIPCICPAPPCTLWRRQ:  XpiPciCpAppAddrIrdyP11C = 1'b1;
+	
+	`XPIPCICPAPPWRDATAN:
+	  begin
+	    XpiPciCpAppDataIrdyP11C = 1'b1;
+	    XpiPciCpAppAddrIrdyP11C = 1'b0;
+	  end
+	
+	`XPIPCICPAPPREQDONE:
+	  begin
+	    XpiPciCpAppDataIrdyP11C = 1'b0;
+	  end
+
+	default:
+	  begin
+	    XpiPciCpAppAddrIrdyP11C = 1'b0;
+	    XpiPciCpAppDataIrdyP11C = 1'b0;
+	    app_split_engaged       = 1'b0;
+	  end
+	
+      endcase // case(xpipciappcpstate)
+    end // always @ (xpipciappcpstate)
+  
+  //---- State Transitions ----
+  
+  always @( /*AS*/XpiPciAppCtlRdTxnP10C or XpiPciAppCtlWrTxnP10C
+	   or XpiPciAppFakeCtlRdCmpP11C or XpiPciAppGilRegRdP10C
+	   or XpiPciAppGilRegWrP10C or cdp2app_data_rdy or com_devsel
+	   or com_status or ifc_pcix_mode or xpipciappcpstate)
+    begin
+      
+      case (xpipciappcpstate)
+	
+	`XPIPCICPAPPIDLE: 
+	  begin
+	    if ((XpiPciAppCtlRdTxnP10C || XpiPciAppCtlWrTxnP10C ||
+		 XpiPciAppGilRegRdP10C || XpiPciAppGilRegWrP10C ||
+		 XpiPciAppFakeCtlRdCmpP11C) && ifc_pcix_mode)
+	      // PCIX Mode: Wait to Check the Status of csm_retry
+	      next_xpipciappcpstate = `XPIPCICPAPPWAIT4RETRY;
+	    else if (com_status[1] && (~ifc_pcix_mode))
+	      // PCI Mode: If Request Retried on PCI bus, ignore the current request
+	      next_xpipciappcpstate = `XPIPCICPAPPREQDONE;
+	    else if (XpiPciAppCtlRdTxnP10C && (~com_status[1]) && (~ifc_pcix_mode))
+	      // PCI Mode: Issue RB Agent Register Read if Request
+	      // not Retried on PCI bus, initiate split transaction
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLRDRQ;
+	    else if ((XpiPciAppCtlWrTxnP10C || XpiPciAppGilRegWrP10C)
+		     && (~com_status[1]) && (~ifc_pcix_mode))
+	      // PCI Mode: Issue Write if not Retried on PCI bus
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLWRRQ;
+	    else if (XpiPciAppGilRegRdP10C && (~com_status[1]) && (~ifc_pcix_mode))
+	      // PCI Mode: GIL Register Read, no split issued
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLGILRD;
+	    else if (XpiPciAppFakeCtlRdCmpP11C && (~com_status[1]) && (~ifc_pcix_mode))
+	      // PCI Mode: GIL Register Read, no split issued
+	      next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	  end
+	
+	`XPIPCICPAPPWAIT4RETRY:
+	  begin
+	    if (ifc_pcix_mode)
+	      // PCIX Mode: One cycle bubble to align with com_status assertion
+	      next_xpipciappcpstate = `XPIPCICPAPPCYCSTALL;
+	    else if (~com_devsel)
+	      next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	  end
+	
+	`XPIPCICPAPPCYCSTALL:
+	  begin
+	    if (XpiPciAppCtlRdTxnP10C && (~com_status[1]) && ifc_pcix_mode)
+	      // PCIX Mode: Issue RB Agent Register Read if Request
+	      // not Retried on PCI bus, initiate split transaction
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLRDRQ;
+	    else if ((XpiPciAppCtlWrTxnP10C || XpiPciAppGilRegWrP10C)
+		     && (~com_status[1]) && ifc_pcix_mode)
+	      // PCIX Mode: Issue Write if not Retried on PCI bus
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLWRRQ;
+	    else if (XpiPciAppGilRegRdP10C && (~com_status[1]) && ifc_pcix_mode)
+	      // PCIX Mode: GIL Register Read, no split issued
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLGILRD;
+	    else if (~com_devsel)
+	      next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	  end
+	
+	`XPIPCICPAPPCTLGILRD: next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	
+	`XPIPCICPAPPCTLRDRQ:  next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	
+	`XPIPCICPAPPCTLWRRQ:
+	  begin
+	    if (cdp2app_data_rdy)
+	      // Write Data Phase 0
+	      next_xpipciappcpstate  =  `XPIPCICPAPPWRDATAN;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPCTLWRRQ;
+	  end
+	
+	`XPIPCICPAPPWRDATAN:
+	  begin
+	    if (com_devsel && (~cdp2app_data_rdy))
+	      // All Data Phases complete
+	      next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	    else if ((~com_devsel) && (~cdp2app_data_rdy))
+	      next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPWRDATAN;
+	  end
+	
+	`XPIPCICPAPPREQDONE:
+	  begin
+	    if (~com_devsel)
+	      // Write Request Complete
+	      next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	    else
+	      next_xpipciappcpstate  =  `XPIPCICPAPPREQDONE;
+	  end
+	
+	default: next_xpipciappcpstate  =  `XPIPCICPAPPIDLE;
+	
+      endcase // case(xpipciappcpstate)
+    end // always @ (...
+
+
+  //---------------------------------------
+  //---- Read Completion State Machine ----
+  //---------------------------------------
+  // This SM services Normal, Delayed & Split completions for 
+  // outstanding Read Requests
+
+  //---- State Definitions ----
+
+`define XPIPCICPAPPCMPIDLE     3'b000
+`define XPIPCICPAPPCMPWAIT     3'b001
+`define XPIPCICPAPPISSUESPLIT  3'b011
+`define XPIPCICPAPPCMPDATA0    3'b010
+`define XPIPCICPAPPCMPDATAN    3'b110
+`define XPIPCICPAPPCMPHALT     3'b101
+  
+  wire [2:0] 			  xpipcicpappcmpstate;
+  reg [2:0] 			  next_xpipcicpappcmpstate;
+  
+DFFR #(3,3'b0) U6_dff (.q(xpipcicpappcmpstate),.d(next_xpipcicpappcmpstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Output Assignment ----
+
+  always @(/*AS*/xpipcicpappcmpstate)
+    begin
+
+      app_split_ld     = 1'b0;
+      app2cdp_data_rdy = 1'b0;
+      
+      case (xpipcicpappcmpstate)
+	
+	`XPIPCICPAPPCMPIDLE: 
+	  begin
+	    app_split_ld     = 1'b0;
+	    app2cdp_data_rdy = 1'b0;
+	  end
+	
+	`XPIPCICPAPPCMPWAIT: ;
+	
+	`XPIPCICPAPPISSUESPLIT: app_split_ld = 1'b1;
+	
+	`XPIPCICPAPPCMPDATA0:
+	  begin
+	    app_split_ld     = 1'b0;
+	    app2cdp_data_rdy = 1'b1;
+	  end
+	
+	`XPIPCICPAPPCMPDATAN: app2cdp_data_rdy = 1'b1;
+
+	`XPIPCICPAPPCMPHALT: ;
+	
+	default:
+	  begin
+	    app_split_ld     = 1'b0;
+	    app2cdp_data_rdy = 1'b0;
+	  end
+	
+      endcase // case(xpipcicpappcmpstate)
+    end // always @ (...
+  
+  //---- State Transitions ----
+
+  always @(/*AS*/XpiGilPciDataIrdyP11S or XpiPciAppCpDataIrdyPsn10C
+	   or XpiPciAppCtlRdTxnP10S or XpiPciAppFakeCtlRdCmpP11C
+	   or XpiPciAppGilRegRdP10S or cdp2app_rdy4data or com_devsel
+	   or xpipcicpappcmpstate)
+    begin
+
+      case (xpipcicpappcmpstate)
+	
+	`XPIPCICPAPPCMPIDLE:
+	  begin
+	    if (XpiPciAppCtlRdTxnP10S || XpiPciAppGilRegRdP10S || XpiPciAppFakeCtlRdCmpP11C)
+	      // Read Request Issued, wait for Completion Data
+	      next_xpipcicpappcmpstate = `XPIPCICPAPPCMPWAIT;
+	    else
+	      next_xpipcicpappcmpstate = `XPIPCICPAPPCMPIDLE;
+	  end
+	
+	`XPIPCICPAPPCMPWAIT:
+	  begin
+	    if (XpiGilPciDataIrdyP11S || XpiPciAppFakeCtlRdCmpP11C)
+	      // Read Completion Data from GIL or Unused Register Space
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPDATA0;
+	    else if (XpiPciAppCpDataIrdyPsn10C)
+	      // Read Completion Data from RB Agent,
+	      // Issue Split Completion on PCI bus
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPISSUESPLIT;
+	    else
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPWAIT;
+	  end
+	
+	`XPIPCICPAPPISSUESPLIT: next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPDATA0;
+	
+	`XPIPCICPAPPCMPDATA0:
+	  begin
+	    if (cdp2app_rdy4data)
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPDATAN;
+	    else
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPDATA0;
+	  end
+	
+	`XPIPCICPAPPCMPDATAN:
+	  begin
+	    if (~cdp2app_rdy4data)
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPHALT;
+	    else
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPDATAN;
+	  end
+	
+	`XPIPCICPAPPCMPHALT:
+	  begin
+	    if (~com_devsel)
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPIDLE;
+	    else
+	      next_xpipcicpappcmpstate  =  `XPIPCICPAPPCMPHALT;
+	  end
+	      
+	default: next_xpipcicpappcmpstate  =  `XPIPCICPAPPIDLE;
+
+      endcase // case(xpipcicpappcmpstate)
+    end // always @ (...
+  	
+  //---------------------------------------------------
+  //---- Address and ByteCnt for Split Transaction ----
+  //---------------------------------------------------
+  //** If incoming Memory Read is targeted to Control registers
+  //** of one of the Ring Bus Agents, since the Read Completion
+  //** Latency is >8 PCI-X clock cycles, Split Completion is
+  //** issued to the Read Request. Once Completion Data is received
+  //** a Split Completion is serviced. Address and Bytecnt of the
+  //** read request is latched... which is send back during
+  //** Split Completion.
+
+  assign XpiPciAppSplitByteCntP10C = XpiPciAppCtlRegRdP10C ?
+	 cdp2app_bytecnt[11:0] : app_split_bytecnt;
+  
+DFFR #(12,12'b0) U7_dff (.q(app_split_bytecnt),.d(XpiPciAppSplitByteCntP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //------------------------
+  //---- Address Decode ----
+  //------------------------
+  //** Decode is based on PCI-X BAR Registers
+  //** Assuming that 4KB space is required for Control
+  //** registers in Rex1,Rex2 & Tx. This allows 64 Control
+  //** registers of 4B each per Unit on the Ring Bus 
+  //** and upto 16 agents on the Ring  Bus.
+
+  //** Currently assuming that 64KB of memory space is 
+  //** starts at the top of 64KB IO space region.
+  //** i.e. Memory region Address[15:0] = 0x10000 - 0x10FFF
+
+  //** Decode is unaffected by the address range programmed in
+  //** the PCI-X BAR's, it only looks at Address bits [15:0]
+  //** for 4k Memory space.
+		     
+  always @(/*AS*/com_devsel or ifc_adr)
+    begin
+      if (com_devsel)
+	begin
+	  
+	  if ((ifc_adr[15:11] >= 5'b00001) && (ifc_adr[15:11] <= 5'b11111))
+	    begin 
+	      // Memory Space assigned for Registers in Design units conneted to RB.
+	      // Total space reserved = 30 Agents x 512 registers x 4B
+	      XpiPciAppDeMuxSelP10C     = 3'b110; // Control Slave Interface
+	      XpiPciAppCtlRegRdP10C     = 1'b1;
+	      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+	      XpiPciAppGilRegTxnP10C    = 1'b0;
+	    end
+	  
+	  else if ((ifc_adr[15:11] >= 5'b00000) && (ifc_adr[15:11] < 5'b00001)) 
+	    begin 
+	      // Lowermost 512 register space is reserved for DMA,PktRx & PktTx
+	      // Command, Address and Status registers & Global Interrupt Logic
+	      // ICR & ISR Registers
+	      
+	      if (ifc_adr[10:8] == 3'b000) // LowerMost Register Set
+		begin
+		  XpiPciAppGilRegTxnP10C = 1'b0;
+		  
+		  if ((ifc_adr[7:4] >= 4'h0) && (ifc_adr[7:4] < 4'h2))
+		    // DMA0 Registers
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b1;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b001;
+		    end
+		  else if ((ifc_adr[7:4] >= 4'h2) && (ifc_adr[7:4] < 4'h4))
+		    // DMA1 Registers
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b1;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b010;
+		    end
+		  else if ((ifc_adr[7:4] >= 4'h4) && (ifc_adr[7:4] < 4'h5))
+		    // DESC DMA Registers 
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b1;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b011;
+		    end
+		  else if ( (ifc_adr[7:4] >= 4'h5) && (ifc_adr[7:4] < 4'h7) )
+		    // PKT RX Registers
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b1;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b100;
+		    end
+		  else if ( (ifc_adr[7:4] >= 4'h7) && (ifc_adr[7:4] < 4'hf) )
+		    // PKT TX Registers 
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b1;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b101;
+		    end
+		  else if (ifc_adr[7:4] == 4'hf)
+		    begin
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b1; // Unused Allocated Memory Area
+		      XpiPciAppCtlRegRdP10C     = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b000;
+		    end
+		  else
+		    begin
+		      XpiPciAppCtlRegRdP10C     = 1'b0;
+		      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+		      XpiPciAppDeMuxSelP10C     = 3'b000;
+		    end // else: !if(ifc_adr[7:4] == 4'hf)
+		end // if (ifc_adr[10:8] == 3'b000)
+	      else if (ifc_adr[10:8] == 3'b001)
+		// Unused Allocated Memory Space
+		begin
+		  XpiPciAppFakeCtlRdCmpP10C = 1'b1; 
+		  XpiPciAppCtlRegRdP10C     = 1'b0;
+		  XpiPciAppDeMuxSelP10C     = 3'b000;
+		  XpiPciAppGilRegTxnP10C    = 1'b0;
+		end
+	      else
+		// Global Interrupt Logic ICR/ISR Register Space
+		begin
+		  XpiPciAppFakeCtlRdCmpP10C = 1'b0; 
+		  XpiPciAppCtlRegRdP10C     = 1'b0;
+		  XpiPciAppDeMuxSelP10C     = 3'b000;
+		  XpiPciAppGilRegTxnP10C    = 1'b1;
+		end // else: !if(ifc_adr[10:8] == 001)
+	    end // if ((ifc_adr[15:11] >= 5'b00000) && (ifc_adr[15:11] < 5'b00001))
+	  else
+	    begin
+	      XpiPciAppDeMuxSelP10C     = 3'b000;
+	      XpiPciAppCtlRegRdP10C     = 1'b0;
+	      XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+	      XpiPciAppGilRegTxnP10C    = 1'b0;
+	    end // else: !if((ifc_adr[15:11] >= 5'b00000) && (ifc_adr[15:11] < 5'b00001))
+	end // if (com_devsel)
+      else
+	begin
+	  XpiPciAppDeMuxSelP10C     = 3'b000;
+	  XpiPciAppCtlRegRdP10C     = 1'b0;
+	  XpiPciAppFakeCtlRdCmpP10C = 1'b0;
+	  XpiPciAppGilRegTxnP10C    = 1'b0;
+	end // else: !if(com_devsel)
+    end // always @ (...
+  
+  //-------------------------------------------------------------------
+  //---- Channelizing Incoming Request or Completion to the Target ----
+  //-------------------------------------------------------------------
+  
+  always @(/*AS*/XpiPciAppDeMuxSelP10C or XpiPciAppDeMuxSelP11S
+	   or XpiPciAppRdRetryP11S or XpiPciAppSplitAbortP11C
+	   or app_channel or com_devsel or rap_channel
+	   or rsm2app_data_rdy)
+    begin
+      if (com_devsel)
+	// Incoming Request from Completer Interface
+	XpiPciAppDeMuxSelMoutP10C = XpiPciAppDeMuxSelP10C;
+      else if (rsm2app_data_rdy && XpiPciAppRdRetryP11S)
+	// Retried Read completion, send completion to Read requester
+	XpiPciAppDeMuxSelMoutP10C = app_channel[2:0];
+      else if (rsm2app_data_rdy && (~XpiPciAppRdRetryP11S))
+	// Split read completion
+	XpiPciAppDeMuxSelMoutP10C = rap_channel[2:0];
+      else if (XpiPciAppSplitAbortP11C)
+	// Abort/Error condition on Split Response
+	XpiPciAppDeMuxSelMoutP10C = rap_channel[2:0];	
+      else
+	XpiPciAppDeMuxSelMoutP10C = XpiPciAppDeMuxSelP11S;
+    end // always @ (...
+  
+DFFR #(3,3'b0) U8_dff (.q(XpiPciAppDeMuxSelP11S),.d(XpiPciAppDeMuxSelMoutP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //--------------------------------------------------------
+  //---- PCI Application Logic NS Output Register Stage ----
+  //--------------------------------------------------------
+  
+DFFR #(4,4'b0) U9_dff (.q(XpiPciCpAppCmdP11S),.d(ifc_cmd),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U10_dff (.q(XpiPciCpAppAddrP11S),.d(ifc_adr),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(36,36'b0) U11_dff (.q(XpiPciCpAppAttrP11S),.d(ifc_attr),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(8,8'b0) U12_dff (.q(XpiPciCpAppByteEnP11S),.d(cdp2app_be),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(13,13'b0) U13_dff (.q(XpiPciCpAppLengthP11S),.d(cdp2app_bytecnt),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U14_dff (.q(XpiPciCpAppDataP11S),.d(cdp2app_data),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+         
+  //--------------------------------------------------------------------
+  //---- Muxing operation between Requester and Completer Interface ----
+  //--------------------------------------------------------------------
+  // Muxing between Write Request Data from the Completer 
+  // and Read Completion Data from the Requester.
+
+MUX2 #(1) U15_mux2 (.mo(XpiPciAppDataIrdymoP11C),.in0(XpiPciCpAppDataIrdyP11C),.in1(XpiPciRqAppDataIrdyP11C),.sel(XpiPciRqAppDataIrdyP11C));
+
+
+
+  
+MUX2 #(64) U16_mux2 (.mo(XpiPciAppDatamoP11C),.in0(XpiPciCpAppDataP11S),.in1(XpiPciRqAppDataP11S),.sel(XpiPciRqAppDataIrdyP11C));
+
+
+
+
+  // Request Received from the Completer in Target Mode
+  // Muxing between Request Targeted to Global Interrupt Logic
+  // and DMA, Pkt Rx, Pkt Tx
+
+  assign XpiPciAppGilReqP11C = (XpiPciAppGilRegRdP10S || XpiPciAppGilRegWrP11S);
+  
+  assign XpiPciAppGilAddrIrdyP11S = XpiPciAppGilReqP11C ?
+	 XpiPciCpAppAddrIrdyP11C  : 1'b0;
+  
+  assign XpiPciAppGilDataIrdyP11S = XpiPciAppGilReqP11C ?
+	 XpiPciAppDataIrdymoP11C  : 1'b0;
+  
+  assign XpiPciAppAddrIrdyP11S  = (~XpiPciAppGilReqP11C) ?
+				    XpiPciCpAppAddrIrdyP11C : 1'b0;
+  
+  assign XpiPciAppDataIrdyP11S  = (~XpiPciAppGilReqP11C) ? 
+				    XpiPciAppDataIrdymoP11C : 1'b0;
+  
+  assign XpiPciAppGilOffsetP11S = XpiPciCpAppAddrP11S[6:2];  
+  assign XpiPciAppGilDataP11S   = XpiPciAppDatamoP11C[`CFG_WIDTH-1:0];
+  assign XpiPciAppGilCmdP11S    = XpiPciCpAppCmdP11S;
+  assign XpiPciAppGilTrdyP10S   = (~(XpiDRTPciAddrIrdyPsn12S || XpiDRTPciDataIrdyPsn12S));
+  
+  assign XpiPciAppAddrP11S      = XpiPciCpAppAddrP11S;
+  assign XpiPciAppCmdP11S       = XpiPciCpAppCmdP11S;
+  assign XpiPciAppAttrP11S      = XpiPciCpAppAttrP11S;
+  assign XpiPciAppByteEnP11S    = XpiPciCpAppByteEnP11S;
+  assign XpiPciAppLengthP11S    = XpiPciCpAppLengthP11S;
+  assign XpiPciAppDataP11S      = XpiPciAppDatamoP11C;
+  
+  // Requester only accepts Write Data every third PCI
+  // clock, hence propagating this back pressure impact
+  // through Trdy signal..
+  assign XpiPciAppTrdyP11S      = XpiPciRqAppTrdyP11S; 
+  assign XpiPciAppTrdyP10S      = XpiPciRqAppTrdyP10C; 
+
+  assign XpiPciAppBusyP11S = (XpiPciAppBusyP11C || rsm_busy);
+  
+  //-----------------------------------------------------
+  //---- PCI Application Logic in Master(Slave) Mode ----
+  //-----------------------------------------------------
+
+DFFR #(1,1'b0) U17_dff (.q(XpiPciRqAppTrdyP11S),.d(XpiPciRqAppTrdyP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------------
+  //---- PCI Application Logic SN Input Register Stage ----
+  //-------------------------------------------------------
+
+  // Muxing between GIL & DMA,RX,TX Data & Command
+
+DFFR #(1,1'b0) U18_dff (.q(XpiPciAppDataIrdyPsn10S),.d(XpiDRTPciDataIrdyPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U19_dff (.q(XpiPciAppCmdPsn10S),.d(XpiDRTPciCmdPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(3,3'b0) U20_dff (.q(XpiPciAppRqTxnIDPsn10S),.d(XpiDRTPciTxnIDPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U21_dff (.q(XpiPciAppRqAddrIrdyPsn10S),.d(XpiDRTPciAddrIrdyPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U22_dff (.q(XpiPciAppRqAddrPsn10S),.d(XpiDRTPciAddrPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U23_dff (.q(XpiPciAppRqLengthPsn10S),.d(XpiDRTPciLengthPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // ReCirCulating Data & ByteEn to account for Trdy BackPressue
+  
+  assign XpiPciAppDataPsn10C = XpiPciRqAppTrdyP10C ?
+	 XpiDRTPciDataPsn12S : XpiPciAppDataPsn10S;
+DFFR #(64,64'b0) U24_dff (.q(XpiPciAppDataPsn10S),.d(XpiPciAppDataPsn10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPciAppByteEnPsn10C = XpiPciRqAppTrdyP10C ?
+	 XpiDRTPciByteEnPsn12S : XpiPciAppByteEnPsn10S;
+DFFR #(8,8'b0) U25_dff (.q(XpiPciAppByteEnPsn10S),.d(XpiPciAppByteEnPsn10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //----------------------------------------------------------------------
+  //---- DeMuxing operation between Requester and Completer Interface ----
+  //----------------------------------------------------------------------
+
+  always @(/*AS*/XpiDRTDeMuxSelP11S or XpiDRTPciCmdPsn12S
+	   or XpiDRTPciDataIrdyPsn12S or XpiPciAppDataIrdyPsn10S)
+    begin
+      if ((XpiDRTPciDataIrdyPsn12S) && (XpiDRTPciCmdPsn12S[3:0]==`RDCMP))
+	XpiDRTDeMuxSelP10C = 1'b1;
+      else if (~XpiPciAppDataIrdyPsn10S)
+	XpiDRTDeMuxSelP10C = 1'b0;
+      else
+	XpiDRTDeMuxSelP10C = XpiDRTDeMuxSelP11S;
+    end
+			      
+DFFR #(1,1'b0) U26_dff (.q(XpiDRTDeMuxSelP11S),.d(XpiDRTDeMuxSelP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+   
+  always @(/*AS*/XpiDRTDeMuxSelP11S or XpiPciAppByteEnPsn10S
+	   or XpiPciAppCmdPsn10S or XpiPciAppDataIrdyPsn10S
+	   or XpiPciAppDataPsn10S)
+    begin
+
+      case(XpiDRTDeMuxSelP11S)
+	
+	1'b0:
+	  begin
+	    XpiPciAppRqDataIrdyPsn10C  = XpiPciAppDataIrdyPsn10S;
+	    XpiPciAppRqCmdPsn10C       = XpiPciAppCmdPsn10S;                 
+	    XpiPciAppRqDataPsn10C      = XpiPciAppDataPsn10S;
+	    XpiPciAppRqByteEnPsn10C    = XpiPciAppByteEnPsn10S;
+	    
+	    XpiPciAppCpDataIrdyPsn10C  = 1'b0;
+	    XpiPciAppCpDataPsn10C      = {`PCI_DATA_WIDTH{1'b0}};
+	  end
+	
+	1'b1:
+	  begin
+	    XpiPciAppCpDataIrdyPsn10C  = XpiPciAppDataIrdyPsn10S;
+	    XpiPciAppCpDataPsn10C      = XpiPciAppDataPsn10S;
+		
+	    XpiPciAppRqDataIrdyPsn10C  = 1'b0; 
+	    XpiPciAppRqCmdPsn10C       = {4{1'b0}};
+	    XpiPciAppRqDataPsn10C      = {`PCI_DATA_WIDTH{1'b0}};
+	    XpiPciAppRqByteEnPsn10C    = {`CMD_BE_WIDTH{1'b0}};
+	  end
+	
+	default:
+	  begin
+	    XpiPciAppRqDataIrdyPsn10C  = 1'b0; 
+	    XpiPciAppRqCmdPsn10C       = {4{1'b0}};
+	    XpiPciAppRqDataPsn10C      = {`PCI_DATA_WIDTH{1'b0}};
+	    XpiPciAppRqByteEnPsn10C    = {`CMD_BE_WIDTH{1'b0}};
+	    
+	    XpiPciAppCpDataIrdyPsn10C  = 1'b0;
+	    XpiPciAppCpDataPsn10C      = {`PCI_DATA_WIDTH{1'b0}};
+	  end // case: default
+	
+      endcase // case(XpiDRTDeMuxSelP10C)
+      
+    end // always @ (...
+
+  
+  //---- ReCirculating Data & ByteEn to account for App Logic Backpressure ----
+  
+  assign XpiPciAppRqDataPsn11C = XpiPciRqAppTrdyP10C ?
+				 XpiPciAppRqDataPsn10C : XpiPciAppRqDataPsn11S;
+DFFR #(64,64'b0) U27_dff (.q(XpiPciAppRqDataPsn11S),.d(XpiPciAppRqDataPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPciAppRqByteEnPsn11C = XpiPciRqAppTrdyP10C ?
+	 XpiPciAppRqByteEnPsn10C : XpiPciAppRqByteEnPsn11S;
+  
+DFFR #(8,8'b0) U28_dff (.q(XpiPciAppRqByteEnPsn11S),.d(XpiPciAppRqByteEnPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------------------
+  //---- PCI-X Application --> Requester Interface logic ----
+  //---------------------------------------------------------
+
+  //** This State Machine Controls issuing Memory Write and Read
+  //** Requests to the PCI-X Core Requester
+  //** In PCIRQRD state Read Request is issued and state RQCMPWAIT
+  //** waits to recv Rd Cmp, when Cmp Data is received transition to
+  //** RQDATARCV state and stay here until all data phases are complete.
+  //** In PCIRQWR state Write Request is issued, then transition to
+  //** WRDATA0 state for first data transfer and wait until the PCI-X
+  //** Core is ready to receive Wr Data, then transition to XPIPCICPAPPWRDATAN state
+  //** stay here until all data phases are complete.
+
+
+  // Note: DW PCIX Core supports only one outstanding Read Request that received
+  // a Retry Response, and waits for the completion data to return from CPU,
+  // before accepting more read requests, however Memory writes can make forward
+  // progress 
+    
+`define XPIPCIAPPRQIDLE       4'b0000	       
+`define XPIPCIAPPRQRD         4'b0001	       
+`define XPIPCIAPPRQRDSTALL    4'b1101	       
+`define XPIPCIAPPRQCMPWAIT    4'b0011	       
+`define XPIPCIAPPRQDATARCV    4'b0111
+`define XPIPCIAPPRQSPLITRESP  4'b0010
+`define XPIPCIAPPRQRETRYRESP  4'b0101
+`define XPIPCIAPPRQWR         4'b1000       
+`define XPIPCIAPPRQWRSTALL    4'b1100       
+`define XPIPCIAPPRQWRDATAWAIT 4'b1001       
+`define XPIPCIAPPRQWRDATAN    4'b1011       
+  
+  // Internal state variables
+  wire [3:0] xpipciapprqstate;
+  reg [3:0]  next_xpipciapprqstate;
+  
+  //---- State Change ----
+  
+DFFR #(4,4'b0) U29_dff (.q(xpipciapprqstate),.d(next_xpipciapprqstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(/*AS*/rsm2app_rdy4data or xpipciapprqstate)
+    begin
+
+      app_adr_ld               = 1'b0;
+      app2rsm_data_rdy         = 1'b0;
+      XpiPciRqAppCmpDataIrdyP11C  = 1'b0;
+      XpiPciRqAppTrdyP10C      = 1'b1;
+      XpiPciAppBusyP11C        = 1'b0;
+      XpiPciAppDataStallP11C   = 1'b0;
+      XpiPciAppDataPhaseP11C   = 1'b0;
+      XpiPciAppRdSplitP11S     = 1'b0;
+      XpiPciRqAppRetryRespP11C = 1'b0;
+      
+      case(xpipciapprqstate)
+	
+	`XPIPCIAPPRQIDLE:
+	  begin
+	    app_adr_ld               = 1'b0;
+	    app2rsm_data_rdy         = 1'b0;
+	    XpiPciRqAppCmpDataIrdyP11C  = 1'b0;
+	    XpiPciRqAppTrdyP10C      = 1'b1;
+      	    XpiPciAppBusyP11C        = 1'b0;
+	    XpiPciAppDataStallP11C   = 1'b0;
+	    XpiPciAppDataPhaseP11C   = 1'b0;
+	    XpiPciAppRdSplitP11S     = 1'b0;
+	    XpiPciRqAppRetryRespP11C = 1'b0;
+  	  end
+	
+	`XPIPCIAPPRQRD:  
+	  begin
+	    app_adr_ld        = 1'b1;
+	    XpiPciAppBusyP11C = 1'b1;
+	  end
+	
+	`XPIPCIAPPRQRDSTALL:
+	  begin
+	    app_adr_ld        = 1'b0;
+	    XpiPciAppBusyP11C = 1'b1;
+	  end
+
+	`XPIPCIAPPRQCMPWAIT: 
+	  begin
+	    app_adr_ld        = 1'b0;
+	    XpiPciAppBusyP11C = 1'b1;
+	  end
+	
+	`XPIPCIAPPRQDATARCV: 
+	  begin
+	    XpiPciRqAppCmpDataIrdyP11C = 1'b1;
+	    XpiPciAppBusyP11C       = 1'b1;
+	  end
+
+	`XPIPCIAPPRQSPLITRESP: XpiPciAppRdSplitP11S = 1'b1;
+
+	`XPIPCIAPPRQRETRYRESP: XpiPciRqAppRetryRespP11C = 1'b1;
+	    
+	`XPIPCIAPPRQWR:
+	  begin
+	    app_adr_ld               = 1'b1;
+	    app2rsm_data_rdy         = 1'b1;
+	    XpiPciRqAppTrdyP10C      = rsm2app_rdy4data;
+	    XpiPciAppDataStallP11C   = 1'b0;
+	    XpiPciAppBusyP11C        = 1'b1;
+  	  end
+	
+	`XPIPCIAPPRQWRSTALL: 
+	  begin
+	    app_adr_ld               = 1'b0;
+	    app2rsm_data_rdy         = 1'b1;
+	    XpiPciRqAppTrdyP10C      = rsm2app_rdy4data;
+	    XpiPciAppBusyP11C        = 1'b1;
+  	  end
+	
+	`XPIPCIAPPRQWRDATAWAIT:
+	  begin
+	    app_adr_ld               = 1'b0;
+	    app2rsm_data_rdy         = 1'b1;
+	    XpiPciRqAppTrdyP10C      = rsm2app_rdy4data;
+	    XpiPciAppDataStallP11C   = 1'b1;
+	    XpiPciAppBusyP11C        = 1'b1;
+	  end
+	
+	`XPIPCIAPPRQWRDATAN:
+	  begin
+	    app_adr_ld               = 1'b0;
+	    app2rsm_data_rdy         = 1'b1;
+	    XpiPciRqAppTrdyP10C      = rsm2app_rdy4data;
+	    XpiPciAppDataStallP11C   = 1'b0;
+	    XpiPciAppDataPhaseP11C   = 1'b1;
+	    XpiPciAppBusyP11C        = 1'b1;
+  	  end
+	
+	default:
+	  begin
+	    app_adr_ld               = 1'b0;
+	    app2rsm_data_rdy         = 1'b0;
+	    XpiPciRqAppCmpDataIrdyP11C  = 1'b0;
+	    XpiPciRqAppTrdyP10C      = 1'b1;
+  	    XpiPciAppBusyP11C        = 1'b0;
+	    XpiPciAppDataStallP11C   = 1'b0;
+	    XpiPciAppDataPhaseP11C   = 1'b0;
+	    XpiPciAppRdSplitP11S     = 1'b0;
+	    XpiPciRqAppRetryRespP11C = 1'b0;
+  	  end
+	
+      endcase // case(xpipciapprqstate)
+      
+    end // always @ (xpipciapprqstate)
+  
+  //---- State Transitions ----
+   
+  always @( /*AS*/XpiPciAppDataPhaseP12S or XpiPciAppRqAddrIrdyPsn10S
+	   or XpiPciAppRqCmdPsn10C or XpiPciAppRqDataIrdyPsn10C
+	   or rsm2app_data_rdy or rsm2app_rdy4data or rsm_busy
+	   or rsm_retry or rsm_split_response or xpipciapprqstate)
+    begin
+      
+      case (xpipciapprqstate)
+	
+	`XPIPCIAPPRQIDLE: 
+	  begin
+	    if ((XpiPciAppRqAddrIrdyPsn10S) && (XpiPciAppRqDataIrdyPsn10C) 
+		&& (XpiPciAppRqCmdPsn10C[3:0]==`MEMWR) && (~rsm_busy))
+	      // Issuing Memory write request through DW PCIX Core Requester interface
+	      next_xpipciapprqstate = `XPIPCIAPPRQWR;
+	    else if ((XpiPciAppRqAddrIrdyPsn10S) && (XpiPciAppRqDataIrdyPsn10C) 
+		     && (XpiPciAppRqCmdPsn10C[3:0]==`MEMWR) && rsm_busy)
+	      // DW PCIX Core Requester unable to accept current Mem Write
+	      // absorb the back pressure and issue write when the Requester is ready
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRSTALL;
+	    else if ( (XpiPciAppRqAddrIrdyPsn10S) && (~rsm_busy) &&
+		      ((XpiPciAppRqCmdPsn10C[3:0]==`MEMRD) ||
+		       (XpiPciAppRqCmdPsn10C[3:0]==`MEMRDBURST) ||
+		       (XpiPciAppRqCmdPsn10C[3:0]==`MEMRDLINE) ) )
+	      // Issuing Memory Read request through DW PCIX Core Requester interface
+	      next_xpipciapprqstate = `XPIPCIAPPRQRD;
+	    else if ( (XpiPciAppRqAddrIrdyPsn10S) && rsm_busy &&
+		      ((XpiPciAppRqCmdPsn10C[3:0]==`MEMRD) ||
+		       (XpiPciAppRqCmdPsn10C[3:0]==`MEMRDBURST) ||
+		       (XpiPciAppRqCmdPsn10C[3:0]==`MEMRDLINE) ) )
+	      // DW PCIX Core Requester unable to accept current Mem Read
+	      // absorb the back pressure and issue read when the Requester is ready
+	      next_xpipciapprqstate = `XPIPCIAPPRQRDSTALL;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	  end
+	
+	`XPIPCIAPPRQRD: 
+	  begin
+	    if (~rsm_busy)
+	      next_xpipciapprqstate = `XPIPCIAPPRQCMPWAIT;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQRD;
+	  end
+	
+	`XPIPCIAPPRQRDSTALL:
+	  begin
+	    if (~rsm_busy)
+	      // Stall lifted, issue Read Request
+	      next_xpipciapprqstate = `XPIPCIAPPRQRD;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQRDSTALL;
+	  end
+	    
+	`XPIPCIAPPRQCMPWAIT:
+	  begin
+	    if (rsm2app_data_rdy)
+	      // Read Completion Data Received
+	      next_xpipciapprqstate = `XPIPCIAPPRQDATARCV;
+	    else if (rsm_split_response)
+	      // PCIX Mode, Split Response Received
+	      next_xpipciapprqstate = `XPIPCIAPPRQSPLITRESP;
+	    else if (rsm_retry)
+	      // PCI mode, read is retried
+	      next_xpipciapprqstate = `XPIPCIAPPRQRETRYRESP;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQCMPWAIT;
+	  end
+	
+	`XPIPCIAPPRQDATARCV:
+	  // If the Target of Read request is ready with completion
+	  // data in its Fifo, it will send the requested amount of 
+	  // data during the first read request
+	  // Read Completion data after Split or Retry is handled by
+	  // Read Completion SM
+	  begin
+	    if (~rsm2app_data_rdy)
+	      // All requested data received, transition to Idle
+	      next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQDATARCV;
+	  end
+	
+	`XPIPCIAPPRQSPLITRESP: next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	  
+	`XPIPCIAPPRQRETRYRESP: next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+
+	`XPIPCIAPPRQWR:
+	  begin
+	    if (~rsm2app_rdy4data)
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAWAIT;
+	    else if (rsm2app_rdy4data)
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAN;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQWR;
+	  end
+
+	`XPIPCIAPPRQWRSTALL:
+	  begin
+	    if (~rsm_busy)
+	      // Stall lifted, issue Write Request
+	      next_xpipciapprqstate = `XPIPCIAPPRQWR;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRSTALL;
+	  end
+	
+	`XPIPCIAPPRQWRDATAWAIT:
+	  begin
+	    if (XpiPciAppDataPhaseP12S &&
+		(~XpiPciAppRqDataIrdyPsn10C) &&
+		(~rsm_busy))
+	      next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	    else if (rsm2app_rdy4data)
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAN;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAWAIT;
+	  end
+	
+	`XPIPCIAPPRQWRDATAN:
+	  begin
+	    if ( (~XpiPciAppRqDataIrdyPsn10C) && (~rsm_busy))
+	      next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	    else if (~rsm2app_rdy4data)
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAWAIT;
+	    else
+	      next_xpipciapprqstate = `XPIPCIAPPRQWRDATAN;
+	  end
+	
+	default: next_xpipciapprqstate = `XPIPCIAPPRQIDLE;
+	
+      endcase // case(xpipciapprqstate)
+    end // always @ (...
+
+  //------------------------------------------------
+  //---- Split & Retried Read Completion Logic  ----
+  //------------------------------------------------
+
+  // 1 Outstanding Retried Read request is supported in PCI mode
+  // 4 Outstanding Reads with split responses is supported in PCIX mode
+  // The target should send all the requested data in completion for retried reads
+  // The target can send multiple mini read split completions to account
+  // for all completion data corresponding to the read request,
+  // channelize read completions based on rap_channel_id which is one to one
+  // correspondance with the Transaction ID
+
+DFFR #(1,1'b0) U30_dff (.q(XpiPciRqAppCmpDataIrdyP11S),.d(rsm2app_data_rdy),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPciRqAppDataIrdyP11C = (XpiPciRqAppCmpDataIrdyP11C ||
+				    XpiPciRqAppCmpDataIrdyP11S);
+  
+DFFR #(64,64'b0) U31_dff (.q(XpiPciRqAppDataP11S),.d(rdp2app_data),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+		
+  //--------------------------------------
+  //---- Read Completion Data Counter ----
+  //--------------------------------------
+  // Counts Number of 64b Data Chunks received as Read Completion
+
+  always @(/*AS*/XpiPciAppCmpDataCntP10S or app_adr_ld
+	   or rsm2app_data_rdy)
+    begin
+      if (rsm2app_data_rdy)
+	// Data Received, increment count
+	XpiPciAppCmpDataCntP10C = {XpiPciAppCmpDataCntP10S + 1'b1};
+      else if (XpiPciAppCmpDataCntP10S == `BYTECNT_WIDTH'hfff)
+	XpiPciAppCmpDataCntP10C = {`BYTECNT_WIDTH{1'b0}};
+      else if (app_adr_ld)
+	// Upon issuance of new request, reset the counter
+	XpiPciAppCmpDataCntP10C = {`BYTECNT_WIDTH{1'b0}};
+      else
+	XpiPciAppCmpDataCntP10C = XpiPciAppCmpDataCntP10S;
+    end // always @ (...
+
+DFFR #(12,12'b0) U32_dff (.q(XpiPciAppCmpDataCntP10S),.d(XpiPciAppCmpDataCntP10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Number of 8B (64b) Data Chunk expected in Read Completion
+  assign XpiPciAppExptdDataCntP10C = {app_bytecnt >> 3};
+  
+  //---- All expected data received indication ----
+		     
+  //assign XpiPciAppAllDataRecvdP10C = 
+  //((XpiPciAppExptdDataCntP10C == {XpiPciAppCmpDataCntP10S - 1'b1}) ||
+  //(XpiPciAppExptdDataCntP10C == `BYTECNT_WIDTH'h001));
+  assign XpiPciAppAllDataRecvdP10C = 
+	 (XpiPciAppExptdDataCntP10C == XpiPciAppCmpDataCntP10S);
+
+  //---- Retry Read Pending Indication ----
+  
+  // Read completion indicator
+  assign XpiPciAppRdRetryP11C = 
+	 (XpiPciRqAppRetryRespP11C || XpiPciAppAllDataRecvdP10C || XpiPciAppRdSplitP11S) ?
+	   XpiPciRqAppRetryRespP11C : XpiPciAppRdRetryP11S;
+  
+DFFR #(1,1'b0) U33_dff (.q(XpiPciAppRdRetryP11S),.d(XpiPciAppRdRetryP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Read Stop Indication ----
+  // Application Logic indicates that it can no longer accept a read request
+  // during Read Retry condition or reaching Max Number of Outstanding read limit
+  
+  assign XpiPciAppRdStopP11S = (XpiPciAppRdRetryP11S || rap_max_split_reached);
+  
+  //--------------------------------------------------
+  //---- PCI-X Application Requester Output Stage ---- 
+  //--------------------------------------------------
+  
+  //---- ReCirculating Data Phase indication until Write is Complete ----
+  
+  assign XpiPciAppDataPhaseP12C = (XpiPciAppDataPhaseP11C || (~rsm_busy)) ?
+				    XpiPciAppDataPhaseP11C : XpiPciAppDataPhaseP12S;
+  
+DFFR #(1,1'b0) U34_dff (.q(XpiPciAppDataPhaseP12S),.d(XpiPciAppDataPhaseP12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------------------------------
+  //---- ReCirculating the Data, Length & ByteEn during Data Stall State ----
+  //-------------------------------------------------------------------------
+  
+  // Data
+  assign XpiPciAppRqDataPsn12C = (XpiPciAppDataStallP11C && (~XpiPciRqAppTrdyP10C)) ?
+				   XpiPciAppRqDataPsn12S : XpiPciAppRqDataPsn11S;
+  
+DFFR #(64,64'b0) U35_dff (.q(XpiPciAppRqDataPsn12S),.d(XpiPciAppRqDataPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign app2rdp_data = XpiPciAppRqDataPsn12C;
+  
+  // ByteEn
+  assign XpiPciAppRqByteEnPsn12C = (XpiPciAppDataStallP11C && (~XpiPciRqAppTrdyP10C)) ?
+				     XpiPciAppRqByteEnPsn12S : XpiPciAppRqByteEnPsn11S;
+  
+DFFR #(8,8'b0) U36_dff (.q(XpiPciAppRqByteEnPsn12S),.d(XpiPciAppRqByteEnPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign app_be = XpiPciAppRqByteEnPsn12C;
+
+  // Length
+  assign XpiPciAppRqLengthPsn11C = XpiPciAppRqAddrIrdyPsn10S ?
+	 XpiPciAppRqLengthPsn10S : app_bytecnt;
+DFFR #(12,12'b0) U37_dff (.q(app_bytecnt),.d(XpiPciAppRqLengthPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Command
+DFFR #(4,4'b0) U38_dff (.q(app_cmd),.d(XpiPciAppRqCmdPsn10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Address 
+DFFR #(64,64'b0) U39_dff (.q(app_adr),.d(XpiPciAppRqAddrPsn10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Channel ID
+  // Channel ID distinguishes reads originating from different sources
+  // It has one to one correspondance with Transaction ID's of DMA & RX
+  
+  assign XpiPciAppRqChannelPsn11C = XpiPciAppRqAddrIrdyPsn10S ? 
+	 {2'b00,XpiPciAppRqTxnIDPsn10S} : app_channel;
+  
+DFFR #(5,5'b0) U40_dff (.q(app_channel),.d(XpiPciAppRqChannelPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // One Cycle Delay to align with Data Rdy 
+DFFR #(64,64'b0) U41_dff (.q(XpiPciAppCpDataPsn10S),.d(XpiPciAppCpDataPsn10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Muxing Read Completion Data
+  always @(/*AS*/XpiGilPciDataIrdyP11S or XpiGilPciDataP11S
+	   or XpiPciAppCpDataPsn10S or app2cdp_data or app_split_ld)
+    begin
+      if (app_split_ld)
+	XpiPciAppCpDataPsn11C = XpiPciAppCpDataPsn10S;
+      else if (XpiGilPciDataIrdyP11S)
+	XpiPciAppCpDataPsn11C = {{`CFG_WIDTH{1'b0}},XpiGilPciDataP11S};
+      else
+	XpiPciAppCpDataPsn11C = app2cdp_data;
+    end // always @ (...
+  
+DFFR #(64,64'b0) U42_dff (.q(app2cdp_data),.d(XpiPciAppCpDataPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Sequence ID for Split Completions ----
+
+  // Extracting Information from Read Request Attribute to be
+  // send back during split completion to match request and completion
+  
+  assign XpiPciAppCpAttrPsn11C = (XpiPciAppCtlRdTxnP10S && ifc_attr_phase && (~com_status[1])) ?
+				   ifc_attr[28:8] : XpiPciAppCpAttrPsn11S;
+
+DFFR #(21,21'b0) U43_dff (.q(XpiPciAppCpAttrPsn11S),.d(XpiPciAppCpAttrPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign app_split_seqid = XpiPciAppCpAttrPsn11S;
+
+  //-----------------------
+  //---- Error Handler ----
+  //-----------------------
+  // Assert Interrupt upon following Error condition
+  // rsm_tar_abort : Recieved target abort response for issued request
+  // rsm_ini_abort : DW PCIX core issued Master Abort response
+  // cdp_abort     : DW PCIX Completer indicating abort
+  // csm_split_tarabt: Split Completion is terminated with Target Abort
+  // csm_split_masabt: Split Completion is terminated with Master Abort
+  // rap_split_err_det: Error occured while receiving split completion
+  
+  assign cdp_abort = com_status[0];
+  assign csm_split_tarabt = com_status[15];
+  assign csm_split_masabt = com_status[16];
+  
+  always @(/*AS*/cdp_abort or csm_split_masabt or csm_split_tarabt
+	   or rap_split_err_det or rsm_ini_abort or rsm_tar_abort)
+    begin
+      if (rsm_tar_abort)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h01;
+      else if (rsm_ini_abort)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h02;
+      else if (cdp_abort)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h04;
+      else if (csm_split_tarabt)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h08;
+      else if (csm_split_masabt)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h10;
+      else if (rap_split_err_det)
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h20;
+      else
+	XpiPciAppIntrP11C = `PCIAPP_INTR_EVENTS'h00;
+    end
+  
+DFFR #(8,8'b0) U44_dff (.q(XpiPciAppIntrP11S),.d(XpiPciAppIntrP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPciAppReqAbortP11C   = (rsm_tar_abort || rsm_ini_abort);
+  assign XpiPciAppSplitAbortP11C = (cdp_abort || rap_split_err_det);
+  
+DFFR #(1,1'b0) U45_dff (.q(XpiPciAppReqAbortP11S),.d(XpiPciAppReqAbortP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U46_dff (.q(XpiPciAppSplitAbortP11S),.d(XpiPciAppSplitAbortP11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //------------------------
+  //---- 0in Assertions ----
+  //------------------------
+
+  // 0in known_driven -var XpiDRTPciAddrIrdyPsn12S   -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciAddrPsn12S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciDataIrdyPsn12S   -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciDataPsn12S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciCmdPsn12S        -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciAttrPsn12S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciByteEnPsn12S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciLengthPsn12S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTPciTrdyPsn12S	     -clock XpiPciClk -reset GlCoreResetR00C
+  						    
+  // 0in known_driven -var XpiPciAppAddrIrdyP11S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppAddrP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppCmdP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppAttrP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppByteEnP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppLengthP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppDataIrdyP11S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppDataP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppTrdyP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppTrdyP10S         -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppDeMuxSelP11S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppBusyP11S         -clock XpiPciClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiGilPciDataIrdyP11S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiGilPciDataP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiPciAppGilAddrIrdyP11S  -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppGilOffsetP11S    -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppGilDataIrdyP11S  -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppGilDataP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppGilCmdP11S	     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppGilTrdyP10S	     -clock XpiPciClk -reset GlCoreResetR00C
+
+  // Add 0in case and state_transition directives
+  
+endmodule // pciapp 
+
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:
+
+

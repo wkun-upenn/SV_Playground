@@ -1,0 +1,2 @@
+rm tempus.*
+rm top.*

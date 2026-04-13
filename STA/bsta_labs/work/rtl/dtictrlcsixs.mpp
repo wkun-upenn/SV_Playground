@@ -1,0 +1,293 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtictrlcsixs (
+   /*AUTOARG*/
+   // Outputs
+   DtiCsixSoftResetSynZ01SL, DtiDoTrainingC, DtiRdValidTransS, 
+   DtiRdDataCsixS, DtiBitWrEnC, DtiClkLenWrEnC, DtiWrDataS, 
+   DtiTrainingModeS, DtiCycleThresholdS, DtiTransThresholdS, 
+   // Inputs
+   DtiCsixClk, DtiDoneStretchingZnS, DtiWrEnTransS, DtiRdEnTransS, 
+   DtiAddrCoreS, DtiWrDataCoreS, DtiBit0CtrlS, DtiBit1CtrlS, 
+   DtiBit2CtrlS, DtiBit3CtrlS, DtiBit4CtrlS, DtiBit5CtrlS, 
+   DtiBit6CtrlS, DtiBit7CtrlS, DtiBit8CtrlS, DtiBit9CtrlS, 
+   DtiBit10CtrlS, DtiBit11CtrlS, DtiBit12CtrlS, DtiBit13CtrlS, 
+   DtiBit14CtrlS, DtiBit15CtrlS, DtiBit16CtrlS, DtiClkLenCtrlS
+);
+
+   parameter DTI_WORD_WIDTH = 17;
+   parameter DTI_ADDR_WIDTH = 5;
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Common outputs
+   output                         DtiCsixSoftResetSynZ01SL;
+   output                         DtiDoTrainingC;
+
+   // Read results suitable for synchronization to the core clock domain
+   output                         DtiRdValidTransS;
+   output [`DTI_RDDATA_WIDTH-1:0] DtiRdDataCsixS;
+
+   // Write controls for individual registers
+   output [DTI_WORD_WIDTH-1:0]    DtiBitWrEnC;
+   output                         DtiClkLenWrEnC;
+   output [`DTI_WRDATA_WIDTH-1:0] DtiWrDataS;
+
+   // Programmable register values
+   output [`DTI_TRAINING_MODE_WIDTH-1:0]   DtiTrainingModeS;
+   output [`DTI_CYCLE_THRESHOLD_WIDTH-1:0] DtiCycleThresholdS;
+   output [`DTI_TRANS_THRESHOLD_WIDTH-1:0] DtiTransThresholdS;
+
+
+   // Common inputs
+   input                          DtiCsixClk;
+   input                          DtiDoneStretchingZnS;
+
+   // Read/write controls from the core clock domain
+   input                          DtiWrEnTransS;
+   input                          DtiRdEnTransS;
+   input [DTI_ADDR_WIDTH-1:0]     DtiAddrCoreS;
+   input [`DTI_WRDATA_WIDTH-1:0]  DtiWrDataCoreS;
+
+   // Read values for individual registers
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit0CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit1CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit2CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit3CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit4CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit5CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit6CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit7CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit8CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit9CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit10CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit11CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit12CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit13CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit14CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit15CtrlS;
+   input [`DTI_BIT_CTRL_WIDTH-1:0] DtiBit16CtrlS;
+   input [`DTI_CLKLEN_CTRL_WIDTH-1:0] DtiClkLenCtrlS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire                               DtiWrEnTransD1S;
+   wire                               DtiWrEnTransD2S;
+   wire                               DtiWrEnTransD3S;
+   wire                               DtiWrEnTransD4S;
+
+   wire                               DtiRdEnTransD1S;
+   wire                               DtiRdEnTransD2S;
+   wire                               DtiRdEnTransD3S;
+   wire                               DtiRdEnTransD4S;
+
+   wire [DTI_ADDR_WIDTH-1:0]          DtiAddrD1S;
+   wire [DTI_ADDR_WIDTH-1:0]          DtiAddrS;
+
+   wire [`DTI_WRDATA_WIDTH-1:0]       DtiWrDataD1S;
+   wire [`DTI_WRDATA_WIDTH-1:0]       DtiWrDataS;
+
+   wire                               DtiWrEnC;
+   wire                               DtiRdEnC;
+
+   reg [`DTI_RDDATA_WIDTH-1:0]        DtiNextRdDataC;
+
+   reg [DTI_WORD_WIDTH-1:0]           DtiBitWrEnC;
+   reg                                DtiClkLenWrEnC;
+   reg                                DtiModeWrEnC;
+
+   wire [`DTI_MODE_WIDTH-1:0]         DtiModeS;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Synchronize the reset value.
+
+   RESETSYNC #(1) U_RESETSYNC (// Outputs
+                               .syncreset (DtiCsixSoftResetSynZ01SL),
+                               // Inputs
+                               .inreset   (DtiDoneStretchingZnS),
+                               .clk       (DtiCsixClk));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Handle a transaction
+
+DFF #(1) U1_dff (.q(DtiWrEnTransD1S),.d(DtiWrEnTransS),.clk(DtiCsixClk));
+DFF #(1) U2_dff (.q(DtiWrEnTransD2S),.d(DtiWrEnTransD1S),.clk(DtiCsixClk));
+DFF #(1) U3_dff (.q(DtiWrEnTransD3S),.d(DtiWrEnTransD2S),.clk(DtiCsixClk));
+DFF #(1) U4_dff (.q(DtiWrEnTransD4S),.d(DtiWrEnTransD3S),.clk(DtiCsixClk));
+
+DFF #(1) U5_dff (.q(DtiRdEnTransD1S),.d(DtiRdEnTransS),.clk(DtiCsixClk));
+DFF #(1) U6_dff (.q(DtiRdEnTransD2S),.d(DtiRdEnTransD1S),.clk(DtiCsixClk));
+DFF #(1) U7_dff (.q(DtiRdEnTransD3S),.d(DtiRdEnTransD2S),.clk(DtiCsixClk));
+DFF #(1) U8_dff (.q(DtiRdEnTransD4S),.d(DtiRdEnTransD3S),.clk(DtiCsixClk));
+
+DFF #(DTI_ADDR_WIDTH) U0_xdff (.q(DtiAddrD1S), .d(DtiAddrCoreS), .clk(DtiCsixClk));
+
+DFF #(DTI_ADDR_WIDTH) U1_xdff (.q(DtiAddrS), .d(DtiAddrD1S), .clk(DtiCsixClk));
+
+
+DFF #(11) U9_dff (.q(DtiWrDataD1S),.d(DtiWrDataCoreS),.clk(DtiCsixClk));
+DFF #(11) U10_dff (.q(DtiWrDataS),.d(DtiWrDataD1S),.clk(DtiCsixClk));
+
+
+   // Turn a transition into a pulse.
+   assign DtiWrEnC = DtiWrEnTransD3S ^ DtiWrEnTransD4S;
+   assign DtiRdEnC = DtiRdEnTransD3S ^ DtiRdEnTransD4S;
+
+
+   // 0in kndr -var DtiWrEnC -clock DtiCsixClk -reset ~DtiCsixSoftResetSynZ01SL
+   // 0in kndr -var DtiRdEnC -clock DtiCsixClk -reset ~DtiCsixSoftResetSynZ01SL
+   // 0in kndr -var DtiAddrS -active (DtiWrEnC | DtiRdEnC) -clock DtiCsixClk
+   // 0in kndr -var DtiWrDataS -active DtiWrEnC -clock DtiCsixClk
+
+
+   // Handle reads
+   always @(/*AUTOSENSE*/DtiAddrS or DtiBit0CtrlS or DtiBit10CtrlS
+            or DtiBit11CtrlS or DtiBit12CtrlS or DtiBit13CtrlS
+            or DtiBit14CtrlS or DtiBit15CtrlS or DtiBit16CtrlS
+            or DtiBit1CtrlS or DtiBit2CtrlS or DtiBit3CtrlS
+            or DtiBit4CtrlS or DtiBit5CtrlS or DtiBit6CtrlS
+            or DtiBit7CtrlS or DtiBit8CtrlS or DtiBit9CtrlS
+            or DtiClkLenCtrlS or DtiModeS) begin
+      case (DtiAddrS)
+// surefire lint_off CWECSB CWECSM CWECSS ASWSSS
+        0: DtiNextRdDataC = DtiBit0CtrlS;
+        1: DtiNextRdDataC = DtiBit1CtrlS;
+        2: DtiNextRdDataC = DtiBit2CtrlS;
+        3: DtiNextRdDataC = DtiBit3CtrlS;
+        4: DtiNextRdDataC = DtiBit4CtrlS;
+        5: DtiNextRdDataC = DtiBit5CtrlS;
+        6: DtiNextRdDataC = DtiBit6CtrlS;
+        7: DtiNextRdDataC = DtiBit7CtrlS;
+        8: DtiNextRdDataC = DtiBit8CtrlS;
+        9: DtiNextRdDataC = DtiBit9CtrlS;
+        10: DtiNextRdDataC = DtiBit10CtrlS;
+        11: DtiNextRdDataC = DtiBit11CtrlS;
+        12: DtiNextRdDataC = DtiBit12CtrlS;
+        13: DtiNextRdDataC = DtiBit13CtrlS;
+        14: DtiNextRdDataC = DtiBit14CtrlS;
+        15: DtiNextRdDataC = DtiBit15CtrlS;
+        16: DtiNextRdDataC = DtiBit16CtrlS;
+        17: DtiNextRdDataC = DtiClkLenCtrlS;
+        18: DtiNextRdDataC = DtiModeS;
+        default: DtiNextRdDataC = {`DTI_RDDATA_WIDTH{1'b0}};
+// surefire lint_on CWECSB CWECSM CWECSS ASWSSS
+      endcase // case(DtiAddrS)
+   end // always @(...)
+
+
+   // Handle writes
+   always @(/*AUTOSENSE*/DtiAddrS or DtiWrEnC) begin
+
+      DtiBitWrEnC = {DTI_WORD_WIDTH{1'b0}};
+      DtiClkLenWrEnC = 1'b0;
+      DtiModeWrEnC = 1'b0;
+
+      if (DtiWrEnC) begin
+         case (DtiAddrS)
+// surefire lint_off CWECSB CWECSM CWECSS
+           0: DtiBitWrEnC[0] = 1'b1;
+           1: DtiBitWrEnC[1] = 1'b1;
+           2: DtiBitWrEnC[2] = 1'b1;
+           3: DtiBitWrEnC[3] = 1'b1;
+           4: DtiBitWrEnC[4] = 1'b1;
+           5: DtiBitWrEnC[5] = 1'b1;
+           6: DtiBitWrEnC[6] = 1'b1;
+           7: DtiBitWrEnC[7] = 1'b1;
+           8: DtiBitWrEnC[8] = 1'b1;
+           9: DtiBitWrEnC[9] = 1'b1;
+           10: DtiBitWrEnC[10] = 1'b1;
+           11: DtiBitWrEnC[11] = 1'b1;
+           12: DtiBitWrEnC[12] = 1'b1;
+           13: DtiBitWrEnC[13] = 1'b1;
+           14: DtiBitWrEnC[14] = 1'b1;
+           15: DtiBitWrEnC[15] = 1'b1;
+           16: DtiBitWrEnC[16] = 1'b1;
+           17: DtiClkLenWrEnC = 1'b1;
+           18: DtiModeWrEnC = 1'b1;
+           default: begin /* do nothing */ end
+// surefire lint_on CWECSB CWECSM CWECSS
+         endcase // case(DtiAddrS)
+      end // if (DtiWrEnC)
+   end // always @(...)
+
+
+   // A few different programmable fields are in this register
+EDFFR #(8,`DTI_MODE_RESET_VAL) dff_DtiModeS (.q(DtiModeS),.d(DtiWrDataS[`DTI_MODE_WIDTH-1:0]),.en(DtiModeWrEnC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+
+   assign DtiTrainingModeS = DtiModeS[`DTI_TRAINING_MODE_RANGE];
+   assign DtiCycleThresholdS = DtiModeS[`DTI_CYCLE_THRESHOLD_RANGE];
+   assign DtiTransThresholdS = DtiModeS[`DTI_TRANS_THRESHOLD_RANGE];
+
+   // Disable training when training is not enabled or forced.
+   assign DtiDoTrainingC = (DtiTrainingModeS != `DTI_FORCE_UNTRAINED);
+
+
+   // Send read results back to the CBI (TMI).
+   
+   // Rather than convert the read pulse back to a transition, we just
+   // forward the transition along.  Note that we send the delayed
+   // transition in the cycle after we compute the read data so that
+   // it aligns with the flopped read data.
+   assign DtiRdValidTransS = DtiRdEnTransD4S;
+
+   // Flop the data for synchronization, and hold the data until the
+   // next read transaction.
+EDFF #(12) U11_dff (.q(DtiRdDataCsixS),.d(DtiNextRdDataC),.en(DtiRdEnC),.clk(DtiCsixClk));
+
+
+
+   // 0in kndr -var DtiNextRdDataC -active DtiRdEnC -clock DtiCsixClk
+
+
+endmodule // dtictrlcsixs
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul  1 12:00:00 2002 : created
+//
+// $Log: dtictrlcsixs.v,v $
+// Revision 1.6  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.5  2002/07/29 18:44:10  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.4  2002/07/26 18:32:56  chris
+// Use PortVld for stretched reset
+//
+// Revision 1.3  2002/07/12 22:26:40  chris
+// Remove outdated fixfnordme comments
+//
+// Revision 1.2  2002/07/12 22:23:48  chris
+// Change reset to FORCE_UNTRAINED
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

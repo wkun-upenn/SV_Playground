@@ -1,0 +1,134 @@
+
+`include "xpiuc.vh"
+
+module xpimemint
+  (/*AUTOARG*/
+  // Outputs
+  XpiGmiTargetIDP14S, XpiGmiStatusP14S, XpiGmiNewRespP14S, 
+  XpiGmiIFifoRdEnP10S, XpiGmiDataP14S, XpiGmiCmdP14S, WrEn, WrData, 
+  WrAddr, TOut, RdEn, RdAddr, 
+  // Inputs
+  XpiRbbTargetIDP11S, XpiRbbRdy4DataP11S, XpiRbbNewReqP11S, 
+  XpiRbbIFifoEmptyP11S, XpiRbbDataLenP11S, XpiRbbCmdP11S, 
+  XpiRbbAddrP11S, XpiCoreClk, Rdy4Txn, RdStatus, RdRdy, RdData, 
+  GlCoreResetR00C
+  );
+
+  parameter GMI_DATA_WIDTH = 256;
+  parameter GMI_ADDR_WIDTH = 32;
+  parameter GMI_MEM_ID = 0;
+  parameter GMI_NUM_MEM = 1;
+  parameter GMI_RDEN_DELAY_CNT = GMI_DATA_WIDTH/32-1; // Possible Values = 0,1,2,3
+  
+   // surefire lint_off UDDICU UDDINU
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input		GlCoreResetR00C;	// To U_XPIGMIS of xpigmis.v, ...
+   input [GMI_DATA_WIDTH-1:0]RdData;		// To U_XPIMEMRDCTLS of xpimemrdctls.v
+   input		RdRdy;			// To U_XPIMEMRDCTLS of xpimemrdctls.v
+   input [`GMI_STATUS_WIDTH-1:0]RdStatus;	// To U_XPIMEMRDCTLS of xpimemrdctls.v
+   input		Rdy4Txn;		// To U_XPIMEMRDCTLS of xpimemrdctls.v
+   input		XpiCoreClk;		// To U_XPIGMIS of xpigmis.v, ...
+   input [`RB_ADDR_WIDTH-1:0]XpiRbbAddrP11S;	// To U_XPIGMIS of xpigmis.v
+   input [`RB_CMD_WIDTH-1:0]XpiRbbCmdP11S;	// To U_XPIGMIS of xpigmis.v
+   input [`RB_DATA_WIDTH-1:0]XpiRbbDataLenP11S;	// To U_XPIGMIS of xpigmis.v
+   input		XpiRbbIFifoEmptyP11S;	// To U_XPIGMIS of xpigmis.v
+   input		XpiRbbNewReqP11S;	// To U_XPIGMIS of xpigmis.v
+   input		XpiRbbRdy4DataP11S;	// To U_XPIGMIS of xpigmis.v
+   input [`RB_TARGETID_WIDTH-1:0]XpiRbbTargetIDP11S;// To U_XPIGMIS of xpigmis.v
+   // End of automatics
+   // surefire lint_on UDDICU UDDINU
+
+   // surefire lint_off UDDODN
+  /*AUTOOUTPUT*/
+  // Beginning of automatic outputs (from unused autoinst outputs)
+  output [GMI_ADDR_WIDTH-1:0]RdAddr;		// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output		RdEn;			// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output		TOut;			// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output [GMI_ADDR_WIDTH-1:0]WrAddr;		// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output [GMI_DATA_WIDTH-1:0]WrData;		// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output		WrEn;			// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  output [`RB_CMD_WIDTH-1:0]XpiGmiCmdP14S;	// From U_XPIGMIS of xpigmis.v
+  output [`RB_DATA_WIDTH-1:0]XpiGmiDataP14S;	// From U_XPIGMIS of xpigmis.v
+  output		XpiGmiIFifoRdEnP10S;	// From U_XPIGMIS of xpigmis.v
+  output		XpiGmiNewRespP14S;	// From U_XPIGMIS of xpigmis.v
+  output [`RB_STATUS_WIDTH-1:0]XpiGmiStatusP14S;// From U_XPIGMIS of xpigmis.v
+  output [`RB_TARGETID_WIDTH-1:0]XpiGmiTargetIDP14S;// From U_XPIGMIS of xpigmis.v
+  // End of automatics
+   // surefire lint_on UDDODN
+
+  /*AUTOWIRE*/
+  // Beginning of automatic wires (for undeclared instantiated-module outputs)
+  wire [GMI_DATA_WIDTH-1:0]RexGmiDataP10S;	// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  wire			RexGmiDataRdyP10S;	// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  wire			RexGmiRdy4MemTxnP10S;	// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  wire [`GMI_STATUS_WIDTH-1:0]RexGmiStatusP10S;	// From U_XPIMEMRDCTLS of xpimemrdctls.v
+  wire [GMI_ADDR_WIDTH-1:0]XpiGmiAddrP15S;	// From U_XPIGMIS of xpigmis.v
+  wire [GMI_DATA_WIDTH-1:0]XpiGmiDataLenP15S;	// From U_XPIGMIS of xpigmis.v
+  wire			XpiGmiRdEnP15S;		// From U_XPIGMIS of xpigmis.v
+  wire			XpiGmiRdy4DataP15S;	// From U_XPIGMIS of xpigmis.v
+  wire			XpiGmiTOutP15S;		// From U_XPIGMIS of xpigmis.v
+  wire			XpiGmiWrEnP15S;		// From U_XPIGMIS of xpigmis.v
+  // End of automatics
+
+  xpigmis #(GMI_DATA_WIDTH,GMI_ADDR_WIDTH,GMI_MEM_ID,GMI_NUM_MEM) U_XPIGMIS
+    (/*AUTOINST*/
+     // Outputs
+     .XpiGmiNewRespP14S			(XpiGmiNewRespP14S),
+     .XpiGmiDataP14S			(XpiGmiDataP14S[`RB_DATA_WIDTH-1:0]),
+     .XpiGmiStatusP14S			(XpiGmiStatusP14S[`RB_STATUS_WIDTH-1:0]),
+     .XpiGmiTargetIDP14S		(XpiGmiTargetIDP14S[`RB_TARGETID_WIDTH-1:0]),
+     .XpiGmiCmdP14S			(XpiGmiCmdP14S[`RB_CMD_WIDTH-1:0]),
+     .XpiGmiIFifoRdEnP10S		(XpiGmiIFifoRdEnP10S),
+     .XpiGmiWrEnP15S			(XpiGmiWrEnP15S),
+     .XpiGmiRdEnP15S			(XpiGmiRdEnP15S),
+     .XpiGmiDataLenP15S			(XpiGmiDataLenP15S[GMI_DATA_WIDTH-1:0]),
+     .XpiGmiAddrP15S			(XpiGmiAddrP15S[GMI_ADDR_WIDTH-1:0]),
+     .XpiGmiRdy4DataP15S		(XpiGmiRdy4DataP15S),
+     .XpiGmiTOutP15S			(XpiGmiTOutP15S),
+     // Inputs
+     .GlCoreResetR00C			(GlCoreResetR00C),
+     .XpiCoreClk			(XpiCoreClk),
+     .XpiRbbNewReqP11S			(XpiRbbNewReqP11S),
+     .XpiRbbTargetIDP11S		(XpiRbbTargetIDP11S[`RB_TARGETID_WIDTH-1:0]),
+     .XpiRbbCmdP11S			(XpiRbbCmdP11S[`RB_CMD_WIDTH-1:0]),
+     .XpiRbbAddrP11S			(XpiRbbAddrP11S[`RB_ADDR_WIDTH-1:0]),
+     .XpiRbbDataLenP11S			(XpiRbbDataLenP11S[`RB_DATA_WIDTH-1:0]),
+     .XpiRbbRdy4DataP11S		(XpiRbbRdy4DataP11S),
+     .XpiRbbIFifoEmptyP11S		(XpiRbbIFifoEmptyP11S),
+     .RexGmiDataRdyP10S			(RexGmiDataRdyP10S),
+     .RexGmiDataP10S			(RexGmiDataP10S[GMI_DATA_WIDTH-1:0]),
+     .RexGmiRdy4MemTxnP10S		(RexGmiRdy4MemTxnP10S),
+     .RexGmiStatusP10S			(RexGmiStatusP10S[`GMI_STATUS_WIDTH-1:0]));
+
+   
+  xpimemrdctls #(GMI_DATA_WIDTH,GMI_ADDR_WIDTH,GMI_RDEN_DELAY_CNT) U_XPIMEMRDCTLS
+    (/*AUTOINST*/
+     // Outputs
+     .RdEn				(RdEn),
+     .RdAddr				(RdAddr[GMI_ADDR_WIDTH-1:0]),
+     .WrEn				(WrEn),
+     .WrAddr				(WrAddr[GMI_ADDR_WIDTH-1:0]),
+     .WrData				(WrData[GMI_DATA_WIDTH-1:0]),
+     .TOut				(TOut),
+     .RexGmiDataRdyP10S			(RexGmiDataRdyP10S),
+     .RexGmiDataP10S			(RexGmiDataP10S[GMI_DATA_WIDTH-1:0]),
+     .RexGmiRdy4MemTxnP10S		(RexGmiRdy4MemTxnP10S),
+     .RexGmiStatusP10S			(RexGmiStatusP10S[`GMI_STATUS_WIDTH-1:0]),
+     // Inputs
+     .XpiCoreClk			(XpiCoreClk),
+     .GlCoreResetR00C			(GlCoreResetR00C),
+     .XpiGmiRdEnP15S			(XpiGmiRdEnP15S),
+     .XpiGmiDataLenP15S			(XpiGmiDataLenP15S[GMI_DATA_WIDTH-1:0]),
+     .XpiGmiAddrP15S			(XpiGmiAddrP15S[GMI_ADDR_WIDTH-1:0]),
+     .XpiGmiWrEnP15S			(XpiGmiWrEnP15S),
+     .XpiGmiRdy4DataP15S		(XpiGmiRdy4DataP15S),
+     .XpiGmiTOutP15S			(XpiGmiTOutP15S),
+     .Rdy4Txn				(Rdy4Txn),
+     .RdRdy				(RdRdy),
+     .RdData				(RdData[GMI_DATA_WIDTH-1:0]),
+     .RdStatus				(RdStatus[`GMI_STATUS_WIDTH-1:0]));
+
+endmodule // xpimemint
+
+  

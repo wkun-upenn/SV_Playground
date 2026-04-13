@@ -1,0 +1,446 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+  
+module xpirbid ( /*AUTOARG*/
+  // Outputs
+  XpiRbiCmdPsn11S, XpiRbiTxnIDPsn11S, XpiRbiIrdyPsn11S, 
+  XpiRbiDataPsn11S, XpiRbiTrdyPsn11S, XpiRingBusIniCmdP11S, 
+  XpiRingBusIniTargetIDP11S, XpiRingBusIniAddrCrStatusP11S, 
+  XpiRingBusIniDataLenP11S, 
+  // Inputs
+  XpiCoreClk, GlCoreResetR00C, XpiDRTRbIrdyPns12S, XpiDRTRbCmdPns12S, 
+  XpiDRTRbTxnIDPns12S, XpiDRTRbAddrPns12S, XpiDRTRbDataLenPns12S, 
+  XpiDRTRbTrdyPns12S, XpiRingBusUnitNCmdP11S, 
+  XpiRingBusUnitNTargetIDP11S, XpiRingBusUnitNAddrCrStatusP11S, 
+  XpiRingBusUnitNDataLenP11S
+  );
+  
+  //=====================================
+  //========  Interface Signals  ========
+  //=====================================
+  
+  // Global Signals 
+  input                            XpiCoreClk;
+  input 			   GlCoreResetR00C;
+  
+  // DMA/RX/TX & XpiRbi Interface Signals
+  input 			   XpiDRTRbIrdyPns12S;
+  input [`RB_CMD_WIDTH-1:0] 	   XpiDRTRbCmdPns12S;
+  input [2:0] 			   XpiDRTRbTxnIDPns12S;
+  input [`XPI_ADDR_WIDTH-1:0] 	   XpiDRTRbAddrPns12S;
+  input [`RB_DATA_WIDTH-1:0] 	   XpiDRTRbDataLenPns12S;
+  input 			   XpiDRTRbTrdyPns12S;
+  
+  output [`RB_CMD_WIDTH-1:0] 	   XpiRbiCmdPsn11S;
+  output [2:0] 			   XpiRbiTxnIDPsn11S;
+  output 			   XpiRbiIrdyPsn11S;
+  output [`RB_DATA_WIDTH-1:0] 	   XpiRbiDataPsn11S;
+  output 			   XpiRbiTrdyPsn11S;
+  
+  // Ring Bus Signals //
+  input [`RB_CMD_WIDTH-1:0] 	   XpiRingBusUnitNCmdP11S;
+  input [`RB_TARGETID_WIDTH-1:0]   XpiRingBusUnitNTargetIDP11S;
+  input [`RB_ADDR_WIDTH-1:0] 	   XpiRingBusUnitNAddrCrStatusP11S;
+  input [`RB_DATA_WIDTH-1:0] 	   XpiRingBusUnitNDataLenP11S;
+  
+  output [`RB_CMD_WIDTH-1:0] 	   XpiRingBusIniCmdP11S;
+  output [`RB_TARGETID_WIDTH-1:0]  XpiRingBusIniTargetIDP11S;
+  output [`RB_ADDR_WIDTH-1:0] 	   XpiRingBusIniAddrCrStatusP11S;
+  output [`RB_DATA_WIDTH-1:0] 	   XpiRingBusIniDataLenP11S;
+  
+  //---- Wire Declaration ----
+  
+  wire [`RB_CMD_WIDTH-1:0] 	   XpiRingBusIniCmdP11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRingBusIniTargetIDP11S;
+  wire [`RB_ADDR_WIDTH-1:0] 	   XpiRingBusIniAddrCrStatusP11S;
+  wire [`RB_DATA_WIDTH-1:0] 	   XpiRingBusIniDataLenP11S;
+  
+  wire [`RB_CMD_WIDTH-1:0] 	   XpiRbiCmdPsn11S;
+  wire [`RB_DATA_WIDTH-1:0] 	   XpiRbiDataPsn11S;
+  wire 				   XpiRbiIrdyPsn11S;
+  wire 				   XpiRbiTrdyPsn11S;
+  wire [2:0] 			   XpiRbiTxnIDPsn11S;
+
+  wire 				   XpiRingBusIniIrdyP10S;
+  wire [`RB_DATA_WIDTH-1:0] 	   XpiRingBusIniDataLenP10S;
+  wire [2:0] 			   XpiRingBusIniTxnIDP10S;
+  
+  wire [`RB_CMD_WIDTH-1:0] 	   XpiRbiCmdP10S;
+  wire [`RB_DATA_WIDTH-1:0] 	   XpiRbiDataP10S;
+  wire [`RB_ADDR_WIDTH-1:0] 	   XpiRbiAddrP10S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDP10S;
+  
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRingBusIniTargetIDP10C;
+  wire [`RB_ADDR_WIDTH-1:0] 	   XpiRingBusIniAddrP10C;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRingBusIniTargetIDP10S;
+  wire [`RB_ADDR_WIDTH-1:0] 	   XpiRingBusIniAddrP10S;
+  wire [`RB_CMD_WIDTH-1:0] 	   XpiRingBusIniCmdP10S;
+    
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL1P11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL2P11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL3P11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL4P11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL5P11S;
+  wire [`RB_TARGETID_WIDTH-1:0]    XpiRbiTargetIDL6P11S;
+  
+  wire 				   XpiRbiTargetIDL1MatchP11C;
+  wire 				   XpiRbiTargetIDL2MatchP11C;
+  wire 				   XpiRbiTargetIDL3MatchP11C;
+  wire 				   XpiRbiTargetIDL4MatchP11C;
+  wire 				   XpiRbiTargetIDL5MatchP11C;
+  wire 				   XpiRbiTargetIDL6MatchP11C;
+  wire 				   XpiRbiTargetIDL1MatchP11S;
+  wire 				   XpiRbiTargetIDL2MatchP11S;
+  wire 				   XpiRbiTargetIDL3MatchP11S;
+  wire 				   XpiRbiTargetIDL4MatchP11S;
+  wire 				   XpiRbiTargetIDL5MatchP11S;
+  wire 				   XpiRbiTargetIDL6MatchP11S;
+  wire 				   XpiRbiTargetIDL1MatchP12C;
+  wire 				   XpiRbiTargetIDL2MatchP12C;
+  wire 				   XpiRbiTargetIDL3MatchP12C;
+  wire 				   XpiRbiTargetIDL4MatchP12C;
+  wire 				   XpiRbiTargetIDL5MatchP12C;
+  wire 				   XpiRbiTargetIDL6MatchP12C;
+  
+  wire				   XpiRbiIrdyP11C;
+  wire				   XpiRbiIrdyP12C;
+  wire 				   XpiRbiNewReqP11C;
+  wire 				   XpiRbiCtlRdReqP11C;
+  wire [`RB_CMD_WIDTH-1:0] 	   XpiRbiCmdP11C;
+  wire [`RB_DATA_WIDTH-1:0] 	   XpiRbiDataP11C;
+  
+  //---- Register Declaration ----
+  reg [2:0] 			   XpiRbiTxnIDP11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL1P11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL2P11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL3P11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL4P11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL5P11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	   XpiRbiTargetIDL6P11C;
+  
+  //==============================
+  //======== REQUEST PIPE ========
+  //==============================
+     
+  assign XpiRingBusIniTargetIDP10C = XpiDRTRbAddrPns12S[`XPI_ADDR_WIDTH-1:`RB_ADDR_WIDTH];
+  assign XpiRingBusIniAddrP10C     = XpiDRTRbAddrPns12S[`RB_ADDR_WIDTH-1:0];
+  
+DFFR #(8,8'b0) U1_dff (.q(XpiRingBusIniTargetIDP10S),.d(XpiRingBusIniTargetIDP10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(9,9'b0) U2_dff (.q(XpiRingBusIniAddrP10S),.d(XpiRingBusIniAddrP10C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(4,4'b0) U3_dff (.q(XpiRingBusIniCmdP10S),.d(XpiDRTRbCmdPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(3,3'b0) U4_dff (.q(XpiRingBusIniTxnIDP10S),.d(XpiDRTRbTxnIDPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U5_dff (.q(XpiRingBusIniDataLenP10S),.d(XpiDRTRbDataLenPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+DFFR #(1,1'b0) U6_dff (.q(XpiRingBusIniIrdyP10S),.d(XpiDRTRbIrdyPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------
+  //---- TargetID -> TxnID Table ----
+  //---------------------------------
+  //** TxnID Corresponding to a Specific TargetID is stored
+  //** in a Staging Flop. When Completion is received for that
+  //** particular Request, TxnID is Read Out based on the received
+  //** TargetID..This TxnID is used as DeMux Sel and send completion
+  //** to the respective Agent
+  
+  // Detecting New Request
+  assign XpiRbiNewReqP11C = (XpiRingBusIniIrdyP10S && (XpiRingBusIniCmdP10S != `NULL));
+  
+  //------------------------------------------------------------
+  //---- TargetID Storage corresponding to particular TxnID ----
+  //------------------------------------------------------------
+
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL1MatchP12C or XpiRbiTargetIDL1P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b001) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD) || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD)))
+	// New DMA0 Request, store latest TargetID 
+	XpiRbiTargetIDL1P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL1MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL1P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL1P11C = XpiRbiTargetIDL1P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U7_dff (.q(XpiRbiTargetIDL1P11S),.d(XpiRbiTargetIDL1P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL2MatchP12C or XpiRbiTargetIDL2P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b010) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD) || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD)))
+	// New DMA1 Request, store latest TargetID 
+	XpiRbiTargetIDL2P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL2MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL2P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL2P11C = XpiRbiTargetIDL2P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U8_dff (.q(XpiRbiTargetIDL2P11S),.d(XpiRbiTargetIDL2P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL3MatchP12C or XpiRbiTargetIDL3P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b011) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD) || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD)))
+	// New DESCDMA Request, store latest TargetID 
+	XpiRbiTargetIDL3P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL3MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL3P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL3P11C = XpiRbiTargetIDL3P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U9_dff (.q(XpiRbiTargetIDL3P11S),.d(XpiRbiTargetIDL3P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL4MatchP12C or XpiRbiTargetIDL4P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b100) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD)   || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD) || (XpiRingBusIniCmdP10S == `PKTRXXFR)))
+	// New PKTRX Request, store latest TargetID 
+	XpiRbiTargetIDL4P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL4MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL4P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL4P11C = XpiRbiTargetIDL4P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U10_dff (.q(XpiRbiTargetIDL4P11S),.d(XpiRbiTargetIDL4P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL5MatchP12C or XpiRbiTargetIDL5P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b101) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD) || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD)))
+	// New PKTTX Request, store latest TargetID 
+	XpiRbiTargetIDL5P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL5MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL5P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL5P11C = XpiRbiTargetIDL5P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U11_dff (.q(XpiRbiTargetIDL5P11S),.d(XpiRbiTargetIDL5P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  always @(/*AS*/XpiRbiIrdyP12C or XpiRbiNewReqP11C
+	   or XpiRbiTargetIDL6MatchP12C or XpiRbiTargetIDL6P11S
+	   or XpiRingBusIniCmdP10S or XpiRingBusIniTargetIDP10S
+	   or XpiRingBusIniTxnIDP10S)
+    begin
+      if (XpiRbiNewReqP11C && (XpiRingBusIniTxnIDP10S==3'b110) &&
+	  ((XpiRingBusIniCmdP10S == `RBRD) || (XpiRingBusIniCmdP10S == `RBWR) ||
+	   (XpiRingBusIniCmdP10S == `CTRLRD)))
+	// New CTLSLV Request, store latest TargetID 
+	XpiRbiTargetIDL6P11C = XpiRingBusIniTargetIDP10S;
+      else if (XpiRbiIrdyP12C && XpiRbiTargetIDL6MatchP12C)
+	// Reset TargetID upon receiving completion
+	XpiRbiTargetIDL6P11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbiTargetIDL6P11C = XpiRbiTargetIDL6P11S;
+    end // always @ (...
+  
+DFFR #(8,8'b0) U12_dff (.q(XpiRbiTargetIDL6P11S),.d(XpiRbiTargetIDL6P11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+    
+  //----------------------------------------------------
+  //---- XpiRbi-->RBB(unit 0) Output Register Stage ----
+  //----------------------------------------------------
+  
+DFFR #(32,32'b0) U13_dff (.q(XpiRingBusIniDataLenP11S),.d(XpiRingBusIniDataLenP10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(8,8'b0) U14_dff (.q(XpiRingBusIniTargetIDP11S),.d(XpiRingBusIniTargetIDP10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U15_dff (.q(XpiRingBusIniCmdP11S),.d(XpiRingBusIniCmdP10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(9,9'b0) U16_dff (.q(XpiRingBusIniAddrCrStatusP11S),.d(XpiRingBusIniAddrP10S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //===============================
+  //======== RESPONSE PIPE ========
+  //===============================
+  
+  // If Read Completion is received by XpiRbi from one of the Agents
+  // on the Ring Bus, forward the Completion Data to either DMA, TX
+  // or RX depending upon the Txn ID
+  
+  //--------------------------
+  //-- Input Register Stage --
+  //--------------------------
+  
+DFFR #(4,4'b0) U17_dff (.q(XpiRbiCmdP10S),.d(XpiRingBusUnitNCmdP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U18_dff (.q(XpiRbiDataP10S),.d(XpiRingBusUnitNDataLenP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(9,9'b0) U19_dff (.q(XpiRbiAddrP10S),.d(XpiRingBusUnitNAddrCrStatusP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(8,8'b0) U20_dff (.q(XpiRbiTargetIDP10S),.d(XpiRingBusUnitNTargetIDP11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //-----------------------------------------------
+  //---- Fake Control Register Read Completion ----
+  //-----------------------------------------------
+  // If Control Register Read is issued to a non existent 
+  // Ring Bus Agent, Read recirculates and returns to RBI,
+  // generate a Fake completion
+  
+  assign XpiRbiCtlRdReqP11C = (XpiRbiCmdP10S == `CTRLRD);
+  
+  assign XpiRbiCmdP11C = XpiRbiCtlRdReqP11C ?
+	 `RDCMP : XpiRbiCmdP10S;
+  
+  assign XpiRbiDataP11C = XpiRbiCtlRdReqP11C ? 
+	 {`RB_DATA_WIDTH{1'b0}} : XpiRbiDataP10S;
+  
+  //--------------------------------------------------------------
+  //---- Finding TxnID Corresponding to the Received TargetID ----
+  //--------------------------------------------------------------
+
+  // Assert XpiRbiIrdy if valid Read Completion or Credit Refresh
+  // is received on the Ring Bus.
+  
+  assign XpiRbiIrdyP11C = ((XpiRbiCmdP10S == `RDCMP)   ||
+			   (XpiRbiCmdP10S == `CRDTREF) ||
+			   XpiRbiCtlRdReqP11C);
+			   
+  assign XpiRbiTargetIDL1MatchP11C = (XpiRbiIrdyP11C && 
+				      (XpiRbiTargetIDP10S == XpiRbiTargetIDL1P11S));
+  
+  assign XpiRbiTargetIDL2MatchP11C = (XpiRbiIrdyP11C &&
+				      (XpiRbiTargetIDP10S == XpiRbiTargetIDL2P11S));
+  
+  assign XpiRbiTargetIDL3MatchP11C = (XpiRbiIrdyP11C && 
+				      (XpiRbiTargetIDP10S == XpiRbiTargetIDL3P11S));
+  
+  assign XpiRbiTargetIDL4MatchP11C = (XpiRbiIrdyP11C &&
+				      (XpiRbiTargetIDP10S == XpiRbiTargetIDL4P11S));
+  
+  assign XpiRbiTargetIDL5MatchP11C = (XpiRbiIrdyP11C && 
+				      (XpiRbiTargetIDP10S == XpiRbiTargetIDL5P11S));
+  
+  assign XpiRbiTargetIDL6MatchP11C = 
+	 ((XpiRbiIrdyP11C && (XpiRbiTargetIDP10S == XpiRbiTargetIDL6P11S)) ||
+	  XpiRbiCtlRdReqP11C);
+
+  // Flopping TargetID Match Indication
+DFFR #(1,1'b0) U21_dff (.q(XpiRbiTargetIDL1MatchP11S),.d(XpiRbiTargetIDL1MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U22_dff (.q(XpiRbiTargetIDL2MatchP11S),.d(XpiRbiTargetIDL2MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U23_dff (.q(XpiRbiTargetIDL3MatchP11S),.d(XpiRbiTargetIDL3MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U24_dff (.q(XpiRbiTargetIDL4MatchP11S),.d(XpiRbiTargetIDL4MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U25_dff (.q(XpiRbiTargetIDL5MatchP11S),.d(XpiRbiTargetIDL5MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U26_dff (.q(XpiRbiTargetIDL6MatchP11S),.d(XpiRbiTargetIDL6MatchP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiRbiTargetIDL1MatchP12C = 
+	 ((~XpiRbiTargetIDL1MatchP11C) && XpiRbiTargetIDL1MatchP11S);
+
+  assign XpiRbiTargetIDL2MatchP12C = 
+	 ((~XpiRbiTargetIDL2MatchP11C) && XpiRbiTargetIDL2MatchP11S);
+
+  assign XpiRbiTargetIDL3MatchP12C = 
+	 ((~XpiRbiTargetIDL3MatchP11C) && XpiRbiTargetIDL3MatchP11S);
+
+  assign XpiRbiTargetIDL4MatchP12C = 
+	 ((~XpiRbiTargetIDL4MatchP11C) && XpiRbiTargetIDL4MatchP11S);
+
+  assign XpiRbiTargetIDL5MatchP12C = 
+	 ((~XpiRbiTargetIDL5MatchP11C) && XpiRbiTargetIDL5MatchP11S);
+
+  assign XpiRbiTargetIDL6MatchP12C = 
+	 ((~XpiRbiTargetIDL6MatchP11C) && XpiRbiTargetIDL6MatchP11S);
+  
+  // End of Completion Pulse Detect 
+  assign XpiRbiIrdyP12C = ((~XpiRbiIrdyP11C) && XpiRbiIrdyPsn11S &&
+			   (XpiRingBusUnitNCmdP11S == `NULL));
+  
+  //--------------------------
+  //---- 6:1 TxnID Muxing ----
+  //--------------------------
+  
+  always @ (/*AS*/XpiRbiTargetIDL1MatchP11C
+	    or XpiRbiTargetIDL2MatchP11C or XpiRbiTargetIDL3MatchP11C
+	    or XpiRbiTargetIDL4MatchP11C or XpiRbiTargetIDL5MatchP11C
+	    or XpiRbiTargetIDL6MatchP11C)
+    begin
+      if (XpiRbiTargetIDL1MatchP11C)
+	XpiRbiTxnIDP11C = 3'b001;
+      else if (XpiRbiTargetIDL2MatchP11C)
+	XpiRbiTxnIDP11C = 3'b010;
+      else if (XpiRbiTargetIDL3MatchP11C)
+	XpiRbiTxnIDP11C = 3'b011;
+      else if (XpiRbiTargetIDL4MatchP11C)
+	XpiRbiTxnIDP11C = 3'b100;
+      else if (XpiRbiTargetIDL5MatchP11C)
+	XpiRbiTxnIDP11C = 3'b101;
+      else if (XpiRbiTargetIDL6MatchP11C)
+	XpiRbiTxnIDP11C = 3'b110;
+      else 
+	XpiRbiTxnIDP11C = 3'b000;
+    end // always @ (...
+  
+  //---------------------------
+  //-- Output Register Stage --
+  //---------------------------
+  
+DFFR #(4,4'b0) U27_dff (.q(XpiRbiCmdPsn11S),.d(XpiRbiCmdP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(3,3'b0) U28_dff (.q(XpiRbiTxnIDPsn11S),.d(XpiRbiTxnIDP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U29_dff (.q(XpiRbiDataPsn11S),.d(XpiRbiDataP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(1,1'b0) U30_dff (.q(XpiRbiIrdyPsn11S),.d(XpiRbiIrdyP11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiRbiTrdyPsn11S  = 1'b1;
+
+  //------------------------
+  //---- 0in Assertions ----
+  //------------------------
+
+  // 0in known_driven -var XpiDRTRbIrdyPns12S    -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTRbCmdPns12S     -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTRbTxnIDPns12S   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTRbAddrPns12S    -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTRbDataLenPns12S -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiDRTRbTrdyPns12S    -clock XpiCoreClk -reset GlCoreResetR00C
+                           
+  // 0in known_driven -var XpiRbiCmdPsn11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiTxnIDPsn11S	 -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiIrdyPsn11S	 -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiDataPsn11S	 -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiTrdyPsn11S	 -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiRingBusUnitNCmdP11S          -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusUnitNTargetIDP11S	   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusUnitNAddrCrStatusP11S -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusUnitNDataLenP11S	   -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiRingBusIniCmdP11S            -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusIniTargetIDP11S	   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusIniAddrCrStatusP11S   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusIniDataLenP11S	   -clock XpiCoreClk -reset GlCoreResetR00C
+
+endmodule
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:

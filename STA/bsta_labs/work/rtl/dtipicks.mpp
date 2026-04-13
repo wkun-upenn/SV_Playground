@@ -1,0 +1,465 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtipicks (
+   /*AUTOARG*/
+   // Outputs
+   DtiGetNewOverSelS, DtiFittestOversampleValidS, 
+   DtiFittestOversampleS, DtiPrimarySelReadyS, 
+   // Inputs
+   DtiCsixClk, DtiCsixSoftResetSynZ01SL, DtiDoTrainingC, 
+   DtiOverOneZ11S, DtiOverTwoZ11S, DtiPrefOverSelReadyS, 
+   DtiSuperSelForceEnS, DtiCycleThresholdS, DtiTransThresholdS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Indicate when a filtering period begins
+   output                             DtiGetNewOverSelS;
+
+   // Indicate when a filtering period ends
+   output                             DtiFittestOversampleValidS;
+
+   // Indicate which oversample should become the preferred sample point
+   output [`DTI_OSAMPLE_WIDTH-1:0]    DtiFittestOversampleS;
+
+   // Indicate whether the preferred sample point is ready yet
+   output                             DtiPrimarySelReadyS;
+
+
+   // Common inputs
+   input                              DtiCsixClk;
+   input                              DtiCsixSoftResetSynZ01SL;
+   input                              DtiDoTrainingC;
+
+   // Oversamples for each clock phase
+   input [`DTI_OSAMPLES-1:0]          DtiOverOneZ11S;
+   input [`DTI_OSAMPLES-1:0]          DtiOverTwoZ11S;
+
+   // Is the average clock length ready yet?
+   input                              DtiPrefOverSelReadyS;
+
+   // Forcing signal from software
+   input                             DtiSuperSelForceEnS;
+
+   // Programmable register values
+   input [`DTI_CYCLE_THRESHOLD_WIDTH-1:0] DtiCycleThresholdS;
+   input [`DTI_TRANS_THRESHOLD_WIDTH-1:0] DtiTransThresholdS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [`DTI_OSAMPLES-1:0]           DtiOverPrevZ11S;
+
+   wire [`DTI_OSAMPLES-1:0]           DtiTransPrevZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTransOneZ11C;
+   wire [`DTI_OSAMPLES-2:0]           DtiTransTwoZ11C;
+
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans0aZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans0bZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans1aZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans1bZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans2aZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans2bZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans3aZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans3bZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans4aZ11C;
+   wire [`DTI_OSAMPLES-1:0]           DtiTrans4bZ11C;
+
+   wire [`DTI_FITNESS_WIDTH-1:0]      DtiFitness0Z13S;
+   wire [`DTI_FITNESS_WIDTH-1:0]      DtiFitness1Z13S;
+   wire [`DTI_FITNESS_WIDTH-1:0]      DtiFitness2Z13S;
+   wire [`DTI_FITNESS_WIDTH-1:0]      DtiFitness3Z13S;
+   wire [`DTI_FITNESS_WIDTH-1:0]      DtiFitness4Z13S;
+
+   wire [`DTI_CYCLE_COUNT_WIDTH-1:0]  DtiIncCycleCountZ11C;
+   wire [`DTI_CYCLE_COUNT_WIDTH-1:0]  DtiNextCycleCountZ11C;
+   wire [`DTI_CYCLE_COUNT_WIDTH-1:0]  DtiCycleCountZ12S;
+
+   wire                               DtiTransCountaZ11C;
+   wire                               DtiTransCountbZ11C;
+
+   wire                               DtiTransCountCarryZ11C;
+   wire [`DTI_TRANS_COUNT_WIDTH-2:0]  DtiIncTransCountZ11C;
+
+   wire [`DTI_TRANS_COUNT_WIDTH-1:0]  DtiNewTransCountZ11C;
+   wire [`DTI_TRANS_COUNT_WIDTH-1:0]  DtiNextTransCountZ11C;
+   wire [`DTI_TRANS_COUNT_WIDTH-1:0]  DtiTransCountZ12S;
+
+   reg                                DtiEndCycleZ12C;
+   reg                                DtiEndTransZ12C;
+
+   wire                               DtiEndFitZ12C;
+   wire                               DtiEndFitZ13S;
+   wire                               DtiEndFitZ14S;
+
+   wire                               Dti0Beats1Z13C;
+   wire                               Dti0Beats2Z13C;
+   wire                               Dti0Beats3Z13C;
+   wire                               Dti0Beats4Z13C;
+   wire                               Dti1Beats2Z13C;
+   wire                               Dti1Beats3Z13C;
+   wire                               Dti1Beats4Z13C;
+   wire                               Dti2Beats3Z13C;
+   wire                               Dti2Beats4Z13C;
+   wire                               Dti3Beats4Z13C;
+
+   wire                               Dti0Beats1Z14S;
+   wire                               Dti0Beats2Z14S;
+   wire                               Dti0Beats3Z14S;
+   wire                               Dti0Beats4Z14S;
+   wire                               Dti1Beats2Z14S;
+   wire                               Dti1Beats3Z14S;
+   wire                               Dti1Beats4Z14S;
+   wire                               Dti2Beats3Z14S;
+   wire                               Dti2Beats4Z14S;
+   wire                               Dti3Beats4Z14S;
+
+   wire [`DTI_OSAMPLES-1:0]           DtiPickZ14C;
+   wire [`DTI_OSAMPLE_WIDTH-1:0]      DtiFittestOversampleZ14C;
+   wire                               DtiNextPrimarySelReadyC;
+
+   wire                               DtiBeginFitZ08C;
+   wire                               DtiBeginFitZ09S;
+   wire                               DtiBeginFitZ10S;
+   wire                               DtiBeginFitZ11S;
+   wire                               DtiBeginFitZ12S;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // Keep the oversamples from the previous phase so that we can generate
+   // a run of 10 transitions to examine for each oversample.
+DFF #(5) U1_dff (.q(DtiOverPrevZ11S),.d(DtiOverTwoZ11S),.clk(DtiCsixClk));
+
+
+   // Find transitions.  The pattern starts with Trans[0] = Over[0] ^ Over[1].
+   // Trans[4] wraps to the next phase.  There is no DtiTransTwoS[4] because
+   // we don't need it (and because there's no "next phase" to calculate the
+   // transition with).
+
+   assign DtiTransPrevZ11C =
+          DtiOverPrevZ11S[`DTI_OSAMPLES-1:0] ^
+          {DtiOverOneZ11S[0], DtiOverPrevZ11S[`DTI_OSAMPLES-1:1]};
+
+   assign DtiTransOneZ11C =
+          DtiOverOneZ11S[`DTI_OSAMPLES-1:0] ^
+          {DtiOverTwoZ11S[0], DtiOverOneZ11S[`DTI_OSAMPLES-1:1]};
+
+   assign DtiTransTwoZ11C =
+          DtiOverTwoZ11S[`DTI_OSAMPLES-2:0] ^
+          DtiOverTwoZ11S[`DTI_OSAMPLES-1:1];
+
+
+   // At this point the transitions are grouped into linear sets with
+   // different phase boundaries depending on which oversample is using
+   // them for calculating fitness.
+
+   assign DtiTrans0aZ11C = DtiTransPrevZ11C[4:0];
+   assign DtiTrans0bZ11C = DtiTransOneZ11C[4:0];
+
+   assign DtiTrans1aZ11C = {DtiTransOneZ11C[0], DtiTransPrevZ11C[4:1]};
+   assign DtiTrans1bZ11C = {DtiTransTwoZ11C[0], DtiTransOneZ11C[4:1]};
+
+   assign DtiTrans2aZ11C = {DtiTransOneZ11C[1:0], DtiTransPrevZ11C[4:2]};
+   assign DtiTrans2bZ11C = {DtiTransTwoZ11C[1:0], DtiTransOneZ11C[4:2]};
+
+   assign DtiTrans3aZ11C = {DtiTransOneZ11C[2:0], DtiTransPrevZ11C[4:3]};
+   assign DtiTrans3bZ11C = {DtiTransTwoZ11C[2:0], DtiTransOneZ11C[4:3]};
+
+   assign DtiTrans4aZ11C = {DtiTransOneZ11C[3:0], DtiTransPrevZ11C[4]};
+   assign DtiTrans4bZ11C = {DtiTransTwoZ11C[3:0], DtiTransOneZ11C[4]};
+
+/* dtifitcalcs AUTO_TEMPLATE (
+      // Outputs
+      .DtiFitnessZ13S  (DtiFitness@Z13S[]),
+      // Inputs
+      .DtiCsixClk      (DtiCsixClk),
+      .DtiTransaZ11C   (DtiTrans@aZ11C[]),
+      .DtiTransbZ11C   (DtiTrans@bZ11C[]),
+      .DtiBeginFitZ12S (DtiBeginFitZ12S));
+*/
+
+   dtifitcalcs U0_dtifitcalcs (/*AUTOINST*/
+                               // Outputs
+                               .DtiFitnessZ13S(DtiFitness0Z13S[`DTI_FITNESS_WIDTH-1:0]), // Templated
+                               // Inputs
+                               .DtiCsixClk(DtiCsixClk),          // Templated
+                               .DtiTransaZ11C(DtiTrans0aZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiTransbZ11C(DtiTrans0bZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiBeginFitZ12S(DtiBeginFitZ12S)); // Templated
+
+
+   dtifitcalcs U1_dtifitcalcs (/*AUTOINST*/
+                               // Outputs
+                               .DtiFitnessZ13S(DtiFitness1Z13S[`DTI_FITNESS_WIDTH-1:0]), // Templated
+                               // Inputs
+                               .DtiCsixClk(DtiCsixClk),          // Templated
+                               .DtiTransaZ11C(DtiTrans1aZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiTransbZ11C(DtiTrans1bZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiBeginFitZ12S(DtiBeginFitZ12S)); // Templated
+
+
+   dtifitcalcs U2_dtifitcalcs (/*AUTOINST*/
+                               // Outputs
+                               .DtiFitnessZ13S(DtiFitness2Z13S[`DTI_FITNESS_WIDTH-1:0]), // Templated
+                               // Inputs
+                               .DtiCsixClk(DtiCsixClk),          // Templated
+                               .DtiTransaZ11C(DtiTrans2aZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiTransbZ11C(DtiTrans2bZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiBeginFitZ12S(DtiBeginFitZ12S)); // Templated
+
+
+   dtifitcalcs U3_dtifitcalcs (/*AUTOINST*/
+                               // Outputs
+                               .DtiFitnessZ13S(DtiFitness3Z13S[`DTI_FITNESS_WIDTH-1:0]), // Templated
+                               // Inputs
+                               .DtiCsixClk(DtiCsixClk),          // Templated
+                               .DtiTransaZ11C(DtiTrans3aZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiTransbZ11C(DtiTrans3bZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiBeginFitZ12S(DtiBeginFitZ12S)); // Templated
+
+
+   dtifitcalcs U4_dtifitcalcs (/*AUTOINST*/
+                               // Outputs
+                               .DtiFitnessZ13S(DtiFitness4Z13S[`DTI_FITNESS_WIDTH-1:0]), // Templated
+                               // Inputs
+                               .DtiCsixClk(DtiCsixClk),          // Templated
+                               .DtiTransaZ11C(DtiTrans4aZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiTransbZ11C(DtiTrans4bZ11C[`DTI_OSAMPLES-1:0]), // Templated
+                               .DtiBeginFitZ12S(DtiBeginFitZ12S)); // Templated
+
+
+   // Count the number of cycles during which the transition history is
+   // kept.  After a programmable threshold of cycles *and* a programmable
+   // threshold of transitions, the fitness average is used to pick a
+   // preferred oversample.  The cycle count saturates at the maximum value
+   // in case we still have to wait for the transition threshold.
+
+INC #(11) U2_inc (.s(DtiIncCycleCountZ11C),.a(DtiCycleCountZ12S));
+
+
+
+
+   assign DtiNextCycleCountZ11C =
+          DtiBeginFitZ11S      ? {`DTI_CYCLE_COUNT_WIDTH{1'b0}} :
+          (&DtiCycleCountZ12S) ? {`DTI_CYCLE_COUNT_WIDTH{1'b1}} :
+                                 DtiIncCycleCountZ11C;
+
+DFF #(11) U3_dff (.q(DtiCycleCountZ12S),.d(DtiNextCycleCountZ11C),.clk(DtiCsixClk));
+
+
+   // Count the number of phases that contain transitions.  Certain transitions
+   // seen by the fitness calculations for oversamples 1-4 aren't counted
+   // until the next cycle, so those oversamples get a slight advantage.
+   // This is vaguely compensated for by giving the earlier oversamples the
+   // benefit in case of a tie.
+
+   assign DtiTransCountaZ11C = (|DtiTransPrevZ11C);
+   assign DtiTransCountbZ11C = (|DtiTransOneZ11C);
+
+ADD #(1) U4_add (.s({DtiTransCountCarryZ11C, DtiNewTransCountZ11C[0]}),.a(DtiTransCountaZ11C),.b(DtiTransCountbZ11C),.ci(DtiTransCountZ12S[0]));
+
+
+
+
+
+
+INC #(11) U5_inc (.s(DtiIncTransCountZ11C),.a(DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:1]));
+
+
+
+
+   assign DtiNewTransCountZ11C[`DTI_TRANS_COUNT_WIDTH-1:1] =
+          DtiTransCountCarryZ11C ?
+             DtiIncTransCountZ11C :
+             DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:1];
+
+   assign DtiNextTransCountZ11C =
+          DtiBeginFitZ11S      ? {`DTI_TRANS_COUNT_WIDTH{1'b0}} :
+          (&DtiTransCountZ12S) ? {`DTI_TRANS_COUNT_WIDTH{1'b1}} :
+                                DtiNewTransCountZ11C;
+
+DFF #(12) U6_dff (.q(DtiTransCountZ12S),.d(DtiNextTransCountZ11C),.clk(DtiCsixClk));
+
+
+   // Have the cycle count and transition count both reached their thresholds?
+
+   always @(/*AUTOSENSE*/DtiCycleCountZ12S or DtiCycleThresholdS) begin
+      case (DtiCycleThresholdS)
+        3'd0: DtiEndCycleZ12C = 1'b1; // no cycle count minimum
+        3'd1: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:
+                                                   `DTI_CYCLE_COUNT_WIDTH-6];
+        3'd2: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:
+                                                   `DTI_CYCLE_COUNT_WIDTH-5];
+        3'd3: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:
+                                                   `DTI_CYCLE_COUNT_WIDTH-4];
+        3'd4: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:
+                                                   `DTI_CYCLE_COUNT_WIDTH-3];
+        3'd5: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:
+                                                   `DTI_CYCLE_COUNT_WIDTH-2];
+        3'd6: DtiEndCycleZ12C = |DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1];
+        3'd7: DtiEndCycleZ12C = &DtiCycleCountZ12S[`DTI_CYCLE_COUNT_WIDTH-1:1];
+        default: DtiEndCycleZ12C = 1'bx;
+      endcase // case(3'b000)
+   end // always @(...)
+
+   always @(/*AUTOSENSE*/DtiTransCountZ12S or DtiTransThresholdS) begin
+      case (DtiTransThresholdS)
+        3'd0: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:0];
+        3'd1: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:
+                                                   `DTI_TRANS_COUNT_WIDTH-6];
+        3'd2: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:
+                                                   `DTI_TRANS_COUNT_WIDTH-5];
+        3'd3: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:
+                                                   `DTI_TRANS_COUNT_WIDTH-4];
+        3'd4: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:
+                                                   `DTI_TRANS_COUNT_WIDTH-3];
+        3'd5: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:
+                                                   `DTI_TRANS_COUNT_WIDTH-2];
+        3'd6: DtiEndTransZ12C = |DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1];
+        3'd7: DtiEndTransZ12C = &DtiTransCountZ12S[`DTI_TRANS_COUNT_WIDTH-1:0];
+        default: DtiEndTransZ12C = 1'bx;
+      endcase // case(3'b000)
+   end // always @(...)
+
+   assign DtiEndFitZ12C = DtiEndCycleZ12C & DtiEndTransZ12C &
+                          ~DtiEndFitZ13S & ~DtiEndFitZ14S & ~DtiBeginFitZ09S &
+                          ~DtiBeginFitZ10S & ~DtiBeginFitZ11S;
+
+DFF #(1) U7_dff (.q(DtiEndFitZ13S),.d(DtiEndFitZ12C),.clk(DtiCsixClk));
+
+
+   // At the end of the fitness period, see which oversample is most fit.
+
+   assign Dti0Beats1Z13C = (DtiFitness0Z13S >= DtiFitness1Z13S);
+   assign Dti0Beats2Z13C = (DtiFitness0Z13S >= DtiFitness2Z13S);
+   assign Dti0Beats3Z13C = (DtiFitness0Z13S >= DtiFitness3Z13S);
+   assign Dti0Beats4Z13C = (DtiFitness0Z13S >= DtiFitness4Z13S);
+
+   assign Dti1Beats2Z13C = (DtiFitness1Z13S >= DtiFitness2Z13S);
+   assign Dti1Beats3Z13C = (DtiFitness1Z13S >= DtiFitness3Z13S);
+   assign Dti1Beats4Z13C = (DtiFitness1Z13S >= DtiFitness4Z13S);
+
+   assign Dti2Beats3Z13C = (DtiFitness2Z13S >= DtiFitness3Z13S);
+   assign Dti2Beats4Z13C = (DtiFitness2Z13S >= DtiFitness4Z13S);
+
+   assign Dti3Beats4Z13C = (DtiFitness3Z13S >= DtiFitness4Z13S);
+
+
+DFF #(1) U8_dff (.q(Dti0Beats1Z14S),.d(Dti0Beats1Z13C),.clk(DtiCsixClk));
+DFF #(1) U9_dff (.q(Dti0Beats2Z14S),.d(Dti0Beats2Z13C),.clk(DtiCsixClk));
+DFF #(1) U10_dff (.q(Dti0Beats3Z14S),.d(Dti0Beats3Z13C),.clk(DtiCsixClk));
+DFF #(1) U11_dff (.q(Dti0Beats4Z14S),.d(Dti0Beats4Z13C),.clk(DtiCsixClk));
+
+DFF #(1) U12_dff (.q(Dti1Beats2Z14S),.d(Dti1Beats2Z13C),.clk(DtiCsixClk));
+DFF #(1) U13_dff (.q(Dti1Beats3Z14S),.d(Dti1Beats3Z13C),.clk(DtiCsixClk));
+DFF #(1) U14_dff (.q(Dti1Beats4Z14S),.d(Dti1Beats4Z13C),.clk(DtiCsixClk));
+
+DFF #(1) U15_dff (.q(Dti2Beats3Z14S),.d(Dti2Beats3Z13C),.clk(DtiCsixClk));
+DFF #(1) U16_dff (.q(Dti2Beats4Z14S),.d(Dti2Beats4Z13C),.clk(DtiCsixClk));
+
+DFF #(1) U17_dff (.q(Dti3Beats4Z14S),.d(Dti3Beats4Z13C),.clk(DtiCsixClk));
+
+DFF #(1) U18_dff (.q(DtiEndFitZ14S),.d(DtiEndFitZ13S),.clk(DtiCsixClk));
+
+
+   // 0in one_hot -var DtiPickZ14C -active DtiEndFitZ14S -clock DtiCsixClk
+
+   assign DtiPickZ14C[0] =
+          Dti0Beats1Z14S & Dti0Beats2Z14S & Dti0Beats3Z14S & Dti0Beats4Z14S;
+
+   assign DtiPickZ14C[1] =
+          ~Dti0Beats1Z14S & Dti1Beats2Z14S & Dti1Beats3Z14S & Dti1Beats4Z14S;
+
+   assign DtiPickZ14C[2] =
+          ~Dti0Beats2Z14S & ~Dti1Beats2Z14S & Dti2Beats3Z14S & Dti2Beats4Z14S;
+
+   assign DtiPickZ14C[3] =
+          ~Dti0Beats3Z14S & ~Dti1Beats3Z14S & ~Dti2Beats3Z14S & Dti3Beats4Z14S;
+
+   assign DtiPickZ14C[4] =
+          ~Dti0Beats4Z14S & ~Dti1Beats4Z14S & ~Dti2Beats4Z14S &~Dti3Beats4Z14S;
+
+   assign DtiFittestOversampleZ14C =
+          ({3{DtiPickZ14C[0]}} & 3'd0) |
+          ({3{DtiPickZ14C[1]}} & 3'd1) |
+          ({3{DtiPickZ14C[2]}} & 3'd2) |
+          ({3{DtiPickZ14C[3]}} & 3'd3) |
+          ({3{DtiPickZ14C[4]}} & 3'd4);
+
+
+DFF #(1) U19_dff (.q(DtiFittestOversampleValidS),.d(DtiEndFitZ14S),.clk(DtiCsixClk));
+
+
+DFF #(3) U20_dff (.q(DtiFittestOversampleS),.d(DtiFittestOversampleZ14C),.clk(DtiCsixClk));
+
+
+
+   // Let dticombines know when the first fittest oversample has been chosen.
+   // One cycle after all bits have picked a fittest oversample, the first
+   // primary samples will be ready for examination.  Or it can be overridden
+   // by a forced value from software.
+   assign DtiNextPrimarySelReadyC =
+          DtiDoTrainingC & (DtiPrimarySelReadyS |
+                            DtiFittestOversampleValidS |
+                            DtiSuperSelForceEnS);
+
+DFFR #(1,1'b0) U21_dff (.q(DtiPrimarySelReadyS),.d(DtiNextPrimarySelReadyC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+
+   // Start a new fitness-averaging period.  Until the clock length has
+   // been determined, we force constant restarts.
+
+   assign DtiBeginFitZ08C  = DtiEndFitZ14S | ~DtiPrefOverSelReadyS;
+
+DFF #(1) U22_dff (.q(DtiBeginFitZ09S),.d(DtiBeginFitZ08C),.clk(DtiCsixClk));
+
+   assign DtiGetNewOverSelS = DtiBeginFitZ09S;
+
+DFF #(1) U23_dff (.q(DtiBeginFitZ10S),.d(DtiBeginFitZ09S),.clk(DtiCsixClk));
+DFF #(1) U24_dff (.q(DtiBeginFitZ11S),.d(DtiBeginFitZ10S),.clk(DtiCsixClk));
+DFF #(1) U25_dff (.q(DtiBeginFitZ12S),.d(DtiBeginFitZ11S),.clk(DtiCsixClk));
+
+
+endmodule // dtipicks
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jun  4 12:00:00 2002 : created
+//
+// $Log: dtipicks.v,v $
+// Revision 1.5  2002/08/08 20:07:09  chris
+// Fix zero-in assertions to use the right clock
+//
+// Revision 1.4  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.3  2002/07/29 18:44:10  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.2  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

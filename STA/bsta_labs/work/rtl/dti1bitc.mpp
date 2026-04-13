@@ -1,0 +1,213 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+module dti1bitc (
+   /*AUTOARG*/
+   // Outputs
+   DtiHistoryBit8C, DtiHistoryBit7C, DtiHistoryBit6S, 
+   DtiHistoryBit5S, DtiHistoryBit4S, DtiHistoryBit3S, 
+   DtiDeskewedBit1C, DtiDeskewedBit0C, DtiDeskewFailureC, 
+   DtiBitCtrlS, DtiPrimarySelReadyS, 
+   // Inputs
+   DtiWrDataS, DtiTransThresholdS, DtiTCWBitC, DtiSuperTwoS, 
+   DtiSuperOneS, DtiPrefOverSelS, DtiPrefOverSelReadyS, 
+   DtiGetNewPrimarySelC, DtiFirstTDWC, DtiDoTrainingC, 
+   DtiCycleThresholdS, DtiCsixSoftResetSynZ01SL, DtiCsixClk, 
+   DtiBitWrEnC
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                DtiBitWrEnC;            // To U_dtibitctrls of dtibitctrls.v
+   input                DtiCsixClk;             // To U_dtiovers of dtiovers.v, ...
+   input                DtiCsixSoftResetSynZ01SL;// To U_dtipicks of dtipicks.v, ...
+   input [`DTI_CYCLE_THRESHOLD_WIDTH-1:0]DtiCycleThresholdS;// To U_dtipicks of dtipicks.v
+   input                DtiDoTrainingC;         // To U_dtipicks of dtipicks.v
+   input                DtiFirstTDWC;           // To U_dtideskews of dtideskews.v
+   input                DtiGetNewPrimarySelC;   // To U_dtiovers of dtiovers.v
+   input                DtiPrefOverSelReadyS;   // To U_dtipicks of dtipicks.v
+   input [`DTI_OSAMPLE_SEL_WIDTH-1:0]DtiPrefOverSelS;// To U_dtiovers of dtiovers.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOneS;       // To U_dtiovers of dtiovers.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwoS;       // To U_dtiovers of dtiovers.v
+   input                DtiTCWBitC;             // To U_dtideskews of dtideskews.v
+   input [`DTI_TRANS_THRESHOLD_WIDTH-1:0]DtiTransThresholdS;// To U_dtipicks of dtipicks.v
+   input [10:0]         DtiWrDataS;             // To U_dtibitctrls of dtibitctrls.v
+   // End of automatics
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [`DTI_BIT_CTRL_WIDTH-1:0]DtiBitCtrlS; // From U_dtibitctrls of dtibitctrls.v
+   output               DtiDeskewFailureC;      // From U_dtideskews of dtideskews.v
+   output               DtiDeskewedBit0C;       // From U_dtideskews of dtideskews.v
+   output               DtiDeskewedBit1C;       // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit3S;        // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit4S;        // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit5S;        // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit6S;        // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit7C;        // From U_dtideskews of dtideskews.v
+   output               DtiHistoryBit8C;        // From U_dtideskews of dtideskews.v
+   // End of automatics
+
+   // Force this signals to output even though it is also used internally.
+   output               DtiPrimarySelReadyS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [2:0]           DtiDeskewPointS;        // From U_dtideskews of dtideskews.v
+   wire                 DtiDeskewReadyS;        // From U_dtideskews of dtideskews.v
+   wire                 DtiDeskewSelForceEnS;   // From U_dtibitctrls of dtibitctrls.v
+   wire [2:0]           DtiDeskewSelForceValueS;// From U_dtibitctrls of dtibitctrls.v
+   wire [`DTI_OSAMPLE_WIDTH-1:0]DtiFittestOversampleS;// From U_dtipicks of dtipicks.v
+   wire                 DtiFittestOversampleValidS;// From U_dtipicks of dtipicks.v
+   wire                 DtiGetNewOverSelS;      // From U_dtipicks of dtipicks.v
+   wire [`DTI_OSAMPLES-1:0]DtiOverOneZ11S;      // From U_dtiovers of dtiovers.v
+   wire [`DTI_OSAMPLES-1:0]DtiOverTwoZ11S;      // From U_dtiovers of dtiovers.v
+   wire [`DTI_SSAMPLE_WIDTH-1:0]DtiPrefPrimarySelS;// From U_dtiovers of dtiovers.v
+   wire                 DtiSampleOneZ10C;       // From U_dtiovers of dtiovers.v
+   wire                 DtiSampleTwoZ10C;       // From U_dtiovers of dtiovers.v
+   wire                 DtiSuperSelForceEnS;    // From U_dtibitctrls of dtibitctrls.v
+   wire [`DTI_SSAMPLE_WIDTH-1:0]DtiSuperSelForceValueS;// From U_dtibitctrls of dtibitctrls.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   // Module Name: dtiovers
+   // Instance Name: U_dtiovers
+   // Description: Mux to oversamples and selected samples
+
+   dtiovers U_dtiovers (/*AUTOINST*/
+                        // Outputs
+                        .DtiOverOneZ11S (DtiOverOneZ11S[`DTI_OSAMPLES-1:0]),
+                        .DtiOverTwoZ11S (DtiOverTwoZ11S[`DTI_OSAMPLES-1:0]),
+                        .DtiSampleOneZ10C(DtiSampleOneZ10C),
+                        .DtiSampleTwoZ10C(DtiSampleTwoZ10C),
+                        .DtiPrefPrimarySelS(DtiPrefPrimarySelS[`DTI_SSAMPLE_WIDTH-1:0]),
+                        // Inputs
+                        .DtiCsixClk     (DtiCsixClk),
+                        .DtiSuperOneS   (DtiSuperOneS[`DTI_SSAMPLES-1:0]),
+                        .DtiSuperTwoS   (DtiSuperTwoS[`DTI_SSAMPLES-1:0]),
+                        .DtiPrefOverSelS(DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+                        .DtiGetNewOverSelS(DtiGetNewOverSelS),
+                        .DtiFittestOversampleValidS(DtiFittestOversampleValidS),
+                        .DtiFittestOversampleS(DtiFittestOversampleS[`DTI_OSAMPLE_WIDTH-1:0]),
+                        .DtiGetNewPrimarySelC(DtiGetNewPrimarySelC),
+                        .DtiSuperSelForceEnS(DtiSuperSelForceEnS),
+                        .DtiSuperSelForceValueS(DtiSuperSelForceValueS[`DTI_SSAMPLE_WIDTH-1:0]));
+
+
+   // Module Name: dtipicks
+   // Instance Name: U_dtipicks
+   // Description: Pick the best sample point
+
+   dtipicks U_dtipicks (/*AUTOINST*/
+                        // Outputs
+                        .DtiGetNewOverSelS(DtiGetNewOverSelS),
+                        .DtiFittestOversampleValidS(DtiFittestOversampleValidS),
+                        .DtiFittestOversampleS(DtiFittestOversampleS[`DTI_OSAMPLE_WIDTH-1:0]),
+                        .DtiPrimarySelReadyS(DtiPrimarySelReadyS),
+                        // Inputs
+                        .DtiCsixClk     (DtiCsixClk),
+                        .DtiCsixSoftResetSynZ01SL(DtiCsixSoftResetSynZ01SL),
+                        .DtiDoTrainingC (DtiDoTrainingC),
+                        .DtiOverOneZ11S (DtiOverOneZ11S[`DTI_OSAMPLES-1:0]),
+                        .DtiOverTwoZ11S (DtiOverTwoZ11S[`DTI_OSAMPLES-1:0]),
+                        .DtiPrefOverSelReadyS(DtiPrefOverSelReadyS),
+                        .DtiSuperSelForceEnS(DtiSuperSelForceEnS),
+                        .DtiCycleThresholdS(DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+                        .DtiTransThresholdS(DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]));
+
+
+   // Module Name: dtideskews
+   // Instance Name: U_dtideskews
+   // Description: Select two deskewed samples from the history of samples
+
+   dtideskews U_dtideskews (/*AUTOINST*/
+                            // Outputs
+                            .DtiHistoryBit8C(DtiHistoryBit8C),
+                            .DtiHistoryBit7C(DtiHistoryBit7C),
+                            .DtiHistoryBit6S(DtiHistoryBit6S),
+                            .DtiHistoryBit5S(DtiHistoryBit5S),
+                            .DtiHistoryBit4S(DtiHistoryBit4S),
+                            .DtiHistoryBit3S(DtiHistoryBit3S),
+                            .DtiDeskewedBit0C(DtiDeskewedBit0C),
+                            .DtiDeskewedBit1C(DtiDeskewedBit1C),
+                            .DtiDeskewFailureC(DtiDeskewFailureC),
+                            .DtiDeskewPointS(DtiDeskewPointS[2:0]),
+                            .DtiDeskewReadyS(DtiDeskewReadyS),
+                            // Inputs
+                            .DtiCsixClk (DtiCsixClk),
+                            .DtiCsixSoftResetSynZ01SL(DtiCsixSoftResetSynZ01SL),
+                            .DtiSampleOneZ10C(DtiSampleOneZ10C),
+                            .DtiSampleTwoZ10C(DtiSampleTwoZ10C),
+                            .DtiFirstTDWC(DtiFirstTDWC),
+                            .DtiTCWBitC (DtiTCWBitC),
+                            .DtiDeskewSelForceEnS(DtiDeskewSelForceEnS),
+                            .DtiDeskewSelForceValueS(DtiDeskewSelForceValueS[2:0]));
+
+
+   // Module Name: dtibitctrls
+   // Instance Name: U_dtibitctrls
+   // Description: Handle one bit's control register
+
+   dtibitctrls U_dtibitctrls (/*AUTOINST*/
+                              // Outputs
+                              .DtiBitCtrlS(DtiBitCtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+                              .DtiSuperSelForceEnS(DtiSuperSelForceEnS),
+                              .DtiSuperSelForceValueS(DtiSuperSelForceValueS[`DTI_SSAMPLE_WIDTH-1:0]),
+                              .DtiDeskewSelForceEnS(DtiDeskewSelForceEnS),
+                              .DtiDeskewSelForceValueS(DtiDeskewSelForceValueS[2:0]),
+                              // Inputs
+                              .DtiCsixClk(DtiCsixClk),
+                              .DtiCsixSoftResetSynZ01SL(DtiCsixSoftResetSynZ01SL),
+                              .DtiBitWrEnC(DtiBitWrEnC),
+                              .DtiWrDataS(DtiWrDataS[10:0]),
+                              .DtiPrefPrimarySelS(DtiPrefPrimarySelS[`DTI_SSAMPLE_WIDTH-1:0]),
+                              .DtiPrimarySelReadyS(DtiPrimarySelReadyS),
+                              .DtiDeskewPointS(DtiDeskewPointS[2:0]),
+                              .DtiDeskewReadyS(DtiDeskewReadyS));
+
+
+endmodule // dti1bitc
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Mar 18 12:00:00 2002 : created
+//
+// $Log: dti1bitc.v,v $
+// Revision 1.5  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.4  2002/07/29 18:44:10  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.3  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.2  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//
+// Revision 1.1  2002/03/19 22:10:52  chris
+// Initial check-in
+//

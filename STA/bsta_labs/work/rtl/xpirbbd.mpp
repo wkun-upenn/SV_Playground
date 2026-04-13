@@ -1,0 +1,965 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpirbbd ( /*AUTOARG*/
+   // Outputs
+   XpiRingBusBlkOutCmdP11S, XpiRingBusBlkOutTargetIDP11S, 
+   XpiRingBusBlkOutAddrCrStatusP11S, XpiRingBusBlkOutDataLenP11S, 
+   XpiRbbNewReqP11S, XpiRbbTargetIDP11S, XpiRbbCmdP11S, 
+   XpiRbbAddrP11S, XpiRbbDataLenP11S, XpiRbbRdy4DataP11S, 
+   XpiRbbIFifoEmptyP11S, XpiRbbCtlWrRdyP11S, XpiRbbCtlWrDataP11S, 
+   XpiRbbCtlRdRdyP11S, XpiRbbCtlWrRdOffsetP11S, 
+   XpiRbbCtlRdy4DataP11S, 
+   // Inputs
+   XpiCoreClk, GlCoreResetR00C, XpiAGTID, XpiRingBusBlkInCmdP11S, 
+   XpiRingBusBlkInTargetIDP11S, XpiRingBusBlkInAddrCrStatusP11S, 
+   XpiRingBusBlkInDataLenP11S, XpiGmiNewRespP14S, XpiGmiDataP14S, 
+   XpiGmiStatusP14S, XpiGmiTargetIDP14S, XpiGmiCmdP14S, 
+   XpiGmiIFifoRdEnP10S, XpiCriDataRdyP10S, XpiCriDataP10S, 
+   XpiCriRdy2RecvP10S
+   );
+ 
+  parameter 	  RBB_FIFO_DEPTH      = 32;
+  parameter 	  RBB_FIFO_ADDR_WIDTH = 5;
+  parameter 	  RBB_REQFIFO_WIDTH   = 41;  
+  parameter 	  RBB_RESPFIFO_WIDTH  = 32;
+  
+  //=====================================
+  //========  Interface Signals  ========
+  //=====================================
+  
+  // Global Signals 
+  input                           XpiCoreClk;
+  input 			  GlCoreResetR00C;
+  input [4:0] 			  XpiAGTID; // surefire lint_off_line UDDICU
+  
+  //==== RBI - RBB Interface====
+  
+  input [`RB_CMD_WIDTH-1:0] 	  XpiRingBusBlkInCmdP11S;
+  input [`RB_TARGETID_WIDTH-1:0]  XpiRingBusBlkInTargetIDP11S;
+  input [`RB_ADDR_WIDTH-1:0] 	  XpiRingBusBlkInAddrCrStatusP11S;
+  input [`RB_DATA_WIDTH-1:0] 	  XpiRingBusBlkInDataLenP11S;
+  
+  //==== RBB - RBB Interface ====
+  
+  output [`RB_CMD_WIDTH-1:0] 	  XpiRingBusBlkOutCmdP11S;
+  output [`RB_TARGETID_WIDTH-1:0] XpiRingBusBlkOutTargetIDP11S;
+  output [`RB_ADDR_WIDTH-1:0] 	  XpiRingBusBlkOutAddrCrStatusP11S;
+  output [`RB_DATA_WIDTH-1:0] 	  XpiRingBusBlkOutDataLenP11S;
+    
+  //==== RBB - Generic Memory Block Interface ====
+  input 			  XpiGmiNewRespP14S;
+  input [`RB_DATA_WIDTH-1:0] 	  XpiGmiDataP14S;
+  input [`RB_STATUS_WIDTH-1:0] 	  XpiGmiStatusP14S;
+  input [`RB_TARGETID_WIDTH-1:0]  XpiGmiTargetIDP14S;
+  input [`RB_CMD_WIDTH-1:0] 	  XpiGmiCmdP14S;
+  
+  input 			  XpiGmiIFifoRdEnP10S;
+  
+  output 			  XpiRbbNewReqP11S;
+  output [`RB_TARGETID_WIDTH-1:0] XpiRbbTargetIDP11S;
+  output [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP11S;  
+  output [`RB_ADDR_WIDTH-1:0] 	  XpiRbbAddrP11S;
+  output [`RB_DATA_WIDTH-1:0] 	  XpiRbbDataLenP11S;
+  output 			  XpiRbbRdy4DataP11S; // surefire lint_off_line UDDOCU
+  output 			  XpiRbbIFifoEmptyP11S;
+  
+  //==== RBB - Control Register Interface ====
+  
+  input 			  XpiCriDataRdyP10S;
+  input [`RB_DATA_WIDTH-1:0] 	  XpiCriDataP10S;     // surefire lint_off_line UDDICU
+  input 			  XpiCriRdy2RecvP10S; // surefire lint_off_line UDDICU
+  
+  output 			  XpiRbbCtlWrRdyP11S;  // surefire lint_off_line UDDODN
+  output [`RB_DATA_WIDTH-1:0] 	  XpiRbbCtlWrDataP11S; // surefire lint_off_line UDDODN
+  output 			  XpiRbbCtlRdRdyP11S;
+  output [`CTL_OFFSET_WIDTH-1:0]  XpiRbbCtlWrRdOffsetP11S; // surefire lint_off_line UDDODN
+  output 			  XpiRbbCtlRdy4DataP11S;  // surefire lint_off_line UDDOCN
+  
+  //--------------------------
+  //---- Wire Declaration ----
+  //--------------------------
+  
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRbbTargetIDP10S;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP10S;
+  wire [`RB_ADDR_WIDTH-1:0] 	  XpiRbbAddrP10S;
+  wire [`RB_ADDR_WIDTH-1:0] 	  XpiRbbAddrP11C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbDataLenP10S; 	 
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbDataLenP11C;
+  
+  wire				  XpiRbbNewReqP11C;
+  wire				  XpiRbbNewReqP11S;
+  wire				  XpiRbbNewRdReqP11C;
+  wire				  XpiRbbPktRecvdP11C;
+  wire				  XpiRbbPktRecvdP12S;
+  wire 				  XpiRbbWrDataRecvdP11C;
+  wire 				  XpiRbbWrDataRecvdP11S;
+  wire                            XpiRbbWrDataRecvdP12S;
+  wire                            XpiRbbWrDataRecvdP13S;
+  wire [`RB_ADDR_WIDTH-1:0] 	  XpiRbbAddrP11S;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP11S;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP12S;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP13C;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP13S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbDataLenP11S;
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRbbTargetIDP11S;
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRbbTargetIDP12S;
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRbbTargetIDP13S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbLenP11C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbLenP11S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbLenP12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbWrLenP12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbWrLenP12S;
+  wire 				  XpiRbbTOutReqP11C;
+  wire 				  XpiRbbFifoResetP10C;
+  
+  wire [`RB_ADDR_WIDTH-1:0] 	  XpiRingBusBlkOutAddrCrStatusP11S;
+  wire [`RB_CMD_WIDTH-1:0] 	  XpiRingBusBlkOutCmdP11S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRingBusBlkOutDataLenP11S;
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRingBusBlkOutTargetIDP11S;
+  
+  wire 				  XpiRbbIdMatchP10C;
+  wire 				  XpiRbbGmiCtlRegWrP10C;
+  wire 				  XpiRbbGmiCtlRegRdP10C;
+  wire 				  XpiRbbGmiCtlRegRdP11C;
+  wire 				  XpiRbbGmiCtlRegRdP11S;
+  wire 				  XpiRbbCtlWrRdyP10C;				  
+  wire 				  XpiRbbCtlRdRdyP10C;				  
+  wire 				  XpiRbbReqAckP11C;
+  wire 				  XpiRbbFakeCmpP10C;
+  wire 				  XpiRbbFakeCmpP10S;
+  
+  wire 				  XpiRbbIFifoPushP10C;
+  wire 				  XpiRbbIFifoPopP11C;
+  wire 				  XpiRbbIFifoFullP10C;
+  wire [RBB_REQFIFO_WIDTH-1:0] 	  XpiRbbIFifoDataInP10S;
+  wire [RBB_REQFIFO_WIDTH-1:0] 	  XpiRbbIFifoDataOutP11S;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbIFifoWrPtrP10C;
+  wire [RBB_FIFO_ADDR_WIDTH:0]    XpiRbbIFifoWrPtrP10S;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbIFifoRdPtrP10C;
+  wire [RBB_FIFO_ADDR_WIDTH:0]    XpiRbbIFifoRdPtrP10S;
+  
+  wire 				  XpiRbbGmiCtlRdCmpP10C;
+  wire 				  XpiRbbGmiCtlRdCmpP10S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbCtlRdCmpDataP10C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbCtlRdCmpDataP10S;
+
+  wire 				  XpiRbbEFifoPushP10C;
+  wire 				  XpiRbbEFifoPushP10S;
+  wire 				  XpiRbbEFifoPopP11C;
+  wire 				  XpiRbbEFifoEmptyP11C;
+  wire 				  XpiRbbEFifoFullP10C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbEFifoDataInP10S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbEFifoDataOutP11S;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbEFifoWrPtrP11C;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbEFifoRdPtrP11C;
+  wire [RBB_FIFO_ADDR_WIDTH:0]    XpiRbbEFifoWrPtrP11S;
+  wire [RBB_FIFO_ADDR_WIDTH:0]    XpiRbbEFifoRdPtrP11S;
+ 
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbWrDataP10C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiRbbWrDataP10S;
+  wire [`RB_ADDR_WIDTH-1:0] 	  XpiRbbCreditsP11C; // surefire lint_off_line UDDSCU
+  
+  wire [`RB_TARGETID_WIDTH-1:0]   XpiRbbCmpTargetIDP10S;
+  wire [`RB_STATUS_WIDTH-1:0] 	  XpiRbbCmpStatusP10S;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbNumEntriesP11C;
+  wire [RBB_FIFO_ADDR_WIDTH:0] 	  XpiRbbNumEntriesP12C;
+  wire 				  XpiRbbCmpDataRecvdP11C;
+  wire 				  XpiRbbAckCntEnP11C;
+  wire 				  XpiRbbAckCntEnP11S;
+  wire [1:0] 			  XpiRbbReqAckCntP11S;
+  
+  //------------------------------
+  //---- Register Declaration ----
+  //------------------------------
+  reg 				  XpiRbbCreditRefreshP11C;
+  reg 				  XpiRbbEFifoPopP10C;
+  
+  reg [`RB_DATA_WIDTH-1:0] 	  XpiRbbCmpDataLenP11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	  XpiRbbTargetIDP11C;
+  reg [`RB_TARGETID_WIDTH-1:0] 	  XpiRbbTargetIDP12C;
+  reg [`RB_CMD_WIDTH-1:0] 	  XpiRbbCmdP11C;
+  reg [`RB_ADDR_WIDTH-1:0] 	  XpiRbbAddrCrStatusP11C;
+  reg 				  XpiRbbTargetErrorP10C;
+  reg [1:0] 			  XpiRbbReqAckCntP11C;
+  
+  // This file contains legitimate comparisons between a
+  // parameter (considered a constant) and a constant so:
+  // surefire lint_off CWCCXX
+   
+  //=====================================
+  //==== XpiRbb Input Register Stage ====
+  //=====================================
+  
+  DFFR #(`RB_CMD_WIDTH,{`RB_CMD_WIDTH{1'b0}}) U1_dff 
+    (.q(XpiRbbCmdP10S), .d(XpiRingBusBlkInCmdP11S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_ADDR_WIDTH,{`RB_ADDR_WIDTH{1'b0}}) U2_dff     
+    (.q(XpiRbbAddrP10S), .d(XpiRingBusBlkInAddrCrStatusP11S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_TARGETID_WIDTH,{`RB_TARGETID_WIDTH{1'b0}}) U3_dff 
+    (.q(XpiRbbTargetIDP10S), .d(XpiRingBusBlkInTargetIDP11S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U4_dff     
+    (.q(XpiRbbDataLenP10S), .d(XpiRingBusBlkInDataLenP11S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Target ID Check ----
+  
+  assign XpiRbbIdMatchP10C = {XpiRbbTargetIDP10S[4:0] == XpiAGTID};
+
+  //-----------------------------------------------------
+  //---- Determining GMI Control Register Write/Read ----
+  //-----------------------------------------------------
+  // GMI Control Register Write are mapped to offset 0x1f0-0x1ff
+  
+  assign XpiRbbGmiCtlRegWrP10C = ((XpiRbbIdMatchP10C) && (XpiRbbCmdP10S == `CTRLWR) && 
+				  ((XpiRbbAddrP10S >= `RB_ADDR_WIDTH'h1f0) &&
+				   (XpiRbbAddrP10S <= `RB_ADDR_WIDTH'h1ff)));
+  
+  assign XpiRbbGmiCtlRegRdP10C = ((XpiRbbIdMatchP10C) && (XpiRbbCmdP10S == `CTRLRD) && 
+				  ((XpiRbbAddrP10S >= `RB_ADDR_WIDTH'h1f0) &&
+				   (XpiRbbAddrP10S <= `RB_ADDR_WIDTH'h1ff)));
+  
+  //---- Memory Write/Read & GMI Control Reg Write Determination ----
+  
+  assign XpiRbbNewRdReqP11C = (XpiRbbIdMatchP10C && ((XpiRbbCmdP10S == `RBRD) || 
+						     XpiRbbGmiCtlRegWrP10C    ||
+						     XpiRbbGmiCtlRegRdP10C));
+			  
+  // For Write Request, Wait till all the Data is Received from the Ring Bus
+  
+  assign XpiRbbWrDataRecvdP11C = (XpiRbbIdMatchP10C && (XpiRbbCmdP10S == `RBWR) &&
+				  (XpiRingBusBlkInCmdP11S != `RBWR));
+  
+  // Indicate Valid Pkt after all Packet Data is Recieved
+  
+  assign XpiRbbPktRecvdP11C = (XpiRbbIdMatchP10C && (XpiRbbCmdP10S == `PKTRXXFR) &&
+			       (XpiRingBusBlkInCmdP11S != `PKTRXXFR));
+  
+  DFFR #(1,1'b0) U35_dff (.q(XpiRbbPktRecvdP12S), .d(XpiRbbPktRecvdP11C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  //---------------------------------------------
+  //---- Indicating Valid New Request to GMI ----
+  //---------------------------------------------
+
+  assign XpiRbbTOutReqP11C = (XpiRbbCmdP10S == `TOUT);
+  
+  assign XpiRbbNewReqP11C = (XpiRbbNewRdReqP11C    || 
+			     XpiRbbWrDataRecvdP12S || 
+			     XpiRbbPktRecvdP11C    ||
+			     XpiRbbTOutReqP11C);
+  
+  DFFR #(1,1'b0) U44_dff 
+    (.q(XpiRbbNewReqP11S), .d(XpiRbbNewReqP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  //===========================================
+  //==== XpiRbb->GMI Output Register Stage ====
+  //===========================================
+
+  // Packet Control Information is overloaded on the Address bus
+  assign XpiRbbAddrP11C = (XpiRbbIFifoPopP11C && {RBB_REQFIFO_WIDTH > 32}) ?
+			  XpiRbbIFifoDataOutP11S[RBB_REQFIFO_WIDTH-1:`RB_DATA_WIDTH]:
+			  XpiRbbAddrP10S;
+
+  // Address
+  DFFR #(`RB_ADDR_WIDTH,{`RB_ADDR_WIDTH{1'b0}}) U7_dff
+    (.q(XpiRbbAddrP11S), .d(XpiRbbAddrP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  // Command
+  DFFR #(`RB_CMD_WIDTH,{`RB_CMD_WIDTH{1'b0}}) U6_dff      
+    (.q(XpiRbbCmdP12S), .d(XpiRbbCmdP10S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_CMD_WIDTH,{`RB_CMD_WIDTH{1'b0}}) U46_dff      
+    (.q(XpiRbbCmdP13S), .d(XpiRbbCmdP12S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  assign XpiRbbCmdP13C = (XpiRbbWrDataRecvdP12S || XpiRbbPktRecvdP12S) ?
+			   XpiRbbCmdP13S : XpiRbbCmdP10S;
+
+  DFFR #(`RB_CMD_WIDTH,{`RB_CMD_WIDTH{1'b0}}) U49_dff      
+    (.q(XpiRbbCmdP11S), .d(XpiRbbCmdP13C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Target ID Storage ---
+  // ReCirculating TargetID of the Current Transfer to be send 
+  // either with Response or Credit Refresh
+
+  DFFR #(`RB_TARGETID_WIDTH,{`RB_TARGETID_WIDTH{1'b0}}) U15_dff 
+    (.q(XpiRbbTargetIDP13S), .d(XpiRbbTargetIDP10S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiRbbNewRdReqP11C or XpiRbbPktRecvdP11C
+	   or XpiRbbTOutReqP11C or XpiRbbTargetIDP10S
+	   or XpiRbbTargetIDP12S or XpiRbbTargetIDP13S
+	   or XpiRbbWrDataRecvdP11S)
+    begin
+      if (XpiRbbNewRdReqP11C || XpiRbbTOutReqP11C)
+	XpiRbbTargetIDP12C = XpiRbbTargetIDP10S;
+      else if (XpiRbbWrDataRecvdP11S || XpiRbbPktRecvdP11C)
+	XpiRbbTargetIDP12C = XpiRbbTargetIDP13S;
+      else
+	XpiRbbTargetIDP12C = XpiRbbTargetIDP12S;
+    end
+  
+  DFFR #(`RB_TARGETID_WIDTH,{`RB_TARGETID_WIDTH{1'b0}}) U8_dff 
+    (.q(XpiRbbTargetIDP12S), .d(XpiRbbTargetIDP12C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  assign XpiRbbTargetIDP11S = XpiRbbTargetIDP12S;
+  
+  //---- Read Length Information ----
+  
+  assign XpiRbbLenP11C = XpiRbbNewRdReqP11C ?
+	 XpiRbbDataLenP10S : XpiRbbLenP11S;
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U9_dff     
+    (.q(XpiRbbLenP11S), .d(XpiRbbLenP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  //---- Determining Write Length Information ----
+  
+  // Delaying RB Write Transaction indication
+  DFFR #(1,1'b0) U38_dff     
+    (.q(XpiRbbWrDataRecvdP11S), .d(XpiRbbWrDataRecvdP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(1,1'b0) U45_dff     
+    (.q(XpiRbbWrDataRecvdP12S), .d(XpiRbbWrDataRecvdP11S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  DFFR #(1,1'b0) U48_dff     
+    (.q(XpiRbbWrDataRecvdP13S), .d(XpiRbbWrDataRecvdP12S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Flopping the Pointers to avoid Timing problems
+    
+  DFFR #(6,{6{1'b0}}) U42_dff
+    (.q(XpiRbbIFifoWrPtrP10S), .d(XpiRbbIFifoWrPtrP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(6,{6{1'b0}}) U43_dff
+    (.q(XpiRbbIFifoRdPtrP10S), .d(XpiRbbIFifoRdPtrP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Write Request Length = Number of Fifo Entries x 4B
+  
+  assign XpiRbbWrLenP12C = {{26{1'b0}},(XpiRbbIFifoWrPtrP10S - XpiRbbIFifoRdPtrP10S)};
+
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U47_dff
+    (.q(XpiRbbWrLenP12S), .d(XpiRbbWrLenP12C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Muxing between Write and Read Length
+  
+  assign XpiRbbLenP12C = XpiRbbWrDataRecvdP13S ?
+	 XpiRbbWrLenP12S : XpiRbbLenP11S;  
+  
+  // Data Muxing, Recirculating Fifo Data under no Pop condition 
+  
+  assign XpiRbbWrDataP10C = XpiRbbIFifoPopP11C ?
+	 XpiRbbIFifoDataOutP11S[`RB_DATA_WIDTH-1:0] : XpiRbbWrDataP10S;
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U10_dff 
+    (.q(XpiRbbWrDataP10S), .d(XpiRbbWrDataP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Muxing between Fifo Data & Incoming Data ----
+
+  assign XpiRbbDataLenP11C = XpiRbbNewReqP11S ?
+	 XpiRbbLenP12C : XpiRbbWrDataP10S;
+  
+  assign XpiRbbDataLenP11S = XpiRbbDataLenP11C;
+  
+  assign XpiRbbRdy4DataP11S = 1'b1;
+  
+  //-------------------------------
+  //---- IFIFO Control Signals ----
+  //-------------------------------
+
+  assign XpiRbbIFifoPushP10C = (XpiRbbIdMatchP10C && (~XpiRbbIFifoFullP10C) &&
+				((XpiRbbCmdP10S==`RBWR) || (XpiRbbCmdP10S==`PKTRXXFR)));
+  
+  assign XpiRbbIFifoDataInP10S = 
+	 {RBB_REQFIFO_WIDTH==32} ? XpiRbbDataLenP10S : {XpiRbbAddrP10S,XpiRbbDataLenP10S};
+  
+  assign XpiRbbIFifoPopP11C = (XpiGmiIFifoRdEnP10S && (~XpiRbbIFifoEmptyP11S));
+  
+  //----------------------
+  //---- INGRESS FIFO ----  
+  //----------------------
+  //** 128B Fifo organized as 32b=4B wide and 32 entries deep
+  //** Ingress Fifo is used to store Data of the Write Transaction
+  //** on the Ring Bus targeted to this RBB.
+
+  assign XpiRbbFifoResetP10C = (~((~GlCoreResetR00C) || XpiRbbTOutReqP11C));
+  
+  FIFO_LA #(RBB_REQFIFO_WIDTH, RBB_FIFO_DEPTH, RBB_FIFO_ADDR_WIDTH) IFIFO 
+    ( .RESET(XpiRbbFifoResetP10C), .CLK(XpiCoreClk), .PUSH(XpiRbbIFifoPushP10C),
+      .POP(XpiRbbIFifoPopP11C), .D(XpiRbbIFifoDataInP10S), .Q(XpiRbbIFifoDataOutP11S),
+      .EMPTY(XpiRbbIFifoEmptyP11S), .FULL(XpiRbbIFifoFullP10C),
+      .WRPTR(XpiRbbIFifoWrPtrP10C), .RDPTR(XpiRbbIFifoRdPtrP10C) );
+  
+  //----------------------------------
+  //---- Credit Refresh Mechanism ----
+  //----------------------------------
+  // This SM checks that complete data from the Ingress Fifo has been read
+  // Once the Fifo is Empty, it sends a Credit Refresh back to the initiating agent
+  // Mux Select Functionality is also overloaded in this SM, between the
+  // time frame of First Fifo Rd Enable & Fifo Empty condition, Data selected
+  // to be send to GMI is IFifo Data
+
+`define XPIRBBCTLIDLE          2'b00
+`define XPIRBBCTLIFIFORD       2'b01
+`define XPIRBBCTLCREDITREFRESH 2'b11
+
+  //State Variables
+  wire [1:0] xpirbbctlstate;
+  reg [1:0]  next_xpirbbctlstate;
+  
+  //---- State Change ----
+  
+  DFFR #(2,{2{1'b0}}) U11_dff (.q(xpirbbctlstate),.d(next_xpirbbctlstate),
+			       .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  
+  //---- State Assignment ----
+
+  always @(xpirbbctlstate)
+    begin
+
+      XpiRbbCreditRefreshP11C = 1'b0;
+      
+      case(xpirbbctlstate)
+	
+	`XPIRBBCTLIDLE: XpiRbbCreditRefreshP11C = 1'b0;
+	
+	`XPIRBBCTLIFIFORD: XpiRbbCreditRefreshP11C = 1'b0;
+	
+	`XPIRBBCTLCREDITREFRESH: XpiRbbCreditRefreshP11C = 1'b1;
+
+	default: XpiRbbCreditRefreshP11C = 1'b0;
+
+      endcase // case(xpirbbctlstate)
+    end // always @ (xpirbbctlstate)
+  
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiRbbIFifoEmptyP11S or XpiRbbIFifoPopP11C
+	   or XpiRingBusBlkInCmdP11S or xpirbbctlstate)
+    begin
+      
+      case(xpirbbctlstate)
+	
+	`XPIRBBCTLIDLE:
+	  begin
+	    if (XpiRbbIFifoPopP11C)
+	      next_xpirbbctlstate = `XPIRBBCTLIFIFORD;
+	    else
+	      next_xpirbbctlstate = `XPIRBBCTLIDLE;
+	  end	      
+
+	`XPIRBBCTLIFIFORD:
+	  begin
+	    if (XpiRbbIFifoEmptyP11S && (XpiRingBusBlkInCmdP11S == `NULL))
+	      next_xpirbbctlstate = `XPIRBBCTLCREDITREFRESH;
+	    else
+	      next_xpirbbctlstate = `XPIRBBCTLIFIFORD;
+	  end	
+	
+	`XPIRBBCTLCREDITREFRESH: next_xpirbbctlstate = `XPIRBBCTLIDLE;
+
+	default: next_xpirbbctlstate = `XPIRBBCTLIDLE;
+	
+      endcase // case(xpirbbctlstate)
+    end // always @ (...
+  
+  //---------------------------------------
+  //---- GMI->RBB Input Register Stage ----
+  //---------------------------------------
+
+  // Request Acknowledgement Received from GMI
+  assign XpiRbbReqAckP11C = (XpiGmiNewRespP14S && (XpiGmiCmdP14S==`REQACK));
+  
+  // Determining Gmi Control Register Read Completion
+  
+  assign XpiRbbGmiCtlRdCmpP10C = (XpiGmiNewRespP14S &&
+				  (XpiGmiStatusP14S==`RB_STATUS_WIDTH'h001));
+  
+  DFFR #(1,1'b0) U24_dff (.q(XpiRbbGmiCtlRdCmpP10S), .d(XpiRbbGmiCtlRdCmpP10C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Determining Memory Read Completion
+  assign XpiRbbEFifoPushP10C   = (XpiGmiNewRespP14S &&
+				  (XpiGmiStatusP14S=={`RB_STATUS_WIDTH{1'b0}}));
+  
+  DFFR #(1,1'b0) U20_dff  (.q(XpiRbbEFifoPushP10S),   .d(XpiRbbEFifoPushP10C),
+			   .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U19_dff     
+    (.q(XpiRbbEFifoDataInP10S), .d(XpiGmiDataP14S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_TARGETID_WIDTH,{`RB_TARGETID_WIDTH{1'b0}}) U21_dff 
+    (.q(XpiRbbCmpTargetIDP10S), .d(XpiGmiTargetIDP14S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_STATUS_WIDTH,{`RB_STATUS_WIDTH{1'b0}}) U22_dff   
+    (.q(XpiRbbCmpStatusP10S),   .d(XpiGmiStatusP14S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  
+  // Storing Gmi Control Register Read Data
+  assign XpiRbbCtlRdCmpDataP10C = XpiRbbGmiCtlRdCmpP10C ?
+	 XpiGmiDataP14S : XpiRbbCtlRdCmpDataP10S;
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U23_dff 
+    (.q(XpiRbbCtlRdCmpDataP10S), .d(XpiRbbCtlRdCmpDataP10C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //------------------------------------------
+  //---- Request Acknowledgement Protocol ----
+  //------------------------------------------
+  // For a request issued to one of the GMI's connected to RBB,
+  // an acknowledgement is expected within 3 Core Clock Cycles
+  // by the RBB, else it defaults to Target Not Found condition.
+
+  //---- State Definition ----
+  
+`define XPIRBBREQACKIDLE  2'b00
+`define XPIRBBREQACKISSUE 2'b01
+`define XPIRBBREQACKERROR 2'b11
+  
+  wire [1:0] xpirbbackstate;
+  reg [1:0]  next_xpirbbackstate;
+  
+  DFFR #(2,{2{1'b0}}) U40_dff (.q(xpirbbackstate), .d(next_xpirbbackstate),
+                               .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(/*AS*/xpirbbackstate)
+    begin
+      
+      case (xpirbbackstate)
+	
+	`XPIRBBREQACKIDLE: XpiRbbTargetErrorP10C = 1'b0;
+	
+	`XPIRBBREQACKISSUE: XpiRbbTargetErrorP10C = 1'b0;
+	
+	`XPIRBBREQACKERROR: XpiRbbTargetErrorP10C = 1'b1;
+	
+	default : XpiRbbTargetErrorP10C = 1'b0;
+	
+      endcase
+    end
+  
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiRbbNewReqP11S or XpiRbbReqAckCntP11S
+	   or XpiRbbReqAckP11C or xpirbbackstate)
+    begin
+      
+      case(xpirbbackstate)
+	
+	`XPIRBBREQACKIDLE:
+	  begin
+	    if (XpiRbbNewReqP11S)
+	      // New Wr/Rd Request issued to GMI
+	      next_xpirbbackstate = `XPIRBBREQACKISSUE;
+	    else
+	      next_xpirbbackstate = `XPIRBBREQACKIDLE;
+	  end
+	
+	`XPIRBBREQACKISSUE:
+	  begin
+	    if (XpiRbbReqAckP11C)
+	      // An acknowledgement received, transition to Idle
+	      next_xpirbbackstate = `XPIRBBREQACKIDLE;
+	    else if (XpiRbbReqAckCntP11S == 2'b11)
+	      // No Ack received in 3 core clks after request issuance
+	      // transition to Error State indicating no target found condition
+	      next_xpirbbackstate = `XPIRBBREQACKERROR;
+	    else
+	      next_xpirbbackstate = `XPIRBBREQACKISSUE;
+	  end
+	
+	`XPIRBBREQACKERROR: next_xpirbbackstate = `XPIRBBREQACKIDLE;
+
+	default: next_xpirbbackstate = `XPIRBBREQACKIDLE;
+	
+      endcase // case(xpirbbackstate)
+      
+    end // always @ (...
+
+
+  //---- Acknowledgement Counter ----
+  
+  assign XpiRbbAckCntEnP11C = (XpiRbbNewReqP11S || XpiRbbReqAckP11C || XpiRbbFakeCmpP10S) ?
+			      XpiRbbNewReqP11S : XpiRbbAckCntEnP11S;
+  
+  DFFR #(1,1'b0) U17_dff (.q(XpiRbbAckCntEnP11S), .d(XpiRbbAckCntEnP11C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiRbbAckCntEnP11S or XpiRbbReqAckCntP11S)
+    begin
+      if (XpiRbbAckCntEnP11S)
+	XpiRbbReqAckCntP11C = {XpiRbbReqAckCntP11S + 1'b1};
+      else if (XpiRbbReqAckCntP11S == 2'b11)
+	XpiRbbReqAckCntP11C = 2'b00;
+      else
+	XpiRbbReqAckCntP11C = 2'b00;
+    end // always @ (...
+  
+  DFFR #(2,{2{1'b0}}) U41_dff (.q(XpiRbbReqAckCntP11S), .d(XpiRbbReqAckCntP11C),
+                          .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+
+  // ReCirculating GMI Control Register Read Request Indication
+  assign XpiRbbGmiCtlRegRdP11C = (XpiRbbGmiCtlRegRdP10C || XpiRbbReqAckP11C) ?
+				   XpiRbbGmiCtlRegRdP10C : XpiRbbGmiCtlRegRdP11S;
+  
+  DFFR #(1,1'b0) U16_dff (.q(XpiRbbGmiCtlRegRdP11S), .d(XpiRbbGmiCtlRegRdP11C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Generating a Fake Read Completion if Target Non Existent
+  
+  assign XpiRbbFakeCmpP10C = (XpiRbbGmiCtlRegRdP11S && XpiRbbTargetErrorP10C);
+  
+  // Cycle Delay
+  DFFR #(1,1'b0) U18_dff (.q(XpiRbbFakeCmpP10S), .d(XpiRbbFakeCmpP10C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+    
+  //---------------------
+  //---- EGRESS FIFO ----  
+  //---------------------
+  //** 128B Fifo organized as 32b=4B wide and 32 entries deep
+  //** Egress Fifo is used to store Data of the Read Completion 
+  //** received from the Generic Memory Block
+  
+  FIFO_LA #(RBB_RESPFIFO_WIDTH, RBB_FIFO_DEPTH, RBB_FIFO_ADDR_WIDTH) EFIFO 
+    ( .RESET(XpiRbbFifoResetP10C), .CLK(XpiCoreClk), .PUSH(XpiRbbEFifoPushP10S),
+      .POP(XpiRbbEFifoPopP11C), .D(XpiRbbEFifoDataInP10S), .Q(XpiRbbEFifoDataOutP11S),
+      .EMPTY(XpiRbbEFifoEmptyP11C), .FULL(XpiRbbEFifoFullP10C),
+      .WRPTR(XpiRbbEFifoWrPtrP11C), .RDPTR(XpiRbbEFifoRdPtrP11C) );
+ 
+  assign XpiRbbEFifoPopP11C = (XpiRbbEFifoPopP10C && (~XpiRbbEFifoEmptyP11C));
+
+  // Number of EFifo Entries = Number of Bytes / FIFO WIDTH(4B)
+  
+  assign XpiRbbNumEntriesP11C = {XpiRbbLenP11S >> 2}; // surefire lint_off_line ASWEBB
+
+  assign XpiRbbNumEntriesP12C = XpiRbbNumEntriesP11C[RBB_FIFO_ADDR_WIDTH:0];
+  
+  // Flopping Pointers to fix timing problem
+
+  DFFR #(6,{6{1'b0}}) U36_dff
+    (.q(XpiRbbEFifoWrPtrP11S), .d(XpiRbbEFifoWrPtrP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  DFFR #(6,{6{1'b0}}) U37_dff
+    (.q(XpiRbbEFifoRdPtrP11S), .d(XpiRbbEFifoRdPtrP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+ 
+  // All Read Completion Data Received Indicator
+  
+  assign XpiRbbCmpDataRecvdP11C =
+	 ((~XpiRbbEFifoEmptyP11C) &&
+	  {{XpiRbbEFifoWrPtrP11S - XpiRbbEFifoRdPtrP11S} == XpiRbbNumEntriesP12C});
+
+  //------------------------------------------
+  //---- EFIFO Read Control State Machine ----
+  //------------------------------------------
+  // Start Reading EFIFO Data once its full (128B are stored)
+  // However if no Null slot is available, stall the Reading
+  
+`define XPIRBBEFIFORDIDLE   2'b00
+`define XPIRBBEFIFORDDATA   2'b01
+`define XPIRBBEFIFORDSTALL  2'b11
+  
+  //State Variables
+  wire [1:0] xpirbbefifordstate;
+  reg [1:0]  next_xpirbbefifordstate;
+  
+  //---- State Change ----
+  
+  DFFR #(2,{2{1'b0}}) U25_dff (.q(xpirbbefifordstate),.d(next_xpirbbefifordstate),
+			       .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+
+  
+  //---- State Assignment ----
+  
+  always @(xpirbbefifordstate)
+    begin
+      
+      XpiRbbEFifoPopP10C = 1'b0;
+      
+      case(xpirbbefifordstate)
+	
+	`XPIRBBEFIFORDIDLE:
+	  begin
+	    XpiRbbEFifoPopP10C = 1'b0;
+	  end
+	
+	`XPIRBBEFIFORDDATA:
+	  begin
+	    XpiRbbEFifoPopP10C = 1'b1;
+	  end
+	
+	`XPIRBBEFIFORDSTALL:
+	  begin
+	    XpiRbbEFifoPopP10C = 1'b0;
+	  end
+
+	default: XpiRbbEFifoPopP10C = 1'b0;
+	
+      endcase // case(xpirbbefifordstate)
+    end // always @ (xpirbbefifordstate)
+  
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiRbbCmpDataRecvdP11C or XpiRbbEFifoEmptyP11C
+	   or XpiRbbEFifoFullP10C or XpiRingBusBlkInCmdP11S
+	   or xpirbbefifordstate)
+    begin
+      
+      case(xpirbbefifordstate)
+	
+	`XPIRBBEFIFORDIDLE:
+	  begin
+	    if ((XpiRbbCmpDataRecvdP11C || XpiRbbEFifoFullP10C) && 
+		(XpiRingBusBlkInCmdP11S==`NULL))
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDDATA;
+	    else
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDIDLE;
+	  end
+	
+	`XPIRBBEFIFORDDATA:
+	  begin
+	    if (XpiRbbEFifoEmptyP11C)
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDIDLE;
+	    else if (XpiRingBusBlkInCmdP11S != `NULL)
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDSTALL;
+	    else
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDDATA;
+	  end
+	
+	`XPIRBBEFIFORDSTALL:
+	  begin
+	    if (XpiRingBusBlkInCmdP11S == `NULL)
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDDATA;
+	    else
+	      next_xpirbbefifordstate = `XPIRBBEFIFORDSTALL;
+	  end
+	
+	default: next_xpirbbefifordstate = `XPIRBBEFIFORDIDLE;
+	
+      endcase // case(xpirbbefifordstate)
+    end // always @ (...
+  
+  //---------------------------------
+  //---- RBB Output Muxing Stage ----
+  //---------------------------------
+
+  //---- Data ----
+  
+  always @(/*AS*/XpiCriDataP10S or XpiCriDataRdyP10S
+	   or XpiRbbCtlRdCmpDataP10S or XpiRbbDataLenP10S
+	   or XpiRbbEFifoDataOutP11S or XpiRbbEFifoPopP11C
+	   or XpiRbbFakeCmpP10S or XpiRbbGmiCtlRdCmpP10S
+	   or XpiRbbIdMatchP10C)
+    begin
+      if (XpiCriDataRdyP10S)
+	XpiRbbCmpDataLenP11C = XpiCriDataP10S;
+      else if (XpiRbbGmiCtlRdCmpP10S)
+	XpiRbbCmpDataLenP11C = XpiRbbCtlRdCmpDataP10S;
+      else if (XpiRbbFakeCmpP10S)
+	XpiRbbCmpDataLenP11C = {`RB_DATA_WIDTH{1'b0}};
+      else if (XpiRbbEFifoPopP11C)
+	XpiRbbCmpDataLenP11C = XpiRbbEFifoDataOutP11S;
+      else if (XpiRbbIdMatchP10C)
+	XpiRbbCmpDataLenP11C = {`RB_DATA_WIDTH{1'b0}};
+      else
+	XpiRbbCmpDataLenP11C = XpiRbbDataLenP10S;
+    end // always @ (...
+  
+  //---- Target ID ----
+  
+  always @(/*AS*/XpiAGTID or XpiCriDataRdyP10S
+	   or XpiRbbCreditRefreshP11C or XpiRbbEFifoPopP11C
+	   or XpiRbbFakeCmpP10S or XpiRbbGmiCtlRdCmpP10S
+	   or XpiRbbIdMatchP10C or XpiRbbTargetIDP10S
+	   or XpiRbbTargetIDP12S)
+    begin
+      if (XpiRbbEFifoPopP11C || XpiRbbGmiCtlRdCmpP10S || 
+	  XpiRbbFakeCmpP10S  || XpiRbbCreditRefreshP11C)
+	// Drive back the TargetID of current request during
+	// Memory Read or Control Register Completion data
+	// or Credit Refresh Cycle
+	XpiRbbTargetIDP11C = XpiRbbTargetIDP12S;
+      else if (XpiCriDataRdyP10S)
+	// Control Register Read Completion 
+	XpiRbbTargetIDP11C = {3'b000,XpiAGTID};
+      else if (XpiRbbIdMatchP10C)
+	XpiRbbTargetIDP11C = {`RB_TARGETID_WIDTH{1'b0}};
+      else
+	XpiRbbTargetIDP11C = XpiRbbTargetIDP10S;
+    end
+
+  //---- Command ----
+  
+  always @(/*AS*/XpiCriDataRdyP10S or XpiRbbCmdP10S
+	   or XpiRbbCreditRefreshP11C or XpiRbbEFifoPopP11C
+	   or XpiRbbFakeCmpP10S or XpiRbbGmiCtlRdCmpP10S
+	   or XpiRbbIdMatchP10C)
+    begin
+      if (XpiRbbEFifoPopP11C || XpiCriDataRdyP10S || 
+	  XpiRbbGmiCtlRdCmpP10S || XpiRbbFakeCmpP10S)
+	XpiRbbCmdP11C = `RDCMP;
+      else if (XpiRbbIdMatchP10C)
+	XpiRbbCmdP11C = `IDLE;
+      else if (XpiRbbCreditRefreshP11C)
+	XpiRbbCmdP11C = `CRDTREF;
+      else
+	XpiRbbCmdP11C = XpiRbbCmdP10S;
+    end
+
+  //---- Address ----
+  
+  always @(/*AS*/XpiRbbAddrP10S or XpiRbbCmpStatusP10S
+	   or XpiRbbCreditRefreshP11C or XpiRbbCreditsP11C
+	   or XpiRbbEFifoPopP11C or XpiRbbFakeCmpP10S
+	   or XpiRbbGmiCtlRdCmpP10S or XpiRbbIdMatchP10C)
+    begin
+      if (XpiRbbEFifoPopP11C || XpiRbbGmiCtlRdCmpP10S || XpiRbbFakeCmpP10S)
+	XpiRbbAddrCrStatusP11C = XpiRbbCmpStatusP10S;
+      else if (XpiRbbIdMatchP10C)
+	XpiRbbAddrCrStatusP11C = {`RB_ADDR_WIDTH{1'b0}};
+      else if (XpiRbbCreditRefreshP11C)
+	XpiRbbAddrCrStatusP11C = XpiRbbCreditsP11C;
+      else 
+	XpiRbbAddrCrStatusP11C = XpiRbbAddrP10S;
+    end
+  
+  assign XpiRbbCreditsP11C = `RB_ADDR_WIDTH'h080;
+  
+  //-----------------------------------
+  //---- RBB Output Register Stage ----
+  //-----------------------------------
+  
+  DFFR #(`RB_CMD_WIDTH,{`RB_CMD_WIDTH{1'b0}}) U26_dff      
+    (.q(XpiRingBusBlkOutCmdP11S), .d(XpiRbbCmdP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_ADDR_WIDTH,{`RB_ADDR_WIDTH{1'b0}}) U27_dff     
+    (.q(XpiRingBusBlkOutAddrCrStatusP11S), .d(XpiRbbAddrCrStatusP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_TARGETID_WIDTH,{`RB_TARGETID_WIDTH{1'b0}}) U28_dff 
+    (.q(XpiRingBusBlkOutTargetIDP11S), .d(XpiRbbTargetIDP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U29_dff     
+    (.q(XpiRingBusBlkOutDataLenP11S) , .d(XpiRbbCmpDataLenP11C),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  //==================================
+  //==== RBB->CRI Interface Logic ====
+  //==================================
+  
+  assign XpiRbbCtlWrRdyP10C = (XpiRbbIdMatchP10C && (XpiRbbCmdP10S == `CTRLWR) &&
+			       (~XpiRbbGmiCtlRegWrP10C) && XpiCriRdy2RecvP10S);
+  
+  assign XpiRbbCtlRdRdyP10C = (XpiRbbIdMatchP10C && (XpiRbbCmdP10S == `CTRLRD) &&
+			       (~XpiRbbGmiCtlRegRdP10C) && XpiCriRdy2RecvP10S);
+  
+  DFFR #(1,1'b0) U30_dff (.q(XpiRbbCtlWrRdyP11S), .d(XpiRbbCtlWrRdyP10C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  
+  DFFR #(1,1'b0) U31_dff (.q(XpiRbbCtlRdRdyP11S), .d(XpiRbbCtlRdRdyP10C),
+			  .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  
+  DFFR #(`RB_DATA_WIDTH,{`RB_DATA_WIDTH{1'b0}}) U32_dff 
+    (.q(XpiRbbCtlWrDataP11S), .d(XpiRbbDataLenP10S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  
+  DFFR #(`CTL_OFFSET_WIDTH,{`CTL_OFFSET_WIDTH{1'b0}}) U33_dff 
+    (.q(XpiRbbCtlWrRdOffsetP11S), .d(XpiRbbAddrP10S),
+     .clk(XpiCoreClk), .reset(GlCoreResetR00C));
+  
+  // Fix Me : Add Control Register Read Completion data Storing
+  // flop, for a case where memory read completion is read out
+  // of the Fifo and RBB receives control register read completion
+  assign XpiRbbCtlRdy4DataP11S = 1'b1;
+ 
+  // surefire lint_on CWCCXX
+  
+  //------------------------
+  //---- 0in Assertions ----
+  //------------------------
+
+  // 0in known_driven -var XpiRbbNewReqP11S    -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbDataLenP11S   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbCmdP11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbAddrP11S      -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbTargetIDP11S  -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbRdy4DataP11S  -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbIFifoEmptyP11S  -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiGmiNewRespP14S    -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiGmiDataP14S       -clock XpiCoreClk -reset GlCoreResetR00C -active XpiGmiNewRespP14S
+  // 0in known_driven -var XpiGmiTargetIDP14S   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiGmiCmdP14S        -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiGmiStatusP14S     -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiGmiIFifoRdEnP10S  -clock XpiCoreClk -reset GlCoreResetR00C
+
+
+  // 0in known_driven -var XpiRingBusBlkInCmdP11S          -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkInTargetIDP11S     -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkInAddrCrStatusP11S -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkInDataLenP11S      -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiRingBusBlkOutCmdP11S          -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkOutTargetIDP11S     -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkOutAddrCrStatusP11S -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRingBusBlkOutDataLenP11S      -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiCriDataRdyP10S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiCriDataP10S          -clock XpiCoreClk -reset GlCoreResetR00C -active XpiCriDataRdyP10S
+  // 0in known_driven -var XpiCriRdy2RecvP10S      -clock XpiCoreClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiRbbCtlWrRdyP11S      -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbCtlRdRdyP11S      -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbCtlWrRdOffsetP11S -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbbCtlRdy4DataP11S   -clock XpiCoreClk -reset GlCoreResetR00C
+
+  /* 0in fifo -enq XpiRbbIFifoPushP10C -deq XpiRbbIFifoPopP11C 
+   -depth RBB_FIFO_DEPTH -enq_data XpiRbbIFifoDataInP10S
+   -deq_data XpiRbbIFifoDataOutP11S -clock XpiCoreClk
+   -reset GlCoreResetR00C
+   */
+
+  /* 0in fifo -enq XpiRbbEFifoPushP10S -deq XpiRbbEFifoPopP11C 
+   -depth RBB_FIFO_DEPTH -enq_data XpiRbbEFifoDataInP10S
+   -deq_data XpiRbbEFifoDataOutP11S -clock XpiCoreClk
+   -reset GlCoreResetR00C
+   */
+
+endmodule // rbb
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:
+

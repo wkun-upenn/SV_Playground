@@ -1,0 +1,117 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtifindtcws (
+   /*AUTOARG*/
+   // Outputs
+   DtiFoundPrefTCWC, 
+   // Inputs
+   DtiCsixClk, DtiPrimarySelReadyS, DtiHistoryWord8C, 
+   DtiHistoryWord7C, DtiHistoryWord6S, DtiHistoryWord5S, 
+   DtiHistoryWord4S, DtiHistoryWord3S, DtiTCWC
+);
+
+   parameter DTI_WORD_WIDTH = 17;
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+
+   // This signal is asserted when a positive match on the TCW is found
+   output                     DtiFoundPrefTCWC;
+
+
+   // Common inputs
+   input                       DtiCsixClk;
+
+   // Indicates whether each preferred sample point is ready yet
+   input [DTI_WORD_WIDTH-1:0] DtiPrimarySelReadyS;
+
+   // Pre-deskewed history
+   // The unflopped history is only used in the FTI, not the DTI
+   // surefire lint_off UDDIDN
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord8C;
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord7C;
+   // surefire lint_on UDDIDN
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord6S;
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord5S;
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord4S;
+   input [DTI_WORD_WIDTH-1:0] DtiHistoryWord3S;
+
+   // Expected TCW pattern
+   input [DTI_WORD_WIDTH-1:0] DtiTCWC;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire                        DtiPrimarySamplesReadyC;
+   wire                        DtiPrimarySamplesReadyS;
+   wire                        DtiPrimarySamplesReadyD1S;
+   wire                        DtiPrimarySamplesReadyD2S;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // Once all bits have picked a fittest oversample, the first primary
+   // samples will be ready for examination one cycle later.
+
+   assign DtiPrimarySamplesReadyC = &DtiPrimarySelReadyS;
+
+DFF #(1) U1_dff (.q(DtiPrimarySamplesReadyS),.d(DtiPrimarySamplesReadyC),.clk(DtiCsixClk));
+
+
+DFF #(1) U2_dff (.q(DtiPrimarySamplesReadyD1S),.d(DtiPrimarySamplesReadyS),.clk(DtiCsixClk));
+
+
+DFF #(1) U3_dff (.q(DtiPrimarySamplesReadyD2S),.d(DtiPrimarySamplesReadyD1S),.clk(DtiCsixClk));
+
+
+
+   // We look at the current primary sample point in order to find the
+   // first TCW.  When it is found, we switch to the latest preferred
+   // sample point (as described in the next comment block below).  We
+   // also begin to search for TDW so that we can deskew accordingly.
+   //
+   // Because TCW is stable in the training pattern for multiple cycles,
+   // we are guaranteed to find it even if we look at an arbitrary sample
+   // point.  However, if we look at a sample point that happens to be
+   // in the transition zone, we might accidentally think we see a TCW
+   // in the transition from one (non-TCW) word to another.  So we use
+   // the current primary sample point, to be safe.
+   //
+   // Additionally, skew between input signals could also cause false
+   // TCW matches.  Since skew can be up to 3 UI, we check for at least
+   // 4 TCW matches in order to make a positive match.
+
+   assign DtiFoundPrefTCWC = (DtiHistoryWord3S == DtiTCWC) &
+                             (DtiHistoryWord4S == DtiTCWC) &
+                             (DtiHistoryWord5S == DtiTCWC) &
+                             (DtiHistoryWord6S == DtiTCWC) &
+                             DtiPrimarySamplesReadyD2S;
+
+
+endmodule // dtifindtcws
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jul  5 12:00:00 2002 : created
+//
+// $Log: dtifindtcws.v,v $
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

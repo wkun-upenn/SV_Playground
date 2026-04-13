@@ -1,0 +1,123 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtifitcalcs (
+   /*AUTOARG*/
+   // Outputs
+   DtiFitnessZ13S, 
+   // Inputs
+   DtiCsixClk, DtiTransaZ11C, DtiTransbZ11C, DtiBeginFitZ12S
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // The fitness of the oversample for which this module is instantiated
+   output [`DTI_FITNESS_WIDTH-1:0] DtiFitnessZ13S;
+
+
+   // Common inputs
+   input                         DtiCsixClk;
+
+   // Transitions for each phase
+   input [`DTI_OSAMPLES-1:0]     DtiTransaZ11C;
+   input [`DTI_OSAMPLES-1:0]     DtiTransbZ11C;
+
+   // Indicates when a new filtering period begins.
+   input                         DtiBeginFitZ12S;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [2:0]                    DtiFitnessaZ11C;
+   wire [2:0]                    DtiFitnessbZ11C;
+   wire [3:0]                    DtiCycleFitnessZ11C;
+   wire [3:0]                    DtiCycleFitnessZ12S;
+
+   wire [`DTI_FITNESS_WIDTH-1:0] DtiFitnessZ12C;
+   wire                          DtiCarryOutZ12C;
+   wire                          DtiCarryInZ12C;
+   wire [`DTI_FITNESS_WIDTH-4:0] DtiIncFitnessZ12C;
+   wire [`DTI_FITNESS_WIDTH-1:0] DtiNextFitnessZ12C;
+   wire [`DTI_FITNESS_WIDTH-1:0] DtiFitnessZ13S;
+
+   // I can't make lint happy without involving an extra wire.
+// surefire lint_off UDDSCU
+   wire                          DtiZeroJnC = 1'b0;
+// surefire lint_on UDDSCU
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   assign DtiFitnessaZ11C = (DtiTransaZ11C[0] | DtiTransaZ11C[4]) ? 3'd0 :
+                            (DtiTransaZ11C[1] | DtiTransaZ11C[3]) ? 3'd3 :
+                            DtiTransaZ11C[2]                      ? 3'd4 :
+                                                                    3'd0;
+
+   assign DtiFitnessbZ11C = (DtiTransbZ11C[0] | DtiTransbZ11C[4]) ? 3'd0 :
+                            (DtiTransbZ11C[1] | DtiTransbZ11C[3]) ? 3'd3 :
+                            DtiTransbZ11C[2]                      ? 3'd4 :
+                                                                    3'd0;
+
+ADD #(3) U1_add (.s(DtiCycleFitnessZ11C),.a(DtiFitnessaZ11C),.b(DtiFitnessbZ11C),.ci(DtiZeroJnC));
+
+
+
+
+
+
+DFF #(4) U2_dff (.q(DtiCycleFitnessZ12S),.d(DtiCycleFitnessZ11C),.clk(DtiCsixClk));
+
+
+ADD #(3) U3_add (.s({DtiCarryOutZ12C, DtiFitnessZ12C[2:0]}),.a(DtiFitnessZ13S[2:0]),.b(DtiCycleFitnessZ12S[2:0]),.ci(DtiZeroJnC));
+
+
+
+
+
+
+   // This works because DtiCycleFitnessZ12S never exceeds 8.
+   assign DtiCarryInZ12C = DtiCarryOutZ12C | DtiCycleFitnessZ12S[3];
+
+INC #(11) U4_inc (.s(DtiIncFitnessZ12C),.a(DtiFitnessZ13S[`DTI_FITNESS_WIDTH-1:3]));
+
+
+
+
+   assign DtiFitnessZ12C[`DTI_FITNESS_WIDTH-1:3] =
+          DtiCarryInZ12C ? DtiIncFitnessZ12C :
+                           DtiFitnessZ13S[`DTI_FITNESS_WIDTH-1:3];
+
+   assign DtiNextFitnessZ12C =
+          DtiBeginFitZ12S ? {`DTI_FITNESS_WIDTH{1'b0}} : DtiFitnessZ12C;
+
+DFF #(14) U5_dff (.q(DtiFitnessZ13S),.d(DtiNextFitnessZ12C),.clk(DtiCsixClk));
+
+
+endmodule // dtifitcalcs
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jun  4 12:00:00 2002 : created
+//
+// $Log: dtifitcalcs.v,v $
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

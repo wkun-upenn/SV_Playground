@@ -1,0 +1,648 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtiovers (
+   /*AUTOARG*/
+   // Outputs
+   DtiOverOneZ11S, DtiOverTwoZ11S, DtiSampleOneZ10C, 
+   DtiSampleTwoZ10C, DtiPrefPrimarySelS, 
+   // Inputs
+   DtiCsixClk, DtiSuperOneS, DtiSuperTwoS, DtiPrefOverSelS, 
+   DtiGetNewOverSelS, DtiFittestOversampleValidS, 
+   DtiFittestOversampleS, DtiGetNewPrimarySelC, DtiSuperSelForceEnS, 
+   DtiSuperSelForceValueS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Oversample outputs
+   output [`DTI_OSAMPLES-1:0]         DtiOverOneZ11S;
+   output [`DTI_OSAMPLES-1:0]         DtiOverTwoZ11S;
+
+   // Primary sample output
+   output                             DtiSampleOneZ10C;
+   output                             DtiSampleTwoZ10C;
+
+   // Signal for software monitoring
+   output [`DTI_SSAMPLE_WIDTH-1:0]    DtiPrefPrimarySelS;
+
+
+   // Common inputs
+   input                              DtiCsixClk;
+
+   // Supersamples for each phase, not yet synchronized to DtiCsixClk
+   input [`DTI_SSAMPLES-1:0]          DtiSuperOneS;
+   input [`DTI_SSAMPLES-1:0]          DtiSuperTwoS;
+
+   // Preferred mux select value based on the average clock phase length.
+   input [`DTI_OSAMPLE_SEL_WIDTH-1:0] DtiPrefOverSelS;
+
+   // Indicates when a filtering period begins
+   input                              DtiGetNewOverSelS;
+
+   // Indicates when a new filtering period begins
+   input                              DtiFittestOversampleValidS;
+
+   // Signal to tell us which oversample has become the preferred sample point
+   input [`DTI_OSAMPLE_WIDTH-1:0]     DtiFittestOversampleS;
+
+   // Signal to tell us when to switch the preferred sample point
+   // to become the primary sample point
+   input                              DtiGetNewPrimarySelC;
+
+   // Forcing signals from software
+   input                             DtiSuperSelForceEnS;
+   input [`DTI_SSAMPLE_WIDTH-1:0]    DtiSuperSelForceValueS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [`DTI_OSAMPLE_SEL_WIDTH-1:0]  DtiOverSelS;
+
+   wire [`DTI_SSAMPLES-1:0]           DtiSuperOneLocalS;
+   wire [`DTI_SSAMPLES-1:0]           DtiSuperTwoLocalS;
+
+   reg [`DTI_OSAMPLES-1:0]            DtiOverOneZ10C;
+   reg [`DTI_OSAMPLES-1:0]            DtiOverTwoZ10C;
+
+   wire [`DTI_OSAMPLES-1:0]           DtiOverOneZ11S;
+   wire [`DTI_OSAMPLES-1:0]           DtiOverTwoZ11S;
+
+
+   reg [`DTI_SSAMPLE_WIDTH-1:0]       DtiPrefPrimarySelC;
+   wire [`DTI_SSAMPLE_WIDTH-1:0]      DtiPrefPrimarySelS;
+
+
+   wire [`DTI_SSAMPLE_WIDTH-1:0]      DtiNextPrimarySelC;
+   wire [`DTI_SSAMPLE_WIDTH-1:0]      DtiPrimarySelS;
+
+
+   wire                               DtiSampleOneZ10C;
+   wire                               DtiSampleTwoZ10C;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // Synchronize supersamples to DtiCsixClk.
+   // We assume that DtiCsixClk has a convenient
+   // timing relationship to the delayed clocks.
+
+DFF #(20) U1_dff (.q(DtiSuperOneLocalS),.d(DtiSuperOneS),.clk(DtiCsixClk));
+DFF #(20) U2_dff (.q(DtiSuperTwoLocalS),.d(DtiSuperTwoS),.clk(DtiCsixClk));
+
+
+   // When OverSelValid is asserted, change the oversample selection
+   // value to the preferred value.
+
+EDFF #(5) U3_dff (.q(DtiOverSelS),.d(DtiPrefOverSelS),.en(DtiGetNewOverSelS),.clk(DtiCsixClk));
+
+
+
+
+   // Use DtiOverSelS to select oversamples from each clock phase.  These
+   // will be used by the dtipicks module to find the data eye and select
+   // the preferred supersample to use as the primary sample point.
+
+   always @(/*AUTOSENSE*/DtiOverSelS or DtiSuperOneLocalS
+            or DtiSuperTwoLocalS) begin
+      case (DtiOverSelS)
+// surefire lint_off CWECSB CWECSM
+        0: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_0_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_0_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_0_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_0_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_0_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_0_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_0_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_0_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_0_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_0_0]};
+
+        1: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_1_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_1_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_1_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_1_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_1_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_1_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_1_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_1_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_1_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_1_0]};
+
+        2: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_2_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_2_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_2_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_2_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_2_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_2_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_2_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_2_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_2_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_2_0]};
+
+        3: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_3_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_3_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_3_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_3_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_3_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_3_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_3_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_3_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_3_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_3_0]};
+
+        4: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_4_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_4_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_4_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_4_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_4_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_4_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_4_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_4_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_4_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_4_0]};
+
+        5: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_5_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_5_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_5_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_5_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_5_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_5_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_5_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_5_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_5_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_5_0]};
+
+        6: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_6_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_6_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_6_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_6_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_6_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_6_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_6_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_6_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_6_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_6_0]};
+
+        7: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_7_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_7_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_7_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_7_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_7_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_7_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_7_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_7_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_7_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_7_0]};
+
+        8: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_8_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_8_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_8_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_8_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_8_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_8_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_8_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_8_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_8_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_8_0]};
+
+        9: {DtiOverOneZ10C,
+            DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_9_4],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_9_3],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_9_2],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_9_1],
+                               DtiSuperOneLocalS[`DTI_OSAMPLE_9_0],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_9_4],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_9_3],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_9_2],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_9_1],
+                               DtiSuperTwoLocalS[`DTI_OSAMPLE_9_0]};
+
+        10: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_10_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_10_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_10_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_10_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_10_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_10_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_10_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_10_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_10_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_10_0]};
+
+        11: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_11_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_11_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_11_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_11_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_11_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_11_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_11_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_11_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_11_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_11_0]};
+
+        12: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_12_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_12_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_12_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_12_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_12_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_12_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_12_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_12_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_12_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_12_0]};
+
+        13: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_13_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_13_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_13_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_13_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_13_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_13_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_13_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_13_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_13_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_13_0]};
+
+        14: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_14_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_14_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_14_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_14_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_14_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_14_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_14_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_14_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_14_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_14_0]};
+
+        15: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_15_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_15_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_15_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_15_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_15_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_15_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_15_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_15_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_15_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_15_0]};
+
+        16: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_16_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_16_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_16_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_16_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_16_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_16_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_16_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_16_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_16_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_16_0]};
+
+        17: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_17_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_17_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_17_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_17_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_17_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_17_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_17_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_17_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_17_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_17_0]};
+
+        18: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_18_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_18_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_18_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_18_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_18_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_18_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_18_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_18_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_18_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_18_0]};
+
+        19: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_19_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_19_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_19_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_19_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_19_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_19_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_19_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_19_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_19_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_19_0]};
+
+        20: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_20_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_20_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_20_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_20_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_20_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_20_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_20_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_20_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_20_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_20_0]};
+
+        21: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_21_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_21_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_21_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_21_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_21_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_21_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_21_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_21_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_21_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_21_0]};
+
+        22: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_22_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_22_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_22_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_22_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_22_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_22_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_22_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_22_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_22_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_22_0]};
+
+        23: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_23_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_23_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_23_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_23_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_23_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_23_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_23_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_23_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_23_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_23_0]};
+
+        24: {DtiOverOneZ10C,
+             DtiOverTwoZ10C} = {DtiSuperOneLocalS[`DTI_OSAMPLE_24_4],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_24_3],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_24_2],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_24_1],
+                                DtiSuperOneLocalS[`DTI_OSAMPLE_24_0],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_24_4],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_24_3],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_24_2],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_24_1],
+                                DtiSuperTwoLocalS[`DTI_OSAMPLE_24_0]};
+// surefire lint_on CWECSB CWECSM
+
+        default: {DtiOverOneZ10C,
+                  DtiOverTwoZ10C} = {(2*`DTI_OSAMPLES){1'bx}};
+      endcase // case(DtiOverSelS)
+   end // always @(...)
+
+DFF #(5) U4_dff (.q(DtiOverOneZ11S),.d(DtiOverOneZ10C),.clk(DtiCsixClk));
+DFF #(5) U5_dff (.q(DtiOverTwoZ11S),.d(DtiOverTwoZ10C),.clk(DtiCsixClk));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Once the dtipicks module has found the oversample that best fits
+   // in the data eye, it will send us the oversample number,
+   // DtiFittestOversampleS, which we translate into a supersample number.
+
+   always @(/*AUTOSENSE*/DtiFittestOversampleS or DtiOverSelS) begin
+      case ({DtiOverSelS,DtiFittestOversampleS})
+// surefire lint_off ASWCBS ASWCBM
+        {5'd0,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_0_0;
+        {5'd0,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_0_1;
+        {5'd0,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_0_2;
+        {5'd0,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_0_3;
+        {5'd0,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_0_4;
+
+        {5'd1,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_1_0;
+        {5'd1,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_1_1;
+        {5'd1,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_1_2;
+        {5'd1,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_1_3;
+        {5'd1,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_1_4;
+
+        {5'd2,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_2_0;
+        {5'd2,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_2_1;
+        {5'd2,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_2_2;
+        {5'd2,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_2_3;
+        {5'd2,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_2_4;
+
+        {5'd3,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_3_0;
+        {5'd3,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_3_1;
+        {5'd3,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_3_2;
+        {5'd3,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_3_3;
+        {5'd3,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_3_4;
+
+        {5'd4,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_4_0;
+        {5'd4,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_4_1;
+        {5'd4,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_4_2;
+        {5'd4,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_4_3;
+        {5'd4,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_4_4;
+
+        {5'd5,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_5_0;
+        {5'd5,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_5_1;
+        {5'd5,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_5_2;
+        {5'd5,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_5_3;
+        {5'd5,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_5_4;
+
+        {5'd6,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_6_0;
+        {5'd6,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_6_1;
+        {5'd6,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_6_2;
+        {5'd6,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_6_3;
+        {5'd6,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_6_4;
+
+        {5'd7,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_7_0;
+        {5'd7,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_7_1;
+        {5'd7,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_7_2;
+        {5'd7,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_7_3;
+        {5'd7,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_7_4;
+
+        {5'd8,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_8_0;
+        {5'd8,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_8_1;
+        {5'd8,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_8_2;
+        {5'd8,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_8_3;
+        {5'd8,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_8_4;
+
+        {5'd9,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_9_0;
+        {5'd9,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_9_1;
+        {5'd9,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_9_2;
+        {5'd9,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_9_3;
+        {5'd9,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_9_4;
+
+        {5'd10,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_10_0;
+        {5'd10,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_10_1;
+        {5'd10,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_10_2;
+        {5'd10,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_10_3;
+        {5'd10,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_10_4;
+
+        {5'd11,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_11_0;
+        {5'd11,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_11_1;
+        {5'd11,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_11_2;
+        {5'd11,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_11_3;
+        {5'd11,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_11_4;
+
+        {5'd12,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_12_0;
+        {5'd12,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_12_1;
+        {5'd12,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_12_2;
+        {5'd12,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_12_3;
+        {5'd12,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_12_4;
+
+        {5'd13,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_13_0;
+        {5'd13,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_13_1;
+        {5'd13,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_13_2;
+        {5'd13,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_13_3;
+        {5'd13,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_13_4;
+
+        {5'd14,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_14_0;
+        {5'd14,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_14_1;
+        {5'd14,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_14_2;
+        {5'd14,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_14_3;
+        {5'd14,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_14_4;
+
+        {5'd15,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_15_0;
+        {5'd15,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_15_1;
+        {5'd15,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_15_2;
+        {5'd15,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_15_3;
+        {5'd15,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_15_4;
+
+        {5'd16,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_16_0;
+        {5'd16,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_16_1;
+        {5'd16,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_16_2;
+        {5'd16,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_16_3;
+        {5'd16,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_16_4;
+
+        {5'd17,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_17_0;
+        {5'd17,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_17_1;
+        {5'd17,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_17_2;
+        {5'd17,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_17_3;
+        {5'd17,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_17_4;
+
+        {5'd18,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_18_0;
+        {5'd18,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_18_1;
+        {5'd18,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_18_2;
+        {5'd18,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_18_3;
+        {5'd18,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_18_4;
+
+        {5'd19,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_19_0;
+        {5'd19,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_19_1;
+        {5'd19,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_19_2;
+        {5'd19,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_19_3;
+        {5'd19,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_19_4;
+
+        {5'd20,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_20_0;
+        {5'd20,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_20_1;
+        {5'd20,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_20_2;
+        {5'd20,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_20_3;
+        {5'd20,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_20_4;
+
+        {5'd21,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_21_0;
+        {5'd21,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_21_1;
+        {5'd21,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_21_2;
+        {5'd21,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_21_3;
+        {5'd21,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_21_4;
+
+        {5'd22,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_22_0;
+        {5'd22,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_22_1;
+        {5'd22,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_22_2;
+        {5'd22,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_22_3;
+        {5'd22,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_22_4;
+
+        {5'd23,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_23_0;
+        {5'd23,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_23_1;
+        {5'd23,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_23_2;
+        {5'd23,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_23_3;
+        {5'd23,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_23_4;
+
+        {5'd24,3'd0}: DtiPrefPrimarySelC = `DTI_OSAMPLE_24_0;
+        {5'd24,3'd1}: DtiPrefPrimarySelC = `DTI_OSAMPLE_24_1;
+        {5'd24,3'd2}: DtiPrefPrimarySelC = `DTI_OSAMPLE_24_2;
+        {5'd24,3'd3}: DtiPrefPrimarySelC = `DTI_OSAMPLE_24_3;
+        {5'd24,3'd4}: DtiPrefPrimarySelC = `DTI_OSAMPLE_24_4;
+// surefire lint_on ASWCBS ASWCBM
+
+        default:      DtiPrefPrimarySelC = {`DTI_SSAMPLE_WIDTH{1'bx}};
+      endcase // case({DtiOverSelS,DtiFittestOversampleS})
+   end // always @(...)
+
+   // Record the preferred supersample number when the fittest oversample
+   // number is valid.
+EDFF #(5) U6_dff (.q(DtiPrefPrimarySelS),.d(DtiPrefPrimarySelC),.en(DtiFittestOversampleValidS),.clk(DtiCsixClk));
+
+
+
+
+   // Transfer the preferred supersample number to become the primary
+   // selection point when directed to do so.  Or it can be overridden
+   // by a forced value from software.
+
+   assign DtiNextPrimarySelC = DtiSuperSelForceEnS  ? DtiSuperSelForceValueS :
+                               DtiGetNewPrimarySelC ? DtiPrefPrimarySelS :
+                                                      DtiPrimarySelS;
+
+DFF #(5) U7_dff (.q(DtiPrimarySelS),.d(DtiNextPrimarySelC),.clk(DtiCsixClk));
+
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Use the primary selection number to choose a primary sample in
+   // each clock phase from the captured supersamples.
+
+// surefire lint_off BWEEBB
+   assign DtiSampleOneZ10C = |((1 << DtiPrimarySelS) & DtiSuperOneLocalS);
+   assign DtiSampleTwoZ10C = |((1 << DtiPrimarySelS) & DtiSuperTwoLocalS);
+// surefire lint_on BWEEBB
+
+
+endmodule // dtiovers
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jun  3 12:00:00 2002 : created
+//
+// $Log: dtiovers.v,v $
+// Revision 1.4  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.3  2002/07/25 20:19:16  chris
+// Fix typo
+//
+// Revision 1.2  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

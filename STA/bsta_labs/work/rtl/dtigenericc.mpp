@@ -1,0 +1,877 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+module dtigenericc (
+   /*AUTOARG*/
+   // Outputs
+   DtiTrainedS, DtiTrainS, DtiTrainRdValidS, DtiTrainRdDataS, 
+   DtiCtrlS, DtiDataS, 
+   // Inputs
+   TmiTrainWrEnS, TmiTrainWrDataS, TmiTrainRdEnS, GlInitDoneR00C, 
+   GlCoreSoftResetSynR00C, EnqGlPortVld, DtiSuperTwo9S, 
+   DtiSuperTwo8S, DtiSuperTwo7S, DtiSuperTwo6S, DtiSuperTwo5S, 
+   DtiSuperTwo4S, DtiSuperTwo3S, DtiSuperTwo2S, DtiSuperTwo1S, 
+   DtiSuperTwo16S, DtiSuperTwo15S, DtiSuperTwo14S, DtiSuperTwo13S, 
+   DtiSuperTwo12S, DtiSuperTwo11S, DtiSuperTwo10S, DtiSuperTwo0S, 
+   DtiSuperOne9S, DtiSuperOne8S, DtiSuperOne7S, DtiSuperOne6S, 
+   DtiSuperOne5S, DtiSuperOne4S, DtiSuperOne3S, DtiSuperOne2S, 
+   DtiSuperOne1S, DtiSuperOne16S, DtiSuperOne15S, DtiSuperOne14S, 
+   DtiSuperOne13S, DtiSuperOne12S, DtiSuperOne11S, DtiSuperOne10S, 
+   DtiSuperOne0S, DtiPosMaskS, DtiNegMaskS, DtiCsixClk, DtiCoreClk, 
+   TmiTrainAddrS
+);
+
+   parameter DTI_WORD_WIDTH = 17;
+   parameter DTI_TCW_VALUE  = 17'h1_0fff;
+   parameter DTI_ICW_VALUE  = 17'h1_000f;
+   parameter DTI_ADDR_WIDTH = 5;
+
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // You should not have to explicitly declare your input/output for a
+   // connectivity file. The AUTOINPUT and AUTOOUTPUT should take care of it.
+
+   /*AUTOINPUT*/
+   // Beginning of automatic inputs (from unused autoinst inputs)
+   input                DtiCoreClk;             // To U_dtictrlcores of dtictrlcores.v
+   input                DtiCsixClk;             // To U_dticlklens of dticlklens.v, ...
+   input [`DTI_CLK_MASK_WIDTH-1:0]DtiNegMaskS;  // To U_dticlklens of dticlklens.v
+   input [`DTI_CLK_MASK_WIDTH-1:0]DtiPosMaskS;  // To U_dticlklens of dticlklens.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne0S;      // To U0_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne10S;     // To U10_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne11S;     // To U11_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne12S;     // To U12_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne13S;     // To U13_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne14S;     // To U14_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne15S;     // To U15_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne16S;     // To U16_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne1S;      // To U1_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne2S;      // To U2_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne3S;      // To U3_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne4S;      // To U4_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne5S;      // To U5_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne6S;      // To U6_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne7S;      // To U7_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne8S;      // To U8_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperOne9S;      // To U9_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo0S;      // To U0_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo10S;     // To U10_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo11S;     // To U11_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo12S;     // To U12_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo13S;     // To U13_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo14S;     // To U14_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo15S;     // To U15_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo16S;     // To U16_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo1S;      // To U1_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo2S;      // To U2_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo3S;      // To U3_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo4S;      // To U4_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo5S;      // To U5_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo6S;      // To U6_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo7S;      // To U7_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo8S;      // To U8_dti1bitc of dti1bitc.v
+   input [`DTI_SSAMPLES-1:0]DtiSuperTwo9S;      // To U9_dti1bitc of dti1bitc.v
+   input                EnqGlPortVld;           // To U_dtictrlcores of dtictrlcores.v
+   input                GlCoreSoftResetSynR00C; // To U_dtictrlcores of dtictrlcores.v
+   input                GlInitDoneR00C;         // To U_dtictrlcores of dtictrlcores.v
+   input                TmiTrainRdEnS;          // To U_dtictrlcores of dtictrlcores.v
+   input [`DTI_WRDATA_WIDTH-1:0]TmiTrainWrDataS;// To U_dtictrlcores of dtictrlcores.v
+   input                TmiTrainWrEnS;          // To U_dtictrlcores of dtictrlcores.v
+   // End of automatics
+
+   // To avoid allowing its parameterized bus width to escape to higher
+   // levels of hierarchy, we give this input an explicit width.
+   input [4:0]          TmiTrainAddrS;
+
+
+   /*AUTOOUTPUT*/
+   // Beginning of automatic outputs (from unused autoinst outputs)
+   output [`DTI_RDDATA_WIDTH-1:0]DtiTrainRdDataS;// From U_dtictrlcores of dtictrlcores.v
+   output               DtiTrainRdValidS;       // From U_dtictrlcores of dtictrlcores.v
+   output               DtiTrainS;              // From U_dticombines of dticombines.v
+   output               DtiTrainedS;            // From U_dticombines of dticombines.v
+   // End of automatics
+
+   // Because of the way we templated them,
+   // these outputs need to be declared explicitly.
+   output [1:0]         DtiCtrlS;
+   output [31:0]        DtiDataS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // You should not have to explicitly declare wires for a connectivity file.
+   // AUTOWIRE should declare it for you.
+
+   /*AUTOWIRE*/
+   // Beginning of automatic wires (for undeclared instantiated-module outputs)
+   wire [DTI_ADDR_WIDTH-1:0]DtiAddrCoreS;       // From U_dtictrlcores of dtictrlcores.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit0CtrlS;  // From U0_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit10CtrlS; // From U10_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit11CtrlS; // From U11_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit12CtrlS; // From U12_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit13CtrlS; // From U13_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit14CtrlS; // From U14_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit15CtrlS; // From U15_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit16CtrlS; // From U16_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit1CtrlS;  // From U1_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit2CtrlS;  // From U2_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit3CtrlS;  // From U3_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit4CtrlS;  // From U4_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit5CtrlS;  // From U5_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit6CtrlS;  // From U6_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit7CtrlS;  // From U7_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit8CtrlS;  // From U8_dti1bitc of dti1bitc.v
+   wire [`DTI_BIT_CTRL_WIDTH-1:0]DtiBit9CtrlS;  // From U9_dti1bitc of dti1bitc.v
+   wire [DTI_WORD_WIDTH-1:0]DtiBitWrEnC;        // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [`DTI_CLKLEN_CTRL_WIDTH-1:0]DtiClkLenCtrlS;// From U_dticlklens of dticlklens.v
+   wire                 DtiClkLenWrEnC;         // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire                 DtiCsixSoftResetSynZ01SL;// From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [`DTI_CYCLE_THRESHOLD_WIDTH-1:0]DtiCycleThresholdS;// From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [16:0]          DtiDeskewFailureC;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiDeskewedWord0C;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiDeskewedWord1C;      // From U0_dti1bitc of dti1bitc.v, ...
+   wire                 DtiDoTrainingC;         // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire                 DtiDoneStretchingZnS;   // From U_dtictrlcores of dtictrlcores.v
+   wire                 DtiFirstTDWC;           // From U_dticombines of dticombines.v
+   wire                 DtiFoundPrefTCWC;       // From U_dtifindtcws of dtifindtcws.v
+   wire                 DtiGetNewPrimarySelC;   // From U_dticombines of dticombines.v
+   wire [16:0]          DtiHistoryWord3S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiHistoryWord4S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiHistoryWord5S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiHistoryWord6S;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiHistoryWord7C;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire [16:0]          DtiHistoryWord8C;       // From U0_dti1bitc of dti1bitc.v, ...
+   wire                 DtiPrefOverSelReadyS;   // From U_dticlklens of dticlklens.v
+   wire [`DTI_OSAMPLE_SEL_WIDTH-1:0]DtiPrefOverSelS;// From U_dticlklens of dticlklens.v
+   wire [16:0]          DtiPrimarySelReadyS;    // From U0_dti1bitc of dti1bitc.v, ...
+   wire [`DTI_RDDATA_WIDTH-1:0]DtiRdDataCsixS;  // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire                 DtiRdEnTransS;          // From U_dtictrlcores of dtictrlcores.v
+   wire                 DtiRdValidTransS;       // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [DTI_WORD_WIDTH-1:0]DtiTCWC;            // From U_dticombines of dticombines.v
+   wire [`DTI_TRAINING_MODE_WIDTH-1:0]DtiTrainingModeS;// From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [`DTI_TRANS_THRESHOLD_WIDTH-1:0]DtiTransThresholdS;// From U_dtictrlcsixs of dtictrlcsixs.v
+   wire [`DTI_WRDATA_WIDTH-1:0]DtiWrDataCoreS;  // From U_dtictrlcores of dtictrlcores.v
+   wire [`DTI_WRDATA_WIDTH-1:0]DtiWrDataS;      // From U_dtictrlcsixs of dtictrlcsixs.v
+   wire                 DtiWrEnTransS;          // From U_dtictrlcores of dtictrlcores.v
+   // End of automatics
+
+
+   //==========================================================================
+   //==========             SubBlock Instantiation                   ==========
+   //==========================================================================
+   // You should instantiate your sub blocks here. It may be useful to use
+   // AUTO_TEMPLATE when instantiating multiple instances of the same module.
+
+
+   // Module Name: dticlklens
+   // Instance Name: U_dticlklens
+   // Description: Convert phase-overlap masks into average phase length
+
+   dticlklens U_dticlklens
+      (/*AUTOINST*/
+       // Outputs
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiClkLenCtrlS                  (DtiClkLenCtrlS[`DTI_CLKLEN_CTRL_WIDTH-1:0]),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiPosMaskS                     (DtiPosMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+       .DtiNegMaskS                     (DtiNegMaskS[`DTI_CLK_MASK_WIDTH-1:0]),
+       .DtiClkLenWrEnC                  (DtiClkLenWrEnC),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+
+   // Module Name: dti1bitc
+   // Instance Name: U*_dti1bitc
+   // Description: Do all training work that is local to each bit
+
+/* dti1bitc AUTO_TEMPLATE (
+      // Outputs
+      .DtiPrimarySelReadyS (DtiPrimarySelReadyS[@]),
+      .DtiHistoryBit\(.*\) (DtiHistoryWord\1[@]),
+      .DtiDeskewedBit0C    (DtiDeskewedWord0C[@]),
+      .DtiDeskewedBit1C    (DtiDeskewedWord1C[@]),
+      .DtiDeskewFailureC   (DtiDeskewFailureC[@]),
+      .DtiBitCtrlS         (DtiBit@CtrlS[]),
+      // Inputs
+      .DtiSuperOneS        (DtiSuperOne@S[]),
+      .DtiSuperTwoS        (DtiSuperTwo@S[]),
+      .DtiTCWBitC          (DtiTCWC[@]),
+      .DtiBitWrEnC         (DtiBitWrEnC[@]));
+*/
+
+   dti1bitc U0_dti1bitc
+       (/*AUTOINST*/
+        // Outputs
+        .DtiBitCtrlS                    (DtiBit0CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+        .DtiDeskewFailureC              (DtiDeskewFailureC[0]),  // Templated
+        .DtiDeskewedBit0C               (DtiDeskewedWord0C[0]),  // Templated
+        .DtiDeskewedBit1C               (DtiDeskewedWord1C[0]),  // Templated
+        .DtiHistoryBit3S                (DtiHistoryWord3S[0]),   // Templated
+        .DtiHistoryBit4S                (DtiHistoryWord4S[0]),   // Templated
+        .DtiHistoryBit5S                (DtiHistoryWord5S[0]),   // Templated
+        .DtiHistoryBit6S                (DtiHistoryWord6S[0]),   // Templated
+        .DtiHistoryBit7C                (DtiHistoryWord7C[0]),   // Templated
+        .DtiHistoryBit8C                (DtiHistoryWord8C[0]),   // Templated
+        .DtiPrimarySelReadyS            (DtiPrimarySelReadyS[0]), // Templated
+        // Inputs
+        .DtiBitWrEnC                    (DtiBitWrEnC[0]),        // Templated
+        .DtiCsixClk                     (DtiCsixClk),
+        .DtiCsixSoftResetSynZ01SL       (DtiCsixSoftResetSynZ01SL),
+        .DtiCycleThresholdS             (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+        .DtiDoTrainingC                 (DtiDoTrainingC),
+        .DtiFirstTDWC                   (DtiFirstTDWC),
+        .DtiGetNewPrimarySelC           (DtiGetNewPrimarySelC),
+        .DtiPrefOverSelReadyS           (DtiPrefOverSelReadyS),
+        .DtiPrefOverSelS                (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+        .DtiSuperOneS                   (DtiSuperOne0S[`DTI_SSAMPLES-1:0]), // Templated
+        .DtiSuperTwoS                   (DtiSuperTwo0S[`DTI_SSAMPLES-1:0]), // Templated
+        .DtiTCWBitC                     (DtiTCWC[0]),            // Templated
+        .DtiTransThresholdS             (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+        .DtiWrDataS                     (DtiWrDataS[10:0]));
+
+   dti1bitc U1_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit1CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[1]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[1]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[1]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[1]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[1]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[1]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[1]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[1]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[1]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[1]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[1]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne1S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo1S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[1]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U2_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit2CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[2]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[2]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[2]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[2]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[2]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[2]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[2]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[2]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[2]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[2]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[2]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne2S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo2S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[2]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U3_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit3CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[3]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[3]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[3]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[3]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[3]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[3]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[3]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[3]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[3]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[3]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[3]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne3S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo3S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[3]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U4_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit4CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[4]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[4]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[4]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[4]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[4]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[4]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[4]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[4]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[4]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[4]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[4]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne4S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo4S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[4]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U5_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit5CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[5]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[5]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[5]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[5]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[5]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[5]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[5]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[5]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[5]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[5]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[5]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne5S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo5S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[5]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U6_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit6CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[6]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[6]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[6]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[6]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[6]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[6]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[6]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[6]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[6]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[6]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[6]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne6S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo6S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[6]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U7_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit7CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[7]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[7]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[7]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[7]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[7]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[7]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[7]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[7]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[7]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[7]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[7]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne7S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo7S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[7]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U8_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit8CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[8]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[8]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[8]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[8]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[8]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[8]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[8]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[8]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[8]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[8]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[8]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne8S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo8S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[8]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U9_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit9CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[9]),  // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[9]),  // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[9]),  // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[9]),   // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[9]),   // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[9]),   // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[9]),   // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[9]),   // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[9]),   // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[9]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[9]),        // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne9S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo9S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[9]),            // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U10_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit10CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[10]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[10]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[10]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[10]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[10]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[10]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[10]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[10]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[10]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[10]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[10]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne10S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo10S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[10]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U11_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit11CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[11]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[11]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[11]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[11]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[11]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[11]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[11]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[11]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[11]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[11]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[11]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne11S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo11S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[11]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U12_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit12CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[12]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[12]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[12]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[12]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[12]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[12]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[12]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[12]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[12]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[12]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[12]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne12S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo12S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[12]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U13_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit13CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[13]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[13]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[13]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[13]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[13]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[13]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[13]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[13]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[13]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[13]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[13]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne13S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo13S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[13]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U14_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit14CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[14]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[14]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[14]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[14]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[14]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[14]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[14]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[14]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[14]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[14]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[14]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne14S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo14S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[14]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U15_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit15CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[15]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[15]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[15]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[15]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[15]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[15]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[15]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[15]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[15]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[15]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[15]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne15S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo15S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[15]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+   dti1bitc U16_dti1bitc
+      (/*AUTOINST*/
+       // Outputs
+       .DtiBitCtrlS                     (DtiBit16CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]), // Templated
+       .DtiDeskewFailureC               (DtiDeskewFailureC[16]), // Templated
+       .DtiDeskewedBit0C                (DtiDeskewedWord0C[16]), // Templated
+       .DtiDeskewedBit1C                (DtiDeskewedWord1C[16]), // Templated
+       .DtiHistoryBit3S                 (DtiHistoryWord3S[16]),  // Templated
+       .DtiHistoryBit4S                 (DtiHistoryWord4S[16]),  // Templated
+       .DtiHistoryBit5S                 (DtiHistoryWord5S[16]),  // Templated
+       .DtiHistoryBit6S                 (DtiHistoryWord6S[16]),  // Templated
+       .DtiHistoryBit7C                 (DtiHistoryWord7C[16]),  // Templated
+       .DtiHistoryBit8C                 (DtiHistoryWord8C[16]),  // Templated
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[16]), // Templated
+       // Inputs
+       .DtiBitWrEnC                     (DtiBitWrEnC[16]),       // Templated
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiPrefOverSelReadyS            (DtiPrefOverSelReadyS),
+       .DtiPrefOverSelS                 (DtiPrefOverSelS[`DTI_OSAMPLE_SEL_WIDTH-1:0]),
+       .DtiSuperOneS                    (DtiSuperOne16S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiSuperTwoS                    (DtiSuperTwo16S[`DTI_SSAMPLES-1:0]), // Templated
+       .DtiTCWBitC                      (DtiTCWC[16]),           // Templated
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       .DtiWrDataS                      (DtiWrDataS[10:0]));
+
+
+   // Module Name: dtifindtcws
+   // Instance Name: U_dtifindtcws
+   // Description: Look at the right amount of history to identify the TCW
+
+   dtifindtcws #(DTI_WORD_WIDTH) U_dtifindtcws
+      (/*AUTOINST*/
+       // Outputs
+       .DtiFoundPrefTCWC                (DtiFoundPrefTCWC),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiPrimarySelReadyS             (DtiPrimarySelReadyS[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord8C                (DtiHistoryWord8C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord7C                (DtiHistoryWord7C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord6S                (DtiHistoryWord6S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord5S                (DtiHistoryWord5S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord4S                (DtiHistoryWord4S[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord3S                (DtiHistoryWord3S[DTI_WORD_WIDTH-1:0]),
+       .DtiTCWC                         (DtiTCWC[DTI_WORD_WIDTH-1:0]));
+
+
+   // Module Name: dticombines
+   // Instance Name: U_dticombines
+   // Description: Look at all bits to find the training pattern
+
+/* dticombines AUTO_TEMPLATE (
+      // Outputs
+      .DtiWord0S ({DtiCtrlS[1],DtiDataS[31:16]}),
+      .DtiWord1S ({DtiCtrlS[0],DtiDataS[15:0]}));
+*/
+
+   dticombines #(DTI_WORD_WIDTH, DTI_TCW_VALUE, DTI_ICW_VALUE) U_dticombines
+      (/*AUTOINST*/
+       // Outputs
+       .DtiWord0S                       ({DtiCtrlS[1],DtiDataS[31:16]}), // Templated
+       .DtiWord1S                       ({DtiCtrlS[0],DtiDataS[15:0]}), // Templated
+       .DtiTrainS                       (DtiTrainS),
+       .DtiTrainedS                     (DtiTrainedS),
+       .DtiGetNewPrimarySelC            (DtiGetNewPrimarySelC),
+       .DtiTCWC                         (DtiTCWC[DTI_WORD_WIDTH-1:0]),
+       .DtiFirstTDWC                    (DtiFirstTDWC),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiFoundPrefTCWC                (DtiFoundPrefTCWC),
+       .DtiDeskewedWord0C               (DtiDeskewedWord0C[DTI_WORD_WIDTH-1:0]),
+       .DtiDeskewedWord1C               (DtiDeskewedWord1C[DTI_WORD_WIDTH-1:0]),
+       .DtiHistoryWord6S                (DtiHistoryWord6S[DTI_WORD_WIDTH-1:0]),
+       .DtiDeskewFailureC               (DtiDeskewFailureC[DTI_WORD_WIDTH-1:0]),
+       .DtiTrainingModeS                (DtiTrainingModeS[1:0]));
+
+
+   // Module Name: dtictrlcores
+   // Instance Name: U_dtictrlcores
+   // Description: Handle core-clock surrogate RBB requests from the CBI (TMI)
+
+/* dtictrlcores AUTO_TEMPLATE (
+      // Outputs
+      .DtiCoreSoftResetSynZ01SL ());
+*/
+
+// surefire lint_off IMNNUL
+   dtictrlcores #(DTI_ADDR_WIDTH) U_dtictrlcores
+      (/*AUTOINST*/
+       // Outputs
+       .DtiTrainRdValidS                (DtiTrainRdValidS),
+       .DtiTrainRdDataS                 (DtiTrainRdDataS[`DTI_RDDATA_WIDTH-1:0]),
+       .DtiCoreSoftResetSynZ01SL        (),                      // Templated
+       .DtiDoneStretchingZnS            (DtiDoneStretchingZnS),
+       .DtiWrEnTransS                   (DtiWrEnTransS),
+       .DtiRdEnTransS                   (DtiRdEnTransS),
+       .DtiAddrCoreS                    (DtiAddrCoreS[DTI_ADDR_WIDTH-1:0]),
+       .DtiWrDataCoreS                  (DtiWrDataCoreS[`DTI_WRDATA_WIDTH-1:0]),
+       // Inputs
+       .DtiCoreClk                      (DtiCoreClk),
+       .GlCoreSoftResetSynR00C          (GlCoreSoftResetSynR00C),
+       .EnqGlPortVld                    (EnqGlPortVld),
+       .GlInitDoneR00C                  (GlInitDoneR00C),
+       .TmiTrainWrEnS                   (TmiTrainWrEnS),
+       .TmiTrainRdEnS                   (TmiTrainRdEnS),
+       .TmiTrainAddrS                   (TmiTrainAddrS[DTI_ADDR_WIDTH-1:0]),
+       .TmiTrainWrDataS                 (TmiTrainWrDataS[`DTI_WRDATA_WIDTH-1:0]),
+       .DtiRdValidTransS                (DtiRdValidTransS),
+       .DtiRdDataCsixS                  (DtiRdDataCsixS[`DTI_RDDATA_WIDTH-1:0]));
+// surefire lint_on IMNNUL
+
+
+   // Module Name: dtictrlcsixs
+   // Instance Name: U_dtictrlcsixs
+   // Description: Handle RBB transactions synchronized from the core clock
+
+   dtictrlcsixs #(DTI_WORD_WIDTH, DTI_ADDR_WIDTH) U_dtictrlcsixs
+      (/*AUTOINST*/
+       // Outputs
+       .DtiCsixSoftResetSynZ01SL        (DtiCsixSoftResetSynZ01SL),
+       .DtiDoTrainingC                  (DtiDoTrainingC),
+       .DtiRdValidTransS                (DtiRdValidTransS),
+       .DtiRdDataCsixS                  (DtiRdDataCsixS[`DTI_RDDATA_WIDTH-1:0]),
+       .DtiBitWrEnC                     (DtiBitWrEnC[DTI_WORD_WIDTH-1:0]),
+       .DtiClkLenWrEnC                  (DtiClkLenWrEnC),
+       .DtiWrDataS                      (DtiWrDataS[`DTI_WRDATA_WIDTH-1:0]),
+       .DtiTrainingModeS                (DtiTrainingModeS[`DTI_TRAINING_MODE_WIDTH-1:0]),
+       .DtiCycleThresholdS              (DtiCycleThresholdS[`DTI_CYCLE_THRESHOLD_WIDTH-1:0]),
+       .DtiTransThresholdS              (DtiTransThresholdS[`DTI_TRANS_THRESHOLD_WIDTH-1:0]),
+       // Inputs
+       .DtiCsixClk                      (DtiCsixClk),
+       .DtiDoneStretchingZnS            (DtiDoneStretchingZnS),
+       .DtiWrEnTransS                   (DtiWrEnTransS),
+       .DtiRdEnTransS                   (DtiRdEnTransS),
+       .DtiAddrCoreS                    (DtiAddrCoreS[DTI_ADDR_WIDTH-1:0]),
+       .DtiWrDataCoreS                  (DtiWrDataCoreS[`DTI_WRDATA_WIDTH-1:0]),
+       .DtiBit0CtrlS                    (DtiBit0CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit1CtrlS                    (DtiBit1CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit2CtrlS                    (DtiBit2CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit3CtrlS                    (DtiBit3CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit4CtrlS                    (DtiBit4CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit5CtrlS                    (DtiBit5CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit6CtrlS                    (DtiBit6CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit7CtrlS                    (DtiBit7CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit8CtrlS                    (DtiBit8CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit9CtrlS                    (DtiBit9CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit10CtrlS                   (DtiBit10CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit11CtrlS                   (DtiBit11CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit12CtrlS                   (DtiBit12CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit13CtrlS                   (DtiBit13CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit14CtrlS                   (DtiBit14CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit15CtrlS                   (DtiBit15CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiBit16CtrlS                   (DtiBit16CtrlS[`DTI_BIT_CTRL_WIDTH-1:0]),
+       .DtiClkLenCtrlS                  (DtiClkLenCtrlS[`DTI_CLKLEN_CTRL_WIDTH-1:0]));
+
+
+endmodule // dtigenericc
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Jun 11 12:00:00 2002 : created
+//
+// $Log: dtigenericc.v,v $
+// Revision 1.6  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.5  2002/07/29 18:44:10  chris
+// Disable micro-deskew when TrainingMode is FORCE_UNTRAINED
+//
+// Revision 1.4  2002/07/26 18:32:56  chris
+// Use PortVld for stretched reset
+//
+// Revision 1.3  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.2  2002/07/15 18:29:15  chris
+// template unconnected reset port
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

@@ -1,0 +1,518 @@
+
+// mpp <clock=RswCsixClk, reset=RswNpsiSoftResetSynR00C>
+`include "rswuc.vh"
+
+module rswflowctls (/*AUTOARG*/
+   // Outputs
+   RswTrainIntrXnnS, RswDip2IntrXnnS, RswLodsIntrXnnS, 
+   RswLodsDetXnnS, RswDRdyXnnS, RswWriteFcFifoXnnC, 
+   RswWrdataFcFifoXnnC, 
+   // Inputs
+   RswCsixClk, RswNpsiSoftResetSynR00C, FtiDataS, FtiTrainLevelS, 
+   FtiTrainPulseS, RswFcFifoFullXnnS, RswLofcsEnX11S, 
+   RswDisLlFlCtlX11S, RswDisVoqFlCtlX11S, RswDip2ErrThreshX11S, 
+   RswDip2OkThreshX11S
+   );
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+   output                              RswTrainIntrXnnS;
+   output                              RswDip2IntrXnnS;
+   output                              RswLodsIntrXnnS;
+   output                              RswLodsDetXnnS;
+   output                              RswDRdyXnnS;
+   output                              RswWriteFcFifoXnnC;
+   output   [`RSW_FCDEC_MESGWIDTH-1:0] RswWrdataFcFifoXnnC;
+
+   input                               RswCsixClk;          // Rsw Flow ctrl clk
+   input 				                  RswNpsiSoftResetSynR00C;     // Global Reset
+   input    [`RSW_FCSTSWIDTH-1:0]      FtiDataS;
+   input                               FtiTrainLevelS;
+   input                               FtiTrainPulseS;
+   input                               RswFcFifoFullXnnS;
+   input                               RswLofcsEnX11S;
+   input                               RswDisLlFlCtlX11S;
+   input                               RswDisVoqFlCtlX11S;
+   input    [15:0]                     RswDip2ErrThreshX11S;
+   input    [15:0]                     RswDip2OkThreshX11S;
+   
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X50                       ----------
+   //--------------------------------------------------------------------------
+   wire     [`RSW_FCSTSWIDTH-1:0]      RswTStatX50C;
+   wire     [`RSW_FCSTSWIDTH-1:0]      RswTStatX51S;
+   wire                                RswTrainLevelX51S;
+   wire                                RswTrainPulseX51S;
+   reg      [3:0]                      RswFcLenCntX50C;
+   wire     [3:0]                      RswFcLenCntX51S;
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X51                       ----------
+   //--------------------------------------------------------------------------
+   wire     [`RSW_FCSTSWIDTH-1:0]      RswTStatX52S;
+   wire                                RswTrainLevelX52S;
+   wire                                RswTrainPulseX52S;
+   wire     [3:0]                      RswFcLenCntX52S;
+   reg                                 RswNextTPX51C;
+   reg      [3:0]                      RswTPCntX51C;
+   reg                                 RswSyncVldX51C;
+   reg                                 RswSyncMidX51C;
+   reg                                 RswAccVldX51C;
+   wire                                RswEoAccX51C;
+   wire                                RswEoAccX52S;
+   wire                                RswCurrentTPX52S;
+   wire                                RswSyncMidX52S;
+   wire                                RswAccVldX52S;
+   wire     [3:0]                      RswTPCntX52S;
+   wire                                RswTrainIntrXnnC;
+   wire                                RswTrainIntrXnnS;
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X52                       ----------
+   //--------------------------------------------------------------------------
+   wire                                RswTrainLevelX53S;
+   wire                                RswTrainPulseX53S;
+   wire                                RswDet12TPX52C;
+   reg      [`RSW_FCMESGWIDTH-1:0]     RswAccRegX52C;
+   wire     [`RSW_FCSTSWIDTH-1:0]      RswIStatXnnC;
+   wire     [`RSW_FCSTSWIDTH-1:0]      RswSRegXnnC;
+   reg      [`RSW_FCSTSWIDTH-1:0]      RswDip2XnnC;
+   wire     [`RSW_FCSTSWIDTH-3:0]      RswNextDip2XnnC;
+   wire                                RswParityOkXnnC;
+   wire                                RswParityFailXnnC;
+   wire     [`RSW_FCMESGWIDTH-1:0]     RswAccRegX53S;
+   wire     [`RSW_FCSTSWIDTH-3:0]      RswDip2XnnS;
+   wire                                RswParityOkXnnS;
+   wire                                RswParityFailXnnS;
+   reg                                 RswLodsDetXnnC;
+   wire                                RswLodsDetXnnS;
+   wire                                RswLodsIntrXnnS;
+   reg      [15:0]                     RswNDip2ErrCntXnnC;
+   wire     [15:0]                     RswNDip2ErrCntXnnS;
+   reg      [15:0]                     RswMDip2OkCntXnnC;
+   wire     [15:0]                     RswMDip2OkCntXnnS;
+   wire                                RswMDip2OkXnnC;
+   wire                                RswMDip2OkXnnS;
+   wire                                RswDip2IntrXnnC;
+   wire                                RswDip2IntrXnnS;
+   wire                                RswEoAccX53S;
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X53                       ----------
+   //--------------------------------------------------------------------------
+   wire                                RswWriteFcFifoXnnC;
+   reg      [`RSW_FCDEC_MESGWIDTH-1:0] RswWrdataFcFifoXnnC;
+   reg                                 RswDRdyXnnC;
+   wire                                RswDRdyXnnS;
+   
+   //==========================================================================
+   //==========           Begining of Actual Logic                   ==========
+   //==========================================================================
+
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X50                       ----------
+   //--------------------------------------------------------------------------
+   // PipeStage Description:  Retime the incoming data
+
+   //-------------------------------------
+   //----- Combinatorial Logic Block -----
+   //-------------------------------------
+   assign RswTStatX50C = FtiTrainLevelS ? FtiDataS : 4'b0000;
+
+   // surefire lint_off ASWEMB
+   // count the length of the fc message
+   always @(/*AS*/FtiTrainLevelS or FtiTrainPulseS or RswFcLenCntX51S)
+   begin
+      if (!FtiTrainLevelS)
+         RswFcLenCntX50C = 4'd0;
+      else if (FtiTrainLevelS & FtiTrainPulseS)
+         RswFcLenCntX50C = 4'd0;
+      else if (RswFcLenCntX51S == 4'd9)
+         RswFcLenCntX50C = 4'd0;
+      else 
+         RswFcLenCntX50C = RswFcLenCntX51S + 1'b1;
+   end
+
+   //-------------------------------------
+   //-----   Sequential Logic Block  -----
+   //-------------------------------------
+DFF #(4) U1_TstatX50 (.q(RswTStatX51S),.d(RswTStatX50C),.clk(RswCsixClk));
+DFF #(1) U1_TLevelX50 (.q(RswTrainLevelX51S),.d(FtiTrainLevelS),.clk(RswCsixClk));
+DFF #(1) U1_TPulseX50 (.q(RswTrainPulseX51S),.d(FtiTrainPulseS),.clk(RswCsixClk));
+DFFR #(4,4'b0) U1_FcLenCntX50 (.q(RswFcLenCntX51S),.d(RswFcLenCntX50C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+   
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X51                       ----------
+   //--------------------------------------------------------------------------
+   // PipeStage Description: Check sync pattern, Incr sync pattern count
+
+   //-------------------------------------
+   //----- Combinatorial Logic Block -----
+   //-------------------------------------
+
+   // Detect 12 consecutive training patterns
+   always @(/*AS*/RswCurrentTPX52S or RswFcLenCntX51S
+	    or RswTrainLevelX51S or RswTrainPulseX51S)
+   begin
+      if (!RswTrainLevelX51S)
+         RswNextTPX51C = `RSW_ZERO;
+      else if (RswTrainLevelX51S & RswTrainPulseX51S)
+         RswNextTPX51C = `RSW_ONE;
+      else if (RswFcLenCntX51S == 4'd9)
+         RswNextTPX51C = RswCurrentTPX52S & RswTrainPulseX51S ? `RSW_ONE : `RSW_ZERO;
+      else 
+         RswNextTPX51C = RswCurrentTPX52S;
+   end
+
+   always @(/*AS*/RswCurrentTPX52S or RswNextTPX51C or RswTPCntX52S
+	    or RswTrainLevelX51S or RswTrainPulseX51S)
+   begin
+      if (!RswTrainLevelX51S)
+         RswTPCntX51C = 4'd0;
+      else if (RswCurrentTPX52S & !RswNextTPX51C)
+         RswTPCntX51C = 4'd0;
+      else if (RswTrainPulseX51S & RswNextTPX51C)
+         RswTPCntX51C = RswTPCntX52S + 1'b1;
+      else 
+         RswTPCntX51C = RswTPCntX52S;
+   end
+
+   // surefire lint_on ASWEMB
+   // check for framing or sync '11' pattern
+   // A '11' normally will occur at the beginning of fc mesg which is
+   // indicated by trainpulse or end of the current mesg and start of next
+   // message.
+   always @(/*AS*/RswFcLenCntX51S or RswTStatX51S or RswTrainLevelX51S
+	    or RswTrainPulseX51S)
+   begin
+      if (RswTrainLevelX51S & RswTrainPulseX51S)
+         RswSyncVldX51C = (RswTStatX51S[3:2] == `RSW_FCHALFSYNC) ? `RSW_ONE : `RSW_ZERO;
+      else if (RswFcLenCntX51S == 4'd0)
+         RswSyncVldX51C = (RswTStatX51S[3:2] == `RSW_FCHALFSYNC) ? `RSW_ONE : `RSW_ZERO;
+      else 
+         RswSyncVldX51C = `RSW_ZERO;
+   end
+
+   // If a '11' were to occur in the middle of fc burst then its a error which
+   // would be caught by dip2 (or in some cases may not be a dip2 error),
+   // hence we would flag a LOFCS error (loss of flow control sync) if config
+   // register is enabled.
+   // SyncMid would be cleared at the beginning and set only when a '11' is
+   // seen in the middle of burst
+   always @(/*AS*/RswAccVldX52S or RswFcLenCntX51S or RswSyncMidX52S
+	    or RswTStatX51S or RswTrainLevelX51S or RswTrainPulseX51S)
+   begin
+      if (RswTrainLevelX51S & RswTrainPulseX51S)
+         RswSyncMidX51C = `RSW_ZERO;
+      else if (RswFcLenCntX51S == 4'd0)
+         RswSyncMidX51C = `RSW_ZERO;
+      else if (RswAccVldX52S)
+         RswSyncMidX51C = ((RswTStatX51S[3:2] == `RSW_FCHALFSYNC) | 
+                                    (RswTStatX51S[1:0] == `RSW_FCHALFSYNC)) 
+                                                   ? `RSW_ONE : `RSW_ZERO;
+      else 
+         RswSyncMidX51C = RswSyncMidX52S;
+   end
+
+   // AccVld is set on a syncvld and cleared on a fclencnt being 9
+   always @(/*AS*/RswAccVldX52S or RswFcLenCntX51S or RswSyncVldX51C)
+   begin
+      if (RswSyncVldX51C)
+         RswAccVldX51C = `RSW_ONE;
+      else if (RswFcLenCntX51S == 4'd0)
+         RswAccVldX51C = `RSW_ZERO;
+      else
+         RswAccVldX51C = RswAccVldX52S;
+   end
+
+   assign RswEoAccX51C = (RswAccVldX51C & (RswFcLenCntX51S == 4'd9)) ?  `RSW_ONE : `RSW_ZERO;
+
+   // interrupt on training gone bad
+   assign RswTrainIntrXnnC = !RswTrainLevelX51S & RswTrainLevelX52S;
+   //-------------------------------------
+   //-----   Sequential Logic Block  -----
+   //-------------------------------------
+DFF #(4) U1_TstatX51 (.q(RswTStatX52S),.d(RswTStatX51S),.clk(RswCsixClk));
+DFF #(1) U1_TLevelX51 (.q(RswTrainLevelX52S),.d(RswTrainLevelX51S),.clk(RswCsixClk));
+DFF #(1) U1_TPulseX51 (.q(RswTrainPulseX52S),.d(RswTrainPulseX51S),.clk(RswCsixClk));
+DFFR #(1,1'b0) U1_SyncMidX51 (.q(RswSyncMidX52S),.d(RswSyncMidX51C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_AccVldX51 (.q(RswAccVldX52S),.d(RswAccVldX51C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_EoAccX51 (.q(RswEoAccX52S),.d(RswEoAccX51C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(4,4'b0) U1_FcLenCntX51 (.q(RswFcLenCntX52S),.d(RswFcLenCntX51S),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_NextTPX51 (.q(RswCurrentTPX52S),.d(RswNextTPX51C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(4,4'b0) U1_TPCntX51 (.q(RswTPCntX52S),.d(RswTPCntX51C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_TrainIntr (.q(RswTrainIntrXnnS),.d(RswTrainIntrXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X52                       ----------
+   //--------------------------------------------------------------------------
+   // PipeStage Description: Accumulate the incoming flow control message into
+   // a register.
+
+   //-------------------------------------
+   //----- Combinatorial Logic Block -----
+   //-------------------------------------
+
+   // Accumulate the flow control message
+   always @(/*AS*/RswAccRegX53S or RswFcLenCntX52S or RswTStatX52S)
+   begin
+   case(RswFcLenCntX52S)
+   4'd0 : RswAccRegX52C = {RswTStatX52S[1:0],34'd0};
+   4'd1 : RswAccRegX52C = {RswAccRegX53S[35:34],RswTStatX52S[3:0],30'd0};
+   4'd2 : RswAccRegX52C = {RswAccRegX53S[35:30],RswTStatX52S[3:0],26'd0};
+   4'd3 : RswAccRegX52C = {RswAccRegX53S[35:26],RswTStatX52S[3:0],22'd0};
+   4'd4 : RswAccRegX52C = {RswAccRegX53S[35:22],RswTStatX52S[3:0],18'd0};
+   4'd5 : RswAccRegX52C = {RswAccRegX53S[35:18],RswTStatX52S[3:0],14'd0};
+   4'd6 : RswAccRegX52C = {RswAccRegX53S[35:14],RswTStatX52S[3:0],10'd0};
+   4'd7 : RswAccRegX52C = {RswAccRegX53S[35:10],RswTStatX52S[3:0],6'd0};
+   4'd8 : RswAccRegX52C = {RswAccRegX53S[35:6],RswTStatX52S[3:0],2'd0};
+   4'd9 : RswAccRegX52C = {RswAccRegX53S[35:2],RswTStatX52S[3:2]};
+   default : RswAccRegX52C = 36'bx;
+   endcase
+   end
+
+   // Check DIP-2
+   assign RswIStatXnnC[3:2] =  RswTStatX52S[3:2];
+   assign RswIStatXnnC[1:0] =  RswEoAccX52S ? 2'b11 : RswTStatX52S[1:0];
+
+   assign RswSRegXnnC[3:2] = (RswFcLenCntX52S == 4'd0) ? 2'b00 : {RswDip2XnnS[0],RswDip2XnnS[1]};
+   // surefire lint_off CMBLOP
+   assign RswSRegXnnC[1:0] = {RswDip2XnnC[2],RswDip2XnnC[3]};
+   // surefire lint_on CMBLOP
+
+   always @(/*AS*/RswFcLenCntX52S or RswIStatXnnC or RswSRegXnnC)
+   begin
+      if (RswFcLenCntX52S == 4'd0)
+         RswDip2XnnC[3:2] = 2'b00;
+      else
+         RswDip2XnnC[3:2] = RswIStatXnnC[3:2] ^ RswSRegXnnC[3:2];
+
+      RswDip2XnnC[1:0] = RswIStatXnnC[1:0] ^ RswSRegXnnC[1:0];
+   end
+
+   assign RswNextDip2XnnC = RswDip2XnnC[1:0];
+
+   assign RswParityOkXnnC = (RswFcLenCntX52S == 4'd9) ? (RswDip2XnnC[1:0] == RswTStatX52S[1:0]) : `RSW_ONE;
+   assign RswParityFailXnnC = (RswFcLenCntX52S == 4'd9) ? (RswDip2XnnC[1:0] != RswTStatX52S[1:0]) : `RSW_ZERO;
+
+   // LODS Detect logic; this feeds to rswcframers state machine
+   // Lods is set 
+   // 1. when Status channel is in training.
+   // 2. Training is done and we detect 12 consecutive training patterns
+   // 3. If a config register is enabled, n no of parity errors
+   // 4. if a config register is enabled, a '11' seen in middle of fc burst
+
+   // Lods is cleared
+   // 1. 1 good parity is seen
+   // 2. If a config register is enabled, m consecutive good parity is seen
+
+   assign RswDet12TPX52C = (RswTPCntX52S == 4'd12) ? `RSW_ONE : `RSW_ZERO;
+
+   always @(/*AS*/RswAccVldX52S or RswDet12TPX52C
+	    or RswDip2ErrThreshX11S or RswLodsDetXnnS
+	    or RswLofcsEnX11S or RswMDip2OkXnnS or RswNDip2ErrCntXnnS
+	    or RswParityOkXnnS or RswSyncMidX52S or RswTrainLevelX52S
+	    or RswTrainPulseX52S)
+   begin
+      if (RswDisLlFlCtlX11S | RswDisVoqFlCtlX11S)
+         RswLodsDetXnnC = `RSW_ZERO;
+      else if (!RswTrainLevelX52S)                   // Sts in training 
+         RswLodsDetXnnC = `RSW_ONE;
+      else if (RswTrainLevelX52S & RswTrainPulseX52S & RswDet12TPX52C) // Detect 12 training pattern
+         RswLodsDetXnnC = `RSW_ONE;
+      else if (RswLofcsEnX11S & RswAccVldX52S & RswSyncMidX52S) // a '11' seen in fc frame
+         RswLodsDetXnnC = `RSW_ONE;
+      else if (RswLofcsEnX11S & (RswNDip2ErrCntXnnS == RswDip2ErrThreshX11S))   // Parity error count reached thresh
+         RswLodsDetXnnC = `RSW_ONE;
+      else if (!RswLofcsEnX11S & RswParityOkXnnS & RswLodsDetXnnS)  // 1 good parity seen
+         RswLodsDetXnnC = `RSW_ZERO;
+      else if (RswLofcsEnX11S & RswMDip2OkXnnS & RswLodsDetXnnS)  // M good parity seen
+         RswLodsDetXnnC = `RSW_ZERO;
+      else 
+         RswLodsDetXnnC = RswLodsDetXnnS;
+   end
+
+   assign RswDip2IntrXnnC = (RswNDip2ErrCntXnnS == RswDip2ErrThreshX11S) ? `RSW_ONE : `RSW_ZERO;
+
+   // surefire lint_off ASWEMB
+   // Parity Error counter
+   always @(/*AS*/RswNDip2ErrCntXnnS or RswParityFailXnnC
+	    or RswTrainLevelX52S)
+   begin
+      if (RswDisLlFlCtlX11S | RswDisVoqFlCtlX11S)
+         RswNDip2ErrCntXnnC = 16'd0;
+      else if (!RswTrainLevelX52S)
+         RswNDip2ErrCntXnnC = 16'd0;
+      else if (RswParityFailXnnC)
+         RswNDip2ErrCntXnnC = RswNDip2ErrCntXnnS + 1'b1;
+      else 
+         RswNDip2ErrCntXnnC = RswNDip2ErrCntXnnS;
+   end
+
+   // M Good parity count
+   always @(/*AS*/RswLofcsEnX11S or RswMDip2OkCntXnnS
+	    or RswParityFailXnnC or RswParityOkXnnC
+	    or RswTrainLevelX52S)
+   begin
+      if (RswDisLlFlCtlX11S | RswDisVoqFlCtlX11S)
+         RswMDip2OkCntXnnC = 16'd0;
+      else if (!RswTrainLevelX52S)
+         RswMDip2OkCntXnnC = 16'd0;
+      else if (!RswLofcsEnX11S | RswParityFailXnnC)
+         RswMDip2OkCntXnnC = 16'd0;
+      else if (RswParityOkXnnC)
+         RswMDip2OkCntXnnC = RswMDip2OkCntXnnS + 1'b1;
+      else 
+         RswMDip2OkCntXnnC = RswMDip2OkCntXnnS;
+   end
+
+   assign RswMDip2OkXnnC = (RswMDip2OkCntXnnC == RswDip2OkThreshX11S) ?  `RSW_ONE : `RSW_ZERO;
+
+   // surefire lint_on ASWEMB
+
+   //-------------------------------------
+   //-----   Sequential Logic Block  -----
+   //-------------------------------------
+DFF #(1) U1_TLevelX52 (.q(RswTrainLevelX53S),.d(RswTrainLevelX52S),.clk(RswCsixClk));
+DFF #(1) U1_TPulseX52 (.q(RswTrainPulseX53S),.d(RswTrainPulseX52S),.clk(RswCsixClk));
+DFFR #(36,36'b0) U1_AccRegX52 (.q(RswAccRegX53S),.d(RswAccRegX52C),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(2,2'b0) U1_Dip2Xnn (.q(RswDip2XnnS),.d(RswNextDip2XnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_ParityOkXnn (.q(RswParityOkXnnS),.d(RswParityOkXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_ParityFailXnn (.q(RswParityFailXnnS),.d(RswParityFailXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_LodsDetXnn (.q(RswLodsDetXnnS),.d(RswLodsDetXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_LodsIntrXnn (.q(RswLodsIntrXnnS),.d(RswLodsDetXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(16,16'b0) U1_NDip2ErrCntXnn (.q(RswNDip2ErrCntXnnS),.d(RswNDip2ErrCntXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(16,16'b0) U1_MDip2OkCntXnn (.q(RswMDip2OkCntXnnS),.d(RswMDip2OkCntXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_MDip2OkXnn (.q(RswMDip2OkXnnS),.d(RswMDip2OkXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_EoAccX52 (.q(RswEoAccX53S),.d(RswEoAccX52S),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+DFFR #(1,1'b0) U1_Dip2IntrXnn (.q(RswDip2IntrXnnS),.d(RswDip2IntrXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+
+   //--------------------------------------------------------------------------
+   //---------                   PipeStage X53                       ----------
+   //--------------------------------------------------------------------------
+   // PipeStage Description: Decode 4b3b if parity is good and prepare for
+   // write
+
+   //-------------------------------------
+   //----- Combinatorial Logic Block -----
+   //-------------------------------------
+
+   assign RswWriteFcFifoXnnC = RswParityOkXnnS & RswEoAccX53S & !RswFcFifoFullXnnS;
+
+   // decode the 36b flow control message
+   always @(/*AS*/RswAccRegX53S or RswWrdataFcFifoXnnC)
+   begin
+      decode_4b3b(RswAccRegX53S[35:32], RswWrdataFcFifoXnnC[26:24]);
+      decode_4b3b(RswAccRegX53S[31:28], RswWrdataFcFifoXnnC[23:21]);
+      decode_4b3b(RswAccRegX53S[27:24], RswWrdataFcFifoXnnC[20:18]);
+      decode_4b3b(RswAccRegX53S[23:20], RswWrdataFcFifoXnnC[17:15]);
+      decode_4b3b(RswAccRegX53S[19:16], RswWrdataFcFifoXnnC[14:12]);
+      decode_4b3b(RswAccRegX53S[15:12], RswWrdataFcFifoXnnC[11:9]);
+      decode_4b3b(RswAccRegX53S[11:8], RswWrdataFcFifoXnnC[8:6]);
+      decode_4b3b(RswAccRegX53S[7:4], RswWrdataFcFifoXnnC[5:3]);
+      decode_4b3b(RswAccRegX53S[3:0], RswWrdataFcFifoXnnC[2:0]);
+   end
+
+   // DRdy feeds into rswcframers state machine
+   // Clear DRdy
+   // 1. Status channel is in training
+   // 2. Training is done and received a training pattern(after FIFO_MAX_T)(p-44 of 121.12)
+   // 3. Parity Error (p-44 of 121.12)
+
+   // Disable LlFc or VoqFc will force DRdy to 1
+   // DRdy takes the value in the fc mesg [26] when parity is good
+
+   always @(/*AS*/RswDRdyXnnS or RswDisLlFlCtlX11S
+	    or RswDisVoqFlCtlX11S or RswParityFailXnnS
+	    or RswParityOkXnnS or RswTrainLevelX53S
+	    or RswTrainPulseX53S or RswWrdataFcFifoXnnC)
+   begin
+      if (RswDisLlFlCtlX11S | RswDisVoqFlCtlX11S)
+         RswDRdyXnnC = `RSW_ONE;
+      else if (!RswTrainLevelX53S)
+         RswDRdyXnnC = `RSW_ZERO;
+      else if (RswTrainLevelX53S & RswTrainPulseX53S)
+         RswDRdyXnnC = `RSW_ZERO;
+      else if (RswParityFailXnnS)
+         RswDRdyXnnC = `RSW_ZERO;
+      else if (RswParityOkXnnS)
+         RswDRdyXnnC = RswWrdataFcFifoXnnC[26];
+      else 
+         RswDRdyXnnC = RswDRdyXnnS;
+   end
+
+   //-------------------------------------
+   //-----   Sequential Logic Block  -----
+   //-------------------------------------
+DFFR #(1,1'b0) U1_DRdy (.q(RswDRdyXnnS),.d(RswDRdyXnnC),.clk(RswCsixClk),.reset(RswNpsiSoftResetSynR00C));
+
+   //--------------------------------------------------------------------------
+   //---------                   4b3b Decode                         ----------
+   //--------------------------------------------------------------------------
+   task decode_4b3b;
+   input    [3:0] dec_in;
+   output   [2:0] dec_out;
+
+   reg      [2:0] dec_out;
+
+   begin
+   case(dec_in)
+   4'b0000 : dec_out = 3'b000;
+   4'b0001 : dec_out = 3'b001;
+   4'b0010 : dec_out = 3'b010;
+   4'b1001 : dec_out = 3'b011;
+   4'b0100 : dec_out = 3'b100;
+   4'b0101 : dec_out = 3'b101;
+   4'b0110 : dec_out = 3'b110;
+   4'b1000 : dec_out = 3'b111;
+   default : dec_out = 3'bx;
+   endcase
+   end
+   endtask
+
+endmodule // rswflowctls
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Wed Mar 13 17:26:21 2002 : created
+//
+// $Log: rswflowctls.v,v $
+// Revision 1.10  2002/08/06 22:17:52  arun
+// bug no 848 fixed
+//
+// Revision 1.9  2002/07/31 19:32:03  arun
+// bug fix with trainlevel and ftidata
+//
+// Revision 1.8  2002/05/21 03:20:56  arun
+// fix bug508 gmi access
+//
+// Revision 1.7  2002/05/18 01:30:38  arun
+// xpi registers bug fix
+//
+// Revision 1.6  2002/05/16 23:46:34  arun
+// some surelint warnings cleared
+//
+// Revision 1.5  2002/05/08 16:33:46  arun
+// Added new reset, yet to be verified
+//
+// Revision 1.4  2002/04/10 01:22:04  arun
+// Synthesis cleanup due to lint and timing issues
+//
+// Revision 1.3  2002/04/03 23:56:04  arun
+// Added debug features, GMI arbitration, interrupt event
+//
+// Revision 1.2  2002/03/22 19:52:40  arun
+// Added Flow control support with hookups to status training module, control
+// registers added, cframe module to generate training, scheduler to see flow
+// control per port
+//
+// Revision 1.1  2002/03/20 02:44:12  arun
+// initial checkin
+//
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:
+

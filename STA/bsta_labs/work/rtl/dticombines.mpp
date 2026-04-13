@@ -1,0 +1,257 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dticombines (
+   /*AUTOARG*/
+   // Outputs
+   DtiWord0S, DtiWord1S, DtiTrainS, DtiTrainedS, 
+   DtiGetNewPrimarySelC, DtiTCWC, DtiFirstTDWC, 
+   // Inputs
+   DtiCsixClk, DtiCsixSoftResetSynZ01SL, DtiFoundPrefTCWC, 
+   DtiDeskewedWord0C, DtiDeskewedWord1C, DtiHistoryWord6S, 
+   DtiDeskewFailureC, DtiTrainingModeS
+);
+
+   parameter DTI_WORD_WIDTH = 17;
+   parameter DTI_TCW_VALUE  = 17'h1_0fff;
+   parameter DTI_ICW_VALUE  = 17'h1_000f;
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Outputs from the DTI to the data sink unit
+   output [DTI_WORD_WIDTH-1:0] DtiWord0S;
+   output [DTI_WORD_WIDTH-1:0] DtiWord1S;
+   output                      DtiTrainS;
+   output                      DtiTrainedS;
+
+   // Indicates that we should use the latest preferred sample point
+   output                      DtiGetNewPrimarySelC;
+
+   // Expected TCW pattern
+// surefire lint_off UDDOCU
+   output [DTI_WORD_WIDTH-1:0] DtiTCWC;
+// surefire lint_on UDDOCU
+
+   // Pulse indicating that a TDW has been found in
+   // (the previous cycle's) DtiSampleS[0]
+   output                      DtiFirstTDWC;
+
+
+   // Common inputs
+   input                       DtiCsixClk;
+   input                       DtiCsixSoftResetSynZ01SL;
+
+   // Indicates whether the start of a training sequence has been found yet
+   input                       DtiFoundPrefTCWC;
+
+   // Deskewed words
+   input [DTI_WORD_WIDTH-1:0]  DtiDeskewedWord0C;
+   input [DTI_WORD_WIDTH-1:0]  DtiDeskewedWord1C;
+
+   // The most recent flopped value in the pre-deskewed history
+   input [DTI_WORD_WIDTH-1:0]  DtiHistoryWord6S;
+
+   // Indication of error
+   input [DTI_WORD_WIDTH-1:0]  DtiDeskewFailureC;
+
+   // Forcing signals from software
+   input [`DTI_TRAINING_MODE_WIDTH-1:0] DtiTrainingModeS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire                        DtiFoundPrefTCWS;
+
+   wire                        DtiFoundSkewedTDWC;
+
+   wire                        DtiWaitingForTDWC;
+   wire                        DtiWaitingForTDWS;
+
+   wire                        DtiFoundDeskewedTDWC;
+   wire                        DtiTrainingFailedC;
+   wire                        DtiTrainC;
+   wire                        DtiTrainedC;
+   wire [2:0]                  DtiIncTDWCountC;
+   wire [2:0]                  DtiNextTDWCountC;
+   wire [2:0]                  DtiTDWCountS;
+
+   wire                        DtiAllowSquashC;
+   wire                        DtiFoundDeskewedTCW0C;
+   wire                        DtiFoundDeskewedTCW1C;
+   wire                        DtiOngoingSquashC;
+   wire                        DtiOngoingSquashS;
+   wire                        DtiSquashWord0C;
+   wire                        DtiSquashWord1C;
+   wire [DTI_WORD_WIDTH-1:0]   DtiWord0C;
+   wire [DTI_WORD_WIDTH-1:0]   DtiWord1C;
+
+   wire [DTI_WORD_WIDTH-1:0]   DtiWord0S;
+   wire [DTI_WORD_WIDTH-1:0]   DtiWord1S;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   // Create a signal to hold the expected training control word (TCW).
+   // Not only is this signal used in this module, but each bit is also
+   // sent to the appropriate instance of dtideskews so that the history
+   // can be examined for the appropriate transition.
+   assign DtiTCWC = DTI_TCW_VALUE;
+
+
+   // We switch to the latest preferred sample point in two circumstances:
+   //    - we see a TCW for a new training sequence, so we know that this
+   //      is a safe time to switch without losing data, or
+   //    - we are currenly untrained, so the output data is currently being
+   //      squashed anyway.
+   // One reason we constantly pick up the latest preferred sample point
+   // while we are untrained is so that we have a reasonable sample point
+   // to use while looking for TCW.  It doesn't really matter if this
+   // sample point wanders around a bit because TCW stays stable long
+   // enough that we'll definitely find it when it happens.
+   assign DtiGetNewPrimarySelC =
+          (DtiFoundPrefTCWC | (~DtiTrainedS & (DtiTDWCountS == 3'd0))) &
+          ~DtiFoundPrefTCWS & ~DtiWaitingForTDWS;
+
+   // Delay for a cycle before looking for TDW, just in case the old
+   // primary sample is significantly different from the preferred sample.
+DFFR #(1,1'b0) U1_dff (.q(DtiFoundPrefTCWS),.d(DtiFoundPrefTCWC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+   // Depending on the skew, it may take multiple cycles for TCW to fully
+   // change to TDW in the pre-deskewed words.  Identify the first full
+   // TDW match so that the deskew logic can set the deskew points accordingly.
+   assign DtiFoundSkewedTDWC = (DtiHistoryWord6S == ~DtiTCWC);
+
+
+   // Once a TCW has been seen, starting waiting for the expected TDW.
+   // Note that because we're looking at the pre-deskewed word, there
+   // may be some garbage between the TCW and the TDW.
+
+   assign DtiWaitingForTDWC = (~DtiWaitingForTDWS & DtiFoundPrefTCWS) |
+                              (DtiWaitingForTDWS & ~DtiFoundSkewedTDWC);
+
+DFFR #(1,1'b0) U2_dff (.q(DtiWaitingForTDWS),.d(DtiWaitingForTDWC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+   // Inform the deskew logic when we find the first TDW following TCW.
+   // The deskew logic uses the information along with its history of
+   // samples to pick the correct deskew point.
+
+   assign DtiFirstTDWC = DtiWaitingForTDWS & DtiFoundSkewedTDWC;
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Check for complete & correct training.
+
+   assign DtiFoundDeskewedTDWC = (DtiDeskewedWord0C == ~DtiTCWC) &
+                                 (DtiDeskewedWord1C == ~DtiTCWC);
+
+// surefire lint_off CWECSB CWECSM
+   assign DtiTrainingFailedC = (DtiTDWCountS != 0) & ~DtiFoundDeskewedTDWC;
+
+   assign DtiTrainC =
+          (DtiTrainingModeS == `DTI_FORCE_UNTRAINED) ? 1'b0 :
+          (DtiTrainingModeS == `DTI_FORCE_TRAINED)   ? 1'b0 :
+          (DtiTrainingModeS == `DTI_FORCE_TRAIN)     ? 1'b1 :
+          ((DtiTDWCountS == 5) & DtiFoundDeskewedTDWC);
+// surefire lint_on CWECSB CWECSM
+
+   assign DtiTrainedC =
+          (DtiTrainingModeS == `DTI_FORCE_UNTRAINED) ? 1'b0 :
+          (DtiTrainingModeS == `DTI_FORCE_TRAINED)   ? 1'b1 :
+          (DtiTrainingModeS == `DTI_FORCE_TRAIN)     ? 1'b1 :
+          (DtiTrainC | (DtiTrainedS & ~|DtiDeskewFailureC &
+                        ~DtiTrainingFailedC));
+
+INC #(3) U3_inc (.s(DtiIncTDWCountC),.a(DtiTDWCountS));
+
+
+
+
+   assign DtiNextTDWCountC =
+          (DtiFirstTDWC & ~|DtiDeskewFailureC) ? 3'd1 :
+          (DtiTDWCountS == 3'd0)               ? 3'd0 :
+          DtiTrainingFailedC                   ? 3'd0 :
+          (DtiTDWCountS == 3'd5)               ? 3'd0 :
+                                                 DtiIncTDWCountC;
+
+DFFR #(3,3'd0) U4_dff (.q(DtiTDWCountS),.d(DtiNextTDWCountC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+DFFR #(1,1'b0) U5_dff (.q(DtiTrainS),.d(DtiTrainC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+DFFR #(1,1'b0) U6_dff (.q(DtiTrainedS),.d(DtiTrainedC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+   ////////////////////////////////////////////////////////////////////////////
+   // Squash data words when not trained and while in training.
+
+   assign DtiAllowSquashC = (DtiTrainingModeS == `DTI_FORCE_UNTRAINED) |
+                            (DtiTrainingModeS == `DTI_TRAIN_NORMALLY);
+
+   assign DtiOngoingSquashC = ((DtiOngoingSquashS & ~DtiTrainC) |
+                               DtiFoundPrefTCWC) & DtiAllowSquashC;
+
+DFF #(1) U7_dff (.q(DtiOngoingSquashS),.d(DtiOngoingSquashC),.clk(DtiCsixClk));
+
+
+   // The DTI finds the first TCW and squashes from that point on.
+   // The FTI might squash a TCW (2'b11) with an ICW (2'b11), but
+   // that's a no-op.  The FTI won't commit to an ongoing squash
+   // unless it sees three TCWs in a row (DtiFoundPrefTCWC).
+
+   assign DtiFoundDeskewedTCW0C = (DtiDeskewedWord0C == DtiTCWC);
+   assign DtiFoundDeskewedTCW1C = (DtiDeskewedWord1C == DtiTCWC);
+
+
+   assign DtiSquashWord0C = (DtiFoundDeskewedTCW0C | DtiOngoingSquashS |
+                             ~DtiTrainedS) & DtiAllowSquashC;
+   assign DtiSquashWord1C = (DtiFoundDeskewedTCW1C | DtiOngoingSquashS |
+                             ~DtiTrainedS) & DtiAllowSquashC;
+
+   assign DtiWord0C = DtiSquashWord0C ? DTI_ICW_VALUE : DtiDeskewedWord0C;
+   assign DtiWord1C = DtiSquashWord1C ? DTI_ICW_VALUE : DtiDeskewedWord1C;
+
+DFF #(DTI_WORD_WIDTH) U0_xdff (.q(DtiWord0S), .d(DtiWord0C), .clk(DtiCsixClk));
+
+DFF #(DTI_WORD_WIDTH) U1_xdff (.q(DtiWord1S), .d(DtiWord1C), .clk(DtiCsixClk));
+
+
+
+endmodule // dticombines
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Mar 18 12:00:00 2002 : created
+//
+// $Log: dticombines.v,v $
+// Revision 1.5  2002/08/08 17:14:14  chris
+// Extend clock averaging to 256 UI; add prog. micro-deskew thresholds
+//
+// Revision 1.4  2002/08/06 23:31:14  chris
+// Improve comments
+//
+// Revision 1.3  2002/07/26 19:16:50  chris
+// Don't squash when forced trained
+//
+// Revision 1.2  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//
+// Revision 1.1  2002/03/19 22:10:52  chris
+// Initial check-in
+//

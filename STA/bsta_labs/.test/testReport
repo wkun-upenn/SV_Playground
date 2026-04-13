@@ -1,0 +1,160 @@
+ **********************************************************
+
+ Running the Installation Test Script
+
+ **********************************************************
+
+
+Test Started Fri Aug 21 09:35:37 2020
+
+
+
+Comparing the directory map listing.
+Done comparing the directory map listing.
+
+Required Tool Executable: genus
+Required Tool Version: 20.1
+Finding the first occurence of the 'genus' in your PATH.
+The tool 'genus' is installed in '/icd/flow/GENUS/GENUS20.10/20.10-d724_1/bin'.
+
+Running the command: 'genus -version'
+
+2020/08/21 09:35:37 WARNING This OS does not appear to be a Cadence supported Linux configuration.
+
+
+2020/08/21 09:35:37 For more info, please run CheckSysConf in <cdsRoot/tools.lnx86/bin/checkSysConf <productId>
+
+
+/icd/flow/GENUS/GENUS20.10/20.10-d724_1/tools.lnx86/synth/bin/64bit/genus: error while loading shared libraries: libxcb.so.1: cannot open shared object file: No such file or directory
+
+
+INFO: I found the version 20.1.
+
+Required Tool Executable: tempus
+Required Tool Version: 20.1
+Finding the first occurence of the 'tempus' in your PATH.
+The tool 'tempus' is installed in '/icd/flow/SSV/SSV181/Rel/18.12/main/18.12-s110_1/lnx86/bin'.
+
+Running the command: 'tempus -version'
+
+Detected cadence.com domain. This build is not fully tested or qualified. Use it at your own risk.
+
+
+@(#)CDS: Tempus Timing Signoff Solution v18.12-s110_1 (64bit) 01/18/2019 17:07 (Linux 2.6.18-194.el5)
+
+
+@(#)CDS: NanoRoute 18.12-s110_1 NR181210-1607/18_12-UB (database version 2.30, 441.7.1) {superthreading v1.47}
+
+
+@(#)CDS: AAE 18.12-s043 (64bit) 01/18/2019 (Linux 2.6.18-194.el5)
+
+
+@(#)CDS: CTE 18.12-s037_1 () Dec  3 2018 09:27:36 ( )
+
+
+@(#)CDS: SYNTECH 18.12-s015_1 () Nov 30 2018 19:16:11 ( )
+
+
+@(#)CDS: CPE v18.12-s099
+
+
+@(#)CDS: OA 22.50-p092 Tue Jul 17 11:13:18 2018
+
+
+@(#)CDS: SGN 10.10-p124 (19-Aug-2014) (64 bit executable)
+
+
+@(#)CDS: RCDB 11.14
+
+
+
+
+
+ERROR: No valid tool found matching 'tempus' with the version(s) '20.1'.
+Checking license Genus_Synthesis
+
+INFO: License 'Genus_Synthesis' OK for 90000 users until cdslmd.
+
+FOUND valid licenses for genus and is Genus_Synthesis
+INFO: Found atleast one of the specified licenses. 
+Checking license Tempus_Timing_Signoff_XL
+
+INFO: License 'Tempus_Timing_Signoff_XL' OK for 90000 users until cdslmd.
+
+FOUND valid licenses for tempus and is Tempus_Timing_Signoff_XL
+INFO: Found atleast one of the specified licenses. 
+Comparing the current system profile against the required system profile.
+
+
+INFO: THE RESOLVED PATH IS /icd/flow/GENUS/GENUS20.10/20.10-d724_1/bin
+INFO: You might need to add the checkSysConf utility to the beginning of your path.
+=====================================================================
+[Copyright 2002-2019] Cadence Design Systems, Inc. All rights reserved.
+
+This  program and online  documentation  may not be copied, modified,
+re-published, uploaded,  executed, or  distributed in any way, in any
+medium, whether in whole or in part, without prior written permission
+from Cadence Design Systems, Inc.
+=====================================================================
+
+
+============== checkSysConf:  Version 3.37 ====================
+
+
+
+ERROR: GENUS201 configuration check has failed. Please check if you have the latest checkSysConf utility installed.
+Configuration checks failed on this workstation (vlsj-estrn), status is: FAIL
+
+This operating system version '5.0WS' is not supported
+
+If you believe you are running a supported OS then check that
+the OS version directory exists in the data directory:
+/grid/avs/install/xcelium/AGILE/20.06.001/share/patchData/Linux/x86_64
+
+
+Exiting checkSysConf ... Good-bye
+Output is saved as /tmp/checkSysConf.vlsj-estrn-2020.08.21.09:36.14990.log
+INFO: THE RESOLVED PATH IS /icd/flow/SSV/SSV181/Rel/18.12/main/18.12-s110_1/lnx86/bin
+INFO: You might need to add the checkSysConf utility to the beginning of your path.
+=====================================================================
+[Copyright 2002-2019] Cadence Design Systems, Inc. All rights reserved.
+
+This  program and online  documentation  may not be copied, modified,
+re-published, uploaded,  executed, or  distributed in any way, in any
+medium, whether in whole or in part, without prior written permission
+from Cadence Design Systems, Inc.
+=====================================================================
+
+
+============== checkSysConf:  Version 3.37 ====================
+
+
+
+ERROR: SSV201 configuration check has failed. Please check if you have the latest checkSysConf utility installed.
+Configuration checks failed on this workstation (vlsj-estrn), status is: FAIL
+
+This operating system version '5.0WS' is not supported
+
+If you believe you are running a supported OS then check that
+the OS version directory exists in the data directory:
+/grid/avs/install/xcelium/AGILE/20.06.001/share/patchData/Linux/x86_64
+
+
+Exiting checkSysConf ... Good-bye
+Output is saved as /tmp/checkSysConf.vlsj-estrn-2020.08.21.09:36.15090.log
+Done comparing the system profiles.
+
+
+
+End testing Fri Aug 21 09:36:12 2020
+
+
+Testing of 'Basic Static Timing Analysis' FAILED.
+
+ with 0 WARNINGS and 3 ERRORS. 
+Check .test/testReport for problems.
+
+This course is meant for Cadence classrooms only.
+
+.
+

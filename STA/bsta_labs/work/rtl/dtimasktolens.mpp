@@ -1,0 +1,104 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+`include "dtiuc.vh"
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtimasktolens (
+   /*AUTOARG*/
+   // Outputs
+   DtiPhaseLenC, 
+   // Inputs
+   DtiPhaseMaskS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Clock phase length
+   output [`DTI_CLK_PHASE_WIDTH-1:0] DtiPhaseLenC;
+
+
+   // Clock phase overlap mask for the positive or negative phase
+   input [`DTI_CLK_MASK_WIDTH-1:0]   DtiPhaseMaskS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   reg [`DTI_CLK_PHASE_WIDTH-1:0]    DtiPhaseLenC;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+
+
+   always @(DtiPhaseMaskS) begin
+      case (1'b1) // not parallel case; default makes it full case
+         // Bit 0 of the phase mask contains the mask for the 6th clock.
+         // Bit 1 of the phase mask contains the mask for the 7th clock.  etc.
+         // If the phase is 5 delays long, we set PhaseLen to 0.
+         // If the phase is 6 delays long, we set PhaseLen to 1.  etc.
+         // If the phase is >23 delays long, we set PhaseLen to 19.
+// surefire lint_off CWECSM ASWCBS ASWCBM
+         ~DtiPhaseMaskS[0]: DtiPhaseLenC = 0;
+         ~DtiPhaseMaskS[1]: DtiPhaseLenC = 1;
+         ~DtiPhaseMaskS[2]: DtiPhaseLenC = 2;
+         ~DtiPhaseMaskS[3]: DtiPhaseLenC = 3;
+         ~DtiPhaseMaskS[4]: DtiPhaseLenC = 4;
+         ~DtiPhaseMaskS[5]: DtiPhaseLenC = 5;
+         ~DtiPhaseMaskS[6]: DtiPhaseLenC = 6;
+         ~DtiPhaseMaskS[7]: DtiPhaseLenC = 7;
+         ~DtiPhaseMaskS[8]: DtiPhaseLenC = 8;
+         ~DtiPhaseMaskS[9]: DtiPhaseLenC = 9;
+         ~DtiPhaseMaskS[10]: DtiPhaseLenC = 10;
+         ~DtiPhaseMaskS[11]: DtiPhaseLenC = 11;
+         ~DtiPhaseMaskS[12]: DtiPhaseLenC = 12;
+         ~DtiPhaseMaskS[13]: DtiPhaseLenC = 13;
+         ~DtiPhaseMaskS[14]: DtiPhaseLenC = 14;
+         ~DtiPhaseMaskS[15]: DtiPhaseLenC = 15;
+         ~DtiPhaseMaskS[16]: DtiPhaseLenC = 16;
+         ~DtiPhaseMaskS[17]: DtiPhaseLenC = 17;
+         ~DtiPhaseMaskS[18]: DtiPhaseLenC = 18;
+         ~DtiPhaseMaskS[19]: DtiPhaseLenC = 19;
+         ~DtiPhaseMaskS[20]: DtiPhaseLenC = 20;
+         ~DtiPhaseMaskS[21]: DtiPhaseLenC = 21;
+         ~DtiPhaseMaskS[22]: DtiPhaseLenC = 22;
+         ~DtiPhaseMaskS[23]: DtiPhaseLenC = 23;
+         ~DtiPhaseMaskS[24]: DtiPhaseLenC = 24;
+         ~DtiPhaseMaskS[25]: DtiPhaseLenC = 25;
+         ~DtiPhaseMaskS[26]: DtiPhaseLenC = 26;
+         ~DtiPhaseMaskS[27]: DtiPhaseLenC = 27;
+         ~DtiPhaseMaskS[28]: DtiPhaseLenC = 28;
+         ~DtiPhaseMaskS[29]: DtiPhaseLenC = 29;
+         ~DtiPhaseMaskS[30]: DtiPhaseLenC = 30;
+         default:            DtiPhaseLenC = 31;
+// surefire lint_on CWECSM ASWCBS ASWCBM
+      endcase
+   end
+
+
+endmodule // dtimasktolens
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon May 31 12:00:00 2002 : created
+//
+// $Log: dtimasktolens.v,v $
+// Revision 1.2  2002/08/13 23:29:17  chris
+// Increase phase length range, but reduce supersamples by skipping
+//
+// Revision 1.1  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//

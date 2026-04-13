@@ -1,0 +1,37 @@
+
+module dtisuper1d ( DtiSampleOneS, DtiSampleTwoS, DtiSampleClk, DtiSampleData
+     );
+input  DtiSampleClk, DtiSampleData;
+output DtiSampleOneS, DtiSampleTwoS;
+    wire DtiSampleTwo1S, DtiSampleOne0S, DtiSampleOne1S, DtiSampleTwo0S;
+    TLATX1 DtiSampleOne0S_reg ( .D(DtiSampleData), .G(DtiSampleClk), .Q(
+        DtiSampleOne0S), .QN() );
+    TLATX1 DtiSampleTwo1S_reg ( .D(DtiSampleTwo0S), .G(DtiSampleClk), .Q(
+        DtiSampleTwo1S), .QN() );
+    TLATNX1 DtiSampleTwo0S_reg ( .D(DtiSampleData), .GN(DtiSampleClk), .Q(
+        DtiSampleTwo0S), .QN() );
+    DFFQX1 U1_DFF_QI_reg_0 ( .D(DtiSampleOne1S), .CK(DtiSampleClk), .Q(
+        DtiSampleOneS) );
+    DFFQX1 U0_DFF_QI_reg_0 ( .D(DtiSampleOne0S), .CK(DtiSampleClk), .Q(
+        DtiSampleOne1S) );
+    DFFQX1 U2_DFF_QI_reg_0 ( .D(DtiSampleTwo1S), .CK(DtiSampleClk), .Q(
+        DtiSampleTwoS) );
+endmodule
+
+// This netlist was created with the following source files:
+// Mon Jul 15 16:38:22 PDT 2002
+// netlist CVS srcid: Id: dtisuper1d.v,v 1.1 2002/07/09 23:31:47 chris Exp 
+// netlist CVS srcid: Id: xpipktrxs.v,v 1.41 2002/07/12 19:31:13 ankur Exp 
+// netlist CVS srcid: No CVS Id for ../../../../design/common/src/xpimemrdctls.mpp
+// netlist CVS srcid: Id: xpirbbd.v,v 1.49 2002/07/05 23:53:52 ankur Exp 
+// netlist CVS srcid: Id: xpigils.v,v 1.14 2002/06/29 21:50:19 ankur Exp 
+// netlist CVS srcid: Id: xpigmis.v,v 1.64 2002/07/05 23:53:52 ankur Exp $ $Day $Date 
+// netlist CVS srcid: Id: xpidmas.v,v 1.34 2002/07/05 23:53:52 ankur Exp 
+// netlist CVS srcid: Id: xpidescdmas.v,v 1.27 2002/07/05 23:53:52 ankur Exp 
+// netlist CVS srcid: No CVS Id for ../../../../design/common/src/xpioutens.mpp
+// netlist CVS srcid: Id: xpipciapps.v,v 1.26 2002/06/27 18:06:17 ankur Exp 
+// netlist CVS srcid: Id: xpictlslvd.v,v 1.19 2002/06/29 03:17:04 ankur Exp 
+// netlist CVS srcid: No CVS Id for ../../../../design/common/src/xpimemint.mpp
+// netlist CVS srcid: Id: xpirbid.v,v 1.18 2002/06/20 01:40:27 ankur Exp 
+// netlist CVS srcid: Id: xpipkttxs.v,v 1.46 2002/07/11 07:06:29 ankur Exp 
+// $Id: dtisuper1d.hvsyn,v 1.1 2002/08/19 16:43:54 chris Exp $

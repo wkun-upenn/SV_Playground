@@ -1,0 +1,24 @@
+$courseName = "Basic Static Timing Analysis";
+$courseVersion = "1.2";
+$releaseDate = "07/24/20";
+$tempDir = "./.test";
+$reportFile = "$tempDir/testReport";
+$osName = "Linux";
+%toolExeAndExpr = ('genus' => '-version', 'tempus' => '-version');
+%toolExeAndVersion = ('genus' => '20.1', 'tempus' => '20.1');
+%toolExeAndLogfile = ('genus' => 'ANY', 'tempus' => 'ANY');
+%toolExeAndSoftRel = ('genus' => 'GENUS201', 'tempus' => 'SSV201');
+%toolExeAndLicenses = ('genus' => 'Genus_Synthesis', 'tempus' => 'Tempus_Timing_Signoff_XL');
+%toolExeAndNumLicenses = ('genus' => '1', 'tempus' => '1');
+$additionalLogTestString = "";
+$useCheckSysConf = "YES";
+%toolExeAndCheckSoftRel = ('genus' => 'GENUS201', 'tempus' => 'SSV201');
+
+$osVersion = "ANY";
+$cpuArch = "ANY";
+$machType = "ANY";
+$physMem = "ANY";
+$totalSwap = "ANY";
+$freeDisk = "ANY";
+$additionalFile = "";
+$comment = "This course is meant for Cadence classrooms only.";

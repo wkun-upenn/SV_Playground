@@ -1,0 +1,280 @@
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//mpp <clock=DtiCsixClk, reset=DtiCsixSoftResetSynZ01SL>
+
+module dtideskews (
+   /*AUTOARG*/
+   // Outputs
+   DtiHistoryBit8C, DtiHistoryBit7C, DtiHistoryBit6S, 
+   DtiHistoryBit5S, DtiHistoryBit4S, DtiHistoryBit3S, 
+   DtiDeskewedBit0C, DtiDeskewedBit1C, DtiDeskewFailureC, 
+   DtiDeskewPointS, DtiDeskewReadyS, 
+   // Inputs
+   DtiCsixClk, DtiCsixSoftResetSynZ01SL, DtiSampleOneZ10C, 
+   DtiSampleTwoZ10C, DtiFirstTDWC, DtiTCWBitC, DtiDeskewSelForceEnS, 
+   DtiDeskewSelForceValueS
+);
+
+   //==========================================================================
+   //==========               Interface Signals                      ==========
+   //==========================================================================
+   // Declare all your Interface Signals in this section
+
+   // Pre-deskewed history
+   // (output as individual bits to facility combination into words)
+   output       DtiHistoryBit8C;
+   output       DtiHistoryBit7C;
+   output       DtiHistoryBit6S;
+   output       DtiHistoryBit5S;
+   output       DtiHistoryBit4S;
+   output       DtiHistoryBit3S;
+
+   // Deskewed output bits
+   output       DtiDeskewedBit0C;
+   output       DtiDeskewedBit1C;
+
+   // Indication of error
+   output       DtiDeskewFailureC;
+
+   // Signals for software monitoring
+   output [2:0] DtiDeskewPointS;
+   output       DtiDeskewReadyS;
+
+
+   // Common inputs
+   input        DtiCsixClk;
+   input        DtiCsixSoftResetSynZ01SL;        
+
+   // Samples from one clock period
+   input        DtiSampleOneZ10C;
+   input        DtiSampleTwoZ10C;
+
+   // Pulse indicating that a TDW has been found in
+   // (the previous cycle's) DtiSampleS[0]
+   input        DtiFirstTDWC;
+
+   // Expected TCW bit
+   input        DtiTCWBitC;
+
+   // Forcing signals from software
+   input        DtiDeskewSelForceEnS;
+   input [2:0]  DtiDeskewSelForceValueS;
+
+
+   //==========================================================================
+   //==========               Internal Signals                       ==========
+   //==========================================================================
+   // Declare all your Internal Signals in this section
+   //
+   // Signal Naming Convention
+   // Signame = <UnitMnemonic><Functionality ID><SignalMnemonic><MicroPipeline>
+   //               <PipeStageNum><Signal Type><Active Low><Buffered Mnemonic>
+
+   wire [6:0] DtiNextHistoryC;
+   wire [6:0] DtiHistoryS;
+
+   wire       DtiForwardTrans1to2C;
+   wire       DtiForwardTrans2to3C;
+   wire       DtiForwardTrans3to4C;
+   wire       DtiForwardTrans4to5C;
+   wire       DtiForwardTrans5to6C;
+
+   wire       DtiBackwardTrans0to1C;
+   wire       DtiBackwardTrans1to2C;
+   wire       DtiBackwardTrans2to3C;
+   wire       DtiBackwardTrans3to4C;
+   wire       DtiBackwardTrans4to5C;
+   wire       DtiBackwardTrans5to6C;
+
+   wire       DtiFoundForwardTransC;
+   wire       DtiFoundBackwardTransC;
+   wire       DtiLoadDeskewPointC;
+   wire       DtiKeepDeskewPointC;
+
+   wire [2:0] DtiNewDeskewPointC;
+   wire [2:0] DtiDeskewPointS;
+
+
+   wire       DtiNextDeskewReadyC;
+   wire       DtiDeskewReadyS;
+
+
+   //==========================================================================
+   //==========           Beginning of Actual Logic                  ==========
+   //==========================================================================
+   
+
+   // Keep a history of samples from which the deskewed results will be chosen.
+   // The order of samples in the history is as follows:
+   //   - DtiHistoryS[0] (oldest)
+   //   - DtiHistoryS[1]
+   //   - DtiHistoryS[2]
+   //   - DtiHistoryS[3]
+   //   - DtiHistoryS[4]
+   //   - DtiHistoryS[5]
+   //   - DtiHistoryS[6]
+   //   - DtiSampleOneZ10C
+   //   - DtiSampleTwoZ10C (youngest)
+
+   // Shift the history by two samples per cycle.
+   // The next two upper bits of the history are the current samples.
+   assign DtiNextHistoryC = {DtiSampleTwoZ10C,
+                             DtiSampleOneZ10C,
+                             DtiHistoryS[6:2]};
+
+DFF #(7) U1_dff (.q(DtiHistoryS),.d(DtiNextHistoryC),.clk(DtiCsixClk));
+
+
+   // Give the TCW-finding logic some history to use.
+   //
+   // In order to unambiguously tell the difference between a real TCW and
+   // a false positive, the FTI needs to find 6 TCWs in a row.  (A false
+   // positive could include a DIP-4 '11', a framing '11', and three other
+   // '11's resulting from a skew of 3 UI between the status bits.)
+   //
+   // Because a false TDW can occur in the DTI only as a result of skew,
+   // the DTI only needs to find 4 TCWs in a row.  Thus, the DTI doesn't
+   // look at the unflopped history, just the flopped history.  This is
+   // fortunate because the 17 signal bits processed by the DTI would be
+   // harder to make meet timing if the unflopped history were used.
+
+   assign DtiHistoryBit8C = DtiSampleTwoZ10C;
+   assign DtiHistoryBit7C = DtiSampleOneZ10C;
+   assign DtiHistoryBit6S = DtiHistoryS[6];
+   assign DtiHistoryBit5S = DtiHistoryS[5];
+   assign DtiHistoryBit4S = DtiHistoryS[4];
+   assign DtiHistoryBit3S = DtiHistoryS[3];
+
+
+   // Select the output bits from the history.
+   // The order of bits is as follows:
+   //   - DtiDeskewedBit0C (oldest)
+   //   - DtiDeskewedBit1C (youngest)
+
+   assign {DtiDeskewedBit1C, DtiDeskewedBit0C} =
+          (DtiDeskewPointS == 3'd4) ? DtiHistoryS[1:0] :
+          (DtiDeskewPointS == 3'd3) ? DtiHistoryS[2:1] :
+          (DtiDeskewPointS == 3'd2) ? DtiHistoryS[3:2] :
+          (DtiDeskewPointS == 3'd1) ? DtiHistoryS[4:3] :
+          (DtiDeskewPointS == 3'd0) ? DtiHistoryS[5:4] :
+                                      2'bxx;
+
+
+   // Find TCW -> TDW transitions
+
+   assign DtiForwardTrans1to2C = (DtiHistoryS[1] ==  DtiTCWBitC) &
+                                 (DtiHistoryS[2] == ~DtiTCWBitC);
+
+   assign DtiForwardTrans2to3C = (DtiHistoryS[2] ==  DtiTCWBitC) &
+                                 (DtiHistoryS[3] == ~DtiTCWBitC);
+
+   assign DtiForwardTrans3to4C = (DtiHistoryS[3] ==  DtiTCWBitC) &
+                                 (DtiHistoryS[4] == ~DtiTCWBitC);
+
+   assign DtiForwardTrans4to5C = (DtiHistoryS[4] ==  DtiTCWBitC) &
+                                 (DtiHistoryS[5] == ~DtiTCWBitC);
+
+   assign DtiForwardTrans5to6C = (DtiHistoryS[5] ==  DtiTCWBitC) &
+                                 (DtiHistoryS[6] == ~DtiTCWBitC);
+
+
+   // Find TDW -> TCW transitions
+
+   assign DtiBackwardTrans0to1C = (DtiHistoryS[0] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[1] ==  DtiTCWBitC);
+
+   assign DtiBackwardTrans1to2C = (DtiHistoryS[1] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[2] ==  DtiTCWBitC);
+
+   assign DtiBackwardTrans2to3C = (DtiHistoryS[2] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[3] ==  DtiTCWBitC);
+
+   assign DtiBackwardTrans3to4C = (DtiHistoryS[3] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[4] ==  DtiTCWBitC);
+
+   assign DtiBackwardTrans4to5C = (DtiHistoryS[4] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[5] ==  DtiTCWBitC);
+
+   assign DtiBackwardTrans5to6C = (DtiHistoryS[5] == ~DtiTCWBitC) &
+                                  (DtiHistoryS[6] ==  DtiTCWBitC);
+
+
+   assign DtiFoundForwardTransC = DtiForwardTrans1to2C |
+                                  DtiForwardTrans2to3C |
+                                  DtiForwardTrans3to4C |
+                                  DtiForwardTrans4to5C |
+                                  DtiForwardTrans5to6C;
+
+   assign DtiFoundBackwardTransC = DtiBackwardTrans0to1C |
+                                   DtiBackwardTrans1to2C |
+                                   DtiBackwardTrans2to3C |
+                                   DtiBackwardTrans3to4C |
+                                   DtiBackwardTrans4to5C |
+                                   DtiBackwardTrans5to6C;
+
+
+   // When the Training Data Word is readable across all bits, the
+   // deskew point is frozen such that each bit outputs the first
+   // history point where the TDW bit appeared.  The DeskewPoint
+   // value is a representation of how far back in the history the
+   // deskewed value should be read from.  This point is carefully
+   // chosen so that the first pair of TDW bits are output in the
+   // cycle after DtiFirstTDWC.  This allows tdicombines to then
+   // count off exactly 10 TDW bits before the training pattern is
+   // expected to cease.  (Note that if the deskew point is initially
+   // low [e.g. after reset], extra TDW bits may be output before
+   // DtiFirstTDWC is asserted.  These bits are squashed & ignored.)
+   //
+   // In addition to setting the deskew point normally, it can also
+   // be overridden by software.
+
+   assign DtiLoadDeskewPointC = DtiFirstTDWC & ~DtiFoundBackwardTransC;
+
+   assign DtiKeepDeskewPointC = ~DtiLoadDeskewPointC | ~DtiFoundForwardTransC;
+
+   assign DtiNewDeskewPointC =
+          DtiDeskewSelForceEnS ? DtiDeskewSelForceValueS :
+          ({3{DtiLoadDeskewPointC & DtiForwardTrans1to2C}} & 3'd4) |
+          ({3{DtiLoadDeskewPointC & DtiForwardTrans2to3C}} & 3'd3) |
+          ({3{DtiLoadDeskewPointC & DtiForwardTrans3to4C}} & 3'd2) |
+          ({3{DtiLoadDeskewPointC & DtiForwardTrans4to5C}} & 3'd1) |
+          ({3{DtiLoadDeskewPointC & DtiForwardTrans5to6C}} & 3'd0) |
+          ({3{DtiKeepDeskewPointC}}                        & DtiDeskewPointS);
+
+
+   // Find transition failures.  This includes occurences where no
+   // transition is found from TCW -> TDW, or where an unexpected
+   // transition occurs from TDW -> TCW (which might also mean that
+   // there is more than one transition from TCW -> TDW).
+
+   assign DtiDeskewFailureC = DtiFirstTDWC & (~DtiFoundForwardTransC |
+                                              DtiFoundBackwardTransC);
+
+
+DFFR #(3,3'd0) U2_dff (.q(DtiDeskewPointS),.d(DtiNewDeskewPointC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+   // Remember whether or not a good deskew point has been found.
+   assign DtiNextDeskewReadyC = ~DtiKeepDeskewPointC | DtiDeskewReadyS;
+
+DFFR #(1,1'b0) U3_dff (.q(DtiDeskewReadyS),.d(DtiNextDeskewReadyC),.clk(DtiCsixClk),.reset(DtiCsixSoftResetSynZ01SL));
+
+
+endmodule // dtideskews
+
+
+//-----------------------------------------------------------------------------
+// Modification history :
+// Mon Mar 18 12:00:00 2002 : created
+//
+// $Log: dtideskews.v,v $
+// Revision 1.3  2002/07/15 20:49:47  chris
+// Combine dticlkmask1d into dtisuper1d
+//
+// Revision 1.2  2002/07/09 23:31:47  chris
+// New hierarchy for custom/generic split
+//
+// Revision 1.1  2002/03/19 22:10:52  chris
+// Initial check-in
+//

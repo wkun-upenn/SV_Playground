@@ -1,0 +1,2542 @@
+
+//mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+`include "xpiuc.vh"
+
+module xpipktrxs (/*AUTOARG*/
+   // Outputs
+   XpiPktRxPciArbReqPsn13S, XpiPktRxPciTxnIDPsn13S, 
+   XpiPktRxPciAddrIrdyPsn13S, XpiPktRxPciAddrPsn13S, 
+   XpiPktRxPciDataIrdyPsn13S, XpiPktRxPciDataPsn13S, 
+   XpiPktRxPciCmdPsn13S, XpiPktRxPciAttrPsn13S, 
+   XpiPktRxPciByteEnPsn13S, XpiPktRxPciLengthPsn13S, 
+   XpiPktRxPciTrdyPsn13S, XpiPktRxPciIntrPsn13S, 
+   XpiPktRxRbArbReqPns13S, XpiPktRxRbIrdyPns13S, 
+   XpiPktRxRbAddrPns13S, XpiPktRxRbCmdPns13S, 
+   XpiPktRxRbDataLenPns13S, XpiPktRxRbTxnIDPns13S, 
+   XpiPktRxRbTrdyPns13S, 
+   // Inputs
+   XpiPciClk, XpiCoreClk, GlCoreResetR00C, XpiPciAppPktRxFreq33P11S, 
+   XpiPciAppPktRxFreq66P11S, XpiPciAppPktRxFreq133P11S, 
+   XpiPciAppPktRxAddrIrdyP11S, XpiPciAppPktRxAddrP11S, 
+   XpiPciAppPktRxCmdP11S, XpiPciAppPktRxAttrP11S, 
+   XpiPciAppPktRxByteEnP11S, XpiPciAppPktRxLengthP11S, 
+   XpiPciAppPktRxDataIrdyP11S, XpiPciAppPktRxDataP11S, 
+   XpiPciAppPktRxTrdyP10S, XpiPciAppPktRxTrdyP11S, 
+   XpiPciAppPktRxValidTxnP11S, XpiPciAppPktRxRdStopP11S, 
+   XpiPciArbPktRxStopP11S, XpiPciArbPktRxBusyP11S, 
+   XpiPciArbPktRxSrvP11S, XpiPciArbPktRxReqAbortP11S, 
+   XpiPciArbPktRxSplitAbortP11S, XpiRbiPktRxGntPsn11S, 
+   XpiRbiPktRxStopPsn11S, XpiRbiPktRxIrdyPsn11S, 
+   XpiRbiPktRxCmdPsn11S, XpiRbiPktRxDataPsn11S, 
+   XpiRbiPktRxTrdyPsn11S, XpiRbiPktRxValidXfrPsn11S
+   );
+
+  parameter [2:0] TXNID = 3'b100;
+
+  //-------------------------------------
+  //--------  Interface Signals  --------
+  //-------------------------------------
+  
+  //---- Global Signals ----
+  
+  input                           XpiPciClk;
+  input 			  XpiCoreClk;
+  input 			  GlCoreResetR00C;
+  
+  //---- PKT RX - PCI-X Interface Signals ----
+  input 			  XpiPciAppPktRxFreq33P11S;
+  input 			  XpiPciAppPktRxFreq66P11S;
+  input 			  XpiPciAppPktRxFreq133P11S;
+  input 			  XpiPciAppPktRxAddrIrdyP11S;
+  input [`PCI_ADDR_WIDTH-1:0] 	  XpiPciAppPktRxAddrP11S;
+  input [3:0] 			  XpiPciAppPktRxCmdP11S;
+  input [`PCI_ATTR_WIDTH-1:0] 	  XpiPciAppPktRxAttrP11S;
+  input [7:0] 			  XpiPciAppPktRxByteEnP11S;
+  input [`RQ_BYTECNT_WIDTH-1:0]   XpiPciAppPktRxLengthP11S;
+  input 			  XpiPciAppPktRxDataIrdyP11S;
+  input [`PCI_DATA_WIDTH-1:0] 	  XpiPciAppPktRxDataP11S;
+  input 			  XpiPciAppPktRxTrdyP10S;
+  input 			  XpiPciAppPktRxTrdyP11S;
+  input 			  XpiPciAppPktRxValidTxnP11S;
+  input 			  XpiPciAppPktRxRdStopP11S;
+  
+  input 			  XpiPciArbPktRxStopP11S;
+  input 			  XpiPciArbPktRxBusyP11S;
+  input 			  XpiPciArbPktRxSrvP11S;
+  input 			  XpiPciArbPktRxReqAbortP11S;
+  input 			  XpiPciArbPktRxSplitAbortP11S;
+  
+  output 			  XpiPktRxPciArbReqPsn13S;
+  output [2:0]			  XpiPktRxPciTxnIDPsn13S;
+  output 			  XpiPktRxPciAddrIrdyPsn13S;
+  output [`PCI_ADDR_WIDTH-1:0] 	  XpiPktRxPciAddrPsn13S;
+  output 			  XpiPktRxPciDataIrdyPsn13S;
+  output [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxPciDataPsn13S;
+  output [3:0] 			  XpiPktRxPciCmdPsn13S;
+  output [`PCI_ATTR_WIDTH-1:0] 	  XpiPktRxPciAttrPsn13S;
+  output [7:0] 			  XpiPktRxPciByteEnPsn13S;
+  output [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciLengthPsn13S;
+  output 			  XpiPktRxPciTrdyPsn13S;
+  output [`PKTRX_INTR_EVENTS-1:0] XpiPktRxPciIntrPsn13S;
+ 			  
+  
+  //---- PKT RX - RBI Interface Signals ----
+  input 			  XpiRbiPktRxGntPsn11S;
+  input 			  XpiRbiPktRxStopPsn11S;
+  input 			  XpiRbiPktRxIrdyPsn11S;
+  input [3:0] 			  XpiRbiPktRxCmdPsn11S;
+  input [`RB_DATA_WIDTH-1:0] 	  XpiRbiPktRxDataPsn11S;
+  input 			  XpiRbiPktRxTrdyPsn11S;
+  input 			  XpiRbiPktRxValidXfrPsn11S;
+  
+  output 			  XpiPktRxRbArbReqPns13S;
+  output 			  XpiPktRxRbIrdyPns13S;
+  output [`XPI_ADDR_WIDTH-1:0] 	  XpiPktRxRbAddrPns13S;
+  output [3:0] 			  XpiPktRxRbCmdPns13S;
+  output [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbDataLenPns13S;
+  output [2:0] 			  XpiPktRxRbTxnIDPns13S;
+  output 			  XpiPktRxRbTrdyPns13S;
+
+  //---- PktRx Command, Status and Address Register Declaration ----
+
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxCmdRegPns10C;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxTOutRegPns10C;
+  wire [`DESC_WIDTH-1:0] 	  XpiPktRxDescPtrRegPns10C;
+  
+  //--------------------------
+  //---- Wire Declaration ----
+  //--------------------------
+  wire 				  XpiPciAppPktRxFreq33P11S;
+  wire 				  XpiPciAppPktRxFreq66P11S;
+  wire 				  XpiPciAppPktRxFreq133P11S;
+  wire [`XPI_ADDR_WIDTH-1:0] 	  XpiPktRxRbAddrPns13S;
+  wire [3:0] 			  XpiPktRxRbCmdPns13S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbDataLenPns13S;
+  wire 				  XpiPktRxRbIrdyPns13S;
+  wire [2:0] 			  XpiPktRxRbTxnIDPns13S;
+  wire 				  XpiPktRxRbTrdyPns13S;
+  wire 				  XpiPktRxPciTrdyPsn13S;
+  wire [`PKTRX_INTR_EVENTS-1:0]   XpiPktRxPciIntrPsn13S;
+  
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxCmdRegPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxStatusRegPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxAddressRegPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxTOutRegPns10S;
+  wire [`DESC_WIDTH-1:0] 	  XpiPktRxDescPtrRegPns10S;
+  
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxPciDataPns10S; 
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPktRxPciAddrPns10C;    
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPktRxPciAddrPns10S;    
+  wire 				  XpiPktRxPciDataIrdyPns10S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxWrDataPns10C;
+  
+  wire 				  XpiPktRxPciAddrIrdyPsn12C;
+  wire 				  XpiPktRxSrvCfgRdPns10S;
+  wire 				  XpiPktRxPciDataIrdyPsn12C;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxPciCfgDataPsn12C;
+  
+  wire [2:0] 			  XpiPktRxPciTxnIDPsn13S;
+  wire 				  XpiPktRxPciAddrIrdyPsn13S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxRdAddressPsn11S;
+  wire [`PCI_ADDR_WIDTH-1:0] 	  XpiPktRxPciAddrPsn13S;
+  wire [`PCI_ATTR_WIDTH-1:0] 	  XpiPktRxPciAttrPsn13S;
+  wire [7:0] 			  XpiPktRxPciByteEnPsn13S;
+  wire [3:0] 			  XpiPktRxPciCmdPsn13S;
+  wire 				  XpiPktRxPciDataIrdyPsn13S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxPciDataPsn13S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciLengthPsn13S;
+  
+  wire 				  XpiPktRxFifoRdEnPns12C;
+  wire [`PKTRX_FIFO_WIDTH-1:0] 	  XpiPktRxFifoWrDataPns11C;
+  wire [`PKTRX_FIFO_WIDTH-1:0] 	  XpiPktRxFifoRdDataPns11C;
+  wire 				  XpiPktRxFifoEFPns11C;
+  wire 				  XpiPktRxFifoFFPns10C;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoWrPtrPns10C;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoRdPtrPns10C;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoWrPtrPns10S;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoRdPtrPns10S;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoWrPtrPns11C;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoRdPtrPns11C;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoWrPtrPns11S;
+  wire [`RXFIFOPTR_WIDTH-1:0] 	  XpiPktRxFifoRdPtrPns11S;
+  wire 				  XpiPktRxFifoHFPns11C;
+  wire [5:0] 			  XpiPktRxFifoFillPns11C;
+  wire 				  XpiPktRxFifoGrHFPns11C;
+  wire 				  XpiPktRxChunkPendingPns11C;
+  wire 				  XpiPktRxChunkPendingPns12C;
+  wire 				  XpiPktRxChunkPendingPns12S;
+  wire 				  XpiPktRxLastChunkPns11C;
+  wire 				  XpiPktRxLastChunkPns12C;
+  wire 				  XpiPktRxLastChunkPns12S;
+  wire 				  XpiPktRxFifoLessHalfPns10C;
+  
+  wire [`XPI_MAX_NUM_PKTS-1:0] 	  XpiPktRxMaxPacketsPns10C;
+  wire 				  XpiPktRxRunPns10C;
+  wire 				  XpiPktRxPktDirPns10C;
+  wire 				  XpiPktRxPktCmpltIntrPns10C;
+  wire 				  XpiPktRxTerminatePns10C;
+  wire 				  XpiPktRxTOutIntrPns10C;
+  wire 				  XpiPktRxSrvCfgWrPns11S;   
+  wire 				  XpiPktRxPciDescPh2WrEnPns11S;
+  wire 				  XpiPktRxPciDescPh2WrEnPns12S;
+  wire 				  XpiPktRxDescCPUOwnerPns10S;
+  wire 				  XpiPktRxEOPCurrentPns10C;
+  wire 				  XpiPktRxAsicOwnerPns10C;
+  wire 				  XpiPktRxStartMemRdPns10C;
+  wire 				  XpiPktRxStartMemRdPns10S;
+  wire 				  XpiPktRxStartMemRdPns11S;
+  wire 				  XpiPktRxStartMemRdPns12C;
+  wire 				  XpiPktRxStartMemRdPns12S;
+  wire 				  XpiPktRxPciRegisterRdPns10C;
+  wire                            XpiPktRxPciRegisterRdPns11C;
+  wire 				  XpiPktRxPciRegisterRdPns11S;
+  
+  wire [`MAX_BUFFER_SIZE-1:0] 	  XpiPktRxMemRdLenPns10C;
+  wire [`MAX_BUFFER_SIZE-1:0] 	  XpiPktRxPciMemRdLenPsn11S;
+  
+  wire [`PKTRX_FIFO_WIDTH-1:0] 	  XpiPktRxRbDataPns12C;
+  wire [`PKTRX_FIFO_WIDTH-1:0] 	  XpiPktRxRbDataPns12S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbMSBDataPns12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbMSBDataPns13S;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbLSBDataPns12C;
+  wire [`RB_DATA_WIDTH-1:0] 	  XpiPktRxRbDataPns13C;
+  
+  wire [`PKTRX_CTRL_WIDTH-1:0] 	  XpiPktRxCtrlPns12C;
+  wire [`XPI_ADDR_WIDTH-1:0] 	  XpiPktRxAddrPns12C;
+
+  wire 				  XpiPktRxValidCfgWrPns10C;
+  wire 				  XpiPktRxValidCfgWrPns10S;
+  wire 				  XpiPktRxSrvCfgWrPns10S;
+  wire 				  XpiPktRxCmdWrValidPns10C;
+  wire 				  XpiPktRxCmdWrValidPns10S;
+  wire 				  XpiPktRxCmdWrValidPns11S;
+  wire 				  XpiPktRxAddrRegWrValidPns10C;
+  wire 				  XpiPktRxTOutWrValidPns10C;
+  wire 				  XpiPktRxTOutWrValidPns10S;
+  wire 				  XpiPktRxCoreSyncTOutWrValidPns10S;
+  wire 				  XpiPktRxCoreSyncTOutWrValidPns11S;
+  wire 				  XpiPktRxTOutWrValidPns12S;
+
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxCoreSyncTOutRegPns10S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxCoreSyncTOutRegPns11S;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxTOutRegPns12C;
+  wire [`CFG_WIDTH-1:0] 	  XpiPktRxTOutRegPns12S;
+
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxDescPtrRegMSBPns10C;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxDescPtrRegLSBPns10S;
+  wire [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxDescPtrRegMSBPns10S;
+  
+  wire				  XpiPktRxPciFirstDescRdPns10C;
+  wire				  XpiPktRxPciFirstDescRdPns11C;
+  wire				  XpiPktRxPciFirstDescRdPns11S;
+  wire 				  XpiPktRxPciDescRdPns12C;
+  wire 				  XpiPktRxPciDescRdPns12S;
+
+  wire 				  XpiPktRxPciFirstMemRdTxnPns11C;
+  wire 				  XpiPktRxPciFirstMemRdTxnPns12C;
+  wire 				  XpiPktRxPciFirstMemRdTxnPns12S;
+  
+  wire 				  XpiPktRxPciMemRdTxnPns11C;
+  wire 				  XpiPktRxPciMemRdTxnPns11S;
+  wire 				  XpiPktRxPciFinalMemRdTxnPns10C;
+  wire 				  XpiPktRxPciFinalMemRdTxnPns10S;
+  wire 				  XpiPktRxPciFinalMemRdTxnPns11C;
+  wire 				  XpiPktRxPciFinalMemRdTxnPns12C;
+  wire 				  XpiPktRxPciFinalMemRdTxnPns12S;
+
+  wire 				  XpiPktRxDescRdPendingPns11C;
+  wire 				  XpiPktRxDescRdPendingPns11S;
+  wire 				  XpiPktRxMemRdPendingPns11C;
+  wire 				  XpiPktRxMemRdPendingPns11S;
+  wire 				  XpiPktRxCheckStatePns11C;
+  wire 				  XpiPktRxCheckStatePns11S;
+  wire 				  XpiPktRxTxnIssuedPns11C;
+  wire 				  XpiPktRxNoBufAvailPns12C;
+  wire 				  XpiPktRxNoBufAvailPns12S;
+  
+  wire [`PKTRX_CTRL_WIDTH-1:0] 	  XpiPktRxCtrlPns10S;
+  wire [`PKTRX_CTRL_WIDTH-1:0] 	  XpiPktRxWrCtrlPns10C;
+  wire 				  XpiPktRxInsertSOPPns11C;  
+  wire 				  XpiPktRxInsertSOPPns11S;  
+  wire 				  XpiPktRxInsertSOPPns12C;  
+  wire 				  XpiPktRxInsertEOPPns10C;
+  wire 				  XpiPktRxInsertEOPPns10S;
+  wire 				  XpiPktRxInsertEOPPns11C;
+  wire [5:0] 			  XpiPktRxEOPOffsetPns11C;
+  wire 				  XpiPktRxEOPOffsetMuxEnPns11C;
+  wire [5:0] 			  XpiPktRxLt64EOPOffsetPns11C;
+  wire [5:0] 			  XpiPktRxGr64EOPOffsetPns11C;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPktRxNumEntriesPns10C;
+  wire [4:0] 			  XpiPktRxNumEntriesPns11C;
+  wire 				  XpiPktRxLenLessEqMtuPns11C;
+  wire 				  XpiPktRxLenGrMtuPns11C;
+  wire 				  XpiPktRxLenGr2MtuPns11C;
+  wire 				  XpiPktRxLess64BLenPns11C;
+  wire 				  XpiPktRxLastDataPns11C;
+  wire 				  XpiPktRxLastXfrPns10C;
+  wire 				  XpiPktRxLastXfrPns10S;
+  wire 				  XpiPktRxLastXfrPns11S;
+  wire 				  XpiPktRxLastXfrPns12S;
+  wire 				  XpiPktRxLastXfrPns13C;
+  wire 				  XpiPktRxLastXfrPns13S;
+  wire 				  XpiPktRxLastXfrPns14S;
+  wire 				  XpiPktRxLastChunkLess64Pns10C;
+  wire 				  XpiPktRxLastChunkGr64Pns10C;
+  wire 				  XpiPktRxLastChunkGr64Pns10S;
+  wire 				  XpiPktRxPktCmpltPns11C;
+  wire 				  XpiPktRxPktCmpltPns11S; 
+  wire 				  XpiPktRxPktCmpltPns13C;
+  wire 				  XpiPktRxPktCmpltPns13S;
+  wire 				  XpiPktRxPktXfrCmpltPns11C;
+  wire 				  XpiPktRxPktXfrCmpltPns11S;
+  wire 				  XpiPktRxIssueFinalMemRdPns11C;  
+  wire 				  XpiPktRxIssueFinalMemRdPns11S;  
+  wire 				  XpiPktRxIssueFinalMemRdPns12S;  
+  wire 				  XpiPktRxIssueFinalMemRdPns13S;  
+  wire 				  XpiPktRxUpdateStatusPns11C;
+
+  wire 				  XpiPktRxCreditRefreshPsn11C;
+  wire 				  XpiPktRxTimeOutPsn10S;
+  wire 				  XpiPktRxTimeOutPns12C;
+  wire 				  XpiPktRxTimeOutPns12S;
+  wire 				  XpiPktRxTOutCntEnPns12C;
+  wire 				  XpiPktRxTOutCntEnPns12S;
+  wire 				  XpiPktRxUpdateStatusPsn11S;
+  wire 				  XpiPktRxPciSyncUpdateStatusPsn11S;
+  wire 				  XpiPktRxPciSyncUpdateStatusPsn12S;
+  wire 				  XpiPktRxPciUpdateStatusPsn12S;
+  wire 				  XpiPktRxPciUpdateStatusPsn13S;
+  wire 				  XpiPktRxPciUpdateStatusPsn13C;
+  wire 				  XpiPktRxTimeOutPsn11S;
+  wire 				  XpiPktRxPciSyncTimeOutPsn11S;
+  wire 				  XpiPktRxPciSyncTimeOutPsn12S;
+  wire 				  XpiPktRxPciTimeOutPsn12S;
+  wire 				  XpiPktRxPciTimeOutPsn13S;
+  wire 				  XpiPktRxPciTimeOutPsn13C;
+
+  wire 				  XpiPktRxIssueMemRdPns11S;
+  wire 				  XpiPktRxIssueFirstMemRdPns11S;
+  
+  wire [`XPI_MAX_NUM_PKTS-1:0] 	  XpiPktRxNumPktsPns10S;
+  wire [4:0] 			  XpiPktRxWrDataCntPns10S;
+  wire [4:0] 			  XpiPktRxRdDataCntPns12S;
+  wire [`TOUT_CNTR_WIDTH-1:0] 	  XpiPktRxTimeOutCntPns12S;
+  wire [3:0] 			  XpiPktRxAssertCntPsn11S;
+
+  wire 				  XpiPktRxDescWrBackPns12C;
+  wire 				  XpiPktRxDescWrBackPns12S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciCmpDataCntPns11S;
+  wire [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciExptDataCntPns11C;
+  wire 				  XpiPktRxPciAllDataRecvdPns11C;
+  wire 				  XpiPktRxPciAllDataRecvdPns11S;
+  wire 				  XpiPktRxPciAllDataRecvdPns12C;
+  wire 				  XpiPktRxPciAllDataRecvdPns12S;
+  wire 				  XpiPktRxTOutTriggerPns10C;
+  wire 				  XpiPktRxTOutCntEnPns10C;
+  wire 				  XpiPktRxTOutCntEnPns10S;
+  wire [`TOUT_CNTR_WIDTH-1:0] 	  XpiPktRxTimeOutCntPns10S;
+  wire 				  XpiPktRxPciTimeOutPns11C;
+  
+  //------------------------------
+  //---- Register Declaration ----
+  //------------------------------
+
+  reg [`CFG_WIDTH-1:0] 		  XpiPktRxAddressRegPns10C;
+  reg [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxDescPtrRegLSBPns10C;
+  reg [`PCI_DATA_WIDTH-1:0] 	  XpiPktRxPciDataPsn12C;
+
+  reg 				  XpiPktRxRbArbReqPns13S;
+  reg [`CFG_WIDTH-1:0] 		  XpiPktRxStatusRegPns10C;
+  reg 				  XpiPktRxFifoWrEnPns10C;
+  reg 				  XpiPktRxIssueFirstMemRdPns10C;
+  reg 				  XpiPktRxIssueMemRdPns10C;
+  reg 				  XpiPktRxIssueFinalMemRdPns10C;
+  reg 				  XpiPktRxInitialDescRdPns10C;
+  reg 				  XpiPktRxPciDescRdPns11C;
+  reg 				  XpiPktRxIssueDescRdPns10C;
+  reg 				  XpiPktRxSrvCfgRdPns10C;
+  reg 				  XpiPktRxDescRdPendingPns10C;
+  reg 				  XpiPktRxMemRdPendingPns10C;
+  reg 				  XpiPktRxMemRdCmpWaitPns10C;
+  reg 				  XpiPktRxDescPh1WrEnPns10C;
+  reg 				  XpiPktRxDescPh2WrEnPns10C;
+  reg 				  XpiPktTxBufOwnershipPns10C;
+  reg 				  XpiPktRxPciDataIrdyPns11C;
+  reg 				  XpiPktRxDescWrBackPns11C;
+  reg 				  XpiPktRxKillPns11C;
+  reg 				  XpiPktRxCheckStatePns10C;
+  reg 				  XpiPktRxNoBufAvailPns11C;
+  
+  reg [`PKTRX_INTR_EVENTS-1:0] 	  XpiPktRxIntrPsn13C;
+  
+  reg 				  XpiPktRxPciArbReqPsn13S;
+  reg [`PCI_ADDR_WIDTH-1:0] 	  XpiPktRxPciAddrPsn12C;
+  reg [`CFG_WIDTH-1:0] 		  XpiPktRxRdAddressPsn11C;
+  reg [3:0] 			  XpiPktRxPciCmdPsn12C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciLengthPsn12C;
+    
+  reg [1:0] 			  XpiPktRxMemRdLenMuxSelPns10C;
+  reg [`MAX_BUFFER_SIZE-1:0] 	  XpiPktRxMemRdLenSubPns10C;
+
+  reg [3:0] 			  XpiPktRxRbCmdPns12C;
+  reg 				  XpiPktRxFifoRdEnPns11C;
+  reg 				  XpiPktRxRbIssueWrPns12C;
+  reg 				  XpiPktRxRbAddrIrdyPns11C;
+  reg 				  XpiPktRxRbMuxSelPns12C;
+  reg [4:0] 			  XpiPktRxWrDataCntPns10C;
+  reg [4:0] 			  XpiPktRxRdDataCntPns12C;
+  reg [`PKTRX_CTRL_WIDTH-1:0] 	  XpiPktRxCtrlPns10C;
+  reg [`XPI_MAX_NUM_PKTS-1:0] 	  XpiPktRxNumPktsPns10C;
+  reg 				  XpiPktRxUpdateStatusPns12C;
+  reg 				  XpiPktRxIssueTOutPns12C;
+  reg 				  XpiPktRxUpdateStatusPsn11C;
+  reg 				  XpiPktRxTimeOutPsn11C;
+  reg 				  XpiPktRxAssertCntEnPsn11C;
+  reg [`TOUT_CNTR_WIDTH-1:0] 	  XpiPktRxTimeOutCntPns12C;
+  reg [3:0] 			  XpiPktRxAssertCntPsn11C;
+  reg [`BYTECNT_WIDTH-1:0] 	  XpiPktRxPciCmpDataCntPns11C;
+  reg [`TOUT_CNTR_WIDTH-1:0] 	  XpiPktRxTimeOutCntPns10C;
+
+  reg 				  XpiPktRxValidPns10C;
+  
+  //==================================
+  //======== PCI CLOCK DOMAIN ========
+  //==================================
+  
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  //------------------------------------------------
+  //---- PCI-App to Pkt Tx Input Register Stage ----
+  //------------------------------------------------
+  
+DFFR #(64,64'b0) U1_dff (.q(XpiPktRxPciDataPns10S),.d(XpiPciAppPktRxDataP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  	                         
+  assign XpiPktRxPciAddrPns10C = (XpiPktRxValidCfgWrPns10C || XpiPktRxPciRegisterRdPns10C) ?
+				   XpiPciAppPktRxAddrP11S : XpiPktRxPciAddrPns10S;
+  
+DFFR #(64,64'b0) U2_dff (.q(XpiPktRxPciAddrPns10S),.d(XpiPktRxPciAddrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  	                         
+DFFR #(1,1'b0) U3_dff (.q(XpiPktRxPciDataIrdyPns10S),.d(XpiPciAppPktRxDataIrdyP11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //--------------------------------------
+  //---- PKT RX CONTROL STATE MACHINE ----
+  //--------------------------------------
+  // This SM controls following functionality:
+  // (i)  Writing Read Completion Data into FIFO 
+  // (ii) Issuance of Memory Read onto PCI Interface.
+  // (iii) Sevicing Incoming Control Register WR/RD requests...
+
+  //--------------------------------------------------------------------
+  //---- Qualifier's for PKTRX Register Read Completion Transaction ----
+  //--------------------------------------------------------------------
+  
+  assign XpiPktRxPciRegisterRdPns10C = ( (XpiPciAppPktRxAddrIrdyP11S) &&
+					 (XpiPciAppPktRxCmdP11S == `CTRLRD) &&
+					 (XpiPciAppPktRxValidTxnP11S) );
+  
+  assign XpiPktRxPciRegisterRdPns11C =
+         (XpiPktRxPciRegisterRdPns10C || XpiPktRxSrvCfgRdPns10C) ?
+           XpiPktRxPciRegisterRdPns10C : XpiPktRxPciRegisterRdPns11S;
+  
+DFFR #(1,1'b0) U4_dff (.q(XpiPktRxPciRegisterRdPns11S),.d(XpiPktRxPciRegisterRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //--------------------------------------------------------------
+  //---- Qualifier's for Descriptor & Memory Read Transaction ----
+  //--------------------------------------------------------------
+
+  assign XpiPktRxLenLessEqMtuPns11C = 
+	 ((XpiPktRxPciMemRdLenPsn11S <= {4'h0,`MTU}) &&
+	  (XpiPktRxPciMemRdLenPsn11S > {4'h0,`ZEROLEN}));
+  
+  assign XpiPktRxLenGrMtuPns11C = 
+	 (XpiPktRxPciMemRdLenPsn11S > {4'h0,`MTU});
+  
+  assign XpiPktRxLenGr2MtuPns11C = 
+	 (XpiPktRxPciMemRdLenPsn11S > {4'h0,(`BYTECNT_WIDTH'h002*`MTU)});
+
+  //-----------------------------------
+  //---- Descriptor Read Indication ---
+  //-----------------------------------
+  
+DFFR #(1,1'b0) U5_dff (.q(XpiPktRxSrvCfgWrPns11S),.d(XpiPktRxSrvCfgWrPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Head Descriptor Read Indication, Command Reg Write and Run bit Set
+  assign XpiPktRxPciFirstDescRdPns10C = 
+	 (XpiPktRxSrvCfgWrPns11S && XpiPktRxRunPns10C && 
+	  (XpiPktRxPciAddrPns10S[3:2]==2'b00));
+  
+  // ReCirculating Enable till Descriptor Read from CPU memory
+  assign XpiPktRxPciFirstDescRdPns11C = 
+	 (XpiPktRxSrvCfgWrPns11S || XpiPktRxMemRdCmpWaitPns10C) ?
+	   XpiPktRxPciFirstDescRdPns10C : XpiPktRxPciFirstDescRdPns11S;
+  
+DFFR #(1,1'b0) U6_dff (.q(XpiPktRxPciFirstDescRdPns11S),.d(XpiPktRxPciFirstDescRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // ReCirCulating Subsequent Descriptor Read Indication till its read from CPU memory
+  
+  assign XpiPktRxPciDescRdPns12C = (XpiPktRxPciDescRdPns11C || XpiPktRxPciAllDataRecvdPns12S) ?
+				     XpiPktRxPciDescRdPns11C : XpiPktRxPciDescRdPns12S;
+  
+DFFR #(1,1'b0) U7_dff (.q(XpiPktRxPciDescRdPns12S),.d(XpiPktRxPciDescRdPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //--------------------------------
+  //---- Memory Read Indication ----
+  //--------------------------------
+  
+  // Determining that Ownership is set to ASIC
+  assign XpiPktRxAsicOwnerPns10C = ((XpiPktTxBufOwnershipPns10C) && 
+				    (XpiPktRxPciDescPh2WrEnPns12S)  && 
+				    (~XpiPktRxDescCPUOwnerPns10S));
+  
+  assign XpiPktRxStartMemRdPns10C = ( (XpiPktRxAsicOwnerPns10C) &&
+				      (XpiPktRxDescPtrRegPns10S[1]));  //SOP
+  
+  // Delaying Start Indication by 2 Cycles to Sync Up with Control SM
+DFFR #(1,1'b0) U8_dff (.q(XpiPktRxStartMemRdPns10S),.d(XpiPktRxStartMemRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U9_dff (.q(XpiPktRxStartMemRdPns11S),.d(XpiPktRxStartMemRdPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // ReCirculating Starting of Read Operation indicator
+  assign XpiPktRxStartMemRdPns12C = (XpiPktRxStartMemRdPns11S || XpiPktRxPciAllDataRecvdPns12S) ?
+				      XpiPktRxStartMemRdPns11S : XpiPktRxStartMemRdPns12S;
+  
+DFFR #(1,1'b0) U10_dff (.q(XpiPktRxStartMemRdPns12S),.d(XpiPktRxStartMemRdPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // First Memory Read Indication
+  assign XpiPktRxPciFirstMemRdTxnPns11C = 
+	 (XpiPktRxStartMemRdPns11S && XpiPktRxLenGr2MtuPns11C && 
+	  XpiPktRxRunPns10C);
+  
+  assign XpiPktRxPciFirstMemRdTxnPns12C = 
+	 (XpiPktRxPciFirstMemRdTxnPns11C || XpiPktRxMemRdCmpWaitPns10C) ?
+	   XpiPktRxPciFirstMemRdTxnPns11C : XpiPktRxPciFirstMemRdTxnPns12S;
+  
+DFFR #(1,1'b0) U11_dff (.q(XpiPktRxPciFirstMemRdTxnPns12S),.d(XpiPktRxPciFirstMemRdTxnPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // MTU size Memory Read Indication
+  // >MTU Fifo Space is available & Read Length > MTU
+  assign XpiPktRxPciMemRdTxnPns11C = 
+	 (XpiPktRxFifoLessHalfPns10C && XpiPktRxLenGrMtuPns11C &&
+	  XpiPktRxRunPns10C);
+
+DFFR #(1,1'b0) U12_dff (.q(XpiPktRxPciMemRdTxnPns11S),.d(XpiPktRxPciMemRdTxnPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Last Memory Read Indication
+  assign XpiPktRxPciFinalMemRdTxnPns10C = 
+	 (XpiPktRxFifoLessHalfPns10C && XpiPktRxLenLessEqMtuPns11C &&
+	  XpiPktRxRunPns10C);
+  
+DFFR #(1,1'b0) U13_dff (.q(XpiPktRxPciFinalMemRdTxnPns10S),.d(XpiPktRxPciFinalMemRdTxnPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Last Memory Read Pulse Generation
+  assign XpiPktRxPciFinalMemRdTxnPns11C = (XpiPktRxPciFinalMemRdTxnPns10C &&
+					   (~XpiPktRxPciFinalMemRdTxnPns10S));
+  
+  // ReCirculating Enable until Final Mem Buffer read is issued
+  assign XpiPktRxPciFinalMemRdTxnPns12C = 
+	 (XpiPktRxPciFinalMemRdTxnPns11C || 
+	  XpiPktRxIssueFinalMemRdPns10C  || 
+	  XpiPktRxInsertEOPPns10S)       ?
+	   XpiPktRxPciFinalMemRdTxnPns11C : XpiPktRxPciFinalMemRdTxnPns12S;
+  
+DFFR #(1,1'b0) U14_dff (.q(XpiPktRxPciFinalMemRdTxnPns12S),.d(XpiPktRxPciFinalMemRdTxnPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Descriptor Read Pending Indication ----
+  
+  assign XpiPktRxDescRdPendingPns11C = 
+	 (XpiPktRxDescRdPendingPns10C || XpiPktRxPciAllDataRecvdPns12S) ?
+	   XpiPktRxDescRdPendingPns10C : XpiPktRxDescRdPendingPns11S;
+  
+DFFR #(1,1'b0) U15_dff (.q(XpiPktRxDescRdPendingPns11S),.d(XpiPktRxDescRdPendingPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- Memory Read (Packet) Pending Indication ----
+  
+  assign XpiPktRxMemRdPendingPns11C = 
+	 (XpiPktRxMemRdPendingPns10C || XpiPktRxPciAllDataRecvdPns12S) ?
+	   XpiPktRxMemRdPendingPns10C : XpiPktRxMemRdPendingPns11S;
+  
+DFFR #(1,1'b0) U16_dff (.q(XpiPktRxMemRdPendingPns11S),.d(XpiPktRxMemRdPendingPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- No Buffer Available Condition Indicator ----
+  
+  assign XpiPktRxNoBufAvailPns12C = 
+	 (XpiPktRxNoBufAvailPns11C || XpiPktRxSrvCfgRdPns10C) ?
+	   XpiPktRxNoBufAvailPns11C : XpiPktRxNoBufAvailPns12S;
+  
+DFFR #(1,1'b0) U17_dff (.q(XpiPktRxNoBufAvailPns12S),.d(XpiPktRxNoBufAvailPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+	 
+  //---- Packet Completion Check Pending Indication ----
+
+  assign XpiPktRxTxnIssuedPns11C = (XpiPktRxIssueMemRdPns10C      || 
+				    XpiPktRxIssueFinalMemRdPns10C ||
+				    XpiPktRxDescWrBackPns11C);
+  
+  assign XpiPktRxCheckStatePns11C = (XpiPktRxCheckStatePns10C || XpiPktRxTxnIssuedPns11C) ?
+				      XpiPktRxCheckStatePns10C : XpiPktRxCheckStatePns11S;
+  
+DFFR #(1,1'b0) U18_dff (.q(XpiPktRxCheckStatePns11S),.d(XpiPktRxCheckStatePns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Descriptor Write Back Indication ----
+  
+  assign XpiPktRxDescWrBackPns12C = 
+	 (XpiPktRxDescWrBackPns11C || XpiPktRxPciDescPh2WrEnPns12S) ?
+	   XpiPktRxDescWrBackPns11C : XpiPktRxDescWrBackPns12S;
+  
+DFFR #(1,1'b0) U19_dff (.q(XpiPktRxDescWrBackPns12S),.d(XpiPktRxDescWrBackPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Flopping Write and Read Pointers to fix Timing problems
+DFFR #(6,6'b0) U20_dff (.q(XpiPktRxFifoWrPtrPns10S),.d(XpiPktRxFifoWrPtrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(6,6'b0) U21_dff (.q(XpiPktRxFifoRdPtrPns10S),.d(XpiPktRxFifoRdPtrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Half Flag Determination ----
+  assign XpiPktRxFifoLessHalfPns10C = 
+	 ((XpiPktRxFifoWrPtrPns10S - XpiPktRxFifoRdPtrPns10S) <= 6'b010000);
+
+  
+`define XPIPKTRXIDLE              5'b00000  
+`define XPIPKTRXARBREQ            5'b00001
+`define XPIPKTRXCTLRD             5'b00010
+`define XPIPKTRXINITIALDESCRD     5'b10000
+`define XPIPKTRXDESCRD            5'b00100
+`define XPIPKTRXFIRSTMEMRD        5'b00011
+`define XPIPKTRXMEMRD             5'b01000
+`define XPIPKTRXFINALMEMRD        5'b00101
+`define XPIPKTRXCMPWAIT           5'b00111
+`define XPIPKTRXCMPDATAFIFOWR     5'b00110
+`define XPIPKTRXPKTCMPLTCHECK     5'b01110
+`define XPIPKTRXNEXTDESCRD        5'b01010
+`define XPIPKTRXDESCWRBACK        5'b10110
+`define XPIPKTRXCMPDATADESCWRPH1  5'b10101
+`define XPIPKTRXCMPDATADESCWRPH2  5'b10111
+`define XPIPKTRXDESCWRSTALL       5'b01101
+`define XPIPKTRXDESCOWNERWAIT     5'b10100
+`define XPIPKTRXNOBUFAVAIL        5'b11000
+`define XPIPKTRXTERMINATE         5'b01111
+  
+  // Internal state variables
+  wire [4:0] 			xpipktrxstate;
+  reg [4:0] 			next_xpipktrxstate;
+
+  //---- State Change ----
+DFFR #(5,5'b0) U22_dff (.q(xpipktrxstate),.d(next_xpipktrxstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Output Assignment ----
+  
+  always @(/*AS*/xpipktrxstate)
+    begin
+      
+      XpiPktRxPciArbReqPsn13S       = 1'b0;
+      XpiPktRxFifoWrEnPns10C        = 1'b0;
+      XpiPktRxIssueFirstMemRdPns10C = 1'b0;
+      XpiPktRxIssueMemRdPns10C      = 1'b0;
+      XpiPktRxIssueFinalMemRdPns10C = 1'b0;
+      XpiPktRxInitialDescRdPns10C   = 1'b0;
+      XpiPktRxIssueDescRdPns10C     = 1'b0;
+      XpiPktRxSrvCfgRdPns10C        = 1'b0;
+      XpiPktRxDescRdPendingPns10C   = 1'b0;
+      XpiPktRxMemRdPendingPns10C    = 1'b0;
+      XpiPktRxDescPh1WrEnPns10C     = 1'b0;
+      XpiPktRxDescPh2WrEnPns10C     = 1'b0;
+      XpiPktRxPciDataIrdyPns11C     = 1'b0;
+      XpiPktTxBufOwnershipPns10C    = 1'b0;
+      XpiPktRxMemRdCmpWaitPns10C    = 1'b0;
+      XpiPktRxPciDescRdPns11C       = 1'b0;
+      XpiPktRxDescWrBackPns11C      = 1'b0;
+      XpiPktRxKillPns11C            = 1'b0;
+      XpiPktRxCheckStatePns10C      = 1'b0;
+      XpiPktRxNoBufAvailPns11C      = 1'b0;	
+      
+      case(xpipktrxstate)
+	
+	`XPIPKTRXIDLE:  
+	  begin
+	    XpiPktRxPciArbReqPsn13S       = 1'b0;
+	    XpiPktRxFifoWrEnPns10C        = 1'b0;
+	    XpiPktRxIssueFirstMemRdPns10C = 1'b0;
+	    XpiPktRxIssueMemRdPns10C      = 1'b0;
+	    XpiPktRxIssueFinalMemRdPns10C = 1'b0;
+	    XpiPktRxInitialDescRdPns10C   = 1'b0;
+	    XpiPktRxIssueDescRdPns10C     = 1'b0;
+	    XpiPktRxSrvCfgRdPns10C        = 1'b0;
+	    XpiPktRxDescRdPendingPns10C   = 1'b0;
+	    XpiPktRxMemRdPendingPns10C    = 1'b0;
+	    XpiPktRxDescPh1WrEnPns10C     = 1'b0;
+	    XpiPktRxDescPh2WrEnPns10C     = 1'b0;
+	    XpiPktRxPciDataIrdyPns11C     = 1'b0;
+	    XpiPktTxBufOwnershipPns10C    = 1'b0;
+	    XpiPktRxMemRdCmpWaitPns10C    = 1'b0;
+	    XpiPktRxPciDescRdPns11C       = 1'b0;
+	    XpiPktRxDescWrBackPns11C      = 1'b0;
+	    XpiPktRxKillPns11C            = 1'b0;
+	    XpiPktRxCheckStatePns10C      = 1'b0;
+	    XpiPktRxNoBufAvailPns11C      = 1'b0;	
+	  end
+	
+	`XPIPKTRXARBREQ: XpiPktRxPciArbReqPsn13S = 1'b1;
+	  
+	`XPIPKTRXCTLRD: XpiPktRxSrvCfgRdPns10C = 1'b1;
+	
+	`XPIPKTRXINITIALDESCRD: 
+	  begin
+	    XpiPktRxInitialDescRdPns10C = 1'b1;
+	    XpiPktRxDescRdPendingPns10C = 1'b1;
+	    XpiPktRxPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIPKTRXDESCRD: 
+	  begin
+	    XpiPktRxIssueDescRdPns10C   = 1'b1;
+	    XpiPktRxDescRdPendingPns10C = 1'b1;
+	    XpiPktRxPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIPKTRXFIRSTMEMRD:
+	  begin
+	    XpiPktRxIssueFirstMemRdPns10C = 1'b1;
+	    XpiPktRxMemRdPendingPns10C    = 1'b1;
+	    XpiPktRxPciArbReqPsn13S       = 1'b0;
+	  end
+	    
+	`XPIPKTRXMEMRD: 
+	  begin
+	    XpiPktRxIssueMemRdPns10C    = 1'b1;
+	    XpiPktRxMemRdPendingPns10C  = 1'b1;
+	    XpiPktRxPciArbReqPsn13S     = 1'b0;
+	  end
+	
+	`XPIPKTRXFINALMEMRD: 
+	  begin
+	    XpiPktRxIssueFinalMemRdPns10C = 1'b1;
+	    XpiPktRxMemRdPendingPns10C    = 1'b1;
+	    XpiPktRxPciArbReqPsn13S       = 1'b0;
+	  end
+	
+	`XPIPKTRXCMPWAIT:
+	  begin
+	    XpiPktRxIssueMemRdPns10C      = 1'b0;
+	    XpiPktRxIssueFinalMemRdPns10C = 1'b0;
+	    XpiPktRxInitialDescRdPns10C   = 1'b0;
+	    XpiPktRxIssueDescRdPns10C     = 1'b0;
+	    XpiPktRxMemRdCmpWaitPns10C    = 1'b1;
+	    XpiPktRxMemRdPendingPns10C    = 1'b0;
+	  end
+		
+	`XPIPKTRXCMPDATADESCWRPH1: 
+	  begin
+	    XpiPktRxDescPh1WrEnPns10C = 1'b1;
+	    XpiPktRxPciDataIrdyPns11C = 1'b1;
+	  end
+	
+	`XPIPKTRXCMPDATADESCWRPH2: 
+	  begin
+	    XpiPktRxDescPh1WrEnPns10C = 1'b0;
+	    XpiPktRxDescPh2WrEnPns10C = 1'b1;
+	    XpiPktRxPciDataIrdyPns11C = 1'b1;
+	  end
+
+	`XPIPKTRXDESCWRSTALL:
+	  begin
+	    XpiPktRxDescPh1WrEnPns10C = 1'b0;
+	    XpiPktRxDescPh2WrEnPns10C = 1'b0;
+	    XpiPktRxPciDataIrdyPns11C = 1'b1;
+	  end
+	    	  
+	`XPIPKTRXDESCOWNERWAIT: 
+	  begin
+	    XpiPktRxDescPh2WrEnPns10C  = 1'b0;
+	    XpiPktTxBufOwnershipPns10C = 1'b1;
+	  end
+	  
+	`XPIPKTRXCMPDATAFIFOWR: XpiPktRxFifoWrEnPns10C = 1'b1;
+
+	`XPIPKTRXPKTCMPLTCHECK: 
+	  begin
+	    XpiPktRxFifoWrEnPns10C = 1'b0;
+	    XpiPktRxCheckStatePns10C = 1'b1;
+	  end
+	
+	`XPIPKTRXDESCWRBACK: XpiPktRxDescWrBackPns11C = 1'b1;
+	
+	`XPIPKTRXNEXTDESCRD: XpiPktRxPciDescRdPns11C = 1'b1;
+	
+	`XPIPKTRXNOBUFAVAIL: XpiPktRxNoBufAvailPns11C = 1'b1;
+
+	`XPIPKTRXTERMINATE: XpiPktRxKillPns11C = 1'b1;
+	  
+	default:
+	  begin
+	    XpiPktRxPciArbReqPsn13S       = 1'b0;
+	    XpiPktRxFifoWrEnPns10C        = 1'b0;
+	    XpiPktRxIssueFirstMemRdPns10C = 1'b0;
+	    XpiPktRxIssueMemRdPns10C      = 1'b0;
+	    XpiPktRxIssueFinalMemRdPns10C = 1'b0;
+	    XpiPktRxInitialDescRdPns10C   = 1'b0;
+	    XpiPktRxIssueDescRdPns10C     = 1'b0;
+	    XpiPktRxSrvCfgRdPns10C        = 1'b0;
+	    XpiPktRxDescRdPendingPns10C   = 1'b0;
+	    XpiPktRxMemRdPendingPns10C    = 1'b0;
+	    XpiPktRxDescPh1WrEnPns10C     = 1'b0;
+	    XpiPktRxDescPh2WrEnPns10C     = 1'b0;
+	    XpiPktTxBufOwnershipPns10C    = 1'b0;
+	    XpiPktRxMemRdCmpWaitPns10C    = 1'b0;
+	    XpiPktRxPciDescRdPns11C       = 1'b0;
+	    XpiPktRxDescWrBackPns11C      = 1'b0;
+	    XpiPktRxKillPns11C            = 1'b0;
+	    XpiPktRxCheckStatePns10C      = 1'b0;
+	    XpiPktRxNoBufAvailPns11C      = 1'b0;	
+	  end
+
+      endcase // case(xpipktrxstate)
+    end // always @ (...
+  
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiPciAppPktRxDataIrdyP11S
+	   or XpiPciAppPktRxRdStopP11S or XpiPciAppPktRxTrdyP10S
+	   or XpiPciAppPktRxValidTxnP11S or XpiPciArbPktRxBusyP11S
+	   or XpiPciArbPktRxReqAbortP11S
+	   or XpiPciArbPktRxSplitAbortP11S or XpiPciArbPktRxSrvP11S
+	   or XpiPciArbPktRxStopP11S or XpiPktRxCheckStatePns11S
+	   or XpiPktRxCmdWrValidPns10S or XpiPktRxDescCPUOwnerPns10S
+	   or XpiPktRxDescRdPendingPns11S or XpiPktRxDescWrBackPns12S
+	   or XpiPktRxIssueFinalMemRdPns13S
+	   or XpiPktRxMemRdPendingPns11S or XpiPktRxNoBufAvailPns12S
+	   or XpiPktRxPciAllDataRecvdPns12C
+	   or XpiPktRxPciAllDataRecvdPns12S
+	   or XpiPktRxPciDescPh2WrEnPns12S or XpiPktRxPciDescRdPns12S
+	   or XpiPktRxPciExptDataCntPns11C
+	   or XpiPktRxPciFinalMemRdTxnPns12S
+	   or XpiPktRxPciFirstDescRdPns11S
+	   or XpiPktRxPciFirstMemRdTxnPns11C
+	   or XpiPktRxPciFirstMemRdTxnPns12S
+	   or XpiPktRxPciMemRdTxnPns11S or XpiPktRxPciRegisterRdPns11S
+	   or XpiPktRxPktCmpltPns11S or XpiPktRxPktXfrCmpltPns11S
+	   or XpiPktRxRunPns10C or XpiPktRxTerminatePns10C
+	   or XpiPktRxValidCfgWrPns10S or xpipktrxstate)
+    begin
+      
+      case (xpipktrxstate)
+	
+	`XPIPKTRXIDLE:
+	  begin 
+	    if (XpiPktRxTerminatePns10C)
+	      // Terminate Bit Set, stop all operations, wait for reprogramming
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    else if ((((XpiPktRxPciFirstDescRdPns11S || XpiPktRxPciFirstMemRdTxnPns11C ||
+			XpiPktRxPciMemRdTxnPns11S    || XpiPktRxPciFinalMemRdTxnPns12S ||
+			XpiPktRxPciDescRdPns12S)     && (~XpiPciAppPktRxRdStopP11S))   || 
+		      XpiPktRxPciRegisterRdPns11S ||
+		      XpiPktRxDescWrBackPns12S) &&
+		     (~XpiPciArbPktRxStopP11S)  && 
+		     (~XpiPciArbPktRxBusyP11S)  && 
+		     (~XpiPciArbPktRxSrvP11S))
+	      // Arbitrate for PCI bus accesses for issuinng Descriptor Read, 
+	      // Packet Data Read or sending Register Read Completion
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	  end // case: `XPIPKTRXIDLE
+	
+	`XPIPKTRXARBREQ:
+	  begin
+	    if (XpiPktRxDescRdPendingPns11S &&
+		XpiPciAppPktRxDataIrdyP11S  &&
+		XpiPciAppPktRxValidTxnP11S  &&
+		(~XpiPktRxValidCfgWrPns10S))
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH1;
+	    // A condition when Packet Data Read is Pending, and while
+	    // arbitrating for register read, data completion is received
+	    // absorb the data and then service register read
+	    else if (XpiPktRxMemRdPendingPns11S &&
+		     XpiPciAppPktRxDataIrdyP11S &&
+		     XpiPciAppPktRxValidTxnP11S &&
+		     (~XpiPktRxValidCfgWrPns10S))
+	      // A condition when Packet Data Read is Pending, and while
+	      // arbitrating for register read, data completion is received
+	      // absorb the data and then service register read
+	      next_xpipktrxstate = `XPIPKTRXCMPDATAFIFOWR;	    
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciRegisterRdPns11S && 
+		     (~XpiPciArbPktRxBusyP11S))
+	      // Sending completion for Register Read request
+	      next_xpipktrxstate = `XPIPKTRXCTLRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciFirstDescRdPns11S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // Head Descriptor Read
+	      next_xpipktrxstate = `XPIPKTRXINITIALDESCRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciFirstMemRdTxnPns12S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // 2*MTU Read request
+	      next_xpipktrxstate = `XPIPKTRXFIRSTMEMRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciMemRdTxnPns11S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // MTU Read Request
+	      next_xpipktrxstate = `XPIPKTRXMEMRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciFinalMemRdTxnPns12S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // <= MTU Read Request
+	      next_xpipktrxstate = `XPIPKTRXFINALMEMRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxPciDescRdPns12S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // Subsequent Descriptor Read
+	      next_xpipktrxstate = `XPIPKTRXDESCRD;
+	    else if (XpiPciArbPktRxSrvP11S && XpiPktRxDescWrBackPns12S &&
+		     (~XpiPciArbPktRxBusyP11S))
+	      // Descriptor Write Back to CPU memory
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH1;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	  end // case: `XPIPKTRXARBREQ
+	
+	`XPIPKTRXCTLRD: 
+	  begin
+	    if (XpiPktRxMemRdPendingPns11S || XpiPktRxDescRdPendingPns11S)
+	      next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	    else if (XpiPktRxCheckStatePns11S)
+	      next_xpipktrxstate = `XPIPKTRXPKTCMPLTCHECK;
+	    else if (XpiPktRxNoBufAvailPns12S)
+	      next_xpipktrxstate = `XPIPKTRXNOBUFAVAIL;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	  end
+	
+	`XPIPKTRXFIRSTMEMRD: next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	
+	`XPIPKTRXMEMRD: next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	
+	`XPIPKTRXFINALMEMRD: next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	
+	`XPIPKTRXINITIALDESCRD: next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	
+	`XPIPKTRXDESCRD: next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	
+	`XPIPKTRXCMPWAIT:
+	  begin
+	    if (XpiPktRxDescRdPendingPns11S &&
+		XpiPciAppPktRxDataIrdyP11S  &&
+		XpiPciAppPktRxValidTxnP11S  &&
+		(~XpiPktRxValidCfgWrPns10S))
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH1;
+	    else if (XpiPktRxMemRdPendingPns11S &&
+		     XpiPciAppPktRxDataIrdyP11S &&
+		     XpiPciAppPktRxValidTxnP11S &&
+		     (~XpiPktRxValidCfgWrPns10S))
+	      next_xpipktrxstate = `XPIPKTRXCMPDATAFIFOWR;
+	    else if (XpiPktRxPciRegisterRdPns11S && (~XpiPciArbPktRxSrvP11S))
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else if (XpiPciArbPktRxReqAbortP11S || XpiPciArbPktRxSplitAbortP11S)
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXCMPWAIT;
+	  end // case: `XPIPKTRXCMPWAIT
+	
+	`XPIPKTRXCMPDATAFIFOWR:
+	  begin
+	    if ((~(XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S)) && 
+		(XpiPktRxPciAllDataRecvdPns12C || XpiPktRxPciAllDataRecvdPns12S || 
+		 (XpiPktRxPciExptDataCntPns11C == {`BYTECNT_WIDTH{1'b0}})))
+	      // All Completion Data Received, check for further Data or Desc Wr/Rd requests
+	      next_xpipktrxstate = `XPIPKTRXPKTCMPLTCHECK;
+	    else if ((~(XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S)) && 
+		     (~(XpiPktRxPciAllDataRecvdPns12C || XpiPktRxPciAllDataRecvdPns12S)))
+	      // Not all requested data received in completion, wait for more data
+	      next_xpipktrxstate = `XPIPKTRXCMPWAIT;	    
+	    else
+	      next_xpipktrxstate = `XPIPKTRXCMPDATAFIFOWR;
+	  end
+	
+	`XPIPKTRXPKTCMPLTCHECK:
+	  begin
+	    if ((((XpiPktRxPciMemRdTxnPns11S  || XpiPktRxPciFinalMemRdTxnPns12S) && 
+		 (~XpiPciAppPktRxRdStopP11S)) || XpiPktRxPciRegisterRdPns11S)    && 
+		(~XpiPciArbPktRxStopP11S)     && (~XpiPciArbPktRxBusyP11S)       && 
+		(~XpiPciArbPktRxSrvP11S))
+	      // Further Memory Reads from CPU buffer are pending
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else if (XpiPktRxPktCmpltPns11S || 
+		     ((~XpiPktRxPktCmpltPns11S) && XpiPktRxIssueFinalMemRdPns13S))
+	      // Current Buffer Read complete, Write Back the Descriptor to
+	      // CPU Memory with CPU Ownership bit Set
+	      next_xpipktrxstate = `XPIPKTRXDESCWRBACK;	    
+	    else
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	  end // case: `XPIPKTRXPKTCMPLTCHECK
+
+	`XPIPKTRXDESCWRBACK:
+	  begin
+	    if ((~XpiPciArbPktRxSrvP11S) && (~XpiPciArbPktRxStopP11S) && 
+		(~XpiPciArbPktRxBusyP11S))
+	      // Waiting for Arbitration phase of previous request to complete
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXDESCWRBACK;
+	  end
+	
+	`XPIPKTRXNEXTDESCRD:
+	  begin
+	    if (XpiPktRxTerminatePns10C)
+	      // Terminate Bit Set, stop all operations, wait for reprogramming
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    //else if (XpiPktRxDescWrBackPns12S && (~XpiPciArbPktRxSrvP11S))
+	    else if ((~XpiPciArbPktRxStopP11S) && (~XpiPciArbPktRxBusyP11S) && 
+		     (~XpiPciArbPktRxSrvP11S))
+	      // Wait Until PCI Arbiter is done with Decriptor Write Back operation.
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXNEXTDESCRD;
+	  end
+  
+	`XPIPKTRXCMPDATADESCWRPH1:
+	  begin
+	    if (XpiPktRxDescWrBackPns12S && (~XpiPciAppPktRxTrdyP10S))
+	      // Data Stall during Descriptor WriteBack
+	      next_xpipktrxstate = `XPIPKTRXDESCWRSTALL;
+	    else if (XpiPktRxDescWrBackPns12S && XpiPciArbPktRxReqAbortP11S)
+	      // Abort Completion received for Write Request
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH2;
+	  end   
+	
+	`XPIPKTRXDESCWRSTALL:
+	  begin
+	    if (XpiPciAppPktRxTrdyP10S)
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH2;
+	    else if (XpiPktRxDescWrBackPns12S && XpiPciArbPktRxReqAbortP11S)
+	      // Abort Completion received for Write Request
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXDESCWRSTALL;
+	  end
+	
+	`XPIPKTRXCMPDATADESCWRPH2:
+	  begin
+	    if (XpiPktRxDescWrBackPns12S && XpiPktRxPktXfrCmpltPns11S)
+	      // All packet transfers complete and Final Descriptor 
+	      // Write back done, transition to idle
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	    else if (XpiPktRxDescWrBackPns12S && (~XpiPktRxPktXfrCmpltPns11S))
+	      // Previous Descriptor written to CPU memory read Subsequent Descriptor 
+	      // Read Descriptor when (i) Current Buffer is exhausted and Packet not complete,
+	      // i.e. single packet straddles across multiple buffers
+	      // (ii) Current Packet data read complete, but more packets to read
+	      next_xpipktrxstate = `XPIPKTRXNEXTDESCRD;
+	    else if ((~(XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S)) && 
+		     (XpiPktRxPciAllDataRecvdPns12C || XpiPktRxPciAllDataRecvdPns12S))
+	      // Local Descriptor Write complete, check for ownership
+	      next_xpipktrxstate = `XPIPKTRXDESCOWNERWAIT;
+	    else if ((~(XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S)) && 
+		     (~(XpiPktRxPciAllDataRecvdPns12C || XpiPktRxPciAllDataRecvdPns12S)))
+	      // Descriptor Read data not complete, wait for further data.
+	      next_xpipktrxstate = `XPIPKTRXCMPWAIT;	    	      
+	    else if (XpiPktRxDescWrBackPns12S && XpiPciArbPktRxReqAbortP11S)
+	      // Abort Completion received for Write Request
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXCMPDATADESCWRPH2;
+	  end
+	
+	`XPIPKTRXDESCOWNERWAIT:
+	  begin
+	    if (XpiPktRxPciDescPh2WrEnPns12S && XpiPktRxDescCPUOwnerPns10S)
+	      // CPU Ownership Set, No buffer available condition
+	      next_xpipktrxstate = `XPIPKTRXNOBUFAVAIL;
+	    else if (XpiPktRxPciDescPh2WrEnPns12S && (~XpiPktRxDescCPUOwnerPns10S))
+	      // ASIC Ownership Set, Start reading Packet Data from CPU buffer
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXDESCOWNERWAIT;
+	  end
+
+	`XPIPKTRXNOBUFAVAIL:
+	  begin
+	    if (XpiPktRxCmdWrValidPns10S && XpiPktRxRunPns10C)
+	      // ReSetting of Run Bit indicates available CPU Buffers,
+	      // read Next Descriptor  
+	      next_xpipktrxstate = `XPIPKTRXNEXTDESCRD;
+	    else if (XpiPktRxPciRegisterRdPns11S && (~XpiPciArbPktRxSrvP11S))
+	      // Status Register Read 
+	      next_xpipktrxstate = `XPIPKTRXARBREQ;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXNOBUFAVAIL;
+	  end
+
+	`XPIPKTRXTERMINATE:
+	  begin
+	    if (XpiPktRxCmdWrValidPns10S && XpiPktRxRunPns10C)
+	      // ReStart operation upon reprogramming
+	      next_xpipktrxstate = `XPIPKTRXIDLE;
+	    else
+	      next_xpipktrxstate = `XPIPKTRXTERMINATE;
+	  end
+
+	default: next_xpipktrxstate = `XPIPKTRXIDLE;
+	
+      endcase // case(xpipktrxstate)
+    end // always @ (...
+  
+  //--------------------------------------
+  //---- Read Completion Data Counter ----
+  //--------------------------------------
+  // Counts Number of 8B chunks received in Read Completion
+  
+  always @(/*AS*/XpiPciAppPktRxDataIrdyP11S
+	   or XpiPciAppPktRxValidTxnP11S
+	   or XpiPktRxInitialDescRdPns10C or XpiPktRxIssueDescRdPns10C
+	   or XpiPktRxIssueFinalMemRdPns10C
+	   or XpiPktRxIssueFirstMemRdPns10C
+	   or XpiPktRxIssueMemRdPns10C or XpiPktRxPciCmpDataCntPns11S
+	   or XpiPktRxValidCfgWrPns10S)
+    begin
+      if (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C    ||
+	  XpiPktRxIssueFinalMemRdPns10C || XpiPktRxInitialDescRdPns10C || 
+	  XpiPktRxIssueDescRdPns10C)
+        // Reset Count upon issuance of Read Request
+        XpiPktRxPciCmpDataCntPns11C = {`BYTECNT_WIDTH{1'b0}};
+      else if (XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S &&
+	       (~XpiPktRxValidCfgWrPns10S))
+        XpiPktRxPciCmpDataCntPns11C = {XpiPktRxPciCmpDataCntPns11S + 1'b1};
+      else if (XpiPktRxPciCmpDataCntPns11S == `BYTECNT_WIDTH'hfff)
+        XpiPktRxPciCmpDataCntPns11C = {`BYTECNT_WIDTH{1'b0}};
+      else
+        XpiPktRxPciCmpDataCntPns11C = XpiPktRxPciCmpDataCntPns11S;
+    end
+
+DFFR #(12,12'b0) U23_dff (.q(XpiPktRxPciCmpDataCntPns11S),.d(XpiPktRxPciCmpDataCntPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Expected Data Count in Completion = Read Request (Bytes) / 8
+  assign XpiPktRxPciExptDataCntPns11C = {XpiPktRxPciLengthPsn13S >> 3};
+  
+  assign XpiPktRxPciAllDataRecvdPns11C = 
+	 //(XpiPktRxPciCmpDataCntPns11S == {XpiPktRxPciExptDataCntPns11C - 1'b1});
+	 (XpiPktRxPciCmpDataCntPns11S == XpiPktRxPciExptDataCntPns11C);
+  
+DFFR #(1,1'b0) U24_dff (.q(XpiPktRxPciAllDataRecvdPns11S),.d(XpiPktRxPciAllDataRecvdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Pulse Detect Logic indicating Receipt of all expected data
+  assign XpiPktRxPciAllDataRecvdPns12C = (XpiPktRxPciAllDataRecvdPns11C && 
+					  (~XpiPktRxPciAllDataRecvdPns11S));
+  
+DFFR #(1,1'b0) U25_dff (.q(XpiPktRxPciAllDataRecvdPns12S),.d(XpiPktRxPciAllDataRecvdPns12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //----------------------------------------
+  //---- Pkt Rx Control Register Write  ----
+  //----------------------------------------
+  // Muxing the Control Register Write Based on Address Offset
+  // 0x00 -- Command Register
+  // 0x04 -- Address Register
+  // 0x80 -- Status Register
+  // 0xc0 -- Timer Value Register
+  
+  // Determining Valid Register Write
+  
+  assign XpiPktRxValidCfgWrPns10C = (XpiPciAppPktRxAddrIrdyP11S && 
+				     (XpiPciAppPktRxCmdP11S == `CTRLWR) && 
+				     XpiPciAppPktRxValidTxnP11S);
+  
+DFFR #(1,1'b0) U26_dff (.q(XpiPktRxValidCfgWrPns10S),.d(XpiPktRxValidCfgWrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Write Qualifiers
+  assign XpiPktRxSrvCfgWrPns10S = (XpiPktRxValidCfgWrPns10S &&
+				   XpiPciAppPktRxDataIrdyP11S &&
+				   XpiPciAppPktRxValidTxnP11S);
+  
+  assign XpiPktRxCmdWrValidPns10C = (XpiPktRxSrvCfgWrPns10S && 
+				     (XpiPktRxPciAddrPns10S[3:2]==2'b00));
+  
+  assign XpiPktRxAddrRegWrValidPns10C = (XpiPktRxSrvCfgWrPns10S && 
+					 (XpiPktRxPciAddrPns10S[3:2]==2'b01));
+
+  assign XpiPktRxTOutWrValidPns10C = (XpiPktRxSrvCfgWrPns10S && 
+				      (XpiPktRxPciAddrPns10S[3:2]==2'b11));
+  
+  //---- Command Register Update ----
+  
+  assign XpiPktRxCmdRegPns10C = XpiPktRxCmdWrValidPns10C ? 
+	 XpiPktRxPciDataPns10S[`CFG_WIDTH-1:0] : XpiPktRxCmdRegPns10S;
+
+  //---- Address Register Update ----
+
+  always @(/*AS*/XpiPktRxAddrRegWrValidPns10C
+	   or XpiPktRxAddressRegPns10S or XpiPktRxDescPtrRegPns10S
+	   or XpiPktRxDescWrBackPns12S or XpiPktRxPciDataPns10S
+	   or XpiPktRxPciDescPh2WrEnPns11S)
+    begin
+      if (XpiPktRxAddrRegWrValidPns10C)
+	XpiPktRxAddressRegPns10C = XpiPktRxPciDataPns10S[`CFG_WIDTH-1:0];
+      else if (XpiPktRxPciDescPh2WrEnPns11S && XpiPktRxDescWrBackPns12S)
+	// Updating Address register to physical address of the Next Descriptor to 
+	// be read after the Write Back of Current descriptor to CPU memory
+	XpiPktRxAddressRegPns10C = XpiPktRxDescPtrRegPns10S[95:64];
+      else  
+	XpiPktRxAddressRegPns10C = XpiPktRxAddressRegPns10S;
+    end // always @ (...
+  
+DFFR #(1,1'b0) U27_dff (.q(XpiPktRxCmdWrValidPns10S),.d(XpiPktRxCmdWrValidPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U28_dff (.q(XpiPktRxCmdWrValidPns11S),.d(XpiPktRxCmdWrValidPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---- TimeOut Value Register Update ----
+
+  assign XpiPktRxTOutRegPns10C = XpiPktRxTOutWrValidPns10C ? 
+	 XpiPktRxPciDataPns10S[`CFG_WIDTH-1:0] : XpiPktRxTOutRegPns10S;
+
+DFFR #(1,1'b0) U29_dff (.q(XpiPktRxTOutWrValidPns10S),.d(XpiPktRxTOutWrValidPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------
+  //---- Status Register Update Data ----
+  //-------------------------------------
+  // Note: Status Register is Read Only, Write has no effect
+
+  // ReCirculating Packet Complete indication until last chunk is drained
+  // out and RSI has accepted the chunk.
+  
+  assign XpiPktRxPktCmpltPns13C = (XpiPktRxPktCmpltPns11C || XpiPktRxPciUpdateStatusPsn13C) ?
+				    XpiPktRxPktCmpltPns11C : XpiPktRxPktCmpltPns13S;
+  
+DFFR #(1,1'b0) U30_dff (.q(XpiPktRxPktCmpltPns13S),.d(XpiPktRxPktCmpltPns13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxUpdateStatusPns11C = (XpiPktRxPktCmpltPns13S && 
+				       XpiPktRxPciUpdateStatusPsn13C);
+  
+  always @(/*AS*/XpiPktRxCmdWrValidPns11S or XpiPktRxNumPktsPns10S
+	   or XpiPktRxPktXfrCmpltPns11C or XpiPktRxRunPns10C
+	   or XpiPktRxStatusRegPns10S or XpiPktRxUpdateStatusPns11C
+	   or XpiPktRxValidPns10C)
+    begin
+      if (XpiPktRxCmdWrValidPns11S && XpiPktRxRunPns10C && XpiPktRxValidPns10C)
+	// Fresh Command register write, Set the Busy Bit, Unset remaining bits
+	XpiPktRxStatusRegPns10C = {{31{1'b0}},1'b1};
+      else if (XpiPktRxUpdateStatusPns11C && XpiPktRxPktXfrCmpltPns11C)
+	// All Packet Transfers complete
+	XpiPktRxStatusRegPns10C = {{9{1'b0}},1'b1,XpiPktRxNumPktsPns10S,1'b0};	
+      else if (XpiPktRxUpdateStatusPns11C && (~XpiPktRxPktXfrCmpltPns11C))
+	// Particular Packet Data is Read from CPU and emptied out of PKTRX Fifo
+	XpiPktRxStatusRegPns10C = {{10{1'b0}},XpiPktRxNumPktsPns10S,1'b1};
+      else
+	XpiPktRxStatusRegPns10C = XpiPktRxStatusRegPns10S;
+    end
+  
+  //-------------------------------------
+  //---- PKT RX Control Register Set ----
+  //-------------------------------------
+  
+DFFR #(32,32'b0) U31_dff (.q(XpiPktRxCmdRegPns10S),.d(XpiPktRxCmdRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,32'b0) U32_dff (.q(XpiPktRxAddressRegPns10S),.d(XpiPktRxAddressRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+    
+DFFR #(32,32'b0) U33_dff (.q(XpiPktRxStatusRegPns10S),.d(XpiPktRxStatusRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(32,`CFG_WIDTH'h0000ffff) U34_dff (.q(XpiPktRxTOutRegPns10S),.d(XpiPktRxTOutRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  //---------------------------------------
+  //---- PKT RX Control Register Read  ----
+  //---------------------------------------
+  
+  //---- Mux Select for Control Register Read Data ----
+  //**Muxing out Status, Command or Buffer Descriptor Address 
+  //**Register contents based on Address offset 0x00, 0x04, 0x08..
+  
+MUX4S2 #(32) U35_mux4 (.mo(XpiPktRxPciCfgDataPsn12C),.in0(XpiPktRxCmdRegPns10S),.in1(XpiPktRxAddressRegPns10S),.in2(XpiPktRxStatusRegPns10S),.in3({`CFG_WIDTH{1'b0}}),.sel(XpiPktRxPciAddrPns10S[3:2]));
+
+
+  
+  //-------------------------------------------
+  //---- Two Phase Buffer Descriptor Write ----
+  //-------------------------------------------
+
+  // Updating 64b LSB of the Descriptor
+  always @(/*AS*/XpiPktRxDescPh1WrEnPns10C
+	   or XpiPktRxDescPtrRegLSBPns10S or XpiPktRxDescPtrRegPns10S
+	   or XpiPktRxDescWrBackPns11C or XpiPktRxDescWrBackPns12S
+	   or XpiPktRxPciDataPns10S)
+    begin
+      if (XpiPktRxDescPh1WrEnPns10C && (~XpiPktRxDescWrBackPns12S))
+	// Descriptor read from CPU memory, forming local copy
+	XpiPktRxDescPtrRegLSBPns10C = XpiPktRxPciDataPns10S;
+      else if (XpiPktRxDescWrBackPns11C)
+	// Setting CPU Ownership bit
+	XpiPktRxDescPtrRegLSBPns10C = {XpiPktRxDescPtrRegPns10S[`PCI_DATA_WIDTH-1:1],1'b0};
+      else 
+	XpiPktRxDescPtrRegLSBPns10C = XpiPktRxDescPtrRegLSBPns10S;
+    end // always @ (...
+  
+  // Updating 64b MSB of the Descriptor
+  assign XpiPktRxDescPtrRegMSBPns10C = (XpiPktRxDescPh2WrEnPns10C && (~XpiPktRxDescWrBackPns12S)) ?
+				       XpiPktRxPciDataPns10S : XpiPktRxDescPtrRegMSBPns10S;
+  
+DFFR #(64,64'b0) U36_dff (.q(XpiPktRxDescPtrRegLSBPns10S),.d(XpiPktRxDescPtrRegLSBPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U37_dff (.q(XpiPktRxDescPtrRegMSBPns10S),.d(XpiPktRxDescPtrRegMSBPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxDescPtrRegPns10C = {XpiPktRxDescPtrRegMSBPns10S,
+				     XpiPktRxDescPtrRegLSBPns10S};
+  
+DFFR #(128,128'b0) U38_dff (.q(XpiPktRxDescPtrRegPns10S),.d(XpiPktRxDescPtrRegPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+DFFR #(1,1'b0) U39_dff (.q(XpiPktRxPciDescPh2WrEnPns11S),.d(XpiPktRxDescPh2WrEnPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U40_dff (.q(XpiPktRxPciDescPh2WrEnPns12S),.d(XpiPktRxPciDescPh2WrEnPns11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxDescCPUOwnerPns10S = (~XpiPktRxDescPtrRegPns10S[0]);
+
+  //----------------------------------------
+  //---- Read Request TimeOut Mechanism ----
+  //----------------------------------------
+  // Counting time between issuance of Read Request and receipt of
+  // all requested data
+
+  assign XpiPktRxTOutTriggerPns10C = 
+	 (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C    ||
+	  XpiPktRxIssueFinalMemRdPns10C || XpiPktRxInitialDescRdPns10C ||
+	  XpiPktRxIssueDescRdPns10C);
+
+  assign XpiPktRxTOutCntEnPns10C = (XpiPktRxTOutTriggerPns10C || XpiPktRxPciAllDataRecvdPns12S) ?
+				     XpiPktRxTOutTriggerPns10C : XpiPktRxTOutCntEnPns10S;
+
+DFFR #(1,1'b0) U41_dff (.q(XpiPktRxTOutCntEnPns10S),.d(XpiPktRxTOutCntEnPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiPktRxTOutCntEnPns10S or XpiPktRxTOutRegPns10S
+	   or XpiPktRxTimeOutCntPns10S)
+    begin
+      if (XpiPktRxTOutCntEnPns10S)
+	XpiPktRxTimeOutCntPns10C = {XpiPktRxTimeOutCntPns10S + 1'b1};
+      else if (XpiPktRxTimeOutCntPns10S == XpiPktRxTOutRegPns10S)
+	XpiPktRxTimeOutCntPns10C = {`TOUT_CNTR_WIDTH{1'b0}};
+      else
+	XpiPktRxTimeOutCntPns10C = {`TOUT_CNTR_WIDTH{1'b0}};
+    end // always @ (...
+  
+DFFR #(32,32'b0) U42_dff (.q(XpiPktRxTimeOutCntPns10S),.d(XpiPktRxTimeOutCntPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPciTimeOutPns11C = (XpiPktRxTimeOutCntPns10S == XpiPktRxTOutRegPns10S);
+  
+  //-----------------------------------
+  //---- Interrupt Assertion Logic ----
+  //-----------------------------------
+  // Asserting Interrupt Signals for either all Packet Transfer complete condition or
+  // TimeOut Error condition.
+
+  always @(/*AS*/XpiPktRxPciTimeOutPns11C or XpiPktRxPciTimeOutPsn13C
+	   or XpiPktRxPktCmpltIntrPns10C or XpiPktRxPktXfrCmpltPns11S
+	   or XpiPktRxTOutIntrPns10C or XpiPktRxUpdateStatusPns11C)
+    begin
+      if (XpiPktRxPktCmpltIntrPns10C && XpiPktRxUpdateStatusPns11C && XpiPktRxPktXfrCmpltPns11S)
+	// Packet Transfers Complete
+	XpiPktRxIntrPsn13C = `PKTRX_INTR_EVENTS'b01;
+      else if ((XpiPktRxPciTimeOutPsn13C || XpiPktRxPciTimeOutPns11C) && 
+	       XpiPktRxTOutIntrPns10C)
+	// ASIC or CPU Request Timed Out
+	XpiPktRxIntrPsn13C = `PKTRX_INTR_EVENTS'b10;
+      else
+	XpiPktRxIntrPsn13C = {`PKTRX_INTR_EVENTS{1'b0}};
+    end
+	
+DFFR #(2,2'b0) U43_dff (.q(XpiPktRxPciIntrPsn13S),.d(XpiPktRxIntrPsn13C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------------------------------
+  //---- Determining Pkt Rx Start Operation Enable ----
+  //---------------------------------------------------
+  //** When Run Bit is Set, Rx Buffer Descriptor is Read
+  //** from the Address pointed by the Head Buffer Descriptor
+  //** Pointer Register.
+  
+  assign XpiPktRxRunPns10C          = XpiPktRxCmdRegPns10S[0];
+  assign XpiPktRxMaxPacketsPns10C   = XpiPktRxCmdRegPns10S[21:1];
+  assign XpiPktRxPktCmpltIntrPns10C = XpiPktRxCmdRegPns10S[22];
+  assign XpiPktRxTOutIntrPns10C     = XpiPktRxCmdRegPns10S[23];
+  assign XpiPktRxTerminatePns10C    = XpiPktRxCmdRegPns10S[25];
+  assign XpiPktRxEOPCurrentPns10C   = XpiPktRxDescPtrRegPns10S[2];
+  assign XpiPktRxPktDirPns10C       = XpiPktRxDescPtrRegPns10S[3];
+
+  //----------------------------------------------------------------
+  //---- Command & Status Register Update Control State Machine ----
+  //----------------------------------------------------------------
+
+`define XPIPKTRXOPIDLE  2'b00
+`define XPIPKTRXOPVALID 2'b01
+`define XPIPKTRXOPHALT  2'b11
+`define XPIPKTRXOPSET   2'b10
+  
+  // State Variables
+  wire [1:0] xpipktrxopstate;
+  reg [1:0]  next_xpipktrxopstate;
+
+  // State Change
+DFFR #(2,2'b0) U44_dff (.q(xpipktrxopstate),.d(next_xpipktrxopstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Output Assignment
+
+  always @(/*AS*/xpipktrxopstate)
+    begin
+      
+      XpiPktRxValidPns10C = 1'b0;
+      
+      case (xpipktrxopstate)
+
+	`XPIPKTRXOPIDLE:  
+	  begin
+	    XpiPktRxValidPns10C = 1'b0;
+	  end
+	
+	`XPIPKTRXOPVALID: XpiPktRxValidPns10C = 1'b1;
+	
+	`XPIPKTRXOPHALT:  ;
+
+	`XPIPKTRXOPSET: ;
+	
+	default : 
+	  begin
+	    XpiPktRxValidPns10C = 1'b0;
+	  end
+	
+      endcase // case(xpipktrxopstate)
+    end // always @ (...
+
+  // State Transitions
+
+  always @(/*AS*/XpiPktRxCmdWrValidPns10S or XpiPktRxPktXfrCmpltPns11S
+	   or XpiPktRxRunPns10C or xpipktrxopstate)
+    begin
+
+      case (xpipktrxopstate)
+
+	`XPIPKTRXOPIDLE:
+	  begin
+	    if (XpiPktRxCmdWrValidPns10S && XpiPktRxRunPns10C)
+	      // Setting of Command Register
+	      next_xpipktrxopstate = `XPIPKTRXOPVALID;
+	    else
+	      next_xpipktrxopstate = `XPIPKTRXOPIDLE;
+	  end
+	
+	`XPIPKTRXOPVALID:
+	  begin
+	    if (XpiPktRxPktXfrCmpltPns11S)
+	      // Completion of Current Transfer, transition to Idle
+	      next_xpipktrxopstate = `XPIPKTRXOPIDLE;
+	    else if (XpiPktRxCmdWrValidPns10S && (~XpiPktRxRunPns10C))
+	      next_xpipktrxopstate = `XPIPKTRXOPHALT;
+	    else
+	      next_xpipktrxopstate = `XPIPKTRXOPVALID;
+	  end
+	  
+	`XPIPKTRXOPHALT:
+	  begin
+	    if (XpiPktRxCmdWrValidPns10S && XpiPktRxRunPns10C)
+	      // ReSetting of Run Bit, transition to Valid State
+	      next_xpipktrxopstate = `XPIPKTRXOPSET;
+	    else
+	      next_xpipktrxopstate = `XPIPKTRXOPHALT;
+	  end
+
+	`XPIPKTRXOPSET:
+	  begin
+	    if (XpiPktRxPktXfrCmpltPns11S)
+	      // Completion of Current Transfer, transition to Idle
+	      next_xpipktrxopstate = `XPIPKTRXOPIDLE;
+	    else if (XpiPktRxCmdWrValidPns10S && (~XpiPktRxRunPns10C))
+	      // Unsetting of Run Bit in middle of transfer, transition to Halt State
+	      next_xpipktrxopstate = `XPIPKTRXOPHALT;
+	    else
+	      next_xpipktrxopstate = `XPIPKTRXOPSET;
+	  end
+	
+	default: next_xpipktrxopstate = `XPIPKTRXOPIDLE;
+
+       endcase // case(xpipktrxopstate)
+    end // always @ (...
+  	      
+	  
+  //------------------------------------------------------
+  //---- Counting Total Number of Packets Transferred ----
+  //------------------------------------------------------
+  
+  assign XpiPktRxPktCmpltPns11C = (XpiPktRxLastXfrPns10S && XpiPktRxEOPCurrentPns10C);
+
+DFFR #(1,1'b0) U45_dff (.q(XpiPktRxPktCmpltPns11S),.d(XpiPktRxPktCmpltPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiPktRxCmdWrValidPns11S or XpiPktRxNumPktsPns10S
+	   or XpiPktRxPktCmpltPns11C or XpiPktRxRunPns10C
+	   or XpiPktRxValidPns10C)
+    begin
+      if (XpiPktRxPktCmpltPns11C)
+	XpiPktRxNumPktsPns10C = {XpiPktRxNumPktsPns10S + 
+				 {{(`XPI_MAX_NUM_PKTS-1){1'b0}},1'b1}};
+      else if (XpiPktRxCmdWrValidPns11S && XpiPktRxRunPns10C && XpiPktRxValidPns10C)
+	// Reset the packet count for a  New Command register write
+	XpiPktRxNumPktsPns10C = {`XPI_MAX_NUM_PKTS{1'b0}};
+      else if (XpiPktRxNumPktsPns10S == `XPI_MAX_NUM_PKTS'hfff)
+	// Rollover if the Counter Overflows
+	XpiPktRxNumPktsPns10C = {`XPI_MAX_NUM_PKTS{1'b0}};
+      else
+	XpiPktRxNumPktsPns10C = XpiPktRxNumPktsPns10S;
+    end
+  
+DFFR #(21,21'b0) U46_dff (.q(XpiPktRxNumPktsPns10S),.d(XpiPktRxNumPktsPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPktXfrCmpltPns11C = (XpiPktRxNumPktsPns10S == XpiPktRxMaxPacketsPns10C);
+
+DFFR #(1,1'b0) U47_dff (.q(XpiPktRxPktXfrCmpltPns11S),.d(XpiPktRxPktXfrCmpltPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- ReCirculating Final Read Issue Enable ----
+
+  assign XpiPktRxIssueFinalMemRdPns11C = 
+	 (XpiPktRxIssueFinalMemRdPns10C || XpiPktRxDescWrBackPns11C) ?
+	   XpiPktRxIssueFinalMemRdPns10C : XpiPktRxIssueFinalMemRdPns11S;
+  
+DFFR #(1,1'b0) U48_dff (.q(XpiPktRxIssueFinalMemRdPns11S),.d(XpiPktRxIssueFinalMemRdPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Aligning Final Read Indication with Packet Complete Indication
+DFFR #(1,1'b0) U49_dff (.q(XpiPktRxIssueFinalMemRdPns12S),.d(XpiPktRxIssueFinalMemRdPns11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U50_dff (.q(XpiPktRxIssueFinalMemRdPns13S),.d(XpiPktRxIssueFinalMemRdPns12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------
+  //---- Length Computation for PCI Read Request ----
+  //-------------------------------------------------
+  //**This State Machine controls Splitting of a Single Read
+  //**Request with Length>MTU into different Read Requests of
+  //**MTU granularity. At issuance of a new PCI Read Request
+  //**the total Read Length is subtracted by MTU, the reminder
+  //**is the length in Dwords that still needs to be serviced.
+  
+  //---- State Machine Control for Subtraction Operation ----
+  
+`define XPIPKTRXMEMRDLENIDLE    3'b000
+`define XPIPKTRXMEMRDLENASSG    3'b001
+`define XPIPKTRXMEMRDLENSUB     3'b011
+`define XPIPKTRXMEMRDLENHOLD    3'b010
+`define XPIPKTRXMEMRDLENZERO    3'b110
+  
+  // Internal xpipktrxmemrdlenstate variables
+  wire [2:0] xpipktrxmemrdlenstate;
+  reg [2:0]  next_xpipktrxmemrdlenstate;
+  
+  //---- State Change ----
+  
+DFFR #(3,3'b0) U51_dff (.q(xpipktrxmemrdlenstate),.d(next_xpipktrxmemrdlenstate),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+  
+  always @(/*AS*/xpipktrxmemrdlenstate)
+    begin
+      
+      XpiPktRxMemRdLenMuxSelPns10C = 2'b11;
+      
+      case(xpipktrxmemrdlenstate)
+	
+        `XPIPKTRXMEMRDLENIDLE: XpiPktRxMemRdLenMuxSelPns10C = 2'b11;
+	
+	`XPIPKTRXMEMRDLENASSG: XpiPktRxMemRdLenMuxSelPns10C = 2'b00;
+	
+	`XPIPKTRXMEMRDLENSUB:  XpiPktRxMemRdLenMuxSelPns10C = 2'b01;
+	
+	`XPIPKTRXMEMRDLENHOLD: XpiPktRxMemRdLenMuxSelPns10C = 2'b11;
+
+	`XPIPKTRXMEMRDLENZERO: XpiPktRxMemRdLenMuxSelPns10C = 2'b10;
+
+	default:               XpiPktRxMemRdLenMuxSelPns10C = 2'b11;
+	
+      endcase // case(xpipktrxmemrdlenstate)
+      
+    end // always @ (xpipktrxmemrdlenstate)
+  
+  //---- State Transition ----
+  
+  always @(/*AS*/XpiPktRxAsicOwnerPns10C or XpiPktRxInsertEOPPns10C
+	   or XpiPktRxIssueFinalMemRdPns10C
+	   or XpiPktRxIssueFirstMemRdPns10C
+	   or XpiPktRxIssueMemRdPns10C or xpipktrxmemrdlenstate)
+    begin
+      
+      case (xpipktrxmemrdlenstate)
+        
+	`XPIPKTRXMEMRDLENIDLE:
+	  begin
+	    if (XpiPktRxAsicOwnerPns10C)
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENASSG;
+	    else
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENIDLE;
+	  end
+	
+	`XPIPKTRXMEMRDLENASSG:
+	  begin
+	    if (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C)
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENSUB;
+	    else if (XpiPktRxIssueFinalMemRdPns10C)
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENHOLD;	      
+	    else
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENASSG;
+	  end
+	
+	`XPIPKTRXMEMRDLENSUB: next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENHOLD;
+	
+	`XPIPKTRXMEMRDLENHOLD:
+	  begin
+	    if (XpiPktRxInsertEOPPns10C)
+	      // Reset Length after EOP Offset is determined
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENZERO;
+	    else if (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C)
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENSUB;
+	    else
+	      next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENHOLD;
+	  end
+	
+	`XPIPKTRXMEMRDLENZERO: next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENIDLE;
+	
+	default: next_xpipktrxmemrdlenstate = `XPIPKTRXMEMRDLENIDLE;
+	
+      endcase // case(xpipktrxmemrdlenstate)
+    end // always @ (...
+
+  //------------------------------
+  //---- Packet Length Muxing ----
+  //------------------------------
+  
+  // Muxing between output of Subtracter and Total length in Buffer Descriptor
+  
+MUX4S2 #(16) U52_mux4 (.mo(XpiPktRxMemRdLenPns10C),.in0(XpiPktRxDescPtrRegPns10S[47:32]),.in1(XpiPktRxMemRdLenSubPns10C),.in2({`MAX_BUFFER_SIZE{1'b0}}),.in3(XpiPktRxPciMemRdLenPsn11S),.sel(XpiPktRxMemRdLenMuxSelPns10C));
+
+
+  
+DFFR #(16,16'b0) U53_dff (.q(XpiPktRxPciMemRdLenPsn11S),.d(XpiPktRxMemRdLenPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------------------
+  //---- Subtraction Operation on issuance of a read request ----
+  //-------------------------------------------------------------
+  
+DFFR #(1,1'b0) U54_dff (.q(XpiPktRxIssueFirstMemRdPns11S),.d(XpiPktRxIssueFirstMemRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U55_dff (.q(XpiPktRxIssueMemRdPns11S),.d(XpiPktRxIssueMemRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiPktRxIssueFirstMemRdPns11S
+	   or XpiPktRxIssueMemRdPns11S or XpiPktRxPciMemRdLenPsn11S)
+    begin
+      if (XpiPktRxIssueFirstMemRdPns11S)
+	XpiPktRxMemRdLenSubPns10C = {XpiPktRxPciMemRdLenPsn11S - {4'h0,`FIRSTMEMRDLEN}};
+      else if (XpiPktRxIssueMemRdPns11S)
+	XpiPktRxMemRdLenSubPns10C = {XpiPktRxPciMemRdLenPsn11S - {4'h0,`MTU}};
+      else
+	XpiPktRxMemRdLenSubPns10C = XpiPktRxPciMemRdLenPsn11S;
+    end
+  
+  //-------------------------------------------------------
+  //---- SOP, EOP, EOPOFFSET & Direction Control Logic ----
+  //-------------------------------------------------------
+
+  // Packet Control Information is arranged in following order
+  // PktCtrl[0] - SOP
+  // PktCtrl[1] - EOP
+  // PktCtrl[7:2] - EOP Offset
+  // PktCtrl[8] - Direction
+
+  // SOP Insertion Logic
+  // Detecting the Receipt of First Packet Data
+    
+  assign XpiPktRxInsertSOPPns11C = (XpiPktRxStartMemRdPns12S   && 
+				    XpiPciAppPktRxDataIrdyP11S &&
+				    XpiPciAppPktRxValidTxnP11S &&
+				    (~XpiPktRxValidCfgWrPns10S));
+
+DFFR #(1,1'b0) U56_dff (.q(XpiPktRxInsertSOPPns11S),.d(XpiPktRxInsertSOPPns11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Pulse Detect for SOP Insertion
+  assign XpiPktRxInsertSOPPns12C = (XpiPktRxInsertSOPPns11C && (~XpiPktRxInsertSOPPns11S));
+				    
+  // EOP Insertion Logic
+
+  // Classifying remaining Bytes to be Read into 2 groups
+  // (a) 0-64B (b) 64B-128B 
+
+  assign XpiPktRxEOPOffsetMuxEnPns11C = 
+	 ((XpiPktRxPciMemRdLenPsn11S > `MAX_BUFFER_SIZE'h0000) &&
+	  (XpiPktRxPciMemRdLenPsn11S < `MAX_BUFFER_SIZE'h0080));
+      
+  // Determining EOP Offset for 64B Packet Chunk
+  // EOPOffset = Length of Last Chunk -1 ;
+
+  assign XpiPktRxLt64EOPOffsetPns11C = {XpiPktRxPciMemRdLenPsn11S[5:0] - 6'b000001};
+  assign XpiPktRxGr64EOPOffsetPns11C = {XpiPktRxPciMemRdLenPsn11S[5:0] - 6'b100001};
+	 
+  assign XpiPktRxEOPOffsetPns11C = XpiPktRxEOPOffsetMuxEnPns11C ?
+	 XpiPktRxLt64EOPOffsetPns11C : XpiPktRxGr64EOPOffsetPns11C;
+
+  // Total Number of Fifo Entries Expected in Read Completion
+  assign XpiPktRxNumEntriesPns10C = {XpiPktRxPciLengthPsn12C >> 3}; //divide by 8
+
+  assign XpiPktRxNumEntriesPns11C = XpiPktRxNumEntriesPns10C[4:0];
+  
+  //---- Data Counter Counting Number of 8B Chunks Received ----
+  
+  always @(/*AS*/XpiPciAppPktRxDataIrdyP11S
+	   or XpiPciAppPktRxValidTxnP11S
+	   or XpiPktRxIssueFinalMemRdPns10C
+	   or XpiPktRxIssueFirstMemRdPns10C
+	   or XpiPktRxIssueMemRdPns10C or XpiPktRxValidCfgWrPns10S
+	   or XpiPktRxWrDataCntPns10S)
+    begin
+      if (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C || 
+	  XpiPktRxIssueFinalMemRdPns10C || {XpiPktRxWrDataCntPns10S == 5'b11111})
+	// ReSetting the Count everytime a Read is issued or Count Exceeded
+	XpiPktRxWrDataCntPns10C = {5{1'b0}};	
+      else if (XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S &&
+	       (~XpiPktRxValidCfgWrPns10S))
+	XpiPktRxWrDataCntPns10C = {XpiPktRxWrDataCntPns10S + 5'b00001};
+      else
+	XpiPktRxWrDataCntPns10C = XpiPktRxWrDataCntPns10S;
+    end
+
+DFFR #(5,5'b0) U57_dff (.q(XpiPktRxWrDataCntPns10S),.d(XpiPktRxWrDataCntPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Detect the Last Completion Data of Final Read Transfer.
+  assign XpiPktRxLastDataPns11C = 
+	 ((XpiPciAppPktRxDataIrdyP11S && XpiPciAppPktRxValidTxnP11S &&
+	   (~XpiPktRxValidCfgWrPns10S)) &&
+	  ({XpiPktRxWrDataCntPns10S == {XpiPktRxNumEntriesPns11C - 5'b00001}} ||
+	   {XpiPktRxNumEntriesPns11C == {5{1'b0}}}));
+  
+  assign XpiPktRxLastXfrPns10C = (XpiPktRxIssueFinalMemRdPns11S && XpiPktRxLastDataPns11C);
+
+DFFR #(1,1'b0) U58_dff (.q(XpiPktRxLastXfrPns10S),.d(XpiPktRxLastXfrPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Pulse Generation indicating the first Read Completion Data
+  assign XpiPktRxLastChunkLess64Pns10C = 
+	 (XpiPktRxIssueFinalMemRdPns11S && (~XpiPktRxPciDataIrdyPns10S) && 
+	  XpiPciAppPktRxDataIrdyP11S    && XpiPciAppPktRxValidTxnP11S &&
+	  (~XpiPktRxValidCfgWrPns10S));
+  
+  // Pulse Generation indicating completion of 64B chunk data
+  assign XpiPktRxLastChunkGr64Pns10C = 
+	 (XpiPktRxIssueFinalMemRdPns11S && XpiPciAppPktRxDataIrdyP11S &&
+	  XpiPciAppPktRxValidTxnP11S    && (~XpiPktRxValidCfgWrPns10S) && 
+	  {XpiPktRxWrDataCntPns10S == 5'b00111});
+
+DFFR #(1,1'b0) U59_dff (.q(XpiPktRxLastChunkGr64Pns10S),.d(XpiPktRxLastChunkGr64Pns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Muxing the EOP Insert Enable based upon Size of Last Chunk
+  
+  assign XpiPktRxLess64BLenPns11C = 
+	 ((XpiPktRxPciMemRdLenPsn11S > `MAX_BUFFER_SIZE'h0000) &&
+	  (XpiPktRxPciMemRdLenPsn11S <= `MAX_BUFFER_SIZE'h0040));
+  
+  assign XpiPktRxInsertEOPPns10C = XpiPktRxLess64BLenPns11C ?
+	 XpiPktRxLastChunkLess64Pns10C : XpiPktRxLastChunkGr64Pns10S;      
+
+DFFR #(1,1'b0) U60_dff (.q(XpiPktRxInsertEOPPns10S),.d(XpiPktRxInsertEOPPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxInsertEOPPns11C = (XpiPktRxInsertEOPPns10C && XpiPktRxEOPCurrentPns10C);
+  
+  //---- Packet Control ----
+  
+  always @(/*AS*/XpiPktRxEOPOffsetPns11C or XpiPktRxInsertEOPPns11C
+	   or XpiPktRxInsertSOPPns12C or XpiPktRxPktDirPns10C)
+    begin
+      if (XpiPktRxInsertSOPPns12C && XpiPktRxInsertEOPPns11C)
+	XpiPktRxCtrlPns10C = {XpiPktRxPktDirPns10C,XpiPktRxEOPOffsetPns11C,1'b1,1'b1};
+      else if (XpiPktRxInsertSOPPns12C)
+	XpiPktRxCtrlPns10C = {XpiPktRxPktDirPns10C,6'b000000,1'b0,1'b1};
+      else if (XpiPktRxInsertEOPPns11C)
+	XpiPktRxCtrlPns10C = {XpiPktRxPktDirPns10C,XpiPktRxEOPOffsetPns11C,1'b1,1'b0};
+      else 
+	XpiPktRxCtrlPns10C = {XpiPktRxPktDirPns10C,6'b000000,1'b0,1'b0};
+    end
+  
+DFFR #(9,9'b0) U61_dff (.q(XpiPktRxCtrlPns10S),.d(XpiPktRxCtrlPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxWrDataPns10C = XpiPktRxPciDataPns10S;
+  assign XpiPktRxWrCtrlPns10C = XpiPktRxCtrlPns10S;
+  
+  assign XpiPktRxFifoWrDataPns11C = {XpiPktRxWrCtrlPns10C,XpiPktRxWrDataPns10C};
+  
+  //-----------------------------------
+  //---- PKT RX ASYNCHROUNOUS FIFO ----
+  //-----------------------------------
+  //** Width 64b, Depth = 8, Capacity=64Bytes
+
+  assign XpiPktRxFifoRdEnPns12C = (XpiPktRxFifoRdEnPns11C && (~XpiPktRxFifoEFPns11C));
+  
+ASYNCFIFO #(`PKTRX_FIFO_WIDTH, 32, 5) XPIPKTRXFIFO ( .RESET_RDCLK(GlCoreResetR00C), .RESET_WRCLK(GlCoreResetR00C), .WRCLK(XpiPciClk), .RDCLK(XpiCoreClk), .WRITE(XpiPktRxFifoWrEnPns10C), .READ(XpiPktRxFifoRdEnPns12C), .WRDATA(XpiPktRxFifoWrDataPns11C), .RDDATA(XpiPktRxFifoRdDataPns11C), .EMPTY(XpiPktRxFifoEFPns11C), .FULL(XpiPktRxFifoFFPns10C), .RDPTR_WRCLK(XpiPktRxFifoRdPtrPns10C), .WRPTR_WRCLK(XpiPktRxFifoWrPtrPns10C), .RDPTR_RDCLK(XpiPktRxFifoRdPtrPns11C), .WRPTR_RDCLK(XpiPktRxFifoWrPtrPns11C));
+
+
+
+
+
+
+  
+  //-------------------------------
+  //---- PKT RX -> PCI Control ----
+  //-------------------------------
+  
+  //---- Address Irdy ----
+  
+  assign XpiPktRxPciAddrIrdyPsn12C = 
+	 (XpiPktRxIssueFirstMemRdPns10C || XpiPktRxIssueMemRdPns10C    ||
+	  XpiPktRxIssueFinalMemRdPns10C || XpiPktRxInitialDescRdPns10C ||
+	  XpiPktRxIssueDescRdPns10C     || (XpiPktRxDescPh1WrEnPns10C &&
+					    XpiPktRxDescWrBackPns12S));
+  
+  //-----------------------------------
+  //---- Request Address Selection ----
+  //-----------------------------------
+  
+  // Muxing Address for Different Operations
+  
+  always @(/*AS*/XpiPktRxAddressRegPns10S or XpiPktRxDescPh1WrEnPns10C
+	   or XpiPktRxDescPtrRegPns10S or XpiPktRxDescWrBackPns12S
+	   or XpiPktRxInitialDescRdPns10C or XpiPktRxIssueDescRdPns10C
+	   or XpiPktRxIssueFinalMemRdPns10C
+	   or XpiPktRxIssueFirstMemRdPns10C
+	   or XpiPktRxIssueMemRdPns10C or XpiPktRxPciAddrPsn13S
+	   or XpiPktRxRdAddressPsn11S)
+    begin
+      if (XpiPktRxInitialDescRdPns10C)
+	// Head Descriptor Read
+	XpiPktRxPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiPktRxAddressRegPns10S};
+      else if (XpiPktRxIssueDescRdPns10C)
+	// Subsequent Descriptor Read
+	XpiPktRxPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiPktRxDescPtrRegPns10S[95:64]};
+      else if (XpiPktRxIssueFirstMemRdPns10C || 
+	       XpiPktRxIssueMemRdPns10C      || 
+	       XpiPktRxIssueFinalMemRdPns10C)
+	// Packet Data Read
+	XpiPktRxPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiPktRxRdAddressPsn11S};
+      else if (XpiPktRxDescPh1WrEnPns10C && XpiPktRxDescWrBackPns12S)
+	// Writing Back Current Descriptor to CPU Memory
+	XpiPktRxPciAddrPsn12C = {{`CFG_WIDTH{1'b0}},XpiPktRxAddressRegPns10S};
+      else
+	XpiPktRxPciAddrPsn12C = XpiPktRxPciAddrPsn13S;
+    end	  
+  
+  // Incrementing Address after Read Issuance
+  
+  always @(/*AS*/XpiPktRxDescPtrRegPns10S or XpiPktRxDescWrBackPns12S
+	   or XpiPktRxIssueFirstMemRdPns11S
+	   or XpiPktRxIssueMemRdPns11S or XpiPktRxPciDescPh2WrEnPns12S
+	   or XpiPktRxRdAddressPsn11S)
+    begin
+      if (XpiPktRxPciDescPh2WrEnPns12S && (~XpiPktRxDescWrBackPns12S))
+	// New Descriptor Read from CPU memory, extract Data Buffer Address
+	XpiPktRxRdAddressPsn11C = XpiPktRxDescPtrRegPns10S[`DESC_WIDTH-1:96];
+      else if (XpiPktRxIssueFirstMemRdPns11S)
+	// Increment the Address to point to next Buffer Location
+	XpiPktRxRdAddressPsn11C = {XpiPktRxRdAddressPsn11S + {20'h00000,`FIRSTMEMRDLEN}};
+      else if (XpiPktRxIssueMemRdPns11S)
+	XpiPktRxRdAddressPsn11C = {XpiPktRxRdAddressPsn11S + {20'h00000,`MTU}};
+      else
+	XpiPktRxRdAddressPsn11C = XpiPktRxRdAddressPsn11S;
+    end // always @ (...
+  
+DFFR #(32,32'b0) U62_dff (.q(XpiPktRxRdAddressPsn11S),.d(XpiPktRxRdAddressPsn11C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //---- Command ----
+  
+  always @(/*AS*/XpiPktRxDescWrBackPns12S or XpiPktRxPciAddrIrdyPsn12C
+	   or XpiPktRxPciCmdPsn13S or XpiPktRxSrvCfgRdPns10S)
+    begin
+      if (XpiPktRxPciAddrIrdyPsn12C && (~XpiPktRxDescWrBackPns12S))
+	// Descriptor or Data Read
+	XpiPktRxPciCmdPsn12C = `MEMRDLINE;
+      else if (XpiPktRxPciAddrIrdyPsn12C && XpiPktRxDescWrBackPns12S)
+	// Descriptor Write 
+	XpiPktRxPciCmdPsn12C = `MEMWR;
+      else if (XpiPktRxSrvCfgRdPns10S)
+	// Register Read completion
+	XpiPktRxPciCmdPsn12C = `RDCMP;
+      else
+	XpiPktRxPciCmdPsn12C = XpiPktRxPciCmdPsn13S;	
+    end
+  
+  //---- Length ----
+  
+  always @(/*AS*/XpiPktRxDescPh1WrEnPns10C or XpiPktRxDescWrBackPns12S
+	   or XpiPktRxInitialDescRdPns10C or XpiPktRxIssueDescRdPns10C
+	   or XpiPktRxIssueFinalMemRdPns10C
+	   or XpiPktRxIssueFirstMemRdPns10C
+	   or XpiPktRxIssueMemRdPns10C or XpiPktRxPciLengthPsn13S
+	   or XpiPktRxPciMemRdLenPsn11S)
+    begin
+      if (XpiPktRxInitialDescRdPns10C || XpiPktRxIssueDescRdPns10C || 
+	  (XpiPktRxDescPh1WrEnPns10C  && XpiPktRxDescWrBackPns12S))
+	XpiPktRxPciLengthPsn12C = `BYTECNT_WIDTH'h010;
+      else if (XpiPktRxIssueFirstMemRdPns10C)
+	XpiPktRxPciLengthPsn12C = `FIRSTMEMRDLEN;
+      else if (XpiPktRxIssueMemRdPns10C)
+	XpiPktRxPciLengthPsn12C = `MTU;
+      else if (XpiPktRxIssueFinalMemRdPns10C)
+	XpiPktRxPciLengthPsn12C = XpiPktRxPciMemRdLenPsn11S[`BYTECNT_WIDTH-1:0];
+      else
+	XpiPktRxPciLengthPsn12C = XpiPktRxPciLengthPsn13S;
+    end
+
+  //---- Data Irdy ----
+
+DFFR #(1,1'b0) U63_dff (.q(XpiPktRxSrvCfgRdPns10S),.d(XpiPktRxSrvCfgRdPns10C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPciDataIrdyPsn12C = (XpiPktRxSrvCfgRdPns10S || 
+				      (XpiPktRxPciDataIrdyPns11C && XpiPktRxDescWrBackPns12S));
+    
+  //---- Data ----
+
+  always @(/*AS*/XpiPktRxDescPh1WrEnPns10C
+	   or XpiPktRxDescPh2WrEnPns10C or XpiPktRxDescPtrRegPns10S
+	   or XpiPktRxDescWrBackPns12S or XpiPktRxPciCfgDataPsn12C
+	   or XpiPktRxPciDataPsn13S or XpiPktRxSrvCfgRdPns10C)
+    begin
+      if (XpiPktRxSrvCfgRdPns10C)
+	XpiPktRxPciDataPsn12C = {{`CFG_WIDTH{1'b0}},XpiPktRxPciCfgDataPsn12C};
+      else if (XpiPktRxDescPh1WrEnPns10C && XpiPktRxDescWrBackPns12S)
+	XpiPktRxPciDataPsn12C = XpiPktRxDescPtrRegPns10S[`PCI_DATA_WIDTH-1:0];
+      else if (XpiPktRxDescPh2WrEnPns10C && XpiPktRxDescWrBackPns12S)
+	XpiPktRxPciDataPsn12C = XpiPktRxDescPtrRegPns10S[`DESC_WIDTH-1:`PCI_DATA_WIDTH];
+      else 
+	XpiPktRxPciDataPsn12C = XpiPktRxPciDataPsn13S;
+    end // always @ (...
+        
+  //------------------------------------
+  //---- PKT RX -> PCI Output Stage ----
+  //------------------------------------
+
+DFFR #(1,1'b0) U64_dff (.q(XpiPktRxPciAddrIrdyPsn13S),.d(XpiPktRxPciAddrIrdyPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U65_dff (.q(XpiPktRxPciAddrPsn13S),.d(XpiPktRxPciAddrPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(4,4'b0) U66_dff (.q(XpiPktRxPciCmdPsn13S),.d(XpiPktRxPciCmdPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(12,12'b0) U67_dff (.q(XpiPktRxPciLengthPsn13S),.d(XpiPktRxPciLengthPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U68_dff (.q(XpiPktRxPciDataIrdyPsn13S),.d(XpiPktRxPciDataIrdyPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(64,64'b0) U69_dff (.q(XpiPktRxPciDataPsn13S),.d(XpiPktRxPciDataPsn12C),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPciByteEnPsn13S = 8'h00;
+  assign XpiPktRxPciAttrPsn13S   = {`PCI_ATTR_WIDTH{1'b0}};
+  assign XpiPktRxPciTrdyPsn13S   = 1'b1;
+  assign XpiPktRxPciTxnIDPsn13S = TXNID;
+      
+  //=================================
+  //======== CORE CLK DOMAIN ========
+  //=================================
+
+  // Delaying Last Xfr Indication to align with Fifo Wr En
+DFFR #(1,1'b0) U70_dff (.q(XpiPktRxLastXfrPns11S),.d(XpiPktRxLastXfrPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  //mpp <clock=XpiCoreClk, reset=GlCoreResetR00C>
+
+  //------------------------------------
+  //---- PCI->Core Synchronization ----
+  //------------------------------------
+  // Synchronizing Last Data Xfr Indication
+
+  // First Core Sync Flop
+DFFR #(1,1'b0) U71_dff (.q(XpiPktRxLastXfrPns12S),.d(XpiPktRxLastXfrPns11S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Second Core Sync Flop
+DFFR #(1,1'b0) U72_dff (.q(XpiPktRxLastXfrPns13S),.d(XpiPktRxLastXfrPns12S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  // Pulse Generation in CoreClk Domain
+
+DFFR #(1,1'b0) U73_dff (.q(XpiPktRxLastXfrPns14S),.d(XpiPktRxLastXfrPns13S),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  assign XpiPktRxLastXfrPns13C = (XpiPktRxLastXfrPns13S && (~XpiPktRxLastXfrPns14S));
+  
+  // Flopping the Write and Read Pointers to fix Timing problems
+DFFR #(6,6'b0) U74_dff (.q(XpiPktRxFifoWrPtrPns11S),.d(XpiPktRxFifoWrPtrPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(6,6'b0) U75_dff (.q(XpiPktRxFifoRdPtrPns11S),.d(XpiPktRxFifoRdPtrPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxFifoFillPns11C = {XpiPktRxFifoWrPtrPns11S - XpiPktRxFifoRdPtrPns11S};
+  
+  // Fifo Half Full Determination
+  assign XpiPktRxFifoHFPns11C = {XpiPktRxFifoFillPns11C == 6'b010000};
+
+  // Fifo Greater than Half Full Determination
+  assign XpiPktRxFifoGrHFPns11C = {XpiPktRxFifoFillPns11C > 6'b010000};
+
+  // Determining condition when all Packet Reads from CPU buffer are complete,
+  // however previous Packet Chunk is still pending to be drained
+
+  assign XpiPktRxChunkPendingPns11C = (XpiPktRxLastXfrPns13C && XpiPktRxFifoGrHFPns11C);
+
+  assign XpiPktRxChunkPendingPns12C = (XpiPktRxChunkPendingPns11C || XpiPktRxRbIssueWrPns12C) ?
+					XpiPktRxChunkPendingPns11C : XpiPktRxChunkPendingPns12S;
+  
+DFFR #(1,1'b0) U76_dff (.q(XpiPktRxChunkPendingPns12S),.d(XpiPktRxChunkPendingPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  // Last Chunk Pending Indication
+
+  assign XpiPktRxLastChunkPns11C = XpiPktRxChunkPendingPns12S ?
+	 (XpiPktRxChunkPendingPns12S && XpiPktRxRbIssueWrPns12C) : XpiPktRxLastXfrPns13C;
+
+  assign XpiPktRxLastChunkPns12C = (XpiPktRxLastChunkPns11C || XpiPktRxFifoEFPns11C) ?
+				     XpiPktRxLastChunkPns11C : XpiPktRxLastChunkPns12S;
+
+DFFR #(1,1'b0) U77_dff (.q(XpiPktRxLastChunkPns12S),.d(XpiPktRxLastChunkPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+    
+  //--------------------------------
+  //---- Fifo Read Data Counter ----
+  //--------------------------------
+  
+  always @(/*AS*/XpiPktRxFifoRdEnPns12C or XpiPktRxRbIssueWrPns12C
+	   or XpiPktRxRdDataCntPns12S)
+    begin
+      if (XpiPktRxFifoRdEnPns12C)
+	XpiPktRxRdDataCntPns12C = {XpiPktRxRdDataCntPns12S + 5'b00001};
+      else if (~XpiPktRxRbIssueWrPns12C)
+	XpiPktRxRdDataCntPns12C = {5{1'b0}};
+      else
+	XpiPktRxRdDataCntPns12C = XpiPktRxRdDataCntPns12S;
+    end // always @ (...
+
+DFFR #(5,5'b0) U78_dff (.q(XpiPktRxRdDataCntPns12S),.d(XpiPktRxRdDataCntPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- Determining Credit Refresh ----
+  
+  assign XpiPktRxCreditRefreshPsn11C = (XpiRbiPktRxIrdyPsn11S && XpiRbiPktRxValidXfrPsn11S &&
+					(XpiRbiPktRxCmdPsn11S==`CRDTREF));
+
+  //---- TimeOut Event ----
+
+  assign XpiPktRxTimeOutPns12C = (XpiPktRxTimeOutPsn10S || XpiPktRxIssueTOutPns12C) ?
+				   XpiPktRxTimeOutPsn10S : XpiPktRxTimeOutPns12S;
+  
+DFFR #(1,1'b0) U79_dff (.q(XpiPktRxTimeOutPns12S),.d(XpiPktRxTimeOutPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------
+  //---- FIFO Read Control ----
+  //---------------------------
+
+`define XPIPKTRXRDCTLIDLE           3'b000
+`define XPIPKTRXRDCTLARBREQ         3'b001
+`define XPIPKTRXRDCTLFIFOLSBDATARD  3'b011
+`define XPIPKTRXRDCTLFIFOMSBDATARD  3'b010
+`define XPIPKTRXRDCTLWAIT4CRDT      3'b110
+`define XPIPKTRXRDCTLUPDATESTATUS   3'b100
+`define XPIPKTRXRDCTLTIMEOUT        3'b101
+  
+  // Internal state variables
+  wire [2:0] xpipktrxrdctlstate;
+  reg [2:0]  next_xpipktrxrdctlstate;
+  
+  //---- State Change ----
+  
+DFFR #(3,3'b0) U80_dff (.q(xpipktrxrdctlstate),.d(next_xpipktrxrdctlstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- Output Assignment ----
+  
+  always @(xpipktrxrdctlstate)
+    begin
+      
+      XpiPktRxFifoRdEnPns11C       = 1'b0;
+      XpiPktRxRbAddrIrdyPns11C     = 1'b0;
+      XpiPktRxRbIssueWrPns12C      = 1'b0;
+      XpiPktRxRbArbReqPns13S       = 1'b0;
+      XpiPktRxUpdateStatusPns12C   = 1'b0;
+      XpiPktRxIssueTOutPns12C      = 1'b0;
+      
+      case(xpipktrxrdctlstate)
+	
+	`XPIPKTRXRDCTLIDLE: 
+	  begin
+	    XpiPktRxFifoRdEnPns11C       = 1'b0;
+	    XpiPktRxRbAddrIrdyPns11C     = 1'b0;
+	    XpiPktRxRbIssueWrPns12C      = 1'b0;
+	    XpiPktRxRbArbReqPns13S       = 1'b0;
+	    XpiPktRxUpdateStatusPns12C   = 1'b0;
+	    XpiPktRxIssueTOutPns12C      = 1'b0;
+	  end
+	
+	`XPIPKTRXRDCTLARBREQ: XpiPktRxRbArbReqPns13S = 1'b1;
+
+	`XPIPKTRXRDCTLFIFOLSBDATARD:      
+	  begin
+	    XpiPktRxFifoRdEnPns11C   = 1'b1;
+	    XpiPktRxRbAddrIrdyPns11C = 1'b1;
+	    XpiPktRxRbIssueWrPns12C  = 1'b1;
+	  end
+	
+	`XPIPKTRXRDCTLFIFOMSBDATARD:
+	  begin
+	    XpiPktRxFifoRdEnPns11C   = 1'b0;
+	    XpiPktRxRbAddrIrdyPns11C = 1'b1;
+	    XpiPktRxRbIssueWrPns12C  = 1'b1;
+	  end
+
+	`XPIPKTRXRDCTLWAIT4CRDT:
+	  begin
+	    XpiPktRxFifoRdEnPns11C   = 1'b0;
+	    XpiPktRxRbAddrIrdyPns11C = 1'b0;
+	    XpiPktRxRbIssueWrPns12C  = 1'b0;
+	  end
+
+	`XPIPKTRXRDCTLUPDATESTATUS: XpiPktRxUpdateStatusPns12C = 1'b1;	  
+
+	`XPIPKTRXRDCTLTIMEOUT: XpiPktRxIssueTOutPns12C = 1'b1;
+	
+	default:
+	  begin
+	    XpiPktRxFifoRdEnPns11C       = 1'b0;
+	    XpiPktRxRbAddrIrdyPns11C     = 1'b0;
+	    XpiPktRxRbIssueWrPns12C      = 1'b0;
+	    XpiPktRxRbArbReqPns13S       = 1'b0;
+	    XpiPktRxUpdateStatusPns12C   = 1'b0;
+	    XpiPktRxIssueTOutPns12C      = 1'b0;
+	  end
+	
+      endcase // case(xpipktrxrdctlstate)
+    end // always @ (xpipktrxrdctlstate)
+  	
+  //---- State Transitions ----
+  always @(/*AS*/XpiPktRxCreditRefreshPsn11C or XpiPktRxFifoEFPns11C
+	   or XpiPktRxFifoGrHFPns11C or XpiPktRxFifoHFPns11C
+	   or XpiPktRxLastChunkPns12S or XpiPktRxRdDataCntPns12S
+	   or XpiPktRxTimeOutPns12S or XpiPktRxTimeOutPsn10S
+	   or XpiRbiPktRxGntPsn11S or XpiRbiPktRxStopPsn11S
+	   or xpipktrxrdctlstate)
+    begin
+      case (xpipktrxrdctlstate)
+	
+	`XPIPKTRXRDCTLIDLE:
+	  begin
+	    if ((XpiPktRxFifoHFPns11C || XpiPktRxFifoGrHFPns11C ||
+		 XpiPktRxLastChunkPns12S) && (~XpiRbiPktRxStopPsn11S))
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLARBREQ;
+	    else
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLIDLE;
+	  end
+	
+	`XPIPKTRXRDCTLARBREQ:
+	  begin
+	    if (XpiRbiPktRxGntPsn11S)
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLFIFOLSBDATARD;
+	    else if (XpiPktRxTimeOutPns12S)
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLTIMEOUT;	      
+	    else
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLARBREQ;
+	  end
+	
+	`XPIPKTRXRDCTLFIFOLSBDATARD: next_xpipktrxrdctlstate = `XPIPKTRXRDCTLFIFOMSBDATARD;
+	
+	`XPIPKTRXRDCTLFIFOMSBDATARD:
+	  begin
+	    if (XpiPktRxFifoEFPns11C || (XpiPktRxRdDataCntPns12S == 5'b10000))
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLWAIT4CRDT;
+	    else
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLFIFOLSBDATARD;
+	  end
+	
+	`XPIPKTRXRDCTLWAIT4CRDT:
+	  begin
+	    if (XpiPktRxCreditRefreshPsn11C)
+	      // Wait Until current Packet Chunks are accepted by RSI
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLUPDATESTATUS;
+	    else if (XpiPktRxTimeOutPsn10S)
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLARBREQ;	      
+	    else
+	      next_xpipktrxrdctlstate = `XPIPKTRXRDCTLWAIT4CRDT;
+	  end
+	
+	`XPIPKTRXRDCTLUPDATESTATUS: next_xpipktrxrdctlstate = `XPIPKTRXRDCTLIDLE;
+	
+	`XPIPKTRXRDCTLTIMEOUT: next_xpipktrxrdctlstate = `XPIPKTRXRDCTLIDLE;
+	
+	default: next_xpipktrxrdctlstate = `XPIPKTRXRDCTLIDLE;
+	
+      endcase // case(xpipktrxrdctlstate)
+    end // always @ (...
+  
+  //-------------------------------------------
+  //---- Packet Transfer TimeOut Mechanism ----
+  //-------------------------------------------
+  // 12b Counter counting number of Core Clocks between issuance
+  // of  a Packet Chunk and receipt of Credit Refresh
+
+  // TimeOut Counter Enable Logic
+  
+  assign XpiPktRxTOutCntEnPns12C = (XpiPktRxRbAddrIrdyPns11C || 
+				    XpiPktRxCreditRefreshPsn11C) ?
+				   XpiPktRxRbAddrIrdyPns11C : 
+				   XpiPktRxTOutCntEnPns12S;
+  
+DFFR #(1,1'b0) U81_dff (.q(XpiPktRxTOutCntEnPns12S),.d(XpiPktRxTOutCntEnPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  always @(/*AS*/XpiPktRxTOutCntEnPns12S or XpiPktRxTimeOutCntPns12S
+	   or XpiPktRxTimeOutPsn10S)
+    begin
+      if (XpiPktRxTOutCntEnPns12S)
+	XpiPktRxTimeOutCntPns12C = {XpiPktRxTimeOutCntPns12S + 1'b1};
+      else if (XpiPktRxTimeOutPsn10S)
+	XpiPktRxTimeOutCntPns12C = {`TOUT_CNTR_WIDTH{1'b0}};
+      else
+	XpiPktRxTimeOutCntPns12C = {`TOUT_CNTR_WIDTH{1'b0}};
+    end // always @ (...
+  
+DFFR #(32,32'b0) U82_dff (.q(XpiPktRxTimeOutCntPns12S),.d(XpiPktRxTimeOutCntPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxTimeOutPsn10S = (XpiPktRxTimeOutCntPns12S == XpiPktRxTOutRegPns12S);
+  
+  //---------------------------------------
+  //---- Data Mux Select State Machine ----
+  //---------------------------------------
+  //** This state machine drives Mux Select control signal
+  //** use to read the LSB & MSB data of the 64b Fifo data
+  //** at every other clock cycle.
+  
+`define XPIPKTRXMUXSELIDLE     2'b00
+`define XPIPKTRXFIFOLSBDATA    2'b01
+`define XPIPKTRXFIFOMSBDATA    2'b11
+  
+  // Internal xpipktrxdatamuxselstate variables
+  wire [1:0] xpipktrxdatamuxselstate;
+  reg [1:0]  next_xpipktrxdatamuxselstate;
+  
+  //---- State Change ----
+  
+DFFR #(2,2'b0) U83_dff (.q(xpipktrxdatamuxselstate),.d(next_xpipktrxdatamuxselstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---- State Assignment ----
+  
+  always @(xpipktrxdatamuxselstate)
+    
+    begin
+      
+      XpiPktRxRbMuxSelPns12C = 1'b0;
+      
+      case(xpipktrxdatamuxselstate)
+	
+	`XPIPKTRXMUXSELIDLE:  XpiPktRxRbMuxSelPns12C = 1'b0;
+	
+	`XPIPKTRXFIFOLSBDATA: XpiPktRxRbMuxSelPns12C = 1'b0;
+	
+	`XPIPKTRXFIFOMSBDATA: XpiPktRxRbMuxSelPns12C = 1'b1;
+
+	default: XpiPktRxRbMuxSelPns12C = 1'b0;
+	
+      endcase // case(xpipktrxdatamuxselstate)
+
+    end // always @ (xpipktrxdatamuxselstate)
+
+  //---- State Transitions ----
+  
+  always @(/*AS*/XpiPktRxFifoRdEnPns11C or xpipktrxdatamuxselstate)
+    begin
+  
+      case (xpipktrxdatamuxselstate)
+      
+	`XPIPKTRXMUXSELIDLE:
+	  begin
+	    if (XpiPktRxFifoRdEnPns11C)
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXFIFOLSBDATA;
+	    else
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXMUXSELIDLE;
+	  end // case: `XPIPKTRXMUXSELIDLE
+	
+	`XPIPKTRXFIFOLSBDATA:
+	  begin
+	    if (~XpiPktRxFifoRdEnPns11C) 
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXFIFOMSBDATA;
+	    else
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXFIFOLSBDATA;
+	  end
+	
+	`XPIPKTRXFIFOMSBDATA:
+	  begin
+	    if (XpiPktRxFifoRdEnPns11C)
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXFIFOLSBDATA;
+	    else
+	      next_xpipktrxdatamuxselstate = `XPIPKTRXMUXSELIDLE;
+	  end
+	
+	default: next_xpipktrxdatamuxselstate = `XPIPKTRXMUXSELIDLE;
+	
+      endcase // case(xpipktrxdatamuxselstate)
+      
+    end // always @ (...
+
+  
+  //---- PKTRX FIFO Output Register Stage ----
+  
+  assign XpiPktRxRbDataPns12C = (~XpiPktRxFifoEFPns11C) ?
+				XpiPktRxFifoRdDataPns11C : {`PKTRX_FIFO_WIDTH{1'b0}};
+  
+DFFR #(73,73'b0) U84_dff (.q(XpiPktRxRbDataPns12S),.d(XpiPktRxRbDataPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //---------------------------
+  //---- Flopping MSB Data ----
+  //---------------------------
+  
+  assign XpiPktRxRbMSBDataPns12C[`RB_DATA_WIDTH-1:0] = 
+	 XpiPktRxRbDataPns12S[`PCI_DATA_WIDTH-1:`RB_DATA_WIDTH];
+  
+  assign XpiPktRxRbLSBDataPns12C[`RB_DATA_WIDTH-1:0] = 
+	 XpiPktRxRbDataPns12S[`RB_DATA_WIDTH-1:0];
+  
+DFFR #(32,32'b0) U85_dff (.q(XpiPktRxRbMSBDataPns13S),.d(XpiPktRxRbMSBDataPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  //-------------------------------------------------------
+  //---- Data Mux : Alternating between LSB & MSB Data ----
+  //-------------------------------------------------------
+  
+  assign XpiPktRxRbDataPns13C = XpiPktRxRbMuxSelPns12C ? 
+	 XpiPktRxRbMSBDataPns13S : XpiPktRxRbLSBDataPns12C;
+  
+  //---- Extracting Control Information from Fifo Data ----
+  
+  assign XpiPktRxCtrlPns12C = XpiPktRxRbDataPns12S[`PKTRX_FIFO_WIDTH-1:`PCI_DATA_WIDTH];
+  // For Packet Receive operation, assigning Static TargetID of RSI unit
+  assign XpiPktRxAddrPns12C = {8'h01,XpiPktRxCtrlPns12C};
+  
+  //----------------------------------------------------------------
+  //---- Combinatorial Control Logic for PKTRX->RB Output Stage ----
+  //----------------------------------------------------------------
+  
+  assign XpiPktRxRbDataLenPns13S = XpiPktRxRbDataPns13C;
+  
+  // Command Selection
+
+  always @(/*AS*/XpiPktRxIssueTOutPns12C or XpiPktRxRbAddrIrdyPns11C)
+    begin
+      if (XpiPktRxRbAddrIrdyPns11C)
+	XpiPktRxRbCmdPns12C = `PKTRXXFR;
+      else if (XpiPktRxIssueTOutPns12C)
+	XpiPktRxRbCmdPns12C = `TOUT;
+      else
+	XpiPktRxRbCmdPns12C = `NULL;
+    end
+  
+  //---------------------------------
+  //---- PKTRX-->RB Output Stage ----
+  //---------------------------------
+  
+DFFR #(1,1'b0) U86_dff (.q(XpiPktRxRbIrdyPns13S),.d(XpiPktRxRbAddrIrdyPns11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(4,4'b0) U87_dff (.q(XpiPktRxRbCmdPns13S),.d(XpiPktRxRbCmdPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+DFFR #(17,17'b0) U88_dff (.q(XpiPktRxRbAddrPns13S),.d(XpiPktRxAddrPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxRbTxnIDPns13S = TXNID;
+  assign XpiPktRxRbTrdyPns13S  = 1'b1;
+  
+  //---------------------------------------------
+  //---- Core Clk -> PCI Clk Synchronization ----
+  //---------------------------------------------
+
+  //-------------------------------------
+  //---- Synchronizing State Machine ----
+  //-------------------------------------
+  //** 5*CoreClk (333MHz) == PciClk(66MHz)
+  //** 10*CoreClk (333MHz) == PciClk(33MHz)  
+  //** A single CoreClk Pulse is to be asserted for 5+2=7 or 10+2=12
+  //** Core Clk cycles to result into a single PCI Clk Pulse
+
+`define XPIPKTRXCPSYNCIDLE          2'b00
+`define XPIPKTRXCPSYNCSTATUSASSERT  2'b01
+`define XPIPKTRXCPSYNCTOUTASSERT    2'b11
+    
+  // Internal State variables 
+  wire [1:0] xpipktrxcpsyncstate;
+  reg [1:0]  next_xpipktrxcpsyncstate;
+
+  //---- State Change ----
+  
+DFFR #(2,2'b0) U89_dff (.q(xpipktrxcpsyncstate),.d(next_xpipktrxcpsyncstate),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- State Assignment ----
+
+  always @(/*AS*/xpipktrxcpsyncstate)
+    begin
+
+      XpiPktRxUpdateStatusPsn11C = 1'b0;
+      XpiPktRxTimeOutPsn11C      = 1'b0;
+      XpiPktRxAssertCntEnPsn11C  = 1'b0;
+      
+      case(xpipktrxcpsyncstate)
+
+        `XPIPKTRXCPSYNCIDLE:
+          begin
+	    XpiPktRxUpdateStatusPsn11C = 1'b0;
+	    XpiPktRxTimeOutPsn11C      = 1'b0;
+	    XpiPktRxAssertCntEnPsn11C  = 1'b0;
+          end
+
+	`XPIPKTRXCPSYNCSTATUSASSERT:
+	  begin
+	    XpiPktRxUpdateStatusPsn11C = 1'b1;
+	    XpiPktRxAssertCntEnPsn11C  = 1'b1;
+	  end
+
+	`XPIPKTRXCPSYNCTOUTASSERT:
+	  begin
+	    XpiPktRxTimeOutPsn11C      = 1'b1;
+	    XpiPktRxAssertCntEnPsn11C  = 1'b1;
+          end
+
+	default:
+	  begin
+	    XpiPktRxUpdateStatusPsn11C = 1'b0;
+	    XpiPktRxTimeOutPsn11C      = 1'b0;
+	    XpiPktRxAssertCntEnPsn11C  = 1'b0;
+          end
+
+      endcase // case(xpipktrxcpsyncstate)
+    end // always @ (...
+  
+  //---- State Transition ----
+  
+  always @(/*AS*/XpiPciAppPktRxFreq133P11S or XpiPciAppPktRxFreq33P11S
+	   or XpiPciAppPktRxFreq66P11S or XpiPktRxAssertCntPsn11S
+	   or XpiPktRxTimeOutPsn10S or XpiPktRxUpdateStatusPns12C
+	   or xpipktrxcpsyncstate)
+    begin
+
+      case (xpipktrxcpsyncstate)
+
+        `XPIPKTRXCPSYNCIDLE:
+          begin
+	    if (XpiPktRxUpdateStatusPns12C)
+	      next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCSTATUSASSERT;
+	    else if (XpiPktRxTimeOutPsn10S)
+	      next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCTOUTASSERT;
+	    else
+              next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCIDLE;
+          end
+
+	`XPIPKTRXCPSYNCSTATUSASSERT:
+	  begin
+	    if (XpiPktRxTimeOutPsn10S)
+	      next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCTOUTASSERT;
+            else if ((XpiPciAppPktRxFreq133P11S && (XpiPktRxAssertCntPsn11S == 4'b0011)) ||
+		     (XpiPciAppPktRxFreq66P11S  && (XpiPktRxAssertCntPsn11S == 4'b0110)) ||
+		     (XpiPciAppPktRxFreq33P11S  && (XpiPktRxAssertCntPsn11S == 4'b1100)))
+              next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCIDLE;
+            else
+              next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCSTATUSASSERT;
+          end
+	
+	`XPIPKTRXCPSYNCTOUTASSERT:
+	  begin
+            if ((XpiPciAppPktRxFreq133P11S && (XpiPktRxAssertCntPsn11S == 4'b0110)) ||
+		(XpiPciAppPktRxFreq66P11S  && (XpiPktRxAssertCntPsn11S == 4'b0110)) ||
+		(XpiPciAppPktRxFreq33P11S  && (XpiPktRxAssertCntPsn11S == 4'b1100)))
+              next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCIDLE;
+            else
+              next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCTOUTASSERT;
+          end
+
+	default : next_xpipktrxcpsyncstate = `XPIPKTRXCPSYNCIDLE;
+
+      endcase // case(xpipktrxcpsyncstate)
+    end // always @ (...
+  
+  //---- Signal Assertion Counter ----
+  
+  always @(/*AS*/XpiPktRxAssertCntEnPsn11C or XpiPktRxAssertCntPsn11S)
+    begin
+      if (XpiPktRxAssertCntEnPsn11C)
+        XpiPktRxAssertCntPsn11C = {XpiPktRxAssertCntPsn11S + 4'h1};
+      else if (XpiPktRxAssertCntPsn11S == 4'hf)
+        XpiPktRxAssertCntPsn11C = {4{1'b0}};
+      else
+        XpiPktRxAssertCntPsn11C = {4{1'b0}};
+    end
+
+DFFR #(4,4'b0) U90_dff (.q(XpiPktRxAssertCntPsn11S),.d(XpiPktRxAssertCntPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //---- First Core Clk Sync Flop ----
+  
+DFFR #(1,1'b0) U91_dff (.q(XpiPktRxUpdateStatusPsn11S),.d(XpiPktRxUpdateStatusPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U92_dff (.q(XpiPktRxTimeOutPsn11S),.d(XpiPktRxTimeOutPsn11C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+
+  //mpp <clock=XpiPciClk, reset=GlCoreResetR00C>
+  
+  //---- First PCI CLK Sync flop ----  
+
+DFFR #(1,1'b0) U93_dff (.q(XpiPktRxPciSyncUpdateStatusPsn11S),.d(XpiPktRxUpdateStatusPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U94_dff (.q(XpiPktRxPciSyncTimeOutPsn11S),.d(XpiPktRxTimeOutPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+    
+  //---- Second PCI CLK Sync flop ----
+  
+DFFR #(1,1'b0) U95_dff (.q(XpiPktRxPciSyncUpdateStatusPsn12S),.d(XpiPktRxPciSyncUpdateStatusPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U96_dff (.q(XpiPktRxPciSyncTimeOutPsn12S),.d(XpiPktRxPciSyncTimeOutPsn11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Synchronized Signal
+
+DFFR #(1,1'b0) U97_dff (.q(XpiPktRxPciUpdateStatusPsn12S),.d(XpiPktRxPciSyncUpdateStatusPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(1,1'b0) U98_dff (.q(XpiPktRxPciTimeOutPsn12S),.d(XpiPktRxPciSyncTimeOutPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Pulse Generation in PCI Clock Domain
+
+DFFR #(1,1'b0) U99_dff (.q(XpiPktRxPciUpdateStatusPsn13S),.d(XpiPktRxPciUpdateStatusPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPciUpdateStatusPsn13C = 
+	 (XpiPktRxPciUpdateStatusPsn12S && (~XpiPktRxPciUpdateStatusPsn13S));
+  
+DFFR #(1,1'b0) U100_dff (.q(XpiPktRxPciTimeOutPsn13S),.d(XpiPktRxPciTimeOutPsn12S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxPciTimeOutPsn13C = 
+	 (XpiPktRxPciTimeOutPsn12S && (~XpiPktRxPciTimeOutPsn13S));
+  
+  //---------------------------------------------
+  //---- Pci Clk -> Core Clk Synchronization ----
+  //---------------------------------------------
+  
+  // First Core Clk Sync Flop
+DFFR #(1,1'b0) U101_dff (.q(XpiPktRxCoreSyncTOutWrValidPns10S),.d(XpiPktRxTOutWrValidPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U102_dff (.q(XpiPktRxCoreSyncTOutRegPns10S),.d(XpiPktRxTOutRegPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  // Second Core Clk Sync Flop
+DFFR #(1,1'b0) U103_dff (.q(XpiPktRxCoreSyncTOutWrValidPns11S),.d(XpiPktRxCoreSyncTOutWrValidPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+DFFR #(32,32'b0) U104_dff (.q(XpiPktRxCoreSyncTOutRegPns11S),.d(XpiPktRxCoreSyncTOutRegPns10S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+
+  // Muxing the Synchronized Data
+DFFR #(1,1'b0) U105_dff (.q(XpiPktRxTOutWrValidPns12S),.d(XpiPktRxCoreSyncTOutWrValidPns11S),.clk(XpiPciClk),.reset(GlCoreResetR00C));
+  
+  assign XpiPktRxTOutRegPns12C = XpiPktRxTOutWrValidPns12S ?
+	 XpiPktRxCoreSyncTOutRegPns11S : XpiPktRxTOutRegPns12S;
+
+DFFR #(32,`CFG_WIDTH'h0000ffff) U106_dff (.q(XpiPktRxTOutRegPns12S),.d(XpiPktRxTOutRegPns12C),.clk(XpiCoreClk),.reset(GlCoreResetR00C));
+    
+  // 0in known_driven -var XpiPciAppPktRxAddrIrdyP11S  -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxAddrP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxCmdP11S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxAttrP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxByteEnP11S    -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxLengthP11S    -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxDataIrdyP11S  -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxDataP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxTrdyP10S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxTrdyP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciAppPktRxValidTxnP11S  -clock XpiPciClk -reset GlCoreResetR00C
+
+  // 0in known_driven -var XpiPciArbPktRxStopP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciArbPktRxBusyP11S      -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPciArbPktRxSrvP11S       -clock XpiPciClk -reset GlCoreResetR00C
+  
+  // 0in known_driven -var XpiPktRxPciAddrIrdyPsn13S   -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciAddrPsn13S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciDataIrdyPsn13S   -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciDataPsn13S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciCmdPsn13S	       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciAttrPsn13S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciByteEnPsn13S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciLengthPsn13S     -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciTrdyPsn13S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciIntrPsn13S       -clock XpiPciClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxPciArbReqPsn13S     -clock XpiPciClk -reset GlCoreResetR00C
+  
+  // 0in known_driven -var XpiRbiPktRxGntPsn11S        -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxStopPsn11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxIrdyPsn11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxCmdPsn11S	       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxDataPsn11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxTrdyPsn11S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiRbiPktRxValidXfrPsn11S   -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbArbReqPns13S      -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbIrdyPns13S	       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbAddrPns13S	       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbCmdPns13S	       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbDataLenPns13S     -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbTxnIDPns13S       -clock XpiCoreClk -reset GlCoreResetR00C
+  // 0in known_driven -var XpiPktRxRbTrdyPns13S	       -clock XpiCoreClk -reset GlCoreResetR00C
+
+  /* 0in multi_clock_fifo -enq XpiPktRxFifoWrEnPns10C[-enq_clock XpiPciClk]
+   -deq XpiPktRxFifoRdEnPns12C[-deq_clock XpiCoreClk] -depth 32 
+   -enq_data XpiPktRxFifoWrDataPns11C -deq_data XpiPktRxFifoRdDataPns11C[-latency 0]
+   -enq_reset GlCoreResetR00C -deq_reset GlCoreResetR00C
+   */
+  
+endmodule // xpipktrxs
+
+// Local Variables:
+// verilog-auto-sense-defines-constant:t
+// End:
+
+

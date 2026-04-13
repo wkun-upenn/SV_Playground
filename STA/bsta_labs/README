@@ -1,0 +1,37 @@
+I.      Course Title:
+        Basic Static Timing Analysis 3.0
+
+II.     Course Developer:
+        Krishna Atreya
+
+III.    Minimum Hardware Requirements:
+	Installation requirement - 1Mbytes. 
+	Lab requirement - retain at least 250Mbytes for the course 
+	duration for saving of intermediate files, designs, and for the software.
+
+IV.     Software Products Required:
+	An X-Window environment is required to run the software.
+	This course uses one of the following licenses:
+		Tempus_Timing_Signoff_L
+		Tempus_Timing_Signoff_XL
+		Tempus_Timing_Signoff_TSO
+
+        Reference Manuals that should be available (or online):
+		Tempus User Guide
+
+V.      Loading and Set Up of Database
+        Follow the instructions in the first lab.
+ 
+VI.     Checking the software installation:
+	Modify the class_setup file to point to the following:
+	Cadence Tempus or SSV installation
+	Then, run:
+	source class_setup
+	checkSysConf 
+
+	checkSysConf will tell you if your tools have met the necessary requirements.
+	The labs in the class might still work if certain installation requirements are not met.
+	But, please make sure when running production designs, to make sure they are met.
+
+	After the Cadence software and licenses are setup properly, continue to run the labs.
+  	 
