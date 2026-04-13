@@ -1,6 +1,9 @@
 `timescale 1ns/1ps
+/* verilator lint_off DECLFILENAME */
 module tb;
-  logic clk = 0;
+/* verilator lint_on DECLFILENAME */
+  logic clk;
+  initial clk = 0;
   always #5 clk = ~clk;
 
   polymorph dut(.clk(clk));
