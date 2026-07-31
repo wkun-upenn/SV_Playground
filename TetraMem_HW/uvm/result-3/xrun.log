@@ -1,0 +1,142 @@
+xrun: 25.03-s001: (c) Copyright 1995-2025 Cadence Design Systems, Inc.
+TOOL:	xrun	25.03-s001: Started on Jul 16, 2026 at 12:54:00 EDT
+xrun
+	-Q
+	-unbuffered
+	-timescale 1ns/1ns
+	-sysv
+	-access +rw
+	-coverage all
+	+UVM_TESTNAME=coverage_test
+	-uvmnocdnsextra
+	-uvmhome /xcelium25.03/tools//methodology/UVM/CDNS-1.2/sv
+	/xcelium25.03/tools//methodology/UVM/CDNS-1.2/sv/src/uvm_macros.svh
+	design.sv
+	testbench.sv
+	Top level design units:
+		uvm_pkg
+		$unit_0x1bd063d6
+		matmul_pkg
+		sa_pkg
+		ss_pkg
+		env_pkg
+		seq_pkg
+		test_pkg
+		tb_top
+xmelab: *W,COVDCL: By default expression coverage is scored only for Verilog logical operators (|| and &&) and VHDL logical operators (OR, AND, NOR, and NAND), and is scored only in condition expressions. To score coverage for other operators and for expressions in other statements, use the "set_expr_coverable_operators" and "set_expr_coverable_statements" coverage configuration file commands with suitable options at elaboration.
+  wire [`DW-1:0]   sa_a_din  [0:`NN-1];
+                          |
+xmelab: *W,COVMDD (./tb_top.sv,26|26): Toggle coverage for bit, logic, reg, wire, enum and struct multi-dimensional static arrays and vectors is not supported by default. To enable toggle coverage for enum multi-dimensional static arrays specify 'set_toggle_scoring -sv_enum enable_mda' and for other multi-dimensional static arrays, specify 'set_toggle_scoring -sv_mda [<max_bit_base2_exponent>] [-sv_mda_of_struct]' ccf command in the coverage configuration file.
+  int   emit_cnt, emit_idx, Mv;
+               |
+xmelab: *W,COVUTA (./sub_sys.sv,54|15): Toggle coverage is not supported for SystemVerilog integer, real array, string, dynamic array, sparse memory and reference ports. It is also not supported for VHDL multi-dimensional array and array of record. There may also be other such objects in the design.
+xmelab: *W,CGPIDF: Covergroup "per_instance" option , by default, is set as 0.
+xmelab: *N,COVCGN: Coverage configuration file command "set_covergroup -new_instance_reporting" can be specified to improve the scoping and naming of covergroup instances. It may be noted that subsequent merging of a coverage database saved with this command and a coverage database saved without this command is not allowed.
+Loading snapshot worklib.tb_top:sv .................... Done
+SVSEED default: 1
+xcelium> source /xcelium25.03/tools/xcelium/files/xmsimrc
+xcelium> source /xcelium25.03/tools//methodology/UVM/CDNS-1.2/sv/files/tcl/uvm_sim.tcl
+xcelium> run
+UVM_INFO /xcelium25.03/tools/methodology/UVM/CDNS-1.2/sv/src/base/uvm_root.svh(412) @ 0: reporter [UVM/RELNOTES] 
+----------------------------------------------------------------
+CDNS-UVM-1.2 (25.03-s001)
+(C) 2007-2014 Mentor Graphics Corporation
+(C) 2007-2014 Cadence Design Systems, Inc.
+(C) 2006-2014 Synopsys, Inc.
+(C) 2011-2013 Cypress Semiconductor Corp.
+(C) 2013-2014 NVIDIA Corporation
+----------------------------------------------------------------
+
+  ***********       IMPORTANT RELEASE NOTES         ************
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_NO_DEPRECATED undefined.
+  See http://www.eda.org/svdb/view.php?id=3313 for more details.
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_OBJECT_DO_NOT_NEED_CONSTRUCTOR undefined.
+  See http://www.eda.org/svdb/view.php?id=3770 for more details.
+
+      (Specify +UVM_NO_RELNOTES to turn off this notice)
+
+UVM_INFO @ 0: reporter [RNTST] Running test coverage_test...
+UVM_INFO matmul_scoreboard.svh(35) @ 175000: uvm_test_top.env.sa_sb [SCB] MATCH  #1 (m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 265000: uvm_test_top.env.sa_sb [SCB] MATCH  #2 (m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 355000: uvm_test_top.env.sa_sb [SCB] MATCH  #3 (m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 455000: uvm_test_top.env.sa_sb [SCB] MATCH  #4 (m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 555000: uvm_test_top.env.sa_sb [SCB] MATCH  #5 (m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 655000: uvm_test_top.env.sa_sb [SCB] MATCH  #6 (m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 765000: uvm_test_top.env.sa_sb [SCB] MATCH  #7 (m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 875000: uvm_test_top.env.sa_sb [SCB] MATCH  #8 (m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 985000: uvm_test_top.env.sa_sb [SCB] MATCH  #9 (m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 1105000: uvm_test_top.env.sa_sb [SCB] MATCH  #10 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1225000: uvm_test_top.env.sa_sb [SCB] MATCH  #11 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1345000: uvm_test_top.env.sa_sb [SCB] MATCH  #12 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1465000: uvm_test_top.env.sa_sb [SCB] MATCH  #13 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1585000: uvm_test_top.env.sa_sb [SCB] MATCH  #14 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1705000: uvm_test_top.env.sa_sb [SCB] MATCH  #15 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1825000: uvm_test_top.env.sa_sb [SCB] MATCH  #16 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 1945000: uvm_test_top.env.sa_sb [SCB] MATCH  #17 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2065000: uvm_test_top.env.sa_sb [SCB] MATCH  #18 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2185000: uvm_test_top.env.sa_sb [SCB] MATCH  #19 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2305000: uvm_test_top.env.sa_sb [SCB] MATCH  #20 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2425000: uvm_test_top.env.sa_sb [SCB] MATCH  #21 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2545000: uvm_test_top.env.sa_sb [SCB] MATCH  #22 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2665000: uvm_test_top.env.sa_sb [SCB] MATCH  #23 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 2785000: uvm_test_top.env.sa_sb [SCB] MATCH  #24 (m=4)
+UVM_INFO matmul_sequences.svh(61) @ 2795000: uvm_test_top.env.vseqr@@cv1 [SS_VSEQ] multi-channel: 3 matrices (fixed_m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 2955000: uvm_test_top.env.ss_sb [SCB] MATCH  #1 (m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 3035000: uvm_test_top.env.ss_sb [SCB] MATCH  #2 (m=1)
+UVM_INFO matmul_scoreboard.svh(35) @ 3115000: uvm_test_top.env.ss_sb [SCB] MATCH  #3 (m=1)
+UVM_INFO matmul_sequences.svh(61) @ 3115000: uvm_test_top.env.vseqr@@cv2 [SS_VSEQ] multi-channel: 3 matrices (fixed_m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 3285000: uvm_test_top.env.ss_sb [SCB] MATCH  #4 (m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 3365000: uvm_test_top.env.ss_sb [SCB] MATCH  #5 (m=2)
+UVM_INFO matmul_scoreboard.svh(35) @ 3445000: uvm_test_top.env.ss_sb [SCB] MATCH  #6 (m=2)
+UVM_INFO matmul_sequences.svh(61) @ 3445000: uvm_test_top.env.vseqr@@cv3 [SS_VSEQ] multi-channel: 3 matrices (fixed_m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 3625000: uvm_test_top.env.ss_sb [SCB] MATCH  #7 (m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 3705000: uvm_test_top.env.ss_sb [SCB] MATCH  #8 (m=3)
+UVM_INFO matmul_scoreboard.svh(35) @ 3785000: uvm_test_top.env.ss_sb [SCB] MATCH  #9 (m=3)
+UVM_INFO matmul_sequences.svh(61) @ 3785000: uvm_test_top.env.vseqr@@cv4 [SS_VSEQ] multi-channel: 3 matrices (fixed_m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 3975000: uvm_test_top.env.ss_sb [SCB] MATCH  #10 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 4055000: uvm_test_top.env.ss_sb [SCB] MATCH  #11 (m=4)
+UVM_INFO matmul_scoreboard.svh(35) @ 4155000: uvm_test_top.env.ss_sb [SCB] MATCH  #12 (m=4)
+UVM_INFO /xcelium25.03/tools/methodology/UVM/CDNS-1.2/sv/src/base/uvm_objection.svh(1271) @ 4355000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+UVM_INFO matmul_coverage.svh(56) @ 4355000: uvm_test_top.env.cov [COV] TXN coverage = 100.00% over 36 matrices
+UVM_INFO sa_coverage.svh(43) @ 4355000: uvm_test_top.env.sa_cov [COV] ARRAY signal coverage = 100.00%
+UVM_INFO matmul_scoreboard.svh(51) @ 4355000: uvm_test_top.env.sa_sb [SCB] uvm_test_top.env.sa_sb: PASSED : 24 matrices matched
+UVM_INFO ss_coverage.svh(46) @ 4355000: uvm_test_top.env.ss_cov [COV] SUBSYS signal coverage = 100.00%
+UVM_INFO matmul_scoreboard.svh(51) @ 4355000: uvm_test_top.env.ss_sb [SCB] uvm_test_top.env.ss_sb: PASSED : 12 matrices matched
+UVM_INFO /xcelium25.03/tools/methodology/UVM/CDNS-1.2/sv/src/base/uvm_report_server.svh(851) @ 4355000: reporter [UVM/REPORT/SERVER] 
+--- UVM Report Summary ---
+
+** Report counts by severity
+UVM_INFO :   48
+UVM_WARNING :    0
+UVM_ERROR :    0
+UVM_FATAL :    0
+** Report counts by id
+[COV]     3
+[RNTST]     1
+[SCB]    38
+[SS_VSEQ]     4
+[TEST_DONE]     1
+[UVM/RELNOTES]     1
+
+Simulation complete via $finish(1) at time 4355 NS + 59
+/xcelium25.03/tools/methodology/UVM/CDNS-1.2/sv/src/base/uvm_root.svh:543     $finish;
+xcelium> exit
+xmsim: *N,COVCGN: Coverage configuration file command "set_covergroup -new_instance_reporting" can be specified to improve the scoping and naming of covergroup instances. It may be noted that subsequent merging of a coverage database saved with this command and a coverage database saved without this command is not allowed.
+xmsim: *W,CGDEFN: Default name "worklib.uvm_pkg::.cg" will be generated for covergroup instance "cg" as the name of the covergroup instance is not specified explicitly: ./matmul_coverage.svh, 17.
+xmsim: *W,CGDEFN: Default name "worklib.uvm_pkg::.cg" will be generated for covergroup instance "cg" as the name of the covergroup instance is not specified explicitly: ./sa_coverage.svh, 12.
+xmsim: *W,CGDEFN: Default name "worklib.uvm_pkg::.cg" will be generated for covergroup instance "cg" as the name of the covergroup instance is not specified explicitly: ./ss_coverage.svh, 13.
+
+coverage setup:
+  workdir  :  ./cov_work
+  dutinst  :  tb_top(tb_top)
+  scope    :  scope
+  testname :  test
+
+coverage files:
+  model(design data) :  ./cov_work/scope/icc_3dbfb998_767a7afe.ucm
+  data               :  ./cov_work/scope/test/icc_3dbfb998_767a7afe.ucd
+TOOL:	xrun	25.03-s001: Exiting on Jul 16, 2026 at 12:54:09 EDT  (total: 00:00:09)

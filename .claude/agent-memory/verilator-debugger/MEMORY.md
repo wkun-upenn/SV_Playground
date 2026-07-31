@@ -1,0 +1,2 @@
+- [User Profile](user_profile.md) — user works on SV lab exercises, uses Verilator locally, wants approval before any file edits
+- [Coverage Lab Project Context](project_coverage_lab.md) — Coverage lab uses covergroups/cross; Verilator does not support these; target sim is EDA Playground / commercial tool

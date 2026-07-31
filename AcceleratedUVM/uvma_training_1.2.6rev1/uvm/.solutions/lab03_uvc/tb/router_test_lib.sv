@@ -28,6 +28,7 @@ class base_test extends uvm_test;
 
   // UVM build_phase()
   function void build_phase(uvm_phase phase);
+    `uvm_top.set_timeout(500ns, 1);
     super.build_phase(phase);
     uvm_config_wrapper::set(this, "tb.yapp.tx_agent.sequencer.run_phase",
                                    "default_sequence",

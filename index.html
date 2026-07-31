@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kth Largest Element — Heap Visualizer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 2rem; max-width: 600px; margin: 0 auto; }
+  h1 { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+  .controls { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+  .btn { padding: 6px 16px; border: 0.5px solid #ccc; border-radius: 8px; background: transparent; color: #1a1a1a; cursor: pointer; font-size: 14px; }
+  .btn:hover { background: #f5f5f5; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .step-label { font-size: 13px; color: #888; }
+  .phase-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 8px; margin-bottom: 8px; }
+  .phase-push { background: #E6F1FB; color: #185FA5; }
+  .phase-pop  { background: #FAECE7; color: #993C1D; }
+  .phase-done { background: #EAF3DE; color: #3B6D11; }
+  .step-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .step-desc { font-size: 13px; color: #666; margin-bottom: 1rem; line-height: 1.6; }
+  .array-row { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+  .arr-cell { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 0.5px solid #ccc; font-size: 14px; font-weight: 500; background: #f5f5f5; }
+  .arr-cell.active { background: #B5D4F4; color: #0C447C; border-color: #378ADD; }
+  .arr-cell.popped { background: #F5C4B3; color: #712B13; border-color: #D85A30; }
+  .arr-cell.answer { background: #C0DD97; color: #27500A; border-color: #639922; }
+  .arr-label { font-size: 12px; color: #aaa; white-space: nowrap; }
+</style>
+</head>
+<body>
+<h1>Kth Largest Element — Heap Visualizer</h1>
+<p class="subtitle">nums = [3,2,3,1,2,4,5,5,6], k = 4 → answer = 4</p>
+
+<div class="controls">
+  <button class="btn" id="prevBtn" onclick="move(-1)">← prev</button>
+  <button class="btn" id="nextBtn" onclick="move(1)">next →</button>
+  <span class="step-label" id="stepCounter"></span>
+</div>
+<div class="phase-badge" id="phaseBadge"></div>
+<div class="step-title" id="stepTitle"></div>
+<div class="step-desc" id="stepDesc"></div>
+<div class="array-row" id="arrayRow"></div>
+<svg id="heapSvg" width="100%" viewBox="0 0 420 260" style="max-width:420px;display:block;"></svg>
+
+<script>
+const steps = [
+  { phase:"push", title:"push 3 (negated: -3)", desc:"Heap is empty. Push -3. It becomes the root. Heap size = 1.", heap:[-3], highlight:[0], popped:[] },
+  { phase:"push", title:"push 2 (negated: -2)", desc:"Push -2 at index 1. Parent is -3. -2 > -3 so no swap (min heap, more negative = higher priority). Heap size = 2.", heap:[-3,-2], highlight:[1], popped:[] },
+  { phase:"push", title:"push 3 (negated: -3)", desc:"Push -3 at index 2. Parent is -3. Equal, no swap. Heap size = 3.", heap:[-3,-2,-3], highlight:[2], popped:[] },
+  { phase:"push", title:"push 1 (negated: -1)", desc:"Push -1 at index 3. Parent is -2. -1 > -2 so no swap. Heap size = 4.", heap:[-3,-2,-3,-1], highlight:[3], popped:[] },
+  { phase:"push", title:"push 2 (negated: -2)", desc:"Push -2 at index 4. Parent is -2. Equal, no swap. Heap size = 5.", heap:[-3,-2,-3,-1,-2], highlight:[4], popped:[] },
+  { phase:"push", title:"push 4 (negated: -4)", desc:"Push -4 at index 5. Parent is -3 at index 2. -4 < -3 so swap. Parent is -3 at root. -4 < -3 so swap again. -4 reaches root.", heap:[-4,-2,-3,-1,-2,-3], highlight:[0], popped:[] },
+  { phase:"push", title:"push 5 (negated: -5)", desc:"Push -5 at index 6. Parent is -3 at index 2. -5 < -3 so swap. Parent is -4 at root. -5 < -4 so swap again. -5 reaches root.", heap:[-5,-2,-4,-1,-2,-3,-3], highlight:[0], popped:[] },
+  { phase:"push", title:"push 5 (negated: -5)", desc:"Push -5 at index 7. Parent is -2 at index 3. -5 < -2 so swap. Parent is -5 at index 1. Equal, no swap. Heap size = 8.", heap:[-5,-5,-4,-2,-2,-3,-3,-1], highlight:[1], popped:[] },
+  { phase:"push", title:"push 6 (negated: -6)", desc:"Push -6 at index 8. Bubbles all the way up to root. -6 is the most negative = real value 6 = largest. Heap size = 9.", heap:[-6,-6,-4,-5,-2,-3,-3,-1,-2], highlight:[0], popped:[] },
+  { phase:"pop", title:"pop #1 → -6 (real value: 6)", desc:"Remove root -6. Move last element to root, heapify down. Pop count = 1 of 3 needed.", heap:[-6,-5,-4,-2,-2,-3,-3,-1], highlight:[0], popped:[-6] },
+  { phase:"pop", title:"pop #2 → -6 (real value: 6)", desc:"Remove root -6. Move last element to root, heapify down. Pop count = 2 of 3 needed.", heap:[-5,-2,-4,-1,-2,-3,-3], highlight:[0], popped:[-6,-6] },
+  { phase:"pop", title:"pop #3 → -5 (real value: 5)", desc:"Remove root -5. Move last element to root, heapify down. Pop count = 3 of 3. Done popping.", heap:[-5,-2,-4,-3,-2,-3], highlight:[0], popped:[-6,-6,-5] },
+  { phase:"done", title:"answer: heap top = -4 → real value = 4 ✓", desc:"Sorted descending: 6,5,5,4,3,3,2,2,1. The 4th largest is 4. heap[0] = -4, multiply by -1 = 4. Answer = 4 ✓", heap:[-4,-2,-3,-3,-2], highlight:[0], popped:[-6,-6,-5], answer:true }
+];
+
+let cur = 0;
+
+function nodePos(i) {
+  const level = Math.floor(Math.log2(i + 1));
+  const posInLevel = i - (Math.pow(2, level) - 1);
+  const total = Math.pow(2, level);
+  return { x: 20 + (380 / (total + 1)) * (posInLevel + 1), y: 30 + level * 80 };
+}
+
+function render() {
+  const s = steps[cur];
+  document.getElementById('stepTitle').textContent = s.title;
+  document.getElementById('stepDesc').textContent = s.desc;
+  document.getElementById('stepCounter').textContent = `step ${cur + 1} of ${steps.length}`;
+  document.getElementById('prevBtn').disabled = cur === 0;
+  document.getElementById('nextBtn').disabled = cur === steps.length - 1;
+
+  const badge = document.getElementById('phaseBadge');
+  badge.className = 'phase-badge phase-' + s.phase;
+  badge.textContent = s.phase === 'push' ? 'push phase' : s.phase === 'pop' ? 'pop phase (k-1 times)' : 'done';
+
+  const arr = document.getElementById('arrayRow');
+  arr.innerHTML = '<span class="arr-label">heap (negated):</span>';
+  s.heap.forEach((v, i) => {
+    const d = document.createElement('div');
+    d.className = 'arr-cell' + (s.highlight.includes(i) ? (s.answer ? ' answer' : ' active') : '');
+    d.textContent = v;
+    arr.appendChild(d);
+  });
+  if (s.popped.length > 0) {
+    const lbl = document.createElement('span');
+    lbl.className = 'arr-label';
+    lbl.style.marginLeft = '8px';
+    lbl.textContent = 'popped:';
+    arr.appendChild(lbl);
+    s.popped.forEach(v => {
+      const d = document.createElement('div');
+      d.className = 'arr-cell popped';
+      d.textContent = v;
+      arr.appendChild(d);
+    });
+  }
+  if (s.answer) {
+    const lbl = document.createElement('span');
+    lbl.className = 'arr-label';
+    lbl.style.marginLeft = '8px';
+    lbl.textContent = '→ answer = 4';
+    lbl.style.color = '#3B6D11';
+    lbl.style.fontWeight = '500';
+    arr.appendChild(lbl);
+  }
+
+  const svg = document.getElementById('heapSvg');
+  svg.innerHTML = '';
+  const n = Math.min(s.heap.length, 7);
+
+  for (let i = 0; i < n; i++) {
+    const left = 2*i+1, right = 2*i+2;
+    const p = nodePos(i);
+    if (left < n) {
+      const c = nodePos(left);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',p.x); line.setAttribute('y1',p.y);
+      line.setAttribute('x2',c.x); line.setAttribute('y2',c.y);
+      line.setAttribute('stroke','#ccc'); line.setAttribute('stroke-width','1.5');
+      svg.appendChild(line);
+    }
+    if (right < n) {
+      const c = nodePos(right);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1',p.x); line.setAttribute('y1',p.y);
+      line.setAttribute('x2',c.x); line.setAttribute('y2',c.y);
+      line.setAttribute('stroke','#ccc'); line.setAttribute('stroke-width','1.5');
+      svg.appendChild(line);
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    const p = nodePos(i);
+    const isHL = s.highlight.includes(i);
+    const fillC = s.answer && isHL ? '#C0DD97' : isHL ? '#B5D4F4' : '#f5f5f5';
+    const strokeC = s.answer && isHL ? '#639922' : isHL ? '#378ADD' : '#ccc';
+    const textC = s.answer && isHL ? '#27500A' : isHL ? '#0C447C' : '#1a1a1a';
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',p.x); circle.setAttribute('cy',p.y); circle.setAttribute('r',24);
+    circle.setAttribute('fill',fillC); circle.setAttribute('stroke',strokeC);
+    circle.setAttribute('stroke-width', isHL ? '2' : '1');
+    svg.appendChild(circle);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',p.x); text.setAttribute('y',p.y+5);
+    text.setAttribute('text-anchor','middle');
+    text.setAttribute('font-size','13');
+    text.setAttribute('font-weight','500');
+    text.setAttribute('fill',textC);
+    text.setAttribute('font-family','system-ui, sans-serif');
+    text.textContent = s.heap[i];
+    svg.appendChild(text);
+
+    if (i === 0) {
+      const tag = document.createElementNS('http://www.w3.org/2000/svg','text');
+      tag.setAttribute('x',p.x+30); tag.setAttribute('y',p.y+5);
+      tag.setAttribute('font-size','11'); tag.setAttribute('fill','#aaa');
+      tag.setAttribute('font-family','system-ui, sans-serif');
+      tag.textContent = s.phase==='done' ? 'answer' : 'top';
+      svg.appendChild(tag);
+    }
+  }
+
+  if (n < s.heap.length) {
+    const more = document.createElementNS('http://www.w3.org/2000/svg','text');
+    more.setAttribute('x',380); more.setAttribute('y',210);
+    more.setAttribute('font-size','12'); more.setAttribute('fill','#aaa');
+    more.setAttribute('font-family','system-ui, sans-serif');
+    more.textContent = `+${s.heap.length - n} more`;
+    svg.appendChild(more);
+  }
+}
+
+function move(d) { cur = Math.max(0, Math.min(steps.length-1, cur+d)); render(); }
+render();
+</script>
+</body>
+</html>
