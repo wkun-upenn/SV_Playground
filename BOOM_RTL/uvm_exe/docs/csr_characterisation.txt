@@ -1,0 +1,80 @@
+# Measured on the elaborated CSRFile with sim/smoke (make smoke): reset values, decode legality,
+# read-back after writing all-ones / all-zeros, WARL probes. Source of truth for sim/csr_spec.py.
+
+CSR characterisation (value at reset, decode legality, read-back after W(all-ones) / after W(0)):
+  name           addr  reset              rd_ill wr_ill after_W(ones)      after_W(zeros)    
+  fflags         1     0                  0      0      1f                 0                                   
+  frm            2     0                  0      0      7                  0                                   
+  fcsr           3     0                  0      0      ff                 0                                   
+  sstatus        100   200000000          0      0      80000002000c6122   200000000                           
+  sie            104   0                  0      0      0                  0                                   
+  stvec          105   0                  0      0      ffffffffffffff01   0                                   
+  scounteren     106   0                  0      0      1ff                0                                   
+  sscratch       140   0                  0      0      ffffffffffffffff   0                                   
+  sepc           141   0                  0      0      fffffffffffffffe   0                                   
+  scause         142   0                  0      0      800000000000001f   0                                   
+  stval          143   0                  0      0      ffffffffffffffff   0                                   
+  sip            144   0                  0      0      0                  0                                   
+  satp           180   0                  0      0      0                  0                                   
+  mvendorid      f11   0                  0      1      0                  0                                   
+  marchid        f12   2                  0      1      2                  2                                   
+  mimpid         f13   0                  0      1      0                  0                                   
+  mhartid        f14   0                  0      1      0                  0                                   
+  mstatus        300   a00001800          0      0      8000000a007e79aa   a00000000                           
+  misa           301   800000000014112d   0      0      800000000014112d   800000000014112d                    
+  medeleg        302   0                  0      0      b15d               0                                   
+  mideleg        303   0                  0      0      222                0                                   
+  mie            304   0                  0      0      aaa                0                                   
+  mtvec          305   0                  0      0      ffffff01           0                                   
+  mcounteren     306   0                  0      0      1ff                0                                   
+  mcountinhibit  320   0                  0      0      1fd                0                                   
+  mhpmevent3     323   0                  0      0      3f03               0                                   
+  mhpmevent8     328   0                  0      0      3f03               0                                   
+  mscratch       340   0                  0      0      ffffffffffffffff   0                                   
+  mepc           341   0                  0      0      fffffffffffffffe   0                                   
+  mcause         342   0                  0      0      800000000000000f   0                                   
+  mtval          343   0                  0      0      ffffffffffffffff   0                                   
+  mip            344   0                  0      0      222                0                                   
+  pmpaddr0       3b0   0                  0      0      3fffffff           0                                   
+  pmpaddr7       3b7   0                  0      0      3fffffff           0                                   
+  pmpcfg0        3a0   0                  0      0      1f1f1f1f1f1f1f1f   0                                   
+  pmpcfg2        3a2   0                  0      0      0                  0                                   
+  mcycle         b00   4e                 0      0      0                  1                                   
+  minstret       b02   0                  0      0      ffffffffffffffff   0                                   
+  mhpmcounter3   b03   0                  0      0      ffffffffff         0                                   
+  mhpmcounter8   b08   0                  0      0      ffffffffff         0                                   
+  tselect        7a0   0                  0      0      0                  0                                   
+  tdata1         7a1   0                  0      0      0                  0                                   
+  tdata2         7a2   0                  0      0      0                  0                                   
+  dcsr           7b0   -                  1      0     
+  dpc            7b1   -                  1      0     
+  dscratch0      7b2   -                  1      0     
+  custom_7c1     7c1   0                  0      0      8                  0                                   
+  cycle          c00   64                 0      1      45c8               45cc                                
+  time           c01   -                  1      1     
+  instret        c02   0                  0      1      0                  0                                   
+  hpmcounter3    c03   0                  0      1      0                  0                                   
+  vstart(absent) 8     -                  1      0     
+  unknown_7ff    7ff   -                  1      0     
+  satp <= 80000000000fffff -> 80000000000fffff
+  satp <= 8fffffffffffffff -> 80000000000fffff
+  satp <= 9000000000000001 -> 80000000000fffff
+  satp <= 0000000000000001 -> 0000000000000001
+  satp <= 0800000000000000 -> 0000000000000000
+  probe 341 <= 0000008000000000 -> ffffff8000000000           
+  probe 341 <= 0000007ffffffffe -> 0000007ffffffffe           
+  probe 341 <= 0000004000000000 -> 0000004000000000           
+  probe 141 <= 0000008000000000 -> ffffff8000000000           
+  probe 141 <= 0000007ffffffffe -> 0000007ffffffffe           
+  probe 343 <= 0000008000000000 -> ffffff8000000000           
+  probe 343 <= 0000007fffffffff -> 0000007fffffffff           
+  probe 143 <= 0000008000000000 -> ffffff8000000000           
+  probe 105 <= 0000004000000000 -> ffffffc000000000           
+  probe 105 <= 0000003ffffffffd -> 0000003fffffff01           
+  probe 105 <= 0000000000000003 -> 0000000000000001           
+  probe 305 <= 0000000100000000 -> 0000000000000000           
+  probe 305 <= 00000000ffffffff -> 00000000ffffff01           
+  probe 305 <= 0000000000000003 -> 0000000000000001           
+  probe 305 <= 00000000fffffffe -> 00000000fffffffc           
+  probe 105 <= 0000003ffffffffe -> 0000003ffffffffc           
+mstatus at reset = 0000000a00001800 (FS=0) -> writing FS=1

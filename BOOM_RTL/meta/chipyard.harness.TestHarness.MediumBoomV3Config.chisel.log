@@ -1,0 +1,408 @@
+L2 InclusiveCache Client Map:
+	0 <= debug
+	1 <= serial_tl_0_0
+	2 <= serial_tl_0_1
+	3 <= serial_tl_0_2
+	4 <= serial_tl_0_3
+	5 <= Core 0 DCache
+	6 <= Core 0 ICache
+
+[C0] ======BOOM Tile 0 Params======
+
+[C0] ====Overall Frontend Params====
+
+[C0] ==L1-ICache==
+[C0] Fetch bytes   : 8
+[C0] Block bytes   : 64
+[C0] Row bytes     : 8
+[C0] Word bits     : 64
+[C0] Sets          : 64
+[C0] Ways          : 4
+[C0] Refill cycles : 8
+[C0] RAMs          : (64 x 512) using 1 banks
+[C0] Single-banked
+[C0] I-TLB ways    : 32
+
+[C0] ==Branch Predictor Memory Sizes==
+
+[C0] bank0 tage_l2: 128 x 44 = 704
+[C0] bank0 tage_l4: 128 x 44 = 704
+[C0] bank0 tage_l8: 256 x 48 = 1536
+[C0] bank0 tage_l16: 256 x 48 = 1536
+[C0] bank0 tage_l32: 128 x 52 = 832
+[C0] bank0 tage_l64: 128 x 52 = 832
+[C0] bank0 btb_meta_way0: 128 x 124 = 1984
+[C0] bank0 btb_data_way0: 128 x 56 = 896
+[C0] bank0 btb_meta_way1: 128 x 124 = 1984
+[C0] bank0 btb_data_way1: 128 x 56 = 896
+[C0] bank0 ebtb: 128 x 40 = 640
+[C0] bank0 bim: 2048 x 8 = 2048
+[C0] Total bpd size: 14 KB
+
+[C0] ====Overall Core Params====
+
+[C0] ===ExecutionUnits===
+
+[C0] ==2-wide Machine==
+[C0] ==4 Issue==
+
+[C0] ==ExeUnit==
+[C0]  - Mem
+[C0] ==ExeUnit==
+[C0]  - ALU
+[C0]  - Mul
+[C0]  - IFPU
+[C0] ==ExeUnit==
+[C0]  - ALU
+[C0]  - Div
+
+[C0] ===FP Pipeline===
+
+[C0] ==Floating Point Regfile==
+[C0] Num RF Read Ports     : 3
+[C0] Num RF Write Ports    : 2
+[C0] RF Cost (R+W)*(R+2W)  : 35
+[C0] Bypassable Units      : List(false, false)
+[C0] Num Wakeup Ports      : 2
+[C0] Num Bypass Ports      : 0
+
+[C0] ==ROB==
+[C0] Machine Width      : 2
+[C0] Rob Entries        : 64
+[C0] Rob Rows           : 32
+[C0] Rob Row size       : 5
+[C0] log2Ceil(coreWidth): 1
+[C0] FPU FFlag Ports    : 2
+
+[C0] ===Other Core Params===
+[C0] Fetch Width           : 4
+[C0] Decode Width          : 2
+[C0] Issue Width           : 4
+[C0] ROB Size              : 64
+[C0] Issue Window Size     : List(12, 20, 16) (Age-based Priority)
+[C0] Load/Store Unit Size  : 16/16
+[C0] Num Int Phys Registers: 80
+[C0] Num FP  Phys Registers: 64
+[C0] Max Branch Count      : 12
+[C0] ==Integer Regfile==
+[C0] Num RF Read Ports     : 6
+[C0] Num RF Write Ports    : 3
+[C0] RF Cost (R+W)*(R+2W)  : 108
+[C0] Bypassable Units      : List(true, true, true)
+
+[C0] Num Slow Wakeup Ports : 3
+[C0] Num Fast Wakeup Ports : 2
+[C0] Num Bypass Ports      : 4
+
+[C0] DCache Ways           : 4
+[C0] DCache Sets           : 64
+[C0] DCache nMSHRs         : 2
+[C0] ICache Ways           : 4
+[C0] ICache Sets           : 64
+[C0] D-TLB Ways            : 8
+[C0] I-TLB Ways            : 32
+[C0] Paddr Bits            : 32
+[C0] Vaddr Bits            : 39
+
+[C0] Using FPU Unit?       : true
+[C0] Using FDivSqrt?       : true
+[C0] Using VM?             : true
+
+
+Interrupt map (2 harts 1 interrupts):
+  [1, 1] => uart_0
+
+Clock sbus_0: using diplomatically specified frequency of 500.0.
+Clock pbus_0: using diplomatically specified frequency of 500.0.
+Clock fbus_0: using diplomatically specified frequency of 500.0.
+Clock mbus_0: using diplomatically specified frequency of 500.0.
+Clock cbus_0: using diplomatically specified frequency of 500.0.
+/dts-v1/;
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "ucb-bar,chipyard-dev";
+	model = "ucb-bar,chipyard";
+	L3: aliases {
+		serial0 = &L25;
+	};
+	L17: chosen {
+		stdout-path = &L25;
+	};
+	L2: cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <500000>;
+		L12: cpu@0 {
+			clock-frequency = <0>;
+			compatible = "ucb-bar,boom0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <64>;
+			d-cache-size = <16384>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <8>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <0>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <64>;
+			i-cache-size = <16384>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L10>;
+			reg = <0x0>;
+			riscv,isa = "rv64imafdczicsr_zifencei_zihpm";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <500000>;
+			tlb-split;
+			L11: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	L28: htif {
+		compatible = "ucb,htif0";
+	};
+	L24: memory@8000000 {
+		device_type = "memory";
+		reg = <0x8000000 0x10000>;
+		status = "disabled";
+	};
+	L20: memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x10000000>;
+	};
+	L1: soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "ucb-bar,chipyard-soc", "simple-bus";
+		ranges;
+		L23: boot-address-reg@1000 {
+			reg = <0x1000 0x1000>;
+			reg-names = "control";
+		};
+		L10: cache-controller@2010000 {
+			cache-block-size = <64>;
+			cache-level = <2>;
+			cache-sets = <1024>;
+			cache-size = <524288>;
+			cache-unified;
+			compatible = "sifive,inclusivecache0", "cache";
+			next-level-cache = <&L20 &L24>;
+			reg = <0x2010000 0x1000>;
+			reg-names = "control";
+			sifive,mshr-count = <7>;
+		};
+		L7: cbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <500000000>;
+			clock-output-names = "cbus_clock";
+			compatible = "fixed-clock";
+		};
+		L13: clint@2000000 {
+			compatible = "riscv,clint0";
+			interrupts-extended = <&L11 3 &L11 7>;
+			reg = <0x2000000 0x10000>;
+			reg-names = "control";
+		};
+		L26: clock-gater@100000 {
+			reg = <0x100000 0x1000>;
+			reg-names = "control";
+		};
+		L15: debug-controller@0 {
+			compatible = "sifive,debug-013", "riscv,debug-013";
+			debug-attach = "jtag";
+			interrupts-extended = <&L11 65535>;
+			reg = <0x0 0x1000>;
+			reg-names = "control";
+		};
+		L8: error-device@3000 {
+			compatible = "sifive,error0";
+			reg = <0x3000 0x1000>;
+		};
+		L6: fbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <500000000>;
+			clock-output-names = "fbus_clock";
+			compatible = "fixed-clock";
+		};
+		L14: interrupt-controller@c000000 {
+			#interrupt-cells = <1>;
+			compatible = "riscv,plic0";
+			interrupt-controller;
+			interrupts-extended = <&L11 11 &L11 9>;
+			reg = <0xc000000 0x4000000>;
+			reg-names = "control";
+			riscv,max-priority = <1>;
+			riscv,ndev = <1>;
+		};
+		L9: mbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <500000000>;
+			clock-output-names = "mbus_clock";
+			compatible = "fixed-clock";
+		};
+		L5: pbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <500000000>;
+			clock-output-names = "pbus_clock";
+			compatible = "fixed-clock";
+		};
+		L22: rom@10000 {
+			compatible = "sifive,rom0";
+			reg = <0x10000 0x10000>;
+			reg-names = "mem";
+		};
+		L4: sbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <500000000>;
+			clock-output-names = "sbus_clock";
+			compatible = "fixed-clock";
+		};
+		L25: serial@10020000 {
+			clocks = <&L5>;
+			compatible = "sifive,uart0";
+			interrupt-parent = <&L14>;
+			interrupts = <1>;
+			reg = <0x10020000 0x1000>;
+			reg-names = "control";
+		};
+		L27: tile-reset-setter@110000 {
+			reg = <0x110000 0x1000>;
+			reg-names = "control";
+		};
+	};
+};
+
+Generated Address Map
+	       0 -     1000 ARWX  debug-controller@0
+	    1000 -     2000 ARW   boot-address-reg@1000
+	    3000 -     4000 ARWX  error-device@3000
+	   10000 -    20000  R X  rom@10000
+	  100000 -   101000 ARW   clock-gater@100000
+	  110000 -   111000 ARW   tile-reset-setter@110000
+	 2000000 -  2010000 ARW   clint@2000000
+	 2010000 -  2011000 ARW   cache-controller@2010000
+	 8000000 -  8010000 ARWXC memory@8000000
+	 c000000 - 10000000 ARW   interrupt-controller@c000000
+	10020000 - 10021000 ARW   serial@10020000
+	80000000 - 90000000 ARWXC memory@80000000
+
+IOCells generated by IOBinders:
+  IOBinder for interface sifive.blocks.devices.uart.HasPeripheryUART generated:
+    1 X GenericDigitalInIOCell
+    1 X GenericDigitalOutIOCell
+  IOBinder for interface testchipip.boot.CanHavePeripheryCustomBootPin generated:
+    1 X GenericDigitalInIOCell
+  IOBinder for interface freechips.rocketchip.devices.debug.HasPeripheryDebug generated:
+    3 X GenericDigitalInIOCell
+    1 X GenericDigitalOutIOCell
+  IOBinder for interface chipyard.clocking.CanHaveClockTap generated:
+    1 X GenericDigitalOutIOCell
+  IOBinder for interface testchipip.serdes.CanHavePeripheryTLSerial generated:
+    35 X GenericDigitalInIOCell
+    34 X GenericDigitalOutIOCell
+
+  Total generated 77 IOCells:
+    40 X GenericDigitalInIOCell
+    37 X GenericDigitalOutIOCell
+Harness binder clock is 100.0
+[warn] generators/boom/src/main/scala/v3/lsu/dcache.scala 70:43: [W004] Dynamic index with width 4 is too wide for Vec of size 8 (expected index width 3).
+[warn]                           data = wb_buffer(data_req_cnt))
+[warn]                                           ^
+[warn] generators/boom/src/main/scala/v3/lsu/dcache.scala 77:43: [W004] Dynamic index with width 4 is too wide for Vec of size 8 (expected index width 3).
+[warn]                           data = wb_buffer(data_req_cnt))._2
+[warn]                                           ^
+[warn] generators/boom/src/main/scala/v3/lsu/dcache.scala 109:16: [W004] Dynamic index with width 4 is too wide for Vec of size 8 (expected index width 3).
+[warn]       wb_buffer(r2_data_req_cnt) := io.data_resp
+[warn]                ^
+[warn] generators/boom/src/main/scala/v3/ifu/icache.scala 175:25: [W003] Dynamic index with width 7 is too small for extractee of width 256
+[warn]     val s1_vb = vb_array(Cat(i.U, s1_idx))
+[warn]                         ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-maptable.scala 113:65: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]     io.map_resps(i).prs1       := (0 until i).foldLeft(map_table(io.map_reqs(i).lrs1)) ((p,k) =>
+[warn]                                                                 ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-maptable.scala 115:65: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]     io.map_resps(i).prs2       := (0 until i).foldLeft(map_table(io.map_reqs(i).lrs2)) ((p,k) =>
+[warn]                                                                 ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-maptable.scala 117:65: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]     io.map_resps(i).prs3       := (0 until i).foldLeft(map_table(io.map_reqs(i).lrs3)) ((p,k) =>
+[warn]                                                                 ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-maptable.scala 119:65: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]     io.map_resps(i).stale_pdst := (0 until i).foldLeft(map_table(io.map_reqs(i).ldst)) ((p,k) =>
+[warn]                                                                 ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-busytable.scala 67:45: [W002] Dynamic index with width 7 is too large for extractee of width 64
+[warn]     io.busy_resps(i).prs1_busy := busy_table(io.ren_uops(i).prs1) || prs1_was_bypassed && bypass.B
+[warn]                                             ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-busytable.scala 68:45: [W002] Dynamic index with width 7 is too large for extractee of width 64
+[warn]     io.busy_resps(i).prs2_busy := busy_table(io.ren_uops(i).prs2) || prs2_was_bypassed && bypass.B
+[warn]                                             ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-busytable.scala 69:45: [W002] Dynamic index with width 7 is too large for extractee of width 64
+[warn]     io.busy_resps(i).prs3_busy := busy_table(io.ren_uops(i).prs3) || prs3_was_bypassed && bypass.B
+[warn]                                             ^
+[warn] generators/boom/src/main/scala/v3/exu/rename/rename-stage.scala 396:13: [W004] Dynamic index with width 7 is too wide for Vec of size 32 (expected index width 5).
+[warn]       unbusy(io.wakeups(w).bits.uop.pdst) := true.B
+[warn]             ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 347:16: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_bsy(row_idx)      := false.B
+[warn]                ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 348:19: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_unsafe(row_idx)   := false.B
+[warn]                   ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 349:23: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_predicated(row_idx)  := wb_resp.bits.predicated
+[warn]                       ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 363:16: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_bsy(cidx)    := false.B
+[warn]                ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 364:19: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_unsafe(cidx) := false.B
+[warn]                   ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 365:24: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         assert (rob_val(cidx) === true.B, "[rob] store writing back to invalid entry.")
+[warn]                        ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 366:24: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         assert (rob_bsy(cidx) === true.B, "[rob] store writing back to a not-busy entry.")
+[warn]                        ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 372:19: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_unsafe(cidx) := false.B
+[warn]                   ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 382:22: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         rob_fflags(w)(GetRowIdx(fflag_uop.rob_idx)) := io.fflags(i).bits.flags
+[warn]                      ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 391:20: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]       rob_exception(GetRowIdx(io.lxcpt.bits.uop.rob_idx)) := true.B
+[warn]                    ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 394:26: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]         assert(rob_unsafe(GetRowIdx(io.lxcpt.bits.uop.rob_idx)),
+[warn]                          ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 400:20: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]       rob_exception(GetRowIdx(io.csr_replay.bits.uop.rob_idx)) := true.B
+[warn]                    ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 473:14: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]       rob_uop(GetRowIdx(io.brupdate.b2.uop.rob_idx)).debug_fsrc := BSRC_C
+[warn]              ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 474:14: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]       rob_uop(GetRowIdx(io.brupdate.b2.uop.rob_idx)).taken      := io.brupdate.b2.taken
+[warn]              ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 516:29: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]       val temp_uop = rob_uop(GetRowIdx(rob_idx))
+[warn]                             ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 519:24: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]                !rob_val(GetRowIdx(rob_idx))),
+[warn]                        ^
+[warn] generators/boom/src/main/scala/v3/exu/rob.scala 522:24: [W004] Dynamic index with width 6 is too wide for Vec of size 32 (expected index width 5).
+[warn]                !rob_bsy(GetRowIdx(rob_idx))),
+[warn]                        ^
+[warn] generators/boom/src/main/scala/v3/lsu/lsu.scala 1240:26: [W004] Dynamic index with width 5 is too wide for Vec of size 16 (expected index width 4).
+[warn]   val ld_xcpt_uop   = ldq(Mux(l_idx >= numLdqEntries.U, l_idx - numLdqEntries.U, l_idx)).bits.uop
+[warn]                          ^
+[warn] generators/testchipip/src/main/scala/serdes/TLSerdes.scala 85:9: [W008] Return values of asTypeOf will soon be read-only
+[warn]       c <> b.io.protocol
+[warn]         ^
+[warn] There were 31 warning(s) during hardware elaboration.

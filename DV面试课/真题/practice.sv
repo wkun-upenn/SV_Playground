@@ -829,3 +829,643 @@ task model_task;
   join
 endtask
 
+// July Q68
+// Moore FSM
+module detector(
+  input bit clk,
+  input bit rst_n,
+  input bit in,
+  output bit detected
+)
+  typedef enum logic [2:0] {S0, S1, S2, S3, S4, S5} state_e;
+  state_e state, next_state;
+
+  // Update logic
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      state <= 3'b0;
+    end else begin
+      state <= next_state;
+    end
+  end
+
+  always_comb begin
+    case (state)
+      S0: next_state = in ? S1 : S0; // IDLE
+      S1: next_state = in ? S1 : S2; // Seen 1
+      S2: next_state = in ? S3 : S0; // Seen 10
+      S3: next_state = in ? S4 : S2; // Seen 101
+      S4: next_state = in ? S1 : S5; // Seen 1011
+      S5: next_state = in ? S3 : S0;
+      default: next_state = S0;
+    endcase
+  end
+
+  assign detected = state == S5;
+endmodule
+
+module async_fifo #(
+  parameter int DEPTH = 8,
+  parameter int WIDTH = 8,
+  localparam int ADDR_W = $clog2(DEPTH)
+)(
+  input bit clk_wr, clk_rd,
+  input bit rst_n,
+  input big w_en, r_en,
+  input logic [WIDTH-1:0] w_data, r_data,
+
+  output bit full, empty
+);
+
+  logic [WIDTH-1:0] mem [0:DEPTH-1];
+  logic [ADDR_W:0] w_ptr_bin, w_ptr_bin_n, w_ptr_gray, w_ptr_gray_n;
+  logic [ADDR_W:0] r_ptr_bin, r_ptr_bin_n, r_ptr_gray, r_ptr_gray_n;
+
+  logic [ADDR_W:0] w_ptr_gray_d1, w_ptr_gray_d2;
+  logic [ADDR_W:0] r_ptr_gray_d1, r_ptr_gray_d2;
+
+  bit w_push, r_pop;
+  bit full_n, empty_n;
+
+  // write domain
+  assign w_push = w_en && !full;
+  assign w_ptr_bin_n = w_ptr_bin + {ADDR_W{1'b0}, w_push};
+  assign w_ptr_gray_n = w_ptr_bin_n ^ (w_ptr_bin_n >> 1);
+  assign full_n = w_ptr_gray_n == {~(r_ptr_gray_d2[ADDR_W:ADDR_W-1]), r_ptr_gray_d2[ADDR_W-2:0]};
+
+  always_ff @(posedge clk_wr or negedge rst_n) begin
+    if(!rst_n) begin
+      w_ptr_bin_n <= '0;
+      w_ptr_gray_n <= '0;
+      full_n <= '0;
+    end else begin
+      w_ptr_bin <= w_ptr_bin_n;
+      w_ptr_gray <= w_ptr_gray_n;
+      full <= full_n;
+    end
+  end
+
+  always_ff @(posedge clk_wr) begin
+    if (w_push) mem[w_ptr_bin[ADDR_W-1:0]] <= w_data;
+  end
+
+  // read domain
+  assign r_pop = r_en && !empty;
+  assign r_ptr_bin_n = r_ptr_bin + {ADDR_W{1'b0}, r_pop};
+  assign r_ptr_gray_n = r_ptr_bin_n ^ (r_ptr_bin_n >> 1);
+  assign empty_n = r_ptr_gray_n == w_ptr_gray_d2;
+
+  always_ff @(posedge clk_rd or negedge rst_n) begin
+    if(!rst_n) begin
+      r_ptr_bin_n <= '0;
+      r_ptr_gray_n <= '0;
+      empty_n <= '0;
+    end else begin
+      r_ptr_bin <= r_ptr_bin_n;
+      r_ptr_gray <= r_ptr_gray_n;
+      empty <= empty_n;
+      if (r_pop) r_data <= mem[r_ptr_bin[ADDR_W-1:0]];
+    end
+  end
+
+  // 2FF
+  always_ff @(posedge clk_rd or negedge rst_n) begin
+    if (!rst_n) begin
+      w_ptr_gray_d1 <= '0;
+      w_ptr_gray_d2 <= '0;
+    end else begin
+      w_ptr_gray_d1 <= w_ptr_gray;
+      w_ptr_gray_d2 <= w_ptr_gray_d1;
+    end
+  end
+
+  always_ff @(posedge clk_wr or negedge rst_n) begin
+    if (!rst_n) begin
+      r_ptr_gray_d1 <= '0;
+      r_ptr_gray_d2 <= '0;
+    end else begin
+      r_ptr_gray_d1 <= r_ptr_gray;
+      r_ptr_gray_d2 <= r_ptr_gray_d1;
+    end
+  end
+
+
+endmodule
+
+// August Q12
+module fsm_counter #(parameter int NUM_CYCLES = 8)(
+  input bit clock,
+  input bit start,
+);
+
+  typedef enum logic [1:0] {IDLE, COUNTING, DONE} state_e;
+  state_e state, next_state;
+  int counter;
+
+  always_ff @(posedge clock) begin
+    case(state)
+      IDLE: next_state <= start ? COUNTING : IDLE;
+      COUNTING: next_state <= 
+
+    endcase
+  end
+
+endmodule
+
+
+// August Q38
+class burst_txn;
+  rand bit [31:0] starting_addr;
+  rand bit [7:0] burst_len;
+  rand bit [2:0] burst_size;
+
+  localparam bit [31:0] boundary = 32'h1000;
+
+  constraint c_boundary{
+    (starting_addr & (boundary - 1)) + (burst_len + 1) * (1 << busrt_size) -1 < boundary;
+  }
+endclass
+
+property no_cross_page;
+  int unsigned len;
+  int unsigned size;
+  @(posedge clk) disable iff (!rst_n)
+  AWREADY && W
+
+endproperty
+
+// August Q43
+
+// array of 10 elements
+// 3 -> share same value
+// 7 -> $unique, different from triplicate
+
+class arr_unique #(
+  parameter int max_value = 100,
+  parameter int min_value = 0,
+  parameter int arr_size = 10
+);
+
+  rand int dup_value;
+  rand int unsigned dup_idx[3];
+
+  rand int arr[arr_size];
+
+  constraint c_dup{
+    dup_value inside {[min_value : max_value]}; // dup_value range
+    foreach(dup_idx[i]) dup_idx[i] < arr_size;  // three different idx to put the dup_value
+    unique {dup_idx};
+  }
+
+  constraint c_triplicate{
+
+    // Solve for triplicate values
+    foreach (arr[i]) {
+      if (i inside {dup_idx})
+        arr[i] == dup_value;
+      else 
+        arr[i] != dup_value;
+      
+    }
+
+    // Solve for distinct values outside the triplicate idx
+    foreach (arr[i]) 
+      foreach (arr[j])
+        if (i < j && !(i inside {dup_idx}) && !(j inside {dup_idx}))
+          arr[i] != arr[j];
+  }
+
+endclass
+
+arr_unique #() h = new();
+
+// 1, 1, 2, 3, 5, 8
+module fib_counter #(parameter int unsigned SIZE)(
+  input bit clk,
+  input bit rst_n,
+  output logic [SIZE-1:0] value
+);
+
+  logic [SIZE-1:0] prev, curr;
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      prev <= 1;
+      curr <= 1;
+    end else begin
+      prev <= curr;
+      curr <= prev + curr;
+    end
+  end
+
+  assign value = prev;
+endmodule
+
+// August Q58
+
+property fell_after_rise;
+  @(posedge clk) disable iff (!rst_n)
+  $rose(sig) |=> ##[1:10] $fell(sig);
+endproperty
+
+assert property (fell_after_rise) else $error("Failed");
+
+property cat_followed_by_dog;
+  @(posedge clk) disable iff (!rst_n)
+  cat |=> dog[*3:4] ##1 !dog;
+endproperty
+
+// August Q64
+property data_stable(data_in);
+  @(posedge clk) disable iff (rst_n)
+  $rose(en) |=> $stable(data_in)[*5]
+endproperty
+
+class my_driver extends uvm_component #(my_transaction);
+  `uvm_component_utils(my_driver)
+
+  virtual my_if vif;
+  function void build_phase(uvm_phase phase)
+    if (!uvm_config_db#(virtual my_if)::get(this, "", "vif", vif))
+      `uvm_error(get_type_name(), "virtual interface not found")
+  endfunction
+
+  task run_phase(uvm_phase phase);
+    forever begin
+      seq_item_port.get_next_item(seq);
+      repeat (num_cycles) @(vif.cb);
+      drive_item(seq);
+      seq_item_port.item_done();
+    end 
+  endtask
+
+endclass
+
+// August Q85
+interface simple_bus_if (input logic clk, input logic rst_n);
+  logic        valid;
+  logic        ready;     // driven by DUT
+  logic        wr;        // 1 = write, 0 = read
+  logic [31:0] addr;
+  logic [31:0] wdata;
+  logic        rvalid;    // driven by DUT, read data valid
+  logic [31:0] rdata;     // driven by DUT
+endinterface
+
+class bus_item extends uvm_sequence_item;
+  `uvm_object_utils(bus_item)
+  rand bit          wr;
+  rand bit [31:0]   addr;
+  rand bit [31:0]   wdata;
+  rand int unsigned idle_cycles;   // idle cycles before driving this item
+       bit [31:0]   rdata;         // filled by driver for reads
+  constraint c_idle { idle_cycles inside {[0:5]}; }
+  function new(string name = "bus_item"); super.new(name); endfunction
+endclass
+
+class bus_driver extends uvm_driver #(bus_item);
+  `uvm_component_utils(bus_driver)
+  simple_bus_if vif;
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(virtual simple_bus_if)::get(this, "", "vif", vif))
+      `uvm_fatal(get_type_name, "virtual if not set"); // 从 config_db 获取 virtual interface，拿不到时要报 fatal。
+  endfunction
+
+  task body();
+    forever begin
+      seq_item_port.get_next_item(seq);
+      if (seq.idle_cycles != 0) repeat(seq.idle_cycles) @(vif.clk);
+      drive_item(seq);
+      @(vif.clk)
+      seq_item_port.item_done(rsp.rdata) //读操作要把 rdata 返回给 sequence
+    end
+  endtask
+
+  task drive_item(bus_item seq);
+    @(posedge vif.clk iff vif.ready && vif.valid)
+    vif.wr <= seq.wr;
+    ...
+  endtask
+endclass
+
+
+// edge detector
+module edge_detector(
+  input bit clk,
+  input bit rst_n,
+  input bit bit_in,
+  output bit pulse
+);
+  bit bit_d1;
+
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) bit_d1 <= 0;
+    else bit_d1 <= bit_in;
+  end
+
+  assign pulse = (bit_d1 && ~bit_in) || (~bit_d1 && bit_in);
+
+endmodule
+
+//sync FIFO
+module sync_fifo #(
+  parameter int WIDTH = 8,
+  parameter int DEPTH = 8,
+  localparam int PTR_W = $clog2(DEPTH)
+)(
+  input logic clk, rst_n,
+  input logic [PTR_W-1:0] r_addr, w_addr,
+  input logic [WIDTH-1:0] w_data,
+  input logic wr_en, rd_en,
+
+  output logic [WIDTH-1:0] r_data,
+  output logic full, empty
+);
+  logic [WIDTH-1:0] mem [0:DEPTH-1];
+  logic [PTR_W:0] w_ptr, r_ptr;
+  
+  // Read Side
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      r_ptr <= 0;
+    end else (rd_en && !empty) begin
+      r_ptr <= r_ptr + 1;
+      r_data <= mem[r_ptr[0 +: PTR_W]];
+    end
+  end
+
+  // Write Side
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      w_ptr <= 0;
+    end else (wr_en && !full) begin
+      w_ptr <= w_ptr + 1;
+      mem[w_ptr[0 +: PTR_W]] <= w_data;
+    end
+  end
+
+  assign empty = w_ptr == r_ptr;
+  assign full = (w_ptr[PTR_W] != r_ptr[PTR_W]) && (w_ptr[0 +: PTR_W] == r_ptr[0 +: PTR_W]);
+
+endmodule
+
+// sync FIFO
+module sync_fifo #(
+  parameter int WIDTH = 8,
+  parameter int DEPTH = 8,
+  localparam int PTR_W = $clog2(DEPTH)
+)(
+  input logic clk, rst_n,
+  input logic w_en, r_en,
+  input logic [WIDTH-1:0] w_data,
+  output logic [WIDTH-1:0] r_data,
+  output logic full, empty
+);
+
+  logic [WIDTH-1:0] mem [DEPTH-1:0];
+  wire w_push = w_en && !full;
+  wire r_pop = r_en && !empty;
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      w_ptr <= '0;
+      r_ptr <= '0;
+    end else begin
+      if (w_push) w_ptr <= w_ptr + 1;
+      if (r_pop) r_ptr <= r_ptr + 1;
+    end
+  end
+
+  always_ff @(posedge clk) begin
+    if (w_push) mem[w_ptr[PTR_W-1:0]] <= w_data;
+    if (r_pop) r_data <= mem[r_ptr[PTR_W-1:0]];
+  end
+
+  assign empty = w_ptr == r_ptr;
+  assign full = (w_ptr[PTR_W] != r_ptr[PTR_W]) && (w_ptr[PTR_W-1:0] == r_ptr[PTR_W-1:0]);
+
+endmodule
+
+module sram #(
+  parameter int WIDTH = 8,
+  parameter int DEPTH = 8,
+  localparam int ADDR_W = $clog2(DEPTH)
+)(
+  input logic clk,
+  input logic [WIDTH-1:0] w_data,
+  input logic [ADDR_W-1:0] w_addr, r_addr,
+
+  output logic [WIDTH-1:0] r_data
+);
+  logic [WIDTH-1:0] mem [0: DEPTH-1];
+
+
+
+endmodule
+
+
+module async_fifo #(
+  parameter int WIDTH = 8,
+  parameter int DEPTH = 8,
+  localparam int ADDR_W = $clog2(DEPTH)
+  // localparam int ADDR_W = DEPTH > 1 ? $clog2(DEPTH) : 1
+) (
+  input logic clk_wr, clk_rd, rst_n,
+  input logic w_en, r_en,
+  input logic [WIDTH-1:0] w_data,
+
+  output logic [WIDTH-1:0] r_data,
+  output logic full, empty
+);
+
+  logic [WIDTH-1:0] mem [0: DEPTH-1];
+  //定义指针
+  logic [ADDR_W:0] w_ptr_bin, r_ptr_bin, w_ptr_gray, r_ptr_gray;
+  logic [ADDR_W:0] w_ptr_bin_n, r_ptr_bin_n, w_ptr_gray_n, r_ptr_gray_n;
+  //定义2FF逻辑指针
+  logic [ADDR_W:0] w_ptr_gray_d1, w_ptr_gray_d2, r_ptr_gray_d1, r_ptr_gray_d2;
+  //定义空满逻辑
+  logic full_n, empty_n
+  //定义读写逻辑
+  logic w_push, r_pop;
+
+  // Write domain
+  assign w_push = w_en && !full;
+  assign w_ptr_bin_n = w_ptr_bin + {ADDR_W{1'b0}, w_push};
+  assign w_ptr_gray_n = (w_ptr_bin_n >> 1) ^ w_ptr_bin_n;
+  assign full_n = w_ptr_gray_n == {~r_ptr_gray_d2[ADDR_W: ADDR_W-1], r_ptr_gray_d2[ADDR_W-1: 0]};
+
+  always_ff @(posedge clk_wr or negedge rst_n) begin
+    if (!rst_n) begin
+      w_ptr_bin <= '0;
+      w_ptr_gray <= '0;
+      full <= '0;
+    end else begin
+      w_ptr_bin <= w_ptr_bin_n;
+      w_ptr_gray <= w_ptr_gray_n;
+      full <= full_n;
+    end
+  end
+
+  always_ff @(posedge clk_wr) begin
+    if (w_push) mem[w_ptr_bin[ADDR_W-1:0]] <= w_data;
+  end
+
+  // Read domain
+  assign r_pop = r_en && !empty;
+  assign r_ptr_bin_n = r_ptr_bin + {ADDR_W{1'b0}, r_pop};
+  assign r_ptr_gray_n = (r_ptr_bin_n >> 1) ^ r_ptr_bin_n;
+  assign empty_n = r_ptr_gray_n == w_ptr_gray_d2;
+
+  always_ff @(posedge clk_rd or negedge rst_n) begin
+    if (!rst_n) begin
+      r_ptr_bin <= '0;
+      r_ptr_gray <= '0;
+      empty <= 1'b1;
+    end else begin
+      r_ptr_bin <= r_ptr_bin_n;
+      r_ptr_gray <= r_ptr_gray_n;
+      empty <= empty_n;
+      if (r_pop) r_data <= mem[r_ptr_bin[ADDR_W-1:0]];
+    end
+  end
+
+  // 2FF
+  always_ff @(posedge clk_rd or negedge rst_n) begin
+    if (!rst_n) begin
+      w_ptr_gray_d1 <= '0;
+      w_ptr_gray_d2 <= '0;
+    end else begin
+      w_ptr_gray_d1 <= w_ptr_gray;
+      w_ptr_gray_d2 <= w_ptr_gray_d1;
+    end
+  end
+
+  always_ff @(posedge clk_wr or negedge rst_n) begin
+    if (!rst_n) begin
+      r_ptr_gray_d1 <= '0;
+      r_ptr_gray_d2 <= '0;
+    end else begin
+      r_ptr_gray_d1 <= r_ptr_gray;
+      r_ptr_gray_d2 <= r_ptr_gray_d1;
+    end
+  end
+
+endmodule
+
+
+// Scoreboard Sep. Q55
+// Handle out-of-order transaction
+// Compare txn from predictor and monitor
+// transaction_id
+// 1. exp_txn before/after act_txn
+// 2. txn in arbitrary order
+// 3. memory managment by removing matched pairs & report mismatch
+
+class my_txn extends uvm_sequence_item;
+  `uvm_object_utils(my_txn)
+
+  rand int id;
+  rand bit [64:0] data;
+  ...
+
+endclass
+
+
+`uvm_analysis_imp_decl(_exp)
+`uvm_analysis_imp_decl(_act)
+
+class ooo_sb extends uvm_scoreboard;
+  `uvm_component_utils(ooo_sb);
+
+  uvm_analysis_imp_exp #(my_txn, ooo_sb) exp_imp;
+  uvm_analysis_imp_act #(my_txn, ooo_sb) act_imp;
+
+  my_txn exp_q[int];
+  my_txn act_q[int];
+
+  function new(string name, uvm_component parent);
+    super.new(name, parent);
+    exp_imp = new("exp_imp", this);
+    act_imp = new("act_imp", this);
+  endfunction
+
+  function void write_exp(my_txn t);
+    if (act_q.exists(t.id)) begin
+      compare_txn(t, act_q[t.id]);
+      act_q.delete(t.id);
+    end else begin
+      exp_q[t.id] = t;
+    end
+  endfunction
+
+  function void write_act(my_txn t);
+    if (exp_q.exists(t.id)) begin
+      compare_txn(exp[t.id], t);
+      exp_q.delete(t.id);
+    end else begin
+      exp_q[t.id] = t;
+    end
+  endfunction
+
+  function void compare_txn(my_txn exp, my_txn act);
+    static int match_cnt, mismatch_cnt;
+    if (exp.compare(act)) begin
+      match_cnt++;
+    end else begin
+      mismatch_cnt++;
+    end
+  endfunction
+
+endclass
+
+interface bus_if(input logic clk, input logic rst_n);
+  bit [31:0] data;
+  bit valid;
+  int id;
+endinterface
+
+
+使用uvm搭建简单的driver环境,要求：
+1、定义并使用interface和clocking,默认信号clk,rst_n,vld,data。vld信号为input,不用驱动。
+2、定义一个driver的类,类继承于uvm。不用写class中的各种phase,只写满足下面条件3的核心的task即可。
+3、激励要求:
+     (a)有N个同样的激励发送端口(端口间独立),要求能够同时把N个端口都驱动起来。
+     (b)每个端口的发送数据时序要求:vld信号有效后,第三拍给出data数据(data数据位宽和赋值任意,不做要求)。
+            注意:vld拉高的时序可以任意,vld可以背靠背;
+
+// Interface
+interface bus_if(input logic clk, input logic rst_n);
+    logic valid;
+    logic [W-1:0] data;
+    clocking cb @(posedge clk);
+        input rst_n;
+        output valid, data;
+    endclocking
+endinterface
+
+class my_driver extends uvm_driver #(my_txn);
+    `uvm_component_utils(my_driver)
+    ...
+
+    task run_phase(uvm_phase phase);
+        foreach(vif[i]) fork
+            automatic int k = i;
+            drive_port(vif[k]);
+        join_none
+    endtask
+
+    task drive_port(int k);
+        forever begin
+            @(vif.cb);
+                if (vif[k].cb.valid)
+                    fork
+                        repeat(3) @(vif[k].cb); vif[k].cb.data <= t.data;
+                    join_none
+        end
+    endtask
+
+
+endclass

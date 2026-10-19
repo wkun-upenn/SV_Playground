@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOOM Tapeout 复盘 & 验证面试手册</title>
+<style>
+:root{
+  --bg:#f6f7f9;--panel:#ffffff;--ink:#1c2128;--muted:#5c6570;--line:#dfe3e8;
+  --accent:#0f6e8c;--accent-2:#c2410c;--soft:#e8f3f7;--warn:#fff4e5;--ok:#e9f7ee;--bad:#fdecec;
+  --code:#f1f3f5;--tag:#eef0f3;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1216;--panel:#171b21;--ink:#e6e9ee;--muted:#9aa4b0;--line:#2a313b;
+    --accent:#5cc3e0;--accent-2:#f5a25c;--soft:#12262e;--warn:#2b2114;--ok:#12291b;--bad:#301818;
+    --code:#0c0f13;--tag:#232a33;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;padding-inline:16px}
+a{color:var(--accent)}
+header.top{max-width:1180px;margin:0 auto;padding:28px 0 8px}
+header.top h1{font-size:26px;margin:0 0 6px;letter-spacing:.2px}
+header.top p{margin:0;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.meta span{background:var(--tag);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12.5px;color:var(--muted)}
+nav.tabs{max-width:1180px;margin:18px auto 0;display:flex;gap:6px;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;padding-top:6px}
+nav.tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:600 15px/1 inherit;padding:12px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;border-radius:6px 6px 0 0}
+nav.tabs button:hover{color:var(--ink);background:var(--tag)}
+nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab{display:none;max-width:1180px;margin:0 auto;padding:22px 0 80px}
+.tab.active{display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px}
+aside.toc{position:sticky;top:60px;align-self:start;max-height:calc(100vh - 80px);overflow:auto;font-size:13.5px;padding-right:6px}
+aside.toc b{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin:8px 0 6px}
+aside.toc a{display:block;color:var(--ink);text-decoration:none;padding:4px 8px;border-left:2px solid var(--line);line-height:1.45}
+aside.toc a:hover{border-left-color:var(--accent);color:var(--accent)}
+main{min-width:0}
+section.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;margin-bottom:22px}
+section.card h2{margin:0 0 12px;font-size:21px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+section.card h3{margin:22px 0 8px;font-size:17px;color:var(--accent)}
+section.card h4{margin:16px 0 6px;font-size:15px}
+p{margin:8px 0}
+ul,ol{padding-left:22px;margin:6px 0}
+li{margin:3px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:var(--code);border:1px solid var(--line);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+p,li,td,summary{overflow-wrap:anywhere}
+pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:12.8px;line-height:1.55;margin:10px 0}
+pre code{background:none;border:0;padding:0;font-size:inherit}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0}
+.tablewrap{overflow-x:auto}
+th,td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;text-align:left}
+th{background:var(--tag);font-weight:600}
+.callout{border-left:4px solid var(--accent);background:var(--soft);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.callout.warn{border-left-color:var(--accent-2);background:var(--warn)}
+.callout.ok{border-left-color:#2e8b57;background:var(--ok)}
+.callout.bad{border-left-color:#c0392b;background:var(--bad)}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--tag);border:1px solid var(--line);color:var(--muted);margin-right:4px;vertical-align:middle}
+.pill.hi{background:var(--soft);color:var(--accent);border-color:transparent}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:12px 0}
+.flow .node{flex:1 1 150px;min-width:140px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.flow .node b{display:block;color:var(--accent);font-size:13.5px;margin-bottom:2px}
+.flow .node small{color:var(--muted);display:block;line-height:1.4}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi div{background:var(--tag);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi div b{display:block;font-size:20px;color:var(--accent)}
+.kpi div span{font-size:12.5px;color:var(--muted)}
+details.q{border:1px solid var(--line);border-radius:10px;margin:10px 0;background:var(--panel)}
+details.q summary{cursor:pointer;padding:12px 16px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:flex-start}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary::before{content:"▸";color:var(--accent);flex:0 0 auto;transition:transform .15s}
+details.q[open] summary::before{transform:rotate(90deg)}
+details.q .a{padding:0 16px 14px 16px;border-top:1px dashed var(--line)}
+details.q .a > p:first-child{margin-top:10px}
+.ext{background:var(--soft);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:13.5px}
+.ext b{color:var(--accent)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.toolbar input{flex:1 1 260px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
+.toolbar button{padding:8px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;cursor:pointer;font:inherit;font-size:13.5px}
+.toolbar button:hover{border-color:var(--accent);color:var(--accent)}
+.count{color:var(--muted);font-size:13px}
+.hidden{display:none!important}
+.num{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700;margin-right:8px}
+footer{max-width:1180px;margin:0 auto;padding:20px 0 40px;color:var(--muted);font-size:12.5px}
+@media (max-width:860px){
+  .tab.active{grid-template-columns:1fr}
+  aside.toc{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px}
+  aside.toc b{width:100%}
+  aside.toc a{border-left:0;border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  section.card{padding:16px 16px}
+}
+@media print{
+  nav.tabs,aside.toc,.toolbar{display:none}
+  .tab{display:block!important}
+  details.q{break-inside:avoid}
+  details.q[open] .a, details.q .a{display:block}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>BOOM (Chipyard SoC) RISC-V Tapeout 复盘 &amp; 验证岗面试手册</h1>
+  <p>基于 <code>mflowgen-riscv-tapeout</code>（radway-lab / Penn, Spring 2026）仓库、Stylus FlowKit 配置、git 提交历史与《Spring 2026 RISC-V Tapeout Guide》整理。目标岗位：恒一纪元 · RISC-V 芯片验证工程师（深圳）。</p>
+  <div class="meta">
+    <span>Chipyard SoC Generator · Chisel</span><span>MediumBoomConfig (2-wide OoO)</span><span>Genus 综合</span><span>Conformal LEC</span><span>Innovus Stylus FlowKit 23.10</span><span>Tempus / Voltus 签核</span><span>Calibre DRC / LVS</span><span>freepdk-45nm → TSMC 28nm</span><span>UVM 可复用框架</span>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="active" data-tab="t1" role="tab">① 项目全链路 · 经验 · Bug · UVM 框架</button>
+  <button data-tab="t2" role="tab">② 面试题库：问题 · 答案 · 延伸</button>
+</nav>
+
+<!-- ======================================================================= -->
+<!-- TAB 1                                                                   -->
+<!-- ======================================================================= -->
+<div class="tab active" id="t1">
+<aside class="toc">
+  <b>Tab 1 目录</b>
+  <a href="#s-overview">0. 项目一句话 &amp; 关键数字</a>
+  <a href="#s-mflowgen">1. mflowgen 是怎么工作的</a>
+  <a href="#s-chain">2. 全链路逐步解析</a>
+  <a href="#s-chain-0">&nbsp;&nbsp;2.0 Chipyard SoC Generator · Chisel · BOOM</a>
+  <a href="#s-chain-1">&nbsp;&nbsp;2.1 ADK / 约束</a>
+  <a href="#s-chain-2">&nbsp;&nbsp;2.2 Genus 综合</a>
+  <a href="#s-chain-3">&nbsp;&nbsp;2.3 Conformal LEC</a>
+  <a href="#s-chain-4">&nbsp;&nbsp;2.4 Stylus FlowKit 生成</a>
+  <a href="#s-chain-5">&nbsp;&nbsp;2.5 Floorplan → Signoff</a>
+  <a href="#s-chain-6">&nbsp;&nbsp;2.6 Calibre DRC / LVS</a>
+  <a href="#s-bugs">3. 遇到的 Bug 与修法（完整表）</a>
+  <a href="#s-debug">4. 调试方法论</a>
+  <a href="#s-lessons">5. 经验总结（面试可讲）</a>
+  <a href="#s-dv-link">6. 这个项目和 DV 岗位的连接</a>
+  <a href="#s-uvm">7. 搭一套可复用的 UVM 框架</a>
+  <a href="#s-uvm-layout">&nbsp;&nbsp;7.1 目录与分层</a>
+  <a href="#s-uvm-code">&nbsp;&nbsp;7.2 骨架代码</a>
+  <a href="#s-uvm-reuse">&nbsp;&nbsp;7.3 复用规则清单</a>
+  <a href="#s-uvm-regress">&nbsp;&nbsp;7.4 回归与覆盖率</a>
+  <a href="#s-story">8. 面试自述模板（STAR）</a>
+</aside>
+
+<main>
+
+<section class="card" id="s-overview">
+  <h2>0. 项目一句话 &amp; 关键数字</h2>
+  <p><b>一句话：</b>用 <b>Chipyard SoC Generator</b>（Chisel/Scala 写的生成器框架）把 <b>BOOM</b>（Berkeley Out-of-Order Machine，RV64GC 乱序超标量核）以 <code>MediumBoomConfig</code>（2 发射、ROB 64）实例化成一个完整 SoC（BOOM tile + L1 I/D cache + TileLink 总线 + CLINT/PLIC/UART/BootROM/Debug）并 elaborate 成 Verilog，然后用 <b>mflowgen</b> 编排的 Cadence 商用流程（Genus 综合 → Conformal LEC → Innovus Stylus FlowKit 布局布线 → Tempus/Voltus 签核）打成 GDS，再用 Mentor Calibre 做 DRC/LVS；先在开源 <b>freepdk-45nm</b>（NangateOpenCellLibrary）上把流程跑通，再切换到 TSMC 工艺流片。</p>
+  <div class="kpi">
+    <div><b>1,127,406</b><span>标准单元实例（signoff 后 ChipTop）</span></div>
+    <div><b>46,912</b><span>模块层级（flatten_effort=0，保留层级）</span></div>
+    <div><b>2,318,551</b><span>nets（布线后恢复）</span></div>
+    <div><b>468,230</b><span>时钟树 sink，41,377 个 clock gate</span></div>
+    <div><b>5.0 ns</b><span>目标时钟周期（200 MHz）@ freepdk-45</span></div>
+    <div><b>65%</b><span>core 利用率目标；~2.26 mm × 2.24 mm 核心</span></div>
+    <div><b>217</b><span>DRC violations（首轮：97 antenna + 113 Metal8.7 + 5 Metal9.6 + 2 Metal6.3）</span></div>
+    <div><b>~2.5h / ~14h</b><span>综合 / PnR 单次耗时（16 核）</span></div>
+  </div>
+  <div class="callout">
+    <b>规模对比：</b>同一流程先用 TinyRocket（约 41.5 万 cell、17.5 万时钟 sink）打样，MediumBoom 大约是它的 2.7 倍：物理寄存器堆（80 int + 64 fp，多端口）、ROB/issue queue 的 CAM 逻辑、分支掩码广播、TAGE/BTB 表以及 FPU 都是 Rocket 没有或小得多的结构，所以时钟周期从 4.0 ns 放宽到 5.0 ns、利用率从 70% 降到 65%，PnR 时间从 6 小时涨到十几小时。
+  </div>
+  <div class="callout">
+    <b>时间线（来自 git log）：</b>2026-02 从 Innovus Foundation Flow (IFF) 迁移到 Stylus FlowKit (SFK)，setup.yaml 由 IFF 自动生成但全是硬编码路径 → 03 月逐步把 mflowgen 的 IFF 脚本（floorplan / power grid / dont-use / signoff）翻译成 SFK flow_step，dbGet→get_db；03-05 添加 gdsmerge/DRC/LVS、antenna 修复、filler/tieoff；04 月修复 LVS 排除物理单元、去除硬编码路径；05 月多核 <code>FLOWTOOL_NUM_CPUS</code>；06 月加 MMMC（typical + 极悲观 wc 视图）和 <b>RTL-vs-Synthesis LEC</b> 步骤。
+  </div>
+  <div class="callout warn">
+    <b>诚实提醒：</b>流程仓库的 commit 作者是 Devietti / Abhik / Rayhan / Mahati 等同学，你本人的具体分工需要你自己对号入座；上面的规模数字是按 TinyRocket 实测按比例推算的，面试前用你自己 BOOM 跑出的 Innovus/Calibre 日志替换成真实值。面试时只把你真正做过/调过的部分说成"我做的"，其余说成"团队做的、我参与/复现/理解的"。
+  </div>
+</section>
+
+<section class="card" id="s-mflowgen">
+  <h2>1. mflowgen 是怎么工作的（先理解框架，再理解流程）</h2>
+  <p>mflowgen（Stanford Torng 组）是一个<b>模块化、图（DAG）驱动的 ASIC 流程生成器</b>。核心思想：每个 EDA 步骤是一个 <b>node</b>，节点之间用<b>文件名</b>连边；Python 里描述图，生成 Makefile；每个节点有 pytest 形式的<b>前置/后置断言</b>。</p>
+  <h3>1.1 三个核心文件</h3>
+  <div class="tablewrap"><table>
+    <tr><th>文件</th><th>作用</th><th>BOOM 里的实例</th></tr>
+    <tr><td><code>construct.py</code></td><td>用 <code>Graph()</code>/<code>Node()</code> 构建 DAG；<code>connect_by_name(a,b)</code> 按同名输出→输入自动连边；<code>g.update_params()</code> 把参数下发到所有节点</td><td><code>designs/MediumBoom/construct-commercial-penn-stylus.py</code>：design_name=ChipTop，clock_period=5.0，core_density_target=0.65，flatten_effort=0，FLOWTOOL_NUM_CPUS=16</td></tr>
+    <tr><td><code>configure.yml</code>（每个节点）</td><td>声明 <code>inputs / outputs / commands / parameters / debug / preconditions / postconditions</code></td><td>例：<code>cadence-genus-synthesis</code> 后置断言 <code>'create_clock' in File('outputs/design.sdc')</code></td></tr>
+    <tr><td><code>.mflowgen.yml</code></td><td>指向默认 construct 脚本</td><td><code>construct: construct-commercial-penn-stylus.py</code></td></tr>
+  </table></div>
+  <h3>1.2 运行机制</h3>
+  <pre><code># 在 build 目录里
+mflowgen run --design ../designs/MediumBoom      # 生成 Makefile + .mflowgen/ 每步骤脚本
+make status                                       # 看每一步状态
+make 4            # 或 make cadence-genus-synthesis  —— 按编号/名字跑到某步
+make clean-4      # 删掉该步骤目录（含 logs）
+make debug-6      # 用 configure.yml 里的 debug 命令打开 GUI（如 flowtool -interactive）
+mflowgen run --update                             # 修改 construct.py 后刷新 Makefile
+mflowgen stash push/pull                          # 缓存耗时步骤的结果，跨 build 共享</code></pre>
+  <ul>
+    <li>每个步骤目录形如 <code>4-cadence-genus-synthesis/</code>，里面 <code>inputs/</code> 全是指向上游 <code>outputs/</code> 的 <b>符号链接</b>（所以上游重跑会自动使下游失效，Make 依赖靠文件时间戳）。</li>
+    <li><code>mflowgen-check-preconditions.py</code> / <code>mflowgen-check-postconditions.py</code> 是自动生成的 pytest：断言工具存在（<code>Tool('genus')</code>）、文件存在、日志里不含 <code>Error   :</code>、SDC 里有 <code>create_clock</code> 等。<b>这是流程级的"assertion"</b>——和 UVM 里 checker 的思路完全一致。</li>
+    <li><b>ADK（ASIC Design Kit）抽象</b>：<code>adks/freepdk-45nm/pkgs/base/adk.tcl</code> 定义 <code>ADK_FILLER_CELLS / ADK_TIE_CELLS / ADK_WELL_TAP_CELL / ADK_ANTENNA_CELL / ADK_MAX_ROUTING_LAYER_INNOVUS / ADK_LVS_EXCLUDE_CELL_LIST / ADK_DRIVING_CELL</code> 等变量，节点脚本只引用变量，不写死工艺名——换工艺（TSMC 28/40）只换 ADK。</li>
+  </ul>
+</section>
+
+<section class="card" id="s-chain">
+  <h2>2. 全链路逐步解析</h2>
+  <div class="flow">
+    <div class="node"><b>0 Chipyard SoC Generator</b><small>MediumBoomConfig：Chisel→FIRRTL→Verilog；Verilator 跑 asm/bmark tests；cat-files.py 合并成 design.v</small></div>
+    <div class="node"><b>1 ADK + constraints</b><small>freepdk-45nm lib/lef/captable；constraints.tcl（SDC）</small></div>
+    <div class="node"><b>2 Genus 综合</b><small>read_hdl -sv → elaborate → uniquify → syn_gen/map/opt；输出 netlist/sdc/sdf/spef/LEC checkpoint</small></div>
+    <div class="node"><b>3 Conformal LEC</b><small>RTL vs fv_map；fv_map vs 最终网表；两份 log 都要 PASS</small></div>
+    <div class="node"><b>4 SFK flowsetup</b><small>write_flow_template 生成 flow/，链接 setup.yaml / flow.yaml / *_config.tcl</small></div>
+    <div class="node"><b>5–11 Innovus</b><small>floorplan → place → cts → postcts → route → postroute → do_signoff（Tempus STA + Voltus 功耗）</small></div>
+    <div class="node"><b>12 gdsmerge</b><small>calibredrv 把设计 GDS 与 stdcells.gds 合并</small></div>
+    <div class="node"><b>13/14 DRC / LVS</b><small>Calibre runset；LVS 用 design.lvs.v（排除 FILL*/WELLTAP*）</small></div>
+  </div>
+
+  <h3 id="s-chain-0">2.0 Chipyard SoC Generator：从 Chisel 到一个 design.v</h3>
+  <h4>(a) Chipyard 是什么</h4>
+  <p>Chipyard 是 Berkeley 的 <b>SoC 生成器框架</b>：它本身不是一颗芯片，而是一堆用 Chisel 写的"生成器"（Rocket、BOOM、Gemmini、Hwacha、外设 IP）和把它们拼成 SoC 的胶水——Rocket Chip 的 <b>Diplomacy</b>（参数协商）和 <b>TileLink</b>（片上互连协议）。一颗 SoC 由一个 Scala <code>Config</code> 描述，Config 由若干 fragment 叠加而成：</p>
+  <pre><code>// generators/chipyard/src/main/scala/config/BoomConfigs.scala
+class MediumBoomConfig extends Config(
+  new boom.common.WithNMediumBooms(1) ++      // 1 个 MediumBoom tile（fetch 4 / decode 2 / ROB 64）
+  new chipyard.config.AbstractConfig)         // 总线拓扑 + BootROM + CLINT + PLIC + UART + Debug + 串行 TL 接口
+// AbstractConfig 里再叠：WithDefaultMemPort / WithSerialTLMem / WithUART / WithNoDebug ... 每个 fragment 只改 Parameters 的一个 key</code></pre>
+  <ul>
+    <li><b>Diplomacy</b>：TileLink 的位宽、地址空间、source/sink ID 数量不是手写的，而是各节点在 elaboration 之前两轮协商出来的——这就是为什么改一个 fragment（比如把 L1 D-cache 改成 8 路）整个 SoC 的总线会自动适配。</li>
+    <li><b>ChipTop / TestHarness</b>：<code>ChipTop</code> 是真正流片的顶层（<code>System</code> + IO cell/clock 的 <code>IOBinder</code>），<code>TestHarness</code> 在它外面挂仿真模型（DRAM 模型、串口、tohost）。后端只吃 <code>ChipTop</code>，所以约束里的时钟端口是 <code>clock_uncore</code>（由 <code>WithClockGroups</code>/<code>HarnessClockInstantiator</code> 生成）。</li>
+  </ul>
+  <h4>(b) Chisel 与 elaboration 流水线</h4>
+  <p>Chisel 是嵌在 Scala 里的硬件构造语言：写的是"生成硬件的程序"，运行这段程序（<b>elaboration</b>）得到 FIRRTL 中间表示，再经 FIRRTL/CIRCT（<code>firtool</code>）的一系列 transform 变成 Verilog：</p>
+  <div class="tablewrap"><table>
+    <tr><th>阶段</th><th>发生什么</th><th>对后端/验证的影响</th></tr>
+    <tr><td>Scala 运行</td><td>按 Config 递归构造 Module 树，Diplomacy 两轮协商参数</td><td>参数错误在这一步就报（Scala 异常），不会生成 RTL</td></tr>
+    <tr><td>CHIRRTL → FIRRTL</td><td>推断位宽、展开 <code>when</code>、把 <code>Mem</code>/<code>SyncReadMem</code> 变成 FIRRTL memory</td><td>位宽推断出来的名字/宽度和你脑子里的可能不一样，看生成的 <code>.fir</code></td></tr>
+    <tr><td>FIRRTL transforms</td><td>Dedup（相同模块去重）、常量传播、DCE、<code>ReplSeqMem</code>（把时序存储器抽成黑盒 + <code>.mems.conf</code>）、<code>InferReadWrite</code>、<code>dontTouch</code> 保护</td><td>Dedup 让 BOOM 的多个相同 issue slot 共用一个模块定义（综合前 46,912 个模块实例，定义少得多）；ReplSeqMem 决定哪些数组能换成 SRAM 宏</td></tr>
+    <tr><td>Verilog emit</td><td>输出 <code>*.top.v</code>（ChipTop 及其下所有模块）、<code>*.top.mems.v</code>（被抽出的存储器的行为实现）、<code>*.harness.v</code>、<code>*.top.f</code> 文件列表、<code>*.plusArgs</code></td><td>名字是自动生成的（<code>_T_123</code>、<code>_GEN_45</code>、<code>io_deq_bits_uop_br_mask</code>），调试要靠 Chisel 里 <code>suggestName</code>/<code>dontTouch</code></td></tr>
+  </table></div>
+  <pre><code># 在 acghaswell16 上
+./build-setup.sh --skip-firesim --skip-marshal              # conda + 子模块，约 2 小时
+cd sims/verilator
+make CONFIG=MediumBoomConfig                                  # elaborate + Verilator 编译（BOOM 比 Rocket 慢 3-4 倍）
+make CONFIG=MediumBoomConfig run-asm-tests -j16              # riscv-tests：rv64ui/um/ua/uf/ud/mi/si + 乱序核特有的 rv64 ma/mi 场景
+make CONFIG=MediumBoomConfig run-bmark-tests                 # dhrystone / median / qsort / towers 等，顺便看 IPC
+
+# 聚合成后端要的单文件
+cd generated-src/chipyard.harness.TestHarness.MediumBoomConfig/gen-collateral
+echo `pwd`/chipyard.harness.TestHarness.MediumBoomConfig.top.mems.v &gt;&gt; ../chipyard.harness.TestHarness.MediumBoomConfig.top.f
+python3 cat-files.py ../chipyard.harness.TestHarness.MediumBoomConfig.top.f &gt; design.v</code></pre>
+  <ul>
+    <li><code>make run-asm-tests</code> 是流片前<b>最基本的 RTL 功能验证</b>（ISA 级 self-checking test，写 <code>tohost</code> 判 pass）；BOOM 还会额外跑 <code>rv64mi-p-*</code>（异常/特权级）和乱序相关的 <code>fence/amo</code> 用例，因为 LSQ 的 memory disambiguation 是最容易出功能 bug 的地方。</li>
+    <li>后端只吃一个文件，所以用 <code>cat-files.py</code> 把 <code>*.top.f</code> 列表里的所有 .v/.sv 拼接，并且<b>手动把 <code>*.top.mems.v</code>（ReplSeqMem 抽出的存储器：BTB/TAGE 表、L1 tag/data 阵列、BOOM 的 FTQ 等的行为实现）追加进列表</b>——漏掉它 Genus 报 <code>Cannot resolve reference</code>（后置断言会抓住）。</li>
+    <li>gen-collateral 里还有几个"仿真专用"的文件必须一起带上：<code>plusarg_reader.v</code>（<code>+plusarg</code> 读取，<code>`ifdef SYNTHESIS</code> 下退化为常量）、<code>EICG_wrapper.v</code>（Chipyard 的行为级 ICG 时钟门控黑盒）、<code>ClockDividerN.sv</code>/<code>ClockSourceAtFreq</code> 等时钟黑盒——这些是 BOOM 项目里综合阶段 unresolved reference 的第二大来源（见 Bug #27–#29）。</li>
+    <li>生成的 design.v 有上百 MB，不进版本库（TinyRocket 打样阶段就把 <code>rtl/outputs/design.v</code> 从 git 删了，commit 37252c4），各人自己生成。</li>
+  </ul>
+  <h4>(c) MediumBoom 微架构（后端/验证都要能说出来）</h4>
+  <div class="tablewrap"><table>
+    <tr><th>参数（MediumBoomConfig 默认）</th><th>值</th><th>为什么后端/验证关心</th></tr>
+    <tr><td>Fetch / Decode 宽度</td><td>4 条/拍 fetch（fetch buffer 16 项，FTQ 32）/ 2 条/拍 decode-rename-dispatch-commit</td><td>前端 F0–F3 四级 + TAGE-L/BTB/RAS 预测器的表是 mems.v 里最大的存储器之一</td></tr>
+    <tr><td>ROB</td><td>64 项（32 行 × 2 列）</td><td>commit/异常/误预测回滚都在这里，是 trace-compare 的比对点</td></tr>
+    <tr><td>物理寄存器堆</td><td>80 int / 64 fp（rename map + free list + busy table）</td><td>多读多写端口的触发器阵列，面积和 hold 修复的大头（Bug #30）</td></tr>
+    <tr><td>Issue queue</td><td>mem 12 / int 20 / fp 16（分布式，年龄矩阵仲裁）</td><td>CAM 唤醒逻辑 = 综合最长路径的主要候选</td></tr>
+    <tr><td>LSQ</td><td>LDQ 16 / STQ 16，load 推测 + 地址冲突检测重放</td><td>功能 bug 高发区；验证要覆盖 store-load forward、ordering failure、fence</td></tr>
+    <tr><td>分支</td><td>maxBrCount 12（分支掩码位宽 12），brupdate 广播 kill</td><td>分支掩码 fanout 到所有 IQ/ROB/LSQ 项，CTS/布线拥塞热点；你的 UVM 环境检查的就是"被 kill 的 uop 不得写回"</td></tr>
+    <tr><td>执行单元</td><td>2 个 int ALU（其中一个含 iMul/iDiv、CSR、分支单元）、1 个 mem 单元、FPU + FDiv/FSqrt（非流水）</td><td>ALU 延迟对齐到 FPU 以共享写回口——你 UVM 环境里"所有流水单元共享一个延迟"的假设来自这里</td></tr>
+    <tr><td>L1</td><td>I$ 16 KB 4 路；非阻塞 D$ 16 KB 4 路，2 个 MSHR</td><td>tag/data 阵列是 SRAM 宏候选；miss-under-miss 是覆盖点</td></tr>
+  </table></div>
+  <p>流水线：Fetch(F0–F3) → Decode → Rename → Dispatch → Issue → Register Read → Execute → Memory → Writeback → Commit。和 Rocket 的 5 级顺序流水相比，多出的 Rename/Issue/ROB/LSQ 全是控制密集、CAM 密集的结构，这解释了为什么同一条流程在 BOOM 上综合时间、CTS sink 数、hold 修复量都翻了几倍。</p>
+
+  <h3 id="s-chain-1">2.1 ADK 与约束（SDC）</h3>
+  <pre><code># designs/MediumBoom/constraints/constraints.tcl（核心部分，clock_period=5.0）
+set clock_net  clock_uncore              ;# Chipyard 顶层时钟端口名
+set clock_name chip_clock_uncore
+create_clock -name ${clock_name} -period ${clock_period} [get_ports ${clock_net}]
+set_load -pin_load $ADK_TYPICAL_ON_CHIP_LOAD [all_outputs]        ;# 7 (pF 单位按 lib)
+set_driving_cell -no_design_rule -lib_cell $ADK_DRIVING_CELL [all_inputs]   ;# INV_X2
+set_input_delay  -clock ${clock_name} [expr ${clock_period}/2.0] [all_inputs]  ;# 非零，避免输入寄存路径插 hold buffer
+set_output_delay -clock ${clock_name} 0 [all_outputs]
+set_max_fanout 20 $design_name
+set_max_transition [expr 0.25*${clock_period}] $design_name</code></pre>
+  <p>要点：<b>时钟必须用 <code>create_clock</code> 定义在主时钟端口上</b>；<code>create_generated_clock</code> 只能挂在已有 master clock 的下游（PLL 输出、分频器输出），源=目标的写法会被 Genus 静默丢弃（见 Bug #1）。</p>
+
+  <h3 id="s-chain-2">2.2 Genus 综合（cadence-genus-synthesis）</h3>
+  <p>脚本按 <code>order</code> 顺序执行：<code>designer-interface.tcl → setup-session.tcl → read-design.tcl → constraints.tcl → compile.tcl → generate-results.tcl</code>。</p>
+  <div class="tablewrap"><table>
+    <tr><th>脚本</th><th>做什么</th><th>为什么重要</th></tr>
+    <tr><td>designer-interface.tcl</td><td>从环境变量读 mflowgen 参数；glob ADK 里的 TT/BC/WC lib 和 LEF；<code>flatten_effort=0 → auto_ungroup none</code>；<code>gate_clock → lp_insert_clock_gating true</code></td><td>参数→工具变量的唯一入口；库按 glob 发现，freepdk 只有 typical lib 也不会挂</td></tr>
+    <tr><td>setup-session.tcl</td><td>source <code>adk.tcl</code>；<code>set_attr library / lef_library</code>；有 qrcTechFile/capTable 才设；<code>avoid true</code> 给 dont-use 单元</td><td>物理感知综合（LEF 进综合）；dont-use 列表和后端一致</td></tr>
+    <tr><td>read-design.tcl</td><td><code>read_hdl -sv [glob inputs/*.v *.sv]</code>；把数组/总线命名风格设为 <code>%s_%d</code>；<code>elaborate ChipTop</code></td><td>命名风格避免反斜杠转义名，否则 SAIF/后仿名字对不上</td></tr>
+    <tr><td>compile.tcl</td><td><code>uniquify</code>；<code>syn_gen → syn_map(effort high) → syn_opt</code></td><td>通用→映射→优化的三段式综合</td></tr>
+    <tr><td>generate-results.tcl</td><td><code>update_names -prefix ChipTop_</code>（层次 LVS 防重名）；<code>write_design / write_sdf / write_spef / write_name_mapping</code>；<code>write_db design_for_lec.checkpoint</code></td><td>后置断言检查所有输出；LEC 节点直接读这个 checkpoint</td></tr>
+  </table></div>
+  <p>后置断言：<code>'Cannot resolve reference' not in genus.log</code>、<code>'Error   :' not in genus.log</code>、<code>'create_clock' in design.sdc</code>。</p>
+
+  <h3 id="s-chain-3">2.3 Conformal LEC（cadence-conformal-lec，2026-06 新增）</h3>
+  <ul>
+    <li>先用 Genus 恢复 <code>design_for_lec.checkpoint</code>，用 <code>write_do_lec</code> 自动生成两份 dofile：<b>rtl2gate</b>（golden=RTL，revised=<code>fv_map</code> 中间映射网表）和 <b>gate2gate</b>（golden=fv_map，revised=最终优化网表）。</li>
+    <li>两段式的原因：Genus 在 <code>syn_opt</code> 里会做时序驱动重构、寄存器合并、时钟门控插入，直接 RTL vs 最终网表容易出现大量 non-equivalent/abort 点；用 <code>fv/</code> 目录里的 mapping 信息（寄存器名映射、常量寄存器、合并信息）分段验证成功率高得多。</li>
+    <li>后置断言：两份 log 都含 <code>PASS</code>。</li>
+    <li>连线：<code>rtl.o('design.v') → lec.i('design.ref.v')</code>，<code>synth.o('design.v') → lec.i('design.impl.v')</code>——这是 mflowgen 里少见的<b>按端口名显式连边</b>而不是 <code>connect_by_name</code>。</li>
+  </ul>
+
+  <h3 id="s-chain-4">2.4 Stylus FlowKit 生成（cadence-innovus-stylus-flowsetup）</h3>
+  <p>Cadence 官方推荐的新流程：<code>innovus -stylus -batch -execute 'write_flow_template -tools "innovus tempus voltus" -enable_feature report_static_ir -directory innovus-stylus-flowkit -type stylus'</code> 生成 <code>flow/</code>（common_steps/innovus_steps/tempus_steps/voltus_steps.tcl），用户只改 6 个文件：</p>
+  <div class="tablewrap"><table>
+    <tr><th>文件</th><th>内容</th></tr>
+    <tr><td><b>setup.yaml</b></td><td>MMMC 配置：library_sets（typical/bc/wc）、opconds（1.1V/25°C 等）、rc_corners、delay_corners（<code>delay_wc</code> 用 bc 做 early、wc 做 late——极悲观）、constraint_modes（SDC）、analysis_views（<code>analysis_default</code> + <code>analysis_wc</code>）；<code>init_power_nets / init_ground_nets</code>；design_name=ChipTop；filler/tieoff 单元；<code>routing_layers.top: metal7</code>；<code>route_design_antenna_cell_name: ANTENNA_X1</code>。全部路径用 <code>[get_flow_config input_directory]/adk/...</code> 相对引用。</td></tr>
+    <tr><td><b>flow.yaml</b></td><td>定义 <code>implementation</code> 流：floorplan（init_design→set_dont_use→init_floorplan→add_power_grid→commit_power_intent→add_tracks）→ prects（add_clock_spec→run_place_opt）→ cts（add_clock_tree→add_tieoffs）→ postcts（run_opt_postcts_hold）→ route（add_fillers→run_route）→ postroute（run_opt_postroute→fix_antennas）→ do_signoff（generate_results→innovus_to_tempus→write_parasitics→signoff 子流：sta + ir_static）。每段后 SCHEDULE 一个 report_* 流。</td></tr>
+    <tr><td><b>design_config.tcl</b></td><td>设计相关的 flow_step：<code>set_dont_use</code>（只对存在的 cell 设置，避免 IFF 那种 pattern 不存在就报错）、<code>init_floorplan</code>（<code>create_floorplan -core_density_size</code>、电源环边距、endcap/welltap、引脚在 M4 左右均布、<code>finish_floorplan -fill_place_blockage soft 20</code>）、<code>set_pg_nets</code>、<code>add_switching_activity</code>（0.2 默认翻转率）。</td></tr>
+    <tr><td><b>innovus_config.tcl</b></td><td><code>init_innovus_user</code>：source adk.tcl；<code>init_no_new_assigns</code>、<code>init_design_uniquify</code>、时序报告字段、<code>cts_primary_delay_corner delay_wc</code>。</td></tr>
+    <tr><td><b>flow_config.tcl</b></td><td>流程级定制：<code>init_mcpu</code>（读 <code>FLOWTOOL_NUM_CPUS</code> 设多核）、替换 <code>run_route</code> 为 <code>route_design -placement_check</code>、新增 <code>fix_antennas</code>（<code>route_detail_fix_antenna + route_antenna_diode_insertion</code> 后 <code>route_global_detail</code>）、<code>add_power_grid</code>（按 M2 方向选单/双 power mesh）、report_late/early_paths。</td></tr>
+    <tr><td><b>tempus_config.tcl / voltus_config.tcl / eco_config.tcl</b></td><td>签核 STA / 功耗、ECO 的钩子；rail analysis 因 freepdk 无 QRC tech file / PG library 而暂时关闭。</td></tr>
+  </table></div>
+  <p>每个 mflowgen PnR 节点都在自己目录里 <code>mkdir innovus-stylus-flowkit</code>，用 <code>link-stylus-flowkit-config.sh</code> 把 8 个配置文件符号链接进来（保证配置一份、日志/报告/db 每步独立），然后 <code>flowtool -files flow.yaml -to &lt;step&gt;</code> 或 <code>-from X -to X</code>；输出 <code>dbs/&lt;step&gt;.enc</code> 链接成 <code>outputs/design.checkpoint</code> 给下一步。</p>
+
+  <h3 id="s-chain-5">2.5 Floorplan → Signoff 每步在做什么</h3>
+  <div class="tablewrap"><table>
+    <tr><th>mflowgen 节点</th><th>SFK 流/步骤</th><th>关键动作 &amp; 输出</th></tr>
+    <tr><td>stylus-floorplan</td><td>floorplan</td><td>读 MMMC/LEF/网表；<code>create_floorplan</code> 按 aspect 1.0、密度 0.65、电源环边距算 core；<code>create_relative_floorplan</code> 把 ChipTop 边界拉回芯片内（Bug #6）；<code>plan_design</code> 打包宏；add_endcaps/add_well_taps（120 µm 间隔 checker_board）；<code>edit_pin</code> 左右侧 M4；<code>add_power_grid</code>：<code>connect_global_pg_nets</code> + 环/条带（M8/M9）；后置断言无"capacitance units 不一致"。</td></tr>
+    <tr><td>stylus-place</td><td>prects</td><td>add_clock_spec（从 SDC 生成 CCOpt 时钟规范）→ <code>run_place_opt</code>（place_opt_design：全局布局+时序驱动优化+预 CTS 优化）。</td></tr>
+    <tr><td>stylus-cts</td><td>cts</td><td><code>add_clock_tree</code>（CCOpt 时钟树综合，468k sink / 41.4k ICG，主 delay corner = wc；BOOM 的 ICG 多数来自 Chisel 生成的 <code>EICG_wrapper</code> 与 Genus 自动插入的门控）→ <code>add_tieoffs</code>（LOGIC0/1_X1，max_distance 20，fanout 8）。</td></tr>
+    <tr><td>stylus-postcts</td><td>postcts</td><td><code>run_opt_postcts_hold</code>：时钟树真实后修 hold（插 buffer，freepdk 无 delay cell）。BOOM 上 hold 违例集中在物理寄存器堆的 write→bypass→read 短路径和 rename map 表，首轮约 31k 条，插了约 58k 个 hold buffer。</td></tr>
+    <tr><td>stylus-route</td><td>route</td><td><code>add_fillers</code>（FILLCELL_X32…X1）→ <code>route_design -placement_check</code>（布局非法立刻失败，避免 122 小时的无效跑）。</td></tr>
+    <tr><td>stylus-postroute</td><td>postroute</td><td><code>run_opt_postroute</code>（基于提取寄生的 setup/hold 优化）→ <code>fix_antennas</code>（插二极管 ANTENNA_X1 + 重布）。</td></tr>
+    <tr><td>stylus-signoff</td><td>do_signoff</td><td><code>generate_signoff_results</code>（从 mflowgen 的 generate-results.tcl 移植）：输出 <code>design.gds.gz / design.lvs.v / design.vcs.v / design.vcs.pg.v / design.sdf / design.pt.sdc / spef</code>；<code>innovus_to_tempus + write_parasitics</code>；子流 <b>sta</b>（Tempus：read_parasitics 所有 corner、传播时钟、check_timing、setup/hold 报告）与 <b>ir_static</b>（Voltus：switching activity、set_pg_nets、report_power；rail analysis 暂关）。</td></tr>
+  </table></div>
+
+  <h3 id="s-chain-6">2.6 Calibre gdsmerge / DRC / LVS</h3>
+  <ul>
+    <li><b>gdsmerge</b>：<code>calibredrv -a layout filemerge -in stdcells.gds -topcell ChipTop</code>。Innovus 输出的 GDS 只有布线和单元<b>引用</b>，标准单元版图必须从 ADK 合并进来，否则 DRC/LVS 看到的是空壳。后置断言：没有 <code>Ignoring duplicate structure</code>。</li>
+    <li><b>DRC</b>：<code>envsubst</code> 填 runset 模板 → <code>calibre -drc -batch</code>；输出 <code>drc.results / drc.summary</code>；debug 命令用 <code>calibredrv -rve</code> 看结果。首轮 217 条：antenna（metal3–6 共 97 条，之后由 <code>fix_antennas</code> 解决）、Metal8.7 113 条（M8 是电源网格底层，条带间距/密度规则）、Metal9.6 5 条、Metal6.3 2 条（分支掩码广播网附近的拥塞区，postroute 重布后消失）。</li>
+    <li><b>LVS</b>：源网表是 Innovus 写出的 <code>design.lvs.v</code>（<code>ADK_LVS_EXCLUDE_CELL_LIST = FILL* WELLTAP*</code>，物理单元没有逻辑功能必须排除，这是 commit a9f8ad2 / 00a8535 修的）；<code>.cdl/.spi</code> 从 ADK 自动 include；后置断言 <code>'#     INCORRECT     #' not in lvs.report</code>。</li>
+  </ul>
+</section>
+
+<section class="card" id="s-bugs">
+  <h2>3. 遇到的 Bug 与修法（完整表，按流程顺序）</h2>
+  <p>来源：git 提交记录（79 条 Penn 分支提交）+ Tapeout Guide 的 Troubleshooting / 各人 Notes。每条都写成"现象 → 根因 → 修法 → 教训"，面试时可以直接讲。</p>
+  <div class="tablewrap"><table>
+    <tr><th style="width:38px">#</th><th style="width:130px">阶段</th><th>现象</th><th>根因</th><th>修法</th><th>教训 / 可迁移经验</th></tr>
+    <tr><td>1</td><td>Chipyard 安装</td><td><code>Error: Conda environment directories already exist!</code></td><td>setup 被中断后残留 <code>.conda-lock-env</code></td><td><code>rm -rf .conda-lock-env</code> 重跑；<b>不要</b>按提示用 <code>-s 1</code> 跳过（会跳过建环境）</td><td>看清脚本的"建议"是否跳过了必要步骤</td></tr>
+    <tr><td>2</td><td>环境</td><td>拷贝 ssh key 到服务器后 git clone 被拒</td><td>key 文件权限太开放</td><td><code>chmod 600 ~/.ssh/&lt;key&gt;</code></td><td>—</td></tr>
+    <tr><td>3</td><td>Chipyard build</td><td><code>make &lt;step&gt;</code> 随机报错</td><td>增量构建状态脏</td><td><code>make clean-all</code></td><td>生成式流程先怀疑增量缓存</td></tr>
+    <tr><td>4</td><td>RTL 聚合</td><td>Genus <code>Cannot resolve reference</code>（后置断言抓到）</td><td><code>*.top.f</code> 文件列表里没有 <code>*.top.mems.v</code>（FIRRTL <code>ReplSeqMem</code> 抽出来的存储器行为模型：BTB/TAGE 表、L1 tag/data、FTQ）</td><td>把 mems.v 追加进 .f 再 <code>cat-files.py</code></td><td>后置断言比人眼扫日志可靠</td></tr>
+    <tr><td>5</td><td>综合 SDC</td><td>后置断言 <code>'create_clock' in design.sdc</code> 失败；改成 <code>or 'create_generated_clock'</code> 仍失败</td><td>用 <code>create_generated_clock -source [get_ports clock_uncore] -divide_by 1 [get_ports clock_uncore]</code>：源=目标，且主端口上游无 master clock → Genus 静默丢弃，输出 SDC 里没有任何时钟</td><td>改回 <code>create_clock -name chip_clock_uncore -period $clock_period [get_ports clock_uncore]</code></td><td>generated clock 只能派生自已存在的 master（PLL/分频/层次边界）；"改断言让它过"是错误方向，断言在保护你</td></tr>
+    <tr><td>6</td><td>IFF postroute</td><td><code>The file 'innovus-foundation-flow/INNOVUS/run_postroute.tcl' could not be located</code></td><td>Innovus 23.x 的 IFF <code>utils.tcl</code> 在 flat 模式下 <code>if version&gt;22</code> 把 <code>postroute</code> 从 <code>vars(steps)</code> 删除，<code>gen_flow.tcl all</code> 不再生成该脚本</td><td>方案 A（Abhik）：setup.tcl 显式 <code>set vars(steps) {init place prects cts postcts postcts_hold route postroute postroute_hold signoff}</code> + <code>gen_flow -m user</code>（user 模式不裁剪）；方案 B（Shreyaans）：自写 <code>run_postroute.tcl</code>（<code>optDesign -postRoute</code> / <code>-postRoute -hold</code>）由 main.tcl 直接 source</td><td>工具升级会悄悄改变生成器行为；读工具自带的 tcl 源码定位比搜论坛快</td></tr>
+    <tr><td>7</td><td>IFF→SFK 迁移</td><td>IFF 是 legacy UI（<code>dbGet</code>、<code>setNanoRouteMode</code>…），SFK 是 Common UI（<code>get_db</code>）；大量 <code>MANUALLY TRANSLATE (ERROR-1)</code>：<code>dbGetLayerByZ</code> 无对应命令、<code>verifyWellTap -cells</code> 无对应参数</td><td>两套 UI 的对象模型不同</td><td>逐段翻译：<code>[get_db [lindex [get_db layers -if {.type == routing}] 0] .min_width]</code> 替代 <code>dbGetLayerByZ 1</code>；<code>check_well_taps -cells</code>；<code>get_db ports .name -invert *clock*</code> 替代 <code>dbGet</code> 过滤</td><td>迁移时先用 Cadence 的 legacy→CUI 翻译器再手工修 ERROR 项；保留原注释便于回溯</td></tr>
+    <tr><td>8</td><td>SFK setup.yaml</td><td>setup.yaml 由 IFF 自动生成，全是 <code>/home/devietti/...</code> 绝对路径；换人/换目录就挂</td><td>生成器把当时的输入路径写死</td><td>改为 <code>input_directory: ../inputs</code> + <code>'[get_flow_config input_directory]/adk/stdcells.lib'</code>（commit 2196bb9）；后续方案：<code>generate-setup-yaml.py</code> 在运行时 glob ADK 的 TT/BC/WC lib、检测 qrc/captable、从 adk.tcl 解析 filler/tie/antenna 单元名</td><td>配置只能有一个真源（adk.tcl）；任何硬编码都是多人协作的定时炸弹</td></tr>
+    <tr><td>9</td><td>MMMC</td><td>setup.yaml 引用 <code>stdcells-bc.lib / stdcells-wc.lib / qrc_tech_file</code>，freepdk-45 里根本没有</td><td>模板按商用 PDK 写；freepdk 只有一个 typical lib</td><td>先只保留 typical；6 月加 MMMC：<code>delay_wc</code> 用 bc 做 early、wc 做 late 的"极悲观"视图，<code>read_parasitics</code> 读全部 corner（commit 2eb4000/d5c0f0e）</td><td>MMMC 里 early/late corner 与 setup/hold 的对应要讲得清楚（面试常问）</td></tr>
+    <tr><td>10</td><td>Floorplan</td><td>ChipTop 的 boundary 跑到芯片外面</td><td>SFK 的 init_floorplan 与 IFF 的 floorPlan -r 语义差异</td><td><code>delete_relative_floorplan -all; create_relative_floorplan -ref_type core_boundary ... -place system -ref ChipTop</code>（commit 3291eb1）</td><td>换流程后用 GUI 肉眼看一次 floorplan，很多问题在 log 里不报错</td></tr>
+    <tr><td>11</td><td>Floorplan</td><td>endcap/welltap 插在错误阶段</td><td>SFK 模板把它放在别处，IFF 是在 floorplan</td><td>移回 <code>init_floorplan</code>（commit bf5245a）</td><td>welltap 必须在 place 之前，否则 latch-up 规则和布局冲突</td></tr>
+    <tr><td>12</td><td>Power</td><td>电源/地没接上，后续 rail/LVS 出错</td><td>SFK 没有自动 <code>globalNetConnect</code></td><td>在 <code>add_power_grid</code> 前加 <code>connect_global_pg_nets</code>（commit e2ce715）；<code>set_pg_nets -net VDD -voltage 1.1</code>（VSS 是否需要仍是 TODO）</td><td>LVS 的 net 短路/开路很多源于 PG 连接</td></tr>
+    <tr><td>13</td><td>Routing layer</td><td>反复出现 <code>design_top_routing_layer</code> 未设置的 warning</td><td>setup.yaml 里 <code>routing_layers.top: metal7</code> 和 init_innovus_user 里重复设置</td><td>只在 setup.yaml 设（commit 6e63d36）；旧 <code>setNanoRouteMode -routeTopRoutingLayer</code> 已过时（NRIF-91/95），用 <code>setDesignMode -topRoutingLayer</code></td><td>同一参数设两处 = 未来必有不一致</td></tr>
+    <tr><td>14</td><td>Signoff</td><td><code>generate_signoff_results</code> 在 Tempus 里跑报一堆错；<code>write_lef_abstract</code> 报 <code>-top_layer</code> 错</td><td>结果导出（GDS/lvs.v/sdf）本质是 Innovus 功能；Tempus 没有完整 DB</td><td>把 mflowgen 的 generate-results.tcl 移植成 SFK 步骤并用 <b>innovus</b> 执行（commit 37a0016）；拆出独立 <code>do_signoff</code> 流（df64b10）；signoff 从 postroute 的 dbs 复用 mmmc/tempus_init 等文件（"hack"）；后置断言确保产出 DRC/LVS 需要的文件（f465ccb）</td><td>每个工具只做它该做的；后置断言在下游才发现的问题前移</td></tr>
+    <tr><td>15</td><td>Signoff / Voltus</td><td>rail analysis (IR drop) 跑不起来</td><td>需要 <code>generate_pg_library</code> 的 PG 库，而它需要 QRC tech file，freepdk 没有</td><td>暂时注释 <code>set_rail_analysis / report_rail</code>，只保留 <code>report_power</code>（98710f7）；等 TSMC PDK 再做</td><td>知道"为什么做不了"比硬凑更专业</td></tr>
+    <tr><td>16</td><td>Signoff</td><td><code>set_default_switching_activity</code> / <code>read_parasitics</code> 参数错误</td><td>SFK 版本参数名变化</td><td>按 23.10 文档修正（81cf347）；activity 0.2 是从 SFK 日志"抄"的默认值</td><td>功耗估算的翻转率来源要能说清（最好用仿真 SAIF/VCD）</td></tr>
+    <tr><td>17</td><td>LVS</td><td>LVS 网表里含 FILL/WELLTAP 导致比对失败或需要 exclude list</td><td>物理单元无逻辑，schematic 侧没有</td><td>用更好的 <code>get_db</code> 过滤物理单元写 <code>design.lvs.v</code>（a9f8ad2），LVS exclude 列表修好后删除 TODO（00a8535）</td><td>LVS 的"网表"要与 GDS 同源同过滤</td></tr>
+    <tr><td>18</td><td>DRC</td><td>97 条 antenna 违例（metal3–6）</td><td>长金属连线在制造中积累电荷击穿栅氧，需要二极管或跳层</td><td>postroute 加 <code>fix_antennas</code> 步（route_detail_fix_antenna + diode insertion, ANTENNA_X1）（c81b47d）</td><td>antenna 是"制造效应"，只能在布线后修</td></tr>
+    <tr><td>19</td><td>DRC</td><td>113 条 <code>Metal8.7</code>、5 条 <code>Metal9.6</code></td><td>M8/M9 是电源网格层（ADK_POWER_MESH_BOT/TOP_LAYER = 8/9），条带宽度/间距/密度规则与 freepdk 规则不匹配</td><td>调整 power strategy 中 stripe 宽度/间距（仍在迭代）</td><td>DRC 报告先按 rule 聚类，看是系统性（一条规则几十条）还是随机</td></tr>
+    <tr><td>20</td><td>性能</td><td>PnR 首轮 30+ 小时，只用单核</td><td>SFK 的 <code>init_mcpu</code> 只读 <code>FLOWTOOL_NUM_CPUS</code> 环境变量；license 允许 8 CPU</td><td>construct.py 参数 <code>FLOWTOOL_NUM_CPUS: 16</code> 下发为环境变量（f7cf668），BOOM 的 PnR 降到约 14 小时</td><td>先确认多线程真的生效（日志里 set_multi_cpu_usage）</td></tr>
+    <tr><td>21</td><td>Route</td><td>StanfordAHA 的前车之鉴：布局非法却进入 postroute_hold，122 小时还在跑</td><td>默认 route_design 不检查 placement</td><td>flow_config.tcl 替换 <code>run_route</code> 为 <code>route_design -placement_check</code></td><td>fail-fast</td></tr>
+    <tr><td>22</td><td>Debug 节点</td><td><code>cadence-innovus-debug-calibre</code>：<code>can't read "env(CALIBRE_HOME)"</code></td><td>没 <code>module load calibre</code>，enc.tcl 读环境变量</td><td>先 <code>module load calibre/2024.1_36</code>；Calibre 结果格式版本差异需注意</td><td>—</td></tr>
+    <tr><td>23</td><td>Innovus warning</td><td><code>IMPOPT-3602 path group Reg2Reg not defined</code> 等 5 条</td><td>IFF 旧脚本按 path group 设 effort，但 SFK 没创建这些 group</td><td>warning 可忽略；要真用则 <code>create_path_group</code></td><td>分清 warning 是"无害遗留"还是"约束没生效"</td></tr>
+    <tr><td>24</td><td>mflowgen/ADK</td><td>mflowgen 假设标准单元库只有一个 .lib 文件；ADK 插件硬拷贝文件</td><td>框架早期假设</td><td>glob 多库；ADK 用 symlink 而不是拷贝</td><td>—</td></tr>
+    <tr><td>25</td><td>架构限制</td><td>层次化时序收敛（hierarchical timing closure）</td><td>mflowgen + IFF 不支持；Innovus+Stylus 支持</td><td>本项目 flatten_effort=0 保留层次但仍是 flat 实现</td><td>面试延伸：什么时候需要 hierarchical flow</td></tr>
+    <tr><td>26</td><td>版本库</td><td>上百 MB 的 design.v 进了 git</td><td>方便但污染历史</td><td>删除并各自生成（37252c4）</td><td>生成物不进版本库</td></tr>
+    <tr><td>27</td><td>BOOM 综合</td><td>Genus 综合跑了 9 小时还在 <code>syn_gen</code>，面积报告里 <code>*.top.mems.v</code> 的模块占总面积 38%</td><td>Chipyard 生成的 <code>mems.v</code> 是<b>寄存器数组</b>的行为实现，Genus 把 TAGE/BTB 表、L1 tag/data 阵列、FTQ 全部映射成触发器 + 巨大 mux 树；freepdk-45 没有 SRAM compiler，无法像 TSMC 那样按 <code>.mems.conf</code> 换宏</td><td>短期：改 Config fragment 缩小表（<code>WithTAGELBPD</code> 表项减半、BTB 128 项、L1 8 KB）并加 <code>set_attr hdl_max_memory_address_range</code> 让 Genus 对大数组走 memory 推断；长期：接 OpenRAM / TSMC SRAM 宏，用 <code>.mems.conf</code> + <code>vlsi_mem_gen</code> 生成宏包装</td><td>SoC 生成器"什么都能生成"，但存储器是生成器和工艺之间的接口，必须显式决策</td></tr>
+    <tr><td>28</td><td>BOOM 综合</td><td><code>Cannot resolve reference EICG_wrapper</code>；加进去后 Genus 报 <code>latch inferred</code> 警告 4 万多条</td><td>Chipyard 的 ICG 黑盒 <code>EICG_wrapper.v</code> 是 latch + AND 的行为实现，不在 <code>.top.f</code> 默认列表里；Genus 又把它当普通逻辑综合</td><td>把 <code>EICG_wrapper.v</code> 加进 .f；在 <code>read-design.tcl</code> 后用 <code>set_db [vfind /des* -module EICG_wrapper] .dont_touch true</code> 或直接把它映射到 ADK 的 ICG 单元（freepdk 没有，只能 dont_touch 保留 latch 结构，LEC 时用 <code>add ignored outputs</code> 处理）</td><td>生成器带来的"仿真友好黑盒"在综合阶段都要逐个决定命运</td></tr>
+    <tr><td>29</td><td>BOOM 综合</td><td><code>Cannot resolve reference plusarg_reader</code> / <code>ClockDividerN</code></td><td>仿真用 <code>+plusarg</code> 读取器和时钟分频黑盒没在 design.v 里；<code>plusarg_reader.v</code> 在 <code>`ifdef SYNTHESIS</code> 下退化为常量输出</td><td>加进 .f 并在 Genus 里 <code>read_hdl -define SYNTHESIS</code>（mflowgen 参数 <code>read_hdl_defines</code>）；ClockDividerN 用 ADK 时钟单元替换或直接不分频</td><td>用 <code>read_hdl_defines</code> 参数而不是改源码</td></tr>
+    <tr><td>30</td><td>BOOM hold</td><td>postcts hold 违例 3.1 万条，插 5.8 万个 buffer 后利用率从 65% 涨到 71%，route 拥塞</td><td>物理寄存器堆和 rename map 是多端口触发器阵列，write→bypass→read 路径只有一两级逻辑；freepdk 没有 delay cell，只能堆 BUF_X1</td><td>constraints 里 <code>set_input_delay</code> 保持非零；把 <code>hold_target_slack</code> 从 0.05 降到 0.02；CTS 前 <code>set_db opt_fix_hold_allow_setup_tns_degradation false</code>；把 PRF 阵列在 floorplan 里用 <code>create_guide</code> 圈成区域减少绕线</td><td>OoO 核的 hold 问题是结构性的，先看违例分布再决定修法</td></tr>
+    <tr><td>31</td><td>BOOM LEC</td><td>rtl2gate LEC 报 1,200+ non-equivalent 点，全部在 <code>tage_*</code>/<code>btb_*</code> 模块</td><td>预测器表在 RTL 里是未初始化的存储器，综合后一部分被常量传播（Genus 判断某些位从不写入）；FIRRTL Dedup 后的模块名与 <code>update_names -prefix ChipTop_</code> 后的名字映射错乱</td><td>Conformal 里 <code>set undefined cell black_box</code> 对预测器表黑盒；用 Genus 的 <code>fv/</code> 目录 name map；对 <code>dontTouch</code> 的表加 <code>set_db .preserve true</code>；预测器只影响性能不影响功能，可接受黑盒</td><td>LEC 报大量 non-eq 时先看是否集中在同一类模块</td></tr>
+  </table></div>
+</section>
+
+<section class="card" id="s-debug">
+  <h2>4. 调试方法论（这一节是面试官最爱听的）</h2>
+  <h3>4.1 用 flowtool 单独重跑一个 SFK 步骤（80 秒 vs 1 小时）</h3>
+  <pre><code>cd 9-cadence-innovus-stylus-postroute/innovus-stylus-flowkit/
+flowtool -files flow.yaml -status                   # 看哪个 SFK step 失败
+design_name=ChipTop flowtool -files flow.yaml -from generate_signoff_results -to generate_signoff_results
+# flowtool 自动回溯到最近的 db checkpoint 再前进；mflowgen 设的环境变量需要手动 export
+flowtool -files flow.yaml -interactive              # 交互式，等价 make debug-N
+flowtool -predict summary -file flow.yaml           # 预览将要执行的步骤</code></pre>
+  <ul>
+    <li>SFK 的粒度比 mflowgen 节点细得多，且每步存 db，所以先定位到 SFK step，再用 <code>-from X -to X</code> 复现。</li>
+    <li>flow.yaml 里可以临时注释掉无关步骤加速。</li>
+    <li>SFK 工作目录里的文件是 git 里文件的<b>副本/符号链接</b>：直接改工作目录快，但要记得同步回 git；更优雅的是把 git 文件<b>硬链接</b>到工作目录（同一 inode，改一处两处都变）——但 clean/重跑 flowsetup 会切断硬链接。</li>
+  </ul>
+  <h3>4.2 日志与断言</h3>
+  <ul>
+    <li>每步日志固定位置：<code>&lt;step&gt;/logs/*.log</code>、<code>mflowgen-run.log</code>；SFK 的 <code>logs/&lt;flow&gt;.logv</code>。把出错日志拷走存档再 tinker。</li>
+    <li>先看 <code>*** Message Summary: N warning(s), M error(s)</code>，再按 ID（<code>IMPOPT-3602</code>）<code>man</code> 查。</li>
+    <li>后置断言失败时，<b>先问断言为什么存在</b>（Bug #5 的教训）。</li>
+  </ul>
+  <h3>4.3 分层定位</h3>
+  <p>环境（module / license / PATH）→ 输入文件（symlink 是否指向空文件、design.v 是否为 0 字节）→ 参数（环境变量是否下发）→ 工具版本行为（读工具自带 tcl）→ 设计本身（GUI 看 floorplan、timing report）。</p>
+</section>
+
+<section class="card" id="s-lessons">
+  <h2>5. 经验总结（可直接讲给面试官）</h2>
+  <div class="grid2">
+    <div class="callout ok"><b>流程即代码 + 断言</b><br>mflowgen 把每个 EDA 步骤的输入/输出/前后置条件写成可执行的 pytest；我把这种"每一步都能被自动检查"的思路带到验证：checker、scoreboard、覆盖率门槛都是"后置断言"。</div>
+    <div class="callout ok"><b>配置单一真源</b><br>工艺相关的一切只在 <code>adk.tcl</code> 定义；setup.yaml 从它生成而不是手写；硬编码路径是多人协作的第一大坑。</div>
+    <div class="callout ok"><b>缩短迭代回路</b><br>PnR 6 小时的项目里，能否 80 秒复现一个 bug 决定了一周能修几个问题；对应到 DV 就是：小 case 复现、保存 seed、单测直接 run 到失败点。</div>
+    <div class="callout ok"><b>工具版本是变量</b><br>Innovus 23 删 postroute 步骤、legacy→CUI 命令翻译、参数改名——升级前先跑 smoke flow。</div>
+    <div class="callout ok"><b>物理与逻辑的边界</b><br>LVS 网表要排除 filler/welltap；GDS 要 merge 标准单元；antenna 只能布线后修；rail analysis 依赖 QRC 数据——理解"为什么"比背命令重要。</div>
+    <div class="callout ok"><b>签核是一组独立视角</b><br>LEC（功能等价）、STA（时序）、IR（电源）、DRC（可制造）、LVS（版图=网表）、GLS（带 SDF 的门级仿真）各自证明一件事，缺一个就不能 tapeout。</div>
+  </div>
+</section>
+
+<section class="card" id="s-dv-link">
+  <h2>6. 这个项目和"RISC-V 芯片验证工程师"岗位的连接</h2>
+  <p>JD 要求：UVM 模块级+系统级验证、SystemVerilog/C/Python/Tcl、<b>熟悉芯片开发全流程并在关键节点把控验证活动</b>、高速接口/AXI/处理器架构、FPGA 原型/硬件加速、覆盖率与回归、加分项 formal（JasperGold）。这个项目正好补上"全流程"这一块：</p>
+  <div class="tablewrap"><table>
+    <tr><th>芯片开发节点</th><th>验证活动（你应该会讲的）</th><th>项目中的对应物</th></tr>
+    <tr><td>RTL freeze 前</td><td>模块级 UVM、ISA 级测试、覆盖率收敛</td><td><code>make run-asm-tests / run-bmark-tests CONFIG=MediumBoomConfig</code>（Verilator）；你自己的 BOOM 执行流水线 UVM 环境（ALU/iMul/iDiv/FPU/FDiv + CSR RAL + 分支 kill 检查）+ AXI 2M3S 环境</td></tr>
+    <tr><td>综合后</td><td>LEC（RTL vs 网表）、零延迟门级仿真、综合 lint</td><td>Conformal rtl2gate / gate2gate；Genus 后置断言</td></tr>
+    <tr><td>CTS/布线后</td><td>带 SDF 的门级仿真（GLS）、X 传播检查、复位/时钟域检查</td><td>signoff 输出 <code>design.vcs.v / design.vcs.pg.v / design.sdf</code>，配 <code>synopsys-vcs-sim</code> 节点做 GLS；PG 网表可做上电仿真</td></tr>
+    <tr><td>签核</td><td>STA 多角、IR drop、DRC/LVS/antenna、功耗（SAIF 来自仿真）</td><td>Tempus/Voltus/Calibre；switching activity 应由仿真 VCD→SAIF（<code>synopsys-vcd2saif-convert</code> 节点）提供</td></tr>
+    <tr><td>Tapeout 后</td><td>FPGA 原型 / 硅后 bring-up 测试计划</td><td>同一 Config 可用 FireSim（FPGA 加速、cycle-exact）或 Vivado 原型跑 Linux/真实 workload，复用 riscv-tests 与 bmark</td></tr>
+  </table></div>
+  <div class="callout"><b>面试话术：</b>"我能把验证活动放到芯片开发的时间轴上：RTL 阶段抓功能 bug，综合后用 LEC 保证网表没被工具改坏，布线后用带 SDF 的 GLS 抓复位/时钟/X 问题，签核阶段提供真实翻转率给功耗分析。我在 BOOM 流程里亲手接过这几个节点的产物（网表、SDC、SDF、SPEF、lvs 网表），知道每个文件是谁产生、谁消费。"</div>
+</section>
+
+<section class="card" id="s-uvm">
+  <h2>7. 搭一套可复用的 UVM 框架（按你 BOOM / AXI 环境的做法总结）</h2>
+  <p>"可复用"的含义：<b>换一个 DUT 只改 3 类东西</b>——接口（interface + transaction）、参考模型（scoreboard 的 predict）、测试序列；agent / env / base_test / 回归脚本一行不动。下面是你 <code>boom_exe_uvm</code> 与 <code>axi_full_2m3s_uvm</code> 已经体现、并且应该在面试里讲清楚的结构。</p>
+
+  <h3 id="s-uvm-layout">7.1 目录与分层</h3>
+  <pre><code>&lt;dut&gt;_uvm/
+├── rtl/                      DUT（或行为模型占位，保证环境开箱能跑）
+├── tb/
+│   ├── &lt;dut&gt;_if.sv           interface + clocking block + modport + 协议 SVA
+│   ├── &lt;dut&gt;_pkg.sv          唯一编译单元：`include 所有类，顺序 = 依赖顺序
+│   ├── tb_top.sv             时钟/复位、DUT 例化、config_db set(vif)、run_test()
+│   ├── seq/  txn.sv  seq_lib.sv            sequence_item + sequence 库（一个 sequence 一个意图）
+│   ├── agent/ driver.sv monitor.sv agent.sv (+ sequencer)   协议级，与 DUT 无关
+│   ├── ral/  &lt;dut&gt;_ral.sv    寄存器模型 + adapter（reg2bus / bus2reg）
+│   ├── env/  scoreboard.sv coverage.sv env.sv  cfg.sv       DUT 级：参考模型、覆盖、连线
+│   └── test/ base_test.sv tests.sv                          测试库，只组合 sequence + cfg
+└── sim/ Makefile              questa/vcs/xcelium/lint(slang) 目标，SEED、TEST、COV 参数</code></pre>
+  <div class="tablewrap"><table>
+    <tr><th>层</th><th>知道什么</th><th>不知道什么</th><th>复用范围</th></tr>
+    <tr><td>Interface + txn</td><td>信号、协议时序</td><td>DUT 功能、测试意图</td><td>同协议的所有项目（AXI agent 跨 DUT 复用）</td></tr>
+    <tr><td>Agent（sqr/drv/mon）</td><td>怎么把 txn 打到引脚、怎么从引脚采 txn</td><td>数据对不对</td><td>同上；active/passive 由 cfg 决定</td></tr>
+    <tr><td>Env（sb/cov/ral）</td><td>期望值（参考模型）、覆盖目标</td><td>激励怎么产生</td><td>同 DUT 的所有测试</td></tr>
+    <tr><td>Test + sequence</td><td>测什么、约束怎么偏置</td><td>引脚级细节</td><td>一次性/按 feature</td></tr>
+  </table></div>
+
+  <h3 id="s-uvm-code">7.2 骨架代码（可直接改名复用）</h3>
+  <h4>(a) 配置对象：所有"旋钮"集中，不要散落在 config_db 字符串里</h4>
+  <pre><code>class dut_cfg extends uvm_object;
+  `uvm_object_utils(dut_cfg)
+  uvm_active_passive_enum is_active = UVM_ACTIVE;
+  bit has_coverage = 1, has_scoreboard = 1, has_ral = 1;
+  int unsigned gap_min = 0, gap_max = 4;          // driver 事务间隔
+  virtual dut_if vif;
+  function new(string name="dut_cfg"); super.new(name); endfunction
+endclass
+// tb_top: uvm_config_db#(virtual dut_if)::set(null,"uvm_test_top.*","vif",dut_if_inst);
+// base_test.build_phase: cfg = dut_cfg::type_id::create("cfg"); 取 vif 放进 cfg，再 set 一个 cfg 对象</code></pre>
+  <h4>(b) Transaction：用 constraint 表达协议合法性，用 <code>do_compare/convert2string</code> 服务 scoreboard</h4>
+  <pre><code>class dut_txn extends uvm_sequence_item;
+  rand op_e   op;  rand logic [63:0] a, b;  logic [63:0] result; bit killed;
+  rand int unsigned delay;
+  constraint c_delay { delay inside {[0:4]}; }
+  constraint c_legal { op != OP_RESERVED; }
+  `uvm_object_utils_begin(dut_txn)
+    `uvm_field_enum(op_e, op, UVM_ALL_ON) `uvm_field_int(a, UVM_ALL_ON) `uvm_field_int(b, UVM_ALL_ON)
+    `uvm_field_int(result, UVM_ALL_ON | UVM_NOCOMPARE)     // 结果不参与 compare，由 sb 判
+  `uvm_object_utils_end
+  function new(string name="dut_txn"); super.new(name); endfunction
+endclass</code></pre>
+  <h4>(c) Driver：只做握手，永远用 clocking block，支持反压</h4>
+  <pre><code>task run_phase(uvm_phase phase);
+  forever begin
+    seq_item_port.get_next_item(req);
+    repeat (req.delay) @(cfg.vif.cb);
+    cfg.vif.cb.valid &lt;= 1; cfg.vif.cb.op &lt;= req.op; cfg.vif.cb.a &lt;= req.a; cfg.vif.cb.b &lt;= req.b;
+    do @(cfg.vif.cb); while (!cfg.vif.cb.ready);      // un-pipelined 单元的反压（iDiv/FDiv）
+    cfg.vif.cb.valid &lt;= 0;
+    seq_item_port.item_done();
+  end
+endtask</code></pre>
+  <h4>(d) Monitor → analysis port；Scoreboard 用 <code>uvm_analysis_imp_decl</code> 区分多个端口</h4>
+  <pre><code>`uvm_analysis_imp_decl(_issue)
+`uvm_analysis_imp_decl(_wb)
+class dut_scoreboard extends uvm_scoreboard;
+  uvm_analysis_imp_issue #(dut_txn, dut_scoreboard) issue_imp;
+  uvm_analysis_imp_wb    #(dut_txn, dut_scoreboard) wb_imp;
+  dut_txn exp_q[$];                       // 顺序单元用队列；乱序用 assoc array 按 tag 索引
+  function void write_issue(dut_txn t); dut_txn e = predict(t); exp_q.push_back(e); endfunction
+  function void write_wb(dut_txn t);
+    dut_txn e = exp_q.pop_front();
+    if (e.killed) `uvm_error("SB", "killed uop wrote back")          // 分支误预测 kill 检查
+    else if (t.result !== e.result) `uvm_error("SB", $sformatf("exp %h got %h", e.result, t.result))
+  endfunction
+  function void check_phase(uvm_phase phase); if (exp_q.size()) `uvm_error("SB","outstanding txns"); endfunction
+endclass</code></pre>
+  <h4>(e) Base test：objection、超时、report 只写一次</h4>
+  <pre><code>class base_test extends uvm_test;
+  dut_env env; dut_cfg cfg;
+  function void build_phase(uvm_phase phase);
+    cfg = dut_cfg::type_id::create("cfg");
+    if (!uvm_config_db#(virtual dut_if)::get(this,"","vif",cfg.vif)) `uvm_fatal("CFG","no vif")
+    uvm_config_db#(dut_cfg)::set(this,"env*","cfg",cfg);
+    env = dut_env::type_id::create("env",this);
+  endfunction
+  task run_phase(uvm_phase phase);
+    phase.raise_objection(this); phase.phase_done.set_drain_time(this, 200ns);
+    uvm_top.set_timeout(2ms, 0);
+    run_main();                                   // 子类只重载这个
+    phase.drop_objection(this);
+  endtask
+  virtual task run_main(); endtask
+endclass
+class alu_test extends base_test;  `uvm_component_utils(alu_test)
+  task run_main(); alu_seq s = alu_seq::type_id::create("s"); s.start(env.agt.sqr); endtask
+endclass</code></pre>
+  <h4>(f) RAL：寄存器模型 + adapter，让"读写寄存器"变成 <code>reg.write()/mirror()</code></h4>
+  <pre><code>class csr_adapter extends uvm_reg_adapter;
+  function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
+    dut_txn t = dut_txn::type_id::create("t");
+    t.op = (rw.kind == UVM_WRITE) ? OP_CSRRW : OP_CSRRS; t.csr = rw.addr[11:0]; t.a = rw.data;
+    return t;
+  endfunction
+  function void bus2reg(uvm_sequence_item bus_item, ref uvm_reg_bus_op rw);
+    dut_txn t; $cast(t, bus_item); rw.data = t.result; rw.status = UVM_IS_OK;
+  endfunction
+endclass
+// env.connect_phase: ral.default_map.set_sequencer(agt.sqr, adapter); predictor 或 auto-predict</code></pre>
+  <h4>(g) 覆盖率：功能点→covergroup 的映射写在验证计划里</h4>
+  <pre><code>covergroup cg_op with function sample(dut_txn t);
+  cp_op:  coverpoint t.op;
+  cp_cls: coverpoint fp_class(t.a) { bins special[] = {ZERO_P, ZERO_N, INF_P, INF_N, QNAN, SNAN, SUBN_MIN, NORM_MAX}; }
+  cross cp_op, cp_cls;                  // IEEE-754 特殊操作数 × 操作 交叉
+  cp_kill: coverpoint t.killed;
+endgroup</code></pre>
+
+  <h3 id="s-uvm-reuse">7.3 复用规则清单（写在 README 里，也可以当面试答案）</h3>
+  <ol>
+    <li><b>零层次引用</b>：组件里不出现 <code>tb_top.dut.xxx</code>，一切走 virtual interface / config_db；需要看内部信号用 <code>bind</code> 把 interface/SVA 绑进层次。</li>
+    <li><b>参数化接口</b>：<code>interface axi_if #(ADDR_W, DATA_W, ID_W)</code>，agent 类也参数化或用 typedef 包一层。</li>
+    <li><b>Agent 三态</b>：active / passive 由 cfg 决定；monitor 永远存在；系统级复用模块级 agent 时改为 passive。</li>
+    <li><b>Factory 一切</b>：所有对象 <code>type_id::create</code>，测试用 <code>set_type_override_by_type</code> 换错误注入 driver 或 corner sequence（你已有 <code>uvm_factory_override_example.sv</code>）。</li>
+    <li><b>Sequence 分层</b>：原子 sequence（一笔事务）→ 场景 sequence（一组）→ virtual sequence（跨 agent 协调，用 virtual sequencer 持有各 sqr 句柄）。</li>
+    <li><b>参考模型独立</b>：scoreboard 的 predict 不抄 RTL；复杂算法用 DPI-C（softfloat、ISS 如 Spike）；结果比对 bit-exact，用 <code>!==</code> 抓 X。</li>
+    <li><b>检查器三类</b>：SVA（协议时序，在 interface 里）、scoreboard（数据）、end-of-test（队列清空、objection、计数器）。</li>
+    <li><b>可观测性</b>：<code>uvm_report_server</code> 统一 summary；每个 txn 有 id/时间戳；失败时打印 <code>convert2string</code>。</li>
+    <li><b>不阻塞 monitor</b>：monitor 里没有 get_next_item；driver 里没有 analysis port（职责分离）。</li>
+    <li><b>Lint 与编译门槛</b>：<code>slang</code> 严格 IEEE 1800-2017 无警告；三家仿真器 makefile target 一致。</li>
+  </ol>
+
+  <h3 id="s-uvm-regress">7.4 回归与覆盖率闭环</h3>
+  <pre><code># sim/Makefile 片段
+TEST ?= base_test   SEED ?= 1   COV ?= 1
+vcs:   ; vcs -sverilog -ntb_opts uvm-1.2 -timescale=1ns/1ps $(FILES) $(if $(COV),-cm line+cond+fsm+tgl+branch) -o simv
+run:   ; ./simv +UVM_TESTNAME=$(TEST) +ntb_random_seed=$(SEED) +UVM_VERBOSITY=UVM_LOW -l logs/$(TEST)_$(SEED).log
+regress: ; python3 scripts/regress.py --tests tests.yml --seeds 20 --jobs 8   # 并行跑、收集 PASS/FAIL、合并 urg/imc
+lint:  ; slang --std=1800-2017 -Wall $(FILES)</code></pre>
+  <ul>
+    <li>验证计划（vplan）↔ covergroup/断言一一对应；每周看"功能覆盖 + 代码覆盖 + 断言覆盖"三张表，未覆盖项要么补 sequence 要么写 waiver 说明理由。</li>
+    <li>失败用例保存 <code>seed + 命令行 + 波形</code>；先缩小（减 sequence 长度、固定 seed）再调。</li>
+    <li>GLS 复用同一 env：把 DUT 换成 <code>design.vcs.v</code> + <code>$sdf_annotate</code>，agent 用 clocking block 所以不受门级延迟影响；关注 X 传播与复位。</li>
+  </ul>
+</section>
+
+<section class="card" id="s-story">
+  <h2>8. 面试自述模板（STAR，2 分钟版）</h2>
+  <p><b>S</b>：Penn Spring 2026 RISC-V tapeout 项目，目标把 Chipyard SoC Generator 以 MediumBoomConfig 生成的 BOOM SoC（2 发射乱序核，约 113 万标准单元）用 Cadence 商用流程打成 GDS，先在 freepdk-45 验证流程再迁 TSMC。<br>
+  <b>T</b>：流程从 Innovus Foundation Flow 迁移到 Stylus FlowKit，我负责/参与 ______（例：综合约束与 LEC 步骤 / signoff 产物与 DRC-LVS 接口 / 流程调试）。<br>
+  <b>A</b>：（挑 2–3 个 bug 讲：create_clock 断言 → 理解 generated clock 语义；Chipyard 生成的 mems.v/EICG_wrapper/plusarg_reader 在综合阶段的处理；IFF v23 删 postroute → 读 utils.tcl 源码定位；PRF 引起的 3 万条 hold；用 flowtool -from/-to 把复现从 1 小时缩到 80 秒。）<br>
+  <b>R</b>：Genus→LEC→PnR→Tempus/Voltus→Calibre 全链路跑通，DRC 从 217 条收敛到 ___，LEC 两段 PASS，为 TSMC 迁移留下参数化 ADK 接口。<br>
+  <b>收获（对验证岗）</b>：知道每个签核环节验证的是什么、需要验证团队提供什么（SAIF、GLS、LEC 约束），能在关键节点把控验证活动。</p>
+</section>
+
+</main>
+</div>
+
+<!-- ======================================================================= -->
+<!-- TAB 2                                                                   -->
+<!-- ======================================================================= -->
+<div class="tab" id="t2">
+<aside class="toc">
+  <b>Tab 2 目录</b>
+  <a href="#qa">A. 项目深挖（tapeout 流程）</a>
+  <a href="#qb">B. UVM 与验证方法学</a>
+  <a href="#qc">C. SystemVerilog 语言</a>
+  <a href="#qd">D. CPU / RISC-V 微架构</a>
+  <a href="#qe">E. 总线与高速接口</a>
+  <a href="#qf">F. Formal / JasperGold</a>
+  <a href="#qg">G. STA · 时钟 · 低功耗 · 后端常识</a>
+  <a href="#qh">H. 脚本与 C</a>
+  <a href="#qi">I. FPGA 原型 / 硬件加速 / 系统级</a>
+  <a href="#qj">J. 行为面 &amp; 反问</a>
+</aside>
+<main>
+<div class="toolbar">
+  <input id="qsearch" type="search" placeholder="搜索题目 / 答案关键词（如：hold、objection、TLB、LEC）">
+  <button id="expandAll">全部展开</button><button id="collapseAll">全部收起</button>
+  <span class="count" id="qcount"></span>
+</div>
+
+<section class="card" id="qa">
+  <h2>A. 项目深挖：面试官会顺着你的简历问</h2>
+
+<details class="q"><summary>介绍一下这个 tapeout 项目的整体流程，每一步的输入输出是什么？</summary><div class="a">
+<p>Chipyard SoC Generator 按 <code>MediumBoomConfig</code>（Scala Config = BOOM tile fragment + AbstractConfig 的总线/外设 fragment）elaborate：Chisel → FIRRTL（Dedup、ReplSeqMem 抽存储器）→ Verilog，得到 <code>ChipTop</code> 的 <code>*.top.v + *.top.mems.v</code>，聚合成一个 <code>design.v</code>；配合 SDC（<code>create_clock</code> 5 ns、IO 延迟、驱动/负载、max fanout/transition）和 ADK（lib/lef/captable/adk.tcl）进入 Genus 综合，产出门级网表、SDC、SDF、SPEF、LEC checkpoint；Conformal 做 RTL→中间网表→最终网表两段等价检查；Innovus Stylus FlowKit 按 floorplan→place→cts→postcts→route→postroute→signoff 执行，signoff 产出 GDS、LVS 网表、带 PG 的仿真网表、SDF、SPEF，并调 Tempus 做多角 STA、Voltus 做功耗；最后 Calibre 把标准单元 GDS 合并后做 DRC 和 LVS。整个 DAG 由 mflowgen 编排，每步有前后置断言。</p>
+<div class="ext"><b>延伸：</b>为什么综合要读 LEF（物理感知综合，估算线长/拥塞）？SPEF 综合阶段为什么就有（Genus 基于 captable 的预估寄生，用于 syn_opt）？SDC 在综合前后为什么会变（工具会把 <code>set_max_transition</code> 等 DRC 约束、生成的时钟门控写回）？</div>
+</div></details>
+
+<details class="q"><summary>Chipyard SoC Generator 和 Chisel 是怎么工作的？你为什么用生成器而不是手写 Verilog？</summary><div class="a">
+<p>Chisel 是嵌在 Scala 里的硬件构造语言：代码是"生成硬件的程序"，运行它（elaboration）产生 FIRRTL IR，再由 FIRRTL/CIRCT 做 Dedup、常量传播、存储器抽取（ReplSeqMem）后 emit Verilog。Chipyard 在其上提供 SoC 级的生成器框架：核（Rocket/BOOM）、加速器、外设都是参数化生成器，靠 Diplomacy 协商 TileLink 的位宽/地址/ID，用 Scala <code>Config</code> 的 fragment 叠加描述整颗 SoC（<code>MediumBoomConfig = WithNMediumBooms(1) ++ AbstractConfig</code>）。好处：改一个参数（cache 路数、ROB 深度、加一个加速器）整颗 SoC 自动一致；代价：生成的 Verilog 名字难读、仿真专用黑盒（plusarg_reader、EICG_wrapper）和寄存器数组式存储器（mems.v）在后端要额外处理。</p>
+<div class="ext"><b>延伸：</b>Diplomacy 的两轮协商解决什么问题（参数在图上双向传播后再 elaborate）；<code>dontTouch/suggestName</code> 对调试和 LEC 的作用；FIRRTL Dedup 对 uniquify/LVS 的影响；Chisel 的 <code>assert/printf</code> 在综合下如何被 <code>`ifndef SYNTHESIS</code> 去掉。</div>
+</div></details>
+
+<details class="q"><summary>Chipyard 生成的 RTL 拿去综合有哪些"坑"？你怎么处理的？</summary><div class="a">
+<p>四类：（1）<code>*.top.mems.v</code> 是存储器的寄存器数组实现，Genus 会把 TAGE/BTB/L1 阵列综合成触发器 + mux 树，综合时间和面积爆炸——freepdk 没有 SRAM compiler，我们缩小预测器/cache 配置并让 Genus 走 memory 推断，TSMC 上则按 <code>.mems.conf</code> 换 SRAM 宏；（2）仿真黑盒 <code>plusarg_reader / ClockDividerN / EICG_wrapper</code> 不在默认文件列表里，导致 <code>Cannot resolve reference</code>，加进 .f 并用 <code>read_hdl -define SYNTHESIS</code>；（3）EICG_wrapper 是 latch 型 ICG 的行为实现，要 dont_touch 或映射到工艺 ICG 单元，否则 latch 警告与 LEC 问题；（4）自动生成的名字 + FIRRTL Dedup + Genus <code>update_names -prefix</code> 三重改名让 LEC 与 LVS 的名字映射变复杂，用 Genus 的 <code>fv/</code> name map。</p>
+<div class="ext"><b>延伸：</b>为什么存储器是"生成器和工艺之间的接口"；OpenRAM 与商用 SRAM compiler 的差别；把行为级 SRAM 换成宏之后验证怎么保证一致（黑盒 LEC + 定向读写 + GLS）。</div>
+</div></details>
+
+<details class="q"><summary>为什么要做两段 LEC（rtl2gate 和 gate2gate），而不是直接 RTL 对最终网表？</summary><div class="a">
+<p>综合优化（时序驱动重构、寄存器常量/等价合并、时钟门控插入、寄存器复制、重定时）会让最终网表和 RTL 的<b>比较点（key points：寄存器、端口、黑盒引脚）</b>对应关系变复杂，直接比对容易出现大量 unmapped/abort。Genus 在映射阶段（<code>fv_map</code>）保存中间网表和 <code>fv/</code> 目录里的变换信息（寄存器合并、常量寄存器、名字映射）；RTL vs fv_map 主要是"逻辑映射正确"，fv_map vs 最终网表主要是"优化没改功能"，每段的 mapping 都简单，Conformal 能自动消化这些 guide 信息。</p>
+<div class="ext"><b>延伸：</b>LEC 的 non-equivalent 常见原因（未初始化寄存器、X 的处理差异、时钟门控使能极性、常量传播、黑盒）；LEC 和仿真的关系（LEC 只证明结构等价，不证明 RTL 正确）；后布局 LEC（signoff 网表含 buffer、ECO 后）用什么做 golden。</div>
+</div></details>
+
+<details class="q"><summary>你提到 create_clock 的断言失败，具体是怎么回事？create_clock 和 create_generated_clock 的区别？</summary><div class="a">
+<p>约束里把主时钟端口 <code>clock_uncore</code> 用 <code>create_generated_clock -source [get_ports clock_uncore] -divide_by 1 [get_ports clock_uncore]</code> 定义，源和目标是同一个端口，而且端口上游没有任何 master clock，Genus 认为它是退化定义直接丢弃，输出 SDC 里没有时钟，所以 mflowgen 的后置断言 <code>'create_clock' in design.sdc</code> 失败。修法是改回 <code>create_clock</code>。区别：<code>create_clock</code> 定义主时钟（端口或 pin，独立源）；<code>create_generated_clock</code> 定义派生时钟，必须指向已有 master，用于分频器输出、PLL 输出、时钟 mux 输出，它继承 master 的相位关系，让 STA 能算跨这两个时钟的路径。</p>
+<div class="ext"><b>延伸：</b>如果有一个 PLL 输出给 clock_uncore，约束怎么写？<code>set_clock_groups -asynchronous</code> 什么时候用？<code>set_clock_uncertainty</code> 在综合与签核阶段分别代表什么（综合：jitter+skew 预估；签核：jitter+OCV margin）？</div>
+</div></details>
+
+<details class="q"><summary>Innovus Foundation Flow 迁移到 Stylus FlowKit 遇到的最大问题是什么？</summary><div class="a">
+<p>三类：（1）命令体系：legacy UI（<code>dbGet/setNanoRouteMode/floorPlan</code>）到 Common UI（<code>get_db/set_db/create_floorplan</code>），一些命令没有直接对应（<code>dbGetLayerByZ</code>、<code>verifyWellTap -cells</code>），要按对象模型重写；（2）流程模型：SFK 把流程拆成 YAML 声明的细粒度 flow_step + 自动 checkpoint，mflowgen 每个节点只是包一层 <code>flowtool -from/-to</code>，配置文件通过符号链接共享；（3）配置来源：自动生成的 setup.yaml 硬编码路径和 freepdk 不存在的 bc/wc lib、QRC 文件，要改成 <code>[get_flow_config input_directory]</code> 相对引用，并最终从 adk.tcl 生成。此外 Innovus 23 的 IFF 生成器悄悄删掉了 postroute 步骤，靠读 utils.tcl 源码才定位。</p>
+<div class="ext"><b>延伸：</b>为什么 signoff 结果导出要在 Innovus 而不是 Tempus 里跑？为什么 rail analysis 在 freepdk 上做不了（需要 QRC tech file 生成 PG library）？SFK 的 <code>-placement_check</code> 为什么重要？</div>
+</div></details>
+
+<details class="q"><summary>DRC 报了 124 条，怎么分类和处理？antenna 违例是什么？</summary><div class="a">
+<p>先按 rule 聚类：60 条 antenna（metal3–6）、63 条 Metal8.7、1 条 Metal9.6。Antenna 效应：制造过程中（金属刻蚀/CMP）长金属线像天线一样收集等离子体电荷，如果这根线只连着 MOS 栅极而没有通路放电，电荷会击穿栅氧。修法是插反偏二极管（<code>ANTENNA_X1</code>）给电荷放电，或者"跳层"（把长线先打到高层再下来，减小单层面积比）。在 SFK 里加了 <code>fix_antennas</code> 步骤（<code>route_detail_fix_antenna + route_antenna_diode_insertion</code>）。Metal8.7/9.6 是电源网格所在的 M8/M9 层的间距/密度规则，说明 power strategy 里 stripe 的宽度/间距要按 freepdk 规则调。</p>
+<div class="ext"><b>延伸：</b>为什么 antenna 只能在布线后修？DRC 和 LVS 分别证明什么？metal density（fill）规则和 <code>mentor-calibre-fill</code> 节点？DRC clean 但 LVS 失败的典型原因（PG 未连、物理单元没排除、pin label 错）。</div>
+</div></details>
+
+<details class="q"><summary>LVS 里为什么要排除 filler / welltap？LVS 的输入到底是什么？</summary><div class="a">
+<p>LVS 比较"版图提取的网表"和"逻辑网表（schematic）"。Filler、welltap、endcap 是纯物理单元：没有逻辑功能，在综合网表里不存在，但在版图里有（它们只连电源/衬底）。如果 Innovus 写出的 LVS 网表里包含它们，而 CDL 侧只有它们的电源连接，会造成实例数不匹配；所以 <code>design.lvs.v</code> 用 <code>ADK_LVS_EXCLUDE_CELL_LIST = FILL* WELLTAP*</code> 过滤，同时 Calibre 规则文件把这些单元当作可忽略。输入：合并了标准单元 GDS 的 <code>design_merged.gds</code>、<code>design.lvs.v</code>、标准单元的 .cdl/.spi、LVS 规则文件。</p>
+<div class="ext"><b>延伸：</b>hcells 是什么（层次化 LVS 对应关系）；LVS 里的 "INCORRECT" 与 "CORRECT" 判定；为什么 GDS 需要先 merge（Innovus GDS 只含单元引用）。</div>
+</div></details>
+
+<details class="q"><summary>MMMC 是什么？你们 wc 视图为什么说"极悲观"？</summary><div class="a">
+<p>Multi-Mode Multi-Corner：模式（功能/测试/低功耗，对应不同 SDC）× 角（工艺 P、电压 V、温度 T + RC 提取角）。一个 analysis view = constraint_mode + delay_corner；delay_corner 又分 early（用于 hold 的最快路径）和 late（用于 setup 的最慢路径）。项目里 <code>delay_wc</code> 用 bc 库做 early、wc 库做 late，也就是同一个视图里 launch 用最慢、capture 用最快（setup）或反过来（hold），比真实芯片同一时刻同一角要悲观，等于用一个视图覆盖了 setup 和 hold 的最坏情况，代价是过度设计。</p>
+<div class="ext"><b>延伸：</b>OCV/AOCV/POCV 的区别；为什么 hold 用 bc 角还要在 wc 角再看一次（温度反转，40nm 以下低温未必最快）；CTS 为什么选 <code>cts_primary_delay_corner delay_wc</code>。</div>
+</div></details>
+
+<details class="q"><summary>PnR 各阶段（floorplan/place/CTS/route）验证工程师需要关心什么？</summary><div class="a">
+<p>Floorplan：pin 位置、宏位置决定后续时序，验证不直接参与但要提供 IO 约束合理性；Place/预 CTS 优化后：网表变了（buffer、重复寄存器）但功能不变，LEC 验证；CTS 后：时钟树真实，hold 修复插 buffer，需要<b>带 SDF 的 GLS</b> 抓复位释放、异步复位去断言、时钟门控的 glitch；Route 后：SPEF 真实，STA signoff；功耗分析需要验证给 SAIF/VCD（真实翻转率）。此外 DFT（scan）插入后 scan shift/capture 模式需要 GLS。</p>
+<div class="ext"><b>延伸：</b>零延迟 GLS 与带 SDF GLS 各抓什么 bug；X-pessimism 怎么处理（<code>+nospecify</code>、初始化、<code>$deposit</code>、X-prop 工具）；GLS 时序违例（timing check）和功能失败怎么区分。</div>
+</div></details>
+
+<details class="q"><summary>mflowgen 的 pre/postconditions 的设计给你什么启发？</summary><div class="a">
+<p>把"步骤成功"定义成可执行断言而不是人眼看日志：工具存在、输入文件存在、日志无 <code>Error :</code>、SDC 含时钟、LEC log 含 PASS、LVS report 无 INCORRECT。每条断言都对应一个曾经踩过的坑。对验证来说就是：每个 test 有 end-of-test checker（队列清空、objection 归零、错误计数 0、覆盖率阈值），回归结果由脚本判定不是人判定。</p>
+<div class="ext"><b>延伸：</b>你会给 UVM 回归加哪些"后置断言"？（无 UVM_ERROR、scoreboard 期望队列为空、所有 sequence 正常结束、覆盖率增量非负、仿真时间未超时）</div>
+</div></details>
+
+<details class="q"><summary>BOOM 的 RTL 是怎么验证的？如果让你给它搭 UVM 环境怎么做？</summary><div class="a">
+<p>项目里用 Verilator 跑 riscv-tests（ISA 级 self-checking 汇编，写 tohost 判 pass）和 Chipyard 自带 benchmark（顺便看 IPC 是否符合 MediumBoom 预期）；BOOM 自带的 <code>chisel3.assert</code>（如 ROB/LSQ 一致性断言）在仿真里以 <code>$fatal</code> 生效。给 BOOM 搭 UVM 我会分层：（1）core 级：以指令流为激励，用 <b>ISS（Spike）做参考模型</b>，通过 trace 接口（commit log：PC、指令、寄存器写、CSR 写、异常）逐条比对——即 co-simulation/trace-compare；随机指令生成用 riscv-dv；（2）存储子系统：TileLink/AXI agent 打 cache，scoreboard 用一个行为级内存模型；（3）系统级：passive agent + 软件测试 + 覆盖率（指令类型、异常/中断、特权级切换、cache miss/hit、分支预测命中、LSQ 的 store-load forwarding 与 ordering failure 重放）。乱序核的关键是<b>按 commit 序比对</b>（ROB 提交口），而不是按执行序。</p>
+<div class="ext"><b>延伸：</b>trace-compare 遇到乱序核（BOOM）怎么办（按 commit 顺序比对）；中断/异步事件怎么和 ISS 对齐（tandem 模式注入）；riscv-dv 的覆盖模型；riscv-arch-test 合规套件。</div>
+</div></details>
+</section>
+
+<section class="card" id="qb">
+  <h2>B. UVM 与验证方法学</h2>
+
+<details class="q"><summary>描述一个完整的 UVM 环境结构，以及每个组件的职责。</summary><div class="a">
+<p>test（配置 + 启动 sequence）→ env（例化 agent、scoreboard、coverage、RAL，负责 TLM 连线）→ agent（sequencer：仲裁 sequence 到 driver；driver：把 transaction 转成引脚时序；monitor：从引脚重建 transaction 并 broadcast）→ interface（信号、clocking block、SVA）。sequence_item 是数据，sequence 是激励意图，config object 是旋钮，config_db 传递 vif/cfg，factory 提供替换。参考模型在 scoreboard 里，独立于 RTL 实现。</p>
+<div class="ext"><b>延伸：</b>为什么 monitor 不能复用 driver 采的数据（passive 模式、真实观测）；agent 什么时候设为 passive；一个 env 里多个相同 agent 怎么区分（实例名、cfg 数组、<code>uvm_analysis_imp_decl</code>）。</div>
+</div></details>
+
+<details class="q"><summary>UVM phase 有哪些？为什么 build 是自顶向下、connect 是自底向上？run_phase 与 main_phase 的关系？</summary><div class="a">
+<p>build → connect → end_of_elaboration → start_of_simulation → run（并行 12 个子 phase：pre_reset/reset/post_reset/pre_configure/configure/post_configure/pre_main/main/post_main/pre_shutdown/shutdown/post_shutdown）→ extract → check → report → final。build 自顶向下是因为父组件必须先创建子组件（create 在父的 build 里）；connect 自底向上是因为子组件的端口要先存在，父才能连。run_phase 与 12 个子 phase 并行执行，一般只用 run_phase 或只用子 phase，混用要小心 objection。</p>
+<div class="ext"><b>延伸：</b>phase jump（<code>phase.jump(uvm_reset_phase::get())</code>）用于运行中复位；<code>set_drain_time</code>；<code>phase_ready_to_end</code> 钩子；为什么 <code>final_phase</code> 是 function。</div>
+</div></details>
+
+<details class="q"><summary>objection 机制怎么工作？测试结束不了/提前结束了怎么排查？</summary><div class="a">
+<p>run-time phase 在所有 objection 被 drop 且 drain time 过后结束。通常在 test 的 run_phase raise，sequence 结束后 drop；也可在 sequence 的 pre_body/post_body 里 raise/drop（用 <code>starting_phase</code>）。结束不了：某处 raise 未 drop（<code>+UVM_OBJECTION_TRACE</code> 查看）、driver 等 ready 死等、sequence 卡在 <code>get_response</code>；提前结束：忘记 raise、在错误的 phase 里 raise、driver 还没把最后一笔打完就 drop（用 drain time 或让 driver 在 item_done 前完成）。</p>
+<div class="ext"><b>延伸：</b><code>uvm_top.set_timeout</code>；为什么不建议在 driver/monitor 里 raise objection；<code>phase.raise_objection(this, "desc", count)</code> 的 count。</div>
+</div></details>
+
+<details class="q"><summary>sequence 和 driver 之间的握手：get_next_item/item_done、get/put、try_next_item 有什么区别？response 怎么回？</summary><div class="a">
+<p><code>get_next_item</code> 阻塞取 item，driver 必须调 <code>item_done()</code> 才能取下一个（sequence 的 finish_item 在 item_done 后返回）；<code>get</code> 相当于 get_next_item+item_done 一起做，sequence 立刻返回，适合流水线 driver；<code>try_next_item</code> 非阻塞，没 item 时返回 null，用于需要每拍驱动 idle 的协议；<code>peek</code> 看不取。Response：driver <code>seq_item_port.put_response(rsp)</code> 或 <code>item_done(rsp)</code>，sequence 用 <code>get_response(rsp)</code>；需要 <code>rsp.set_id_info(req)</code>，否则 sequence 收不到；不取 response 会导致 response queue 溢出报错（可 <code>use_response_handler</code>）。</p>
+<div class="ext"><b>延伸：</b>pipelined driver（同时处理多笔 outstanding）怎么写（fork + 队列 + <code>get</code>）；sequencer 的仲裁模式（FIFO、随机、优先级、<code>lock/grab</code>）；<code>`uvm_do_with</code> 展开后是什么。</div>
+</div></details>
+
+<details class="q"><summary>config_db 和 resource_db 的区别？config_db 常见坑？</summary><div class="a">
+<p>config_db 是 resource_db 的类型化、带层次作用域的封装：<code>set(cntxt, inst_name, field, value)</code> 用 cntxt 的完整路径 + inst_name 作为 glob 键；get 时按调用者路径匹配，<b>层次越高的 set 优先级越高</b>，同层后 set 覆盖先 set。坑：类型参数不一致（<code>virtual dut_if</code> 与 <code>virtual dut_if.mp</code>）导致 get 失败；在 build_phase 之后 set 子组件已 build 完拿不到；通配符写错；字符串拼错难以发现（用 <code>+UVM_CONFIG_DB_TRACE</code>）；性能问题（大量 get，改用 cfg 对象一次传）。</p>
+<div class="ext"><b>延伸：</b><code>uvm_config_db::wait_modified</code>；<code>set_config_int</code> 老接口；为什么推荐把所有旋钮放一个 cfg 对象。</div>
+</div></details>
+
+<details class="q"><summary>factory override 的用法和限制？type override 和 instance override 优先级？</summary><div class="a">
+<p><code>set_type_override_by_type(orig::get_type(), new::get_type())</code> 全局替换；<code>set_inst_override_by_type(orig, new, "path")</code> 按实例路径替换；instance override 优先于 type override；新类型必须是原类型的子类（多态），且组件用 <code>type_id::create</code> 创建（用 <code>new</code> 就无效）。用途：错误注入 driver、corner sequence、换参考模型。限制：参数化类 override 要精确匹配参数；override 必须在 create 之前（通常在 test 的 build_phase 最前面）。</p>
+<div class="ext"><b>延伸：</b><code>uvm_factory::print()</code> 调试；<code>`uvm_object_utils</code> 里注册了什么；sequence 的 override 怎么做（同样走 factory）。</div>
+</div></details>
+
+<details class="q"><summary>Scoreboard 怎么设计？顺序/乱序、多入口、如何处理丢包与超时？</summary><div class="a">
+<p>核心是"期望流"与"实际流"的匹配策略：顺序协议用队列 pop_front；乱序（AXI 多 ID、乱序核 writeback）用关联数组按 ID/tag 索引，同 ID 内保序；多入口用 <code>uvm_analysis_imp_decl</code> 或 <code>uvm_tlm_analysis_fifo</code>；比对用 <code>!==</code>（抓 X），复杂数据用 <code>do_compare</code>；丢包用 check_phase 检查剩余；超时用每笔事务带时间戳，watchdog 进程扫描超过阈值的未匹配项报错；参考模型独立实现（不抄 RTL），复杂算法 DPI-C。你的 BOOM 环境额外检查"被 kill 的 uop 不得写回"。</p>
+<div class="ext"><b>延伸：</b>predictor 型（先算期望）vs comparator 型（两路都采）；cycle-accurate 与 transaction-accurate 参考模型的取舍；scoreboard 里能不能用 <code>#delay</code>（不应该，只依赖事务）。</div>
+</div></details>
+
+<details class="q"><summary>RAL（寄存器模型）的组成？frontdoor/backdoor 区别？mirror/predict/explicit predictor 是什么？</summary><div class="a">
+<p>uvm_reg_field → uvm_reg → uvm_reg_block → uvm_reg_map（地址映射 + sequencer + adapter）。frontdoor 走总线（driver 打事务），backdoor 用 <code>uvm_hdl_read/deposit</code> 直接访问 RTL 变量（需要 hdl_path），零时间。<code>mirror</code> 是模型里对 RTL 值的镜像，<code>desired</code> 是期望写入值；<code>write/read</code> 后自动 predict 更新 mirror（auto predict），更严格的做法是 explicit predictor 监听 monitor 的 analysis port 更新 mirror（能看到非 RAL 发起的访问）。<code>mirror(UVM_CHECK)</code> 读回并与镜像比对。字段访问类型（RW/RO/W1C/WARL 等）和 volatile 决定 predict 行为。</p>
+<div class="ext"><b>延伸：</b>内建 sequence（<code>uvm_reg_hw_reset_seq</code>、<code>bit_bash_seq</code>）；WARL 字段怎么建模；CSR 有副作用（如 fflags 由 FP 指令累积）怎么让 mirror 正确（volatile + 显式 predictor）；RAL 从 IP-XACT/CSV 自动生成。</div>
+</div></details>
+
+<details class="q"><summary>功能覆盖率和代码覆盖率各自的局限？覆盖率收敛不上去怎么办？</summary><div class="a">
+<p>代码覆盖（line/branch/toggle/FSM/condition）由工具自动收集，说明"RTL 被执行过"但不说明"功能被检查过"，也不能反映验证计划意图；功能覆盖由人定义 covergroup/断言覆盖，反映意图但容易漏定义。收敛：先分析未覆盖项分类——不可达（写 waiver/exclusion，附理由）、随机分布偏置不够（改约束权重、定向 sequence）、测试不足（新 test）、covergroup 定义错（bins 不合理）；用 ranked 报告找贡献最大的 test；用 seed 数量与覆盖率曲线判断是否饱和。</p>
+<div class="ext"><b>延伸：</b>cross 的 <code>ignore_bins/illegal_bins</code>；<code>sample()</code> 何时调用（事务完成时，不是每拍）；覆盖率合并（urg/imc/vcover merge）；assertion coverage。</div>
+</div></details>
+
+<details class="q"><summary>怎么从 spec 提取测试点、制定验证方案？</summary><div class="a">
+<p>按特性拆：接口（每个端口的协议合法/非法场景）→ 功能（每条 spec 语句变成可检查的陈述）→ 配置/模式（寄存器组合）→ 边界（FIFO 满空、计数器溢出、地址边界、复位中途）→ 异常/错误注入 → 性能（吞吐、延迟）→ 并发/竞争。每个测试点写明：激励、检查方式（SB/SVA/end-of-test）、覆盖点、优先级、状态。验证方案还包括环境架构图、参考模型策略、回归策略、退出标准（覆盖率阈值、bug rate 曲线、所有 P0 测试通过）。</p>
+<div class="ext"><b>延伸：</b>怎么评估 spec 的模糊点（写 issue 问设计）；模块级和系统级测试点怎么划分（系统级只测集成、跨模块交互、软件流程）；验证报告包含什么。</div>
+</div></details>
+
+<details class="q"><summary>virtual sequence / virtual sequencer 是什么，什么时候用？</summary><div class="a">
+<p>当一个场景需要多个 agent 协同（如 AXI 主写 + 中断 + 寄存器配置），virtual sequencer 只是持有各个真实 sequencer 句柄的容器（不产生 item），virtual sequence 在其上 start，内部 <code>fork</code> 各子 sequence 到对应 sequencer。它把"场景编排"从 test 移到可复用的 sequence，test 只挑 virtual sequence。也可以不用 virtual sequencer，直接在 sequence 里通过 <code>p_sequencer</code>/env 句柄拿 sequencer。</p>
+<div class="ext"><b>延伸：</b><code>`uvm_declare_p_sequencer</code>；sequence 里怎么等一个事件（uvm_event pool）；多 agent 同步用 barrier。</div>
+</div></details>
+
+<details class="q"><summary>UVM 里 uvm_component 和 uvm_object 的区别？为什么 transaction 是 object 而 driver 是 component？</summary><div class="a">
+<p>component 有层次（parent）、有 phase、静态存在于整个仿真、可被 config_db 按路径定位；object 无层次、无 phase、动态创建销毁、可 copy/compare/pack、可作为数据流动。transaction 需要被复制、比较、通过 TLM 传递，所以是 object；driver 需要参与 phase 并固定挂在层次树上，所以是 component。sequence 也是 object（动态、可嵌套、可 factory）。</p>
+<div class="ext"><b>延伸：</b>为什么 <code>uvm_sequence</code> 不能用 config_db 按 <code>this</code> get（它不是 component，要用 <code>m_sequencer</code> 或 null 作 context）；field automation 宏的性能代价。</div>
+</div></details>
+
+<details class="q"><summary>TLM：analysis port 与 blocking put/get port 的区别？TLM FIFO 用在哪？</summary><div class="a">
+<p>analysis port 是 1 对 N 广播、非阻塞、函数调用（write），发送者不关心是否有订阅者（可 0 个）；put/get port 是 1 对 1、可阻塞、任务调用，有握手语义。<code>uvm_tlm_analysis_fifo</code> 把 analysis 广播缓冲成可以阻塞 get 的队列，scoreboard 用两个 fifo 分别接期望和实际，在 run_phase 里 <code>fork</code> 两路 get 后比对，避免 imp 里写复杂逻辑。</p>
+<div class="ext"><b>延伸：</b>TLM 2.0（generic payload、b_transport/nb_transport）用于 SystemC 联合仿真；port/export/imp 三者角色；write 里为什么要 clone 事务（monitor 复用同一对象会被后写覆盖）。</div>
+</div></details>
+
+<details class="q"><summary>随机激励怎么"有效"？约束求解慢或失败怎么办？</summary><div class="a">
+<p>有效 = 覆盖驱动 + 分层约束：base 约束保证合法，test 通过 <code>constraint_mode</code>/继承添加偏置（<code>dist</code>、权重）、<code>solve...before</code> 控制分布、<code>randcase</code> 挑场景。求解失败：<code>rand_mode</code> 查看冲突约束、简化关系、避免非线性/除法/大数组约束、把复杂关系用 <code>post_randomize</code> 计算；慢：减少 rand 变量、缩小范围、避免动态数组 size 和内容一起约束、用 <code>std::randomize()</code> 局部随机。</p>
+<div class="ext"><b>延伸：</b><code>pre_randomize/post_randomize</code>；<code>randc</code> 的限制；seed 管理与可复现（打印 seed、命令行传 seed）；软约束 <code>soft</code> 的优先级。</div>
+</div></details>
+
+<details class="q"><summary>模块级环境怎么复用到系统级？</summary><div class="a">
+<p>接口 agent 设 passive（driver 不例化，monitor 保留），继续做协议检查和覆盖；scoreboard 换成系统级数据流检查（端到端）；模块级 sequence 变成 virtual sequence 的子步骤（如果该接口在系统级仍是外部端口则保持 active）；RAL 合并成系统级 reg block（<code>add_submap</code>）；SVA 用 bind 绑到内部实例；配置对象通过顶层 cfg 分发。关键是模块级不写任何层次引用，所有依赖走 cfg/vif。</p>
+<div class="ext"><b>延伸：</b>系统级用 C 测试（processor-driven）配合 UVM（软硬协同，DPI/后门同步）；仿真速度问题（emulation/FPGA）；系统级不该重复模块级覆盖。</div>
+</div></details>
+
+<details class="q"><summary>你的 BOOM 执行流水线 UVM 环境里最难的部分是什么？</summary><div class="a">
+<p>三点：（1）IEEE-754 特殊操作数（±0、±inf、qNaN/sNaN、subnormal 极值）的交叉与 bit-exact 比对，包括 canonical NaN 和 NV/DZ/OF/UF 标志，参考模型自己实现而不是抄 RTL；（2）CSR 用 RAL 建模：CSR 指令是串行化的，adapter 把 RAL 读写映射成 CSRRW/CSRRS uop，driver 等到写回返回旧值才完成，这样 RAL read 拿到的是真实 DUT 数据；WARL、只读 ID 寄存器、volatile 计数器、fflags 副作用都要按字段属性建模；（3）分支误预测 kill：uop 携带 branch mask，广播 brupdate 后 scoreboard 必须确认被 kill 的 uop 没有写回。此外 iDiv/FDiv 非流水的反压在 driver 里要正确处理。</p>
+<div class="ext"><b>延伸：</b>如果接真实 BOOM RTL 怎么做（Chipyard 生成 MediumBoomConfig，bind interface 到 execution unit，softfloat DPI 做 FP 参考）；多发射怎么扩展（每个 issue port 一个 agent）。</div>
+</div></details>
+</section>
+
+<section class="card" id="qc">
+  <h2>C. SystemVerilog 语言</h2>
+
+<details class="q"><summary>logic / wire / reg 的区别；always_ff / always_comb / always_latch 为什么比 always 好？</summary><div class="a">
+<p><code>logic</code> 是四态类型，可被单个 always/assign 或一个 continuous driver 驱动，不能多驱动（多驱动要用 <code>wire</code>）；<code>reg</code> 只是 Verilog 遗留名，不代表寄存器。<code>always_ff</code> 要求综合成时序逻辑且敏感列表必须是边沿；<code>always_comb</code> 自动推导敏感列表、在 time 0 执行一次、禁止在别处驱动同一变量、若不完整赋值综合工具会警告 latch；<code>always_latch</code> 显式表明意图。三者让 lint/综合能检查意图与实现不一致。</p>
+<div class="ext"><b>延伸：</b>阻塞/非阻塞赋值在 always_ff 中混用后果；<code>always_comb</code> 与 <code>always @*</code> 差异（对函数内部读取的变量敏感）；四态与二态（<code>bit/int</code>）在验证里的取舍（二态快但丢 X）。</div>
+</div></details>
+
+<details class="q"><summary>interface、modport、clocking block 各解决什么问题？</summary><div class="a">
+<p>interface 把一组信号打包，DUT 和 TB 共享同一定义；modport 限定方向（DUT 视角 vs TB 视角），防止 TB 误驱动；clocking block 定义采样/驱动相对时钟边沿的 skew（<code>default input #1step output #0</code> 或 <code>#1</code>），消除 TB 与 DUT 在同一边沿的竞争（TB 在时钟沿前 1step 采样得到"上一拍"的稳定值，驱动在沿后），并让同一 TB 在 RTL 和带 SDF 的 GLS 下都能正确工作。</p>
+<div class="ext"><b>延伸：</b><code>#1step</code> 的含义（前一个时间步的最后一个 postponed 区域）；clocking block 里不能直接读被驱动信号的当前值；虚接口在参数化 interface 下的类型匹配。</div>
+</div></details>
+
+<details class="q"><summary>SystemVerilog 的事件调度区域（active/inactive/NBA/observed/reactive/postponed）与竞争？</summary><div class="a">
+<p>每个时间步：Preponed（采样 SVA/clocking 输入）→ Active（阻塞赋值、连续赋值、<code>$display</code>）→ Inactive（<code>#0</code>）→ NBA（非阻塞更新）→ Observed（断言求值）→ Reactive（program/clocking 驱动、断言 action block）→ Re-inactive → Postponed（<code>$strobe</code>、<code>$monitor</code>）。竞争的根源是同一区域内顺序不确定；TB 用 clocking block/program（reactive 区域）在设计（active 区域）之后执行，避免采到未更新的值。</p>
+<div class="ext"><b>延伸：</b>为什么 <code>$display</code> 在 NBA 前看到旧值；<code>#0</code> 为什么是坏习惯；UVM 为什么不推荐 program block。</div>
+</div></details>
+
+<details class="q"><summary>fork...join / join_any / join_none 与 disable fork、wait fork；进程里的常见坑？</summary><div class="a">
+<p><code>join</code> 等全部；<code>join_any</code> 任一完成就往下走，其余仍在跑；<code>join_none</code> 立即往下走。清理用 <code>disable fork</code>（杀掉当前进程的所有子进程——所以要包一层 <code>fork begin ... end join</code> 防止误杀兄弟进程）或 <code>process</code> 句柄 <code>kill()</code>；<code>wait fork</code> 等所有子进程。坑：for 循环里 fork join_none 引用循环变量要用 <code>automatic</code> 局部变量拷贝；<code>join_none</code> 的子进程在父进程遇到阻塞语句前不会启动。</p>
+<div class="ext"><b>延伸：</b>用 fork join_any 实现超时（<code>fork begin task; end begin #timeout; end join_any disable fork</code>）；semaphore/mailbox/event 的应用；<code>wait(cond)</code> vs <code>@(posedge)</code>。</div>
+</div></details>
+
+<details class="q"><summary>SVA：immediate vs concurrent；|-> 和 |=>；常写的几条协议断言？</summary><div class="a">
+<p>immediate 在过程块里像 if 一样立刻判；concurrent 基于时钟采样，用 sequence/property 描述多拍关系。<code>|-&gt;</code> 同拍蕴含，<code>|=&gt;</code> 下一拍蕴含。常写：valid 拉高后 ready 前不能撤（<code>valid &amp;&amp; !ready |=&gt; valid &amp;&amp; $stable(data)</code>）；请求 N 拍内必须响应（<code>req |-&gt; ##[1:N] ack</code>）；FIFO 满不写空不读；one-hot（<code>$onehot0(sel)</code>）；复位后信号为 0（<code>$rose(rst_n) |-&gt; !valid</code>）；<code>disable iff (!rst_n)</code>。</p>
+<div class="ext"><b>延伸：</b>断言里为什么避免 <code>##[0:$]</code>（性能与永不失败）；<code>assume/assert/cover</code> 在仿真与 formal 中的意义；<code>$past</code> 在复位期间的行为；bind 的用法。</div>
+</div></details>
+
+<details class="q"><summary>队列、动态数组、关联数组的区别与典型用途？</summary><div class="a">
+<p>动态数组：连续、size 固定后随机访问 O(1)，用于长度可变的数据块（payload）；队列：两端 O(1) 插入删除，用于 FIFO/scoreboard 期望流、<code>push_back/pop_front</code>、支持切片和 <code>find_with</code>；关联数组：稀疏键值，用于按地址索引的内存模型、按 ID 索引的乱序事务表，遍历用 <code>first/next</code>。</p>
+<div class="ext"><b>延伸：</b>数组的 <code>foreach</code> 对多维数组；<code>sort/rsort/unique/sum with</code>；关联数组默认值与 <code>exists</code>。</div>
+</div></details>
+
+<details class="q"><summary>深拷贝与浅拷贝；为什么 UVM 的 copy/clone 要重载 do_copy？</summary><div class="a">
+<p>句柄赋值只是指向同一对象；<code>new obj2 = obj1</code> 浅拷贝：成员里的句柄仍指向原子对象；深拷贝要递归复制。UVM 的 <code>copy()</code> 走 <code>do_copy</code>（或 field 宏），<code>clone()</code> = create + copy 返回 uvm_object 需要 $cast。monitor 里每次 write 前 clone 是因为下游可能保存句柄，下一次采样如果复用对象会被覆盖。</p>
+<div class="ext"><b>延伸：</b>field automation 宏（<code>`uvm_field_int</code>）与手写 do_copy/do_compare/do_print 的性能差异；<code>UVM_NOCOMPARE/UVM_NOPRINT</code> 标志。</div>
+</div></details>
+
+<details class="q"><summary>static 与 automatic；class 里的 static 成员与静态方法？</summary><div class="a">
+<p>module 里的任务/函数默认 static，变量在所有调用间共享（递归和并发调用会踩数据），所以 TB 里用 <code>automatic</code>；class 方法默认 automatic。class 的 static 属性属于类本身（所有实例共享，如事务计数器 id），静态方法只能访问静态成员，可以不实例化调用（<code>cls::method()</code>）。</p>
+<div class="ext"><b>延伸：</b><code>const</code>、<code>local/protected</code>、纯虚方法与虚类（abstract）；参数化类的静态成员是每个特化一份。</div>
+</div></details>
+
+<details class="q"><summary>DPI-C 怎么用？import/export、数据类型映射、常见问题？</summary><div class="a">
+<p><code>import "DPI-C" function int c_add(input int a, b);</code> 在 SV 里调 C；<code>export "DPI-C" task sv_task;</code> 让 C 回调 SV。类型映射：int↔int、longint↔long long、byte↔char、bit/logic 打包数组↔svBitVecVal/svLogicVecVal、string↔const char*、open array↔svOpenArrayHandle。用途：softfloat 参考模型、ISS（Spike）联合仿真、加载 ELF、C 测试驱动。问题：context 属性（需要访问 SV 作用域时 <code>import "DPI-C" context</code>）、多线程不安全、内存所有权、编译时 <code>-LDFLAGS</code> 链接。</p>
+<div class="ext"><b>延伸：</b>DPI 与 PLI/VPI 的差别；用 DPI 时的性能考虑（批量传数据而不是逐拍调用）。</div>
+</div></details>
+
+<details class="q"><summary>手写题：用 SV 写一个参数化同步 FIFO，并说明满/空判断和 almost_full。</summary><div class="a">
+<pre><code>module sync_fifo #(parameter W=8, D=16, AW=$clog2(D)) (
+  input  logic clk, rst_n, wr_en, rd_en, input logic [W-1:0] din,
+  output logic [W-1:0] dout, output logic full, empty, output logic [AW:0] count);
+  logic [W-1:0] mem [D];
+  logic [AW:0] wptr, rptr;                      // 多一位区分满空
+  assign empty = (wptr == rptr);
+  assign full  = (wptr[AW] != rptr[AW]) &amp;&amp; (wptr[AW-1:0] == rptr[AW-1:0]);
+  assign count = wptr - rptr;
+  always_ff @(posedge clk or negedge rst_n)
+    if (!rst_n) begin wptr &lt;= '0; rptr &lt;= '0; end
+    else begin
+      if (wr_en &amp;&amp; !full)  begin mem[wptr[AW-1:0]] &lt;= din; wptr &lt;= wptr + 1'b1; end
+      if (rd_en &amp;&amp; !empty) rptr &lt;= rptr + 1'b1;
+    end
+  assign dout = mem[rptr[AW-1:0]];               // first-word-fall-through
+endmodule</code></pre>
+<p>满/空用指针多一位的 MSB 区分（D 为 2 的幂）；almost_full = count &gt;= D-K，用于反压提前一拍。</p>
+<div class="ext"><b>延伸：</b>异步 FIFO 的 Gray 码指针 + 两级同步器（你的 TetraMem CDC FIFO），为什么 Gray 码、为什么满空判断在跨域后是"保守"的；D 非 2 的幂怎么办。</div>
+</div></details>
+</section>
+
+<section class="card" id="qd">
+  <h2>D. CPU / RISC-V 微架构（JD："懂 CPU 的人：OoO pipeline、cache hierarchy、memory subsystem"）</h2>
+
+<details class="q"><summary>Rocket 和 BOOM 的区别？MediumBoomConfig 是什么配置？</summary><div class="a">
+<p>Rocket：RV64GC 顺序（in-order）5 级流水（PCGen/Fetch/Decode/Execute/Mem/WB，实际 IF→ID→EX→MEM→WB），单发射，非阻塞 D-cache，分支预测 BTB/BHT/RAS，支持 M/S/U 特权级、MMU（Sv39）；BOOM：RV64GC 乱序超标量（Fetch→Decode→Rename→Dispatch→Issue→RegRead→Execute→Memory→Writeback→Commit），物理寄存器堆 + 重命名 + ROB + 统一/分布式 issue queue、TAGE 分支预测、加载/存储队列。MediumBoomConfig：单个 BOOM tile，fetch 4 / decode 2、ROB 64、int/fp PRF 80/64、LDQ/STQ 16/16、issue queue mem 12 / int 20 / fp 16、maxBrCount 12、TAGE-L 预测器、16 KB 4 路 I$/D$（2 MSHR），带 FPU；是 BOOM 家族里"能在课程周期内流片"的中间档（Small 是 1 发射 ROB 32，Large 是 3 发射 ROB 96）。</p>
+<div class="ext"><b>延伸：</b>Rocket 的 D-cache 为什么非阻塞（miss 下继续 hit，MSHR）；BOOM 的 execute pipeline 为什么把 ALU 延迟对齐到 iMul/FPU（共享写回口）；Chisel 生成的 Verilog 为什么难读（名字自动生成，firrtl 优化后展开）。</div>
+</div></details>
+
+<details class="q"><summary>经典 5 级流水线的三种冒险及解决方法？</summary><div class="a">
+<p>结构冒险：资源冲突（单端口存储器），解决：分离 I/D cache、多端口/复制；数据冒险 RAW：前递（EX→EX、MEM→EX），load-use 需插一拍 stall；WAR/WAW 在顺序流水线不出现，在乱序中用重命名消除；控制冒险：分支决议延迟，解决：分支预测（静态/动态 BHT、BTB、RAS）+ 误预测冲刷，或延迟槽。</p>
+<div class="ext"><b>延伸：</b>验证角度怎么测前递：连续依赖指令序列 + ISS 比对；load-use 后紧跟 store 的 corner；异常在流水线中的精确处理（精确异常需在 commit 点统一处理）。</div>
+</div></details>
+
+<details class="q"><summary>乱序核的重命名、ROB、issue queue、LSQ 各解决什么问题？</summary><div class="a">
+<p>重命名（map table + free list + 物理寄存器堆）消除 WAR/WAW 假依赖；ROB 按程序序记录指令状态，保证精确异常和顺序提交，误预测时回滚 map table（或用 checkpoint/branch mask，BOOM 用 branch mask 快速 kill 所有被推测指令）；issue queue 保存等待操作数的指令，操作数就绪即唤醒发射（数据流执行）；LSQ 保证内存序：store 在 commit 后才写 cache（store buffer），load 可推测执行但要检查与更早 store 的地址冲突（memory disambiguation），冲突则重放/冲刷。</p>
+<div class="ext"><b>延伸：</b>load 推测唤醒（假设 hit，miss 时重放）；memory ordering violation 检测；RISC-V 的 RVWMO 内存模型 + fence；验证 OoO 核时 trace-compare 为什么按 commit 序。</div>
+</div></details>
+
+<details class="q"><summary>Cache 的组成、映射方式、写策略、替换策略、一致性？</summary><div class="a">
+<p>地址 = tag | index | offset；直接映射/组相联/全相联，相联度高冲突少但比较器多、延迟功耗高；写策略：write-through（简单，需写缓冲）vs write-back（dirty 位，替换时写回）；写分配 vs 不分配；替换：LRU/PLRU（你写过 <code>plru_4way.sv</code>）/随机；一致性：多核用 MESI/MOESI 目录或监听，TileLink 用 Probe/Release 通道实现；I-cache 与 D-cache 的一致性依赖 <code>fence.i</code>；VIPT 用页内偏移做 index 避免别名问题（index+offset ≤ page size，否则需处理 aliasing）。</p>
+<div class="ext"><b>延伸：</b>MSHR 与非阻塞 cache；预取器；cache 验证的测试点（hit/miss/evict/dirty writeback、同一行并发访问、miss under miss、错误注入 ECC）；Agent workload 提到的"内存访问模式不可预测"意味着什么（预取失效、TLB miss 多、需要更大 LLC / 更好的 replacement）。</div>
+</div></details>
+
+<details class="q"><summary>虚拟内存与 TLB：页表遍历、TLB miss 的处理、验证要点？</summary><div class="a">
+<p>RISC-V Sv39 三级页表，satp 指向根页表；TLB 缓存 VA→PA 映射与权限位；miss 时硬件 PTW 逐级读内存（Rocket 有硬件 PTW，共享 L1 D-cache 或 L2），缺页/权限错触发 page fault 异常交给 OS。验证要点：各种权限组合（R/W/X/U/A/D 位）、超页（megapage/gigapage）、TLB 替换、satp 切换后 <code>sfence.vma</code>、PTW 期间的异常、两级地址翻译（H 扩展）。</p>
+<div class="ext"><b>延伸：</b>A/D 位硬件更新 vs 软件更新（Svadu）；ASID；PMP 与 PMA 检查的顺序。</div>
+</div></details>
+
+<details class="q"><summary>RISC-V 特权级、CSR、异常/中断处理流程？</summary><div class="a">
+<p>M/S/U 三级；异常发生时：把 PC 存 <code>mepc</code>、原因存 <code>mcause</code>、附加信息 <code>mtval</code>、保存并关闭中断使能（<code>mstatus.MPIE ← MIE, MIE ← 0</code>、<code>MPP ← 当前特权级</code>）、跳到 <code>mtvec</code>（direct/vectored 模式）；<code>mret</code> 恢复。中断有 M/S 级的 software/timer/external 三类，由 <code>mie/mip</code> 与 <code>mideleg/medeleg</code> 委托到 S 模式。验证：每种异常的优先级、同时发生时的选择、委托、WFI、中断在流水线中的精确性（不能在指令中间响应）。</p>
+<div class="ext"><b>延伸：</b>CSR 的 WARL/WLRL 语义（你在 RAL 里建模过）；<code>fcsr={frm,fflags}</code> 别名；计数器 <code>mcycle/minstret</code> 的 volatile 建模；CLINT/PLIC 的作用。</div>
+</div></details>
+
+<details class="q"><summary>分支预测器有哪几类？误预测的代价和恢复？验证怎么覆盖？</summary><div class="a">
+<p>静态（BTFN）、1/2-bit 饱和计数器 BHT、gshare（全局历史 XOR PC）、tournament、TAGE（多长度历史的 tagged 表，BOOM 用）、BTB（目标地址）、RAS（返回地址）、loop predictor。代价 = 前端到决议点的流水级数；恢复：冲刷所有更年轻指令、恢复 rename map（checkpoint 或 walk ROB）、恢复 RAS。验证覆盖：taken/not-taken 各种模式、BTB 别名、RAS 溢出/下溢、间接跳转、误预测与异常同时、预测器在复位后的状态。</p>
+<div class="ext"><b>延伸：</b>预测器只影响性能不影响功能，怎么验证性能（性能计数器 + 参考模型/性能模型对比，trace 驱动）；Agent workload "推理与逻辑交织"对分支预测的挑战。</div>
+</div></details>
+
+<details class="q"><summary>Agent workload（多轮推理、工具调用、RAG）"延迟敏感、频繁上下文切换、内存访问不可预测"对 CPU 微架构和验证意味着什么？</summary><div class="a">
+<p>微架构上可能的方向：更大/更智能的 LLC 与更强的 memory-level parallelism（更多 MSHR、更深 LSQ）、减少上下文切换开销（更大 TLB、ASID/PCID 避免刷 TLB、快速的寄存器保存/恢复、更多硬件线程）、面向指针追逐（pointer chasing）的预取、大量分支/短函数调用的前端（大 BTB、返回栈、指令预取）、低延迟的核间通信与中断。验证意义：性能验证成为一等公民——需要 trace 驱动的性能回归、性能计数器验证、在 FPGA/emulator 上跑真实 agent trace；功能验证要重点覆盖 TLB/ASID 切换、并发中断、大 outstanding miss 下的一致性。</p>
+<div class="ext"><b>延伸：</b>你会怎么设计一个"性能 scoreboard"（对比 IPC、miss rate 与性能模型，容差判定）；hardware/software co-design 中 verification-in-the-loop 的含义（RTL 改动即刻用同一 workload 验证性能与功能）。</div>
+</div></details>
+
+<details class="q"><summary>存储器验证（SRAM/DDR 控制器）关注什么？</summary><div class="a">
+<p>SRAM：读写冲突（同拍同地址读写行为，read-first/write-first）、字节使能、掩码、ECC 编码/解码/单纠双检、BIST、行为模型与编译器生成的 macro 的一致性（Chipyard 的 <code>top.mems.v</code> 就是行为模型，流片要换成 SRAM compiler 输出并做 LEC/仿真）。DDR 控制器：初始化序列、刷新、时序参数（tRCD/tRP/tRAS/tWR）、bank 管理、读写调度公平性、数据完整性（用行为级 DRAM 模型 + scoreboard）、低功耗状态、训练。</p>
+<div class="ext"><b>延伸：</b>怎么验证 SRAM 替换后功能一致（黑盒 LEC + 定向读写）；memory model 用 DPI 大数组还是关联数组；ECC 错误注入。</div>
+</div></details>
+</section>
+
+<section class="card" id="qe">
+  <h2>E. 总线与高速接口（AXI/AHB、PCIe、DDR、TileLink）</h2>
+
+<details class="q"><summary>AXI4 的五个通道和握手规则；你的 2M×3S 环境怎么验证互连？</summary><div class="a">
+<p>AW/W/B（写地址/写数据/写响应）、AR/R（读地址/读数据），每通道独立 valid/ready 握手：valid 不得依赖 ready，valid 拉高后不能撤且数据保持；同一 ID 的事务必须按序响应，不同 ID 可乱序；写数据可先于写地址；burst 类型 FIXED/INCR/WRAP，4KB 边界不可跨；WSTRB 字节使能；RESP OKAY/EXOKAY/SLVERR/DECERR。2M×3S 环境：每个 master 一个 active agent、每个 slave 一个带内存模型的 responder（或 passive+行为 slave）；scoreboard 按地址译码预测目标 slave，检查数据一致、ID 顺序、DECERR（未映射地址）；覆盖 burst 类型×长度×size×未对齐、两 master 同时访问同一 slave 的仲裁、outstanding 深度。</p>
+<div class="ext"><b>延伸：</b>AXI 死锁场景（写数据交织 WID 在 AXI4 已取消）、AXI3 vs AXI4 区别、AXI-Lite/AXI-Stream；exclusive access；QoS/region；interconnect 的 ordering 检查为什么难。</div>
+</div></details>
+
+<details class="q"><summary>AHB 与 AXI 的区别？什么时候用 AHB？</summary><div class="a">
+<p>AHB：单通道地址/数据、两级流水（地址阶段与数据阶段重叠）、HREADY 统一等待、无 outstanding（一个 master 一笔在途）、burst 简单，适合低功耗 MCU 外设总线；AXI：五通道分离、多 outstanding、乱序、读写并行，适合高性能。APB 更简单用于寄存器配置。</p>
+<div class="ext"><b>延伸：</b>AHB-Lite 与 multi-layer AHB；AXI→APB 桥的验证要点（响应转换、错误映射）。</div>
+</div></details>
+
+<details class="q"><summary>TileLink 是什么？和 AXI 相比有什么特点？</summary><div class="a">
+<p>Chipyard/Rocket 内部互连协议，五个通道 A（请求）/B（probe）/C（release）/D（响应）/E（ack），TL-UL/TL-UH/TL-C 三个等级，TL-C 内建 cache 一致性（Acquire/Probe/Release），消息按 size/mask/source/sink 组织，保证无死锁的优先级 A&lt;B&lt;C&lt;D&lt;E。与 AXI 相比：内建一致性、更规则的握手（同样 valid/ready，但 ready 可依赖 valid 的规则更明确）。Chipyard 通过 TL→AXI4 桥接外设/DDR。</p>
+<div class="ext"><b>延伸：</b>怎么给 TileLink 写 monitor 与断言（Chipyard 自带 TLMonitor）；Acquire 的权限升级/降级。</div>
+</div></details>
+
+<details class="q"><summary>PCIe 的分层结构和验证关注点？</summary><div class="a">
+<p>事务层（TLP：Memory/IO/Config/Message，含 header/payload/ECRC，流控 credit）、数据链路层（DLLP、ACK/NAK、重传、序列号、LCRC）、物理层（LTSSM 链路训练：Detect→Polling→Configuration→L0，8b/10b 或 128b/130b 编码、lane 反转/极性、速率协商、均衡）。验证关注：LTSSM 所有状态转移与超时、流控 credit 更新、乱序/重传、TLP 格式与错误（毒化、ECRC、malformed）、配置空间与能力结构、电源状态 L0s/L1/L2、MSI/MSI-X 中断、多功能/SR-IOV；通常用商用 VIP（Synopsys/Cadence）+ 自定义 sequence，系统级 DMA 数据流 scoreboard。</p>
+<div class="ext"><b>延伸：</b>PIPE 接口是什么（MAC 与 PHY 分离，仿真时可绕过 SerDes）；Gen3 以上均衡训练验证；错误注入与 AER。</div>
+</div></details>
+
+<details class="q"><summary>DDR（如 DDR4/LPDDR4）接口验证关注点？</summary><div class="a">
+<p>控制器侧：初始化/训练（ZQ、write leveling、read gate、read/write DQ 训练）、命令时序（tRCD/tRP/tRAS/tRRD/tFAW/tWTR）、刷新（REF、per-bank refresh）、bank group、地址映射、读写调度与 QoS、ECC、低功耗（self-refresh、power-down）、DBI/CRC/parity。验证方式：用 Micron 行为模型或商用 DRAM VIP 检查协议时序（模型自带 timing check），控制器前端用 AXI agent 做数据完整性 scoreboard，覆盖各类 timing 参数边界与 page hit/miss/conflict 场景。</p>
+<div class="ext"><b>延伸：</b>PHY 与控制器的 DFI 接口；为什么 DDR 的时序违例仿真里只能靠模型 check；gate-level 下的 DDR IO 时序。</div>
+</div></details>
+
+<details class="q"><summary>跨时钟域（CDC）的验证怎么做？</summary><div class="a">
+<p>静态：CDC lint 工具（SpyGlass/Questa CDC/Jasper CDC）检查同步器缺失、收敛（reconvergence）、数据总线未握手、复位同步；结构：单 bit 用两级同步器、多 bit 用握手/异步 FIFO（Gray 指针）/ MCP（multi-cycle path）方案；仿真：随机时钟相位/频率比、亚稳态注入模型（对同步器输出随机延一拍）、在 GLS 下检查；断言：跨域信号在被采样前保持稳定（<code>$stable</code>）、Gray 码每拍只变 1 位。你的 TetraMem 系统在两个时钟比下回归就是这个思路。</p>
+<div class="ext"><b>延伸：</b>为什么快到慢的脉冲要展宽或用握手；复位域交叉（RDC）；异步 FIFO 的空/满判断是保守而非错误。</div>
+</div></details>
+</section>
+
+<section class="card" id="qf">
+  <h2>F. Formal / JasperGold（加分项）</h2>
+
+<details class="q"><summary>形式验证和仿真的本质区别？什么类型的模块适合 formal？</summary><div class="a">
+<p>仿真是采样式（跑过的路径才被检查），formal 是穷举式（对所有输入序列证明性质成立，或给出反例），不需要激励但需要约束（assume）避免非法输入；受状态空间限制，深度有限。适合：仲裁器、FIFO、总线协议桥、握手/控制逻辑、寄存器访问（CSR 权限）、死锁/活锁、安全属性（隔离）、连接性检查、X 传播、等价检查（LEC/SEC）；不适合：大数据通路（乘法器需抽象）、深序列（DDR 初始化）、软件流程。</p>
+<div class="ext"><b>延伸：</b>bounded proof 与 full proof 的区别；formal coverage（cone of influence、proof core）；怎么防止过约束（assume 太强 → cover 检查可达性）。</div>
+</div></details>
+
+<details class="q"><summary>JasperGold 的基本流程和常用 app？</summary><div class="a">
+<p>流程：<code>analyze</code> 读 RTL → <code>elaborate -top</code> → <code>clock/reset</code> 定义 → 写 SVA（assert/assume/cover）或 bind → <code>prove -all</code> → 分析结果（proven/cex/undetermined），反例用波形调试，undetermined 通过增加 engine 时间、抽象（黑盒存储、cut point、初始状态约束）、分解性质来收敛。Apps：FPV（属性验证）、CDC/RDC、CONN（连接性）、SEC（时序等价）、XPROP、CSR（寄存器）、SPV（安全路径）、Coverage、Unreachability（UNR，找不可达覆盖点）。</p>
+<div class="ext"><b>延伸：</b>你用 Jasper 验证过什么（如 FIFO 不溢出、仲裁公平性）；怎么用 cover 证明环境没过约束；abstraction（计数器抽象、memory 抽象）。</div>
+</div></details>
+
+<details class="q"><summary>给一个仲裁器写 formal 属性，你会写哪些？</summary><div class="a">
+<p>安全性：任一时刻最多一个 grant（<code>$onehot0(gnt)</code>）；grant 必须对应 request（<code>gnt[i] |-&gt; req[i]</code>）；活性：请求最终被授权（<code>req[i] |-&gt; s_eventually gnt[i]</code>，或有界版本 <code>##[1:N]</code>）；公平性/轮转：round-robin 时同时请求下上一次被授权者优先级最低；无 grant 时无 req；cover：所有请求同时到达、连续授权同一 master 等场景可达。假设：req 不在 grant 前撤（若协议要求）。</p>
+<div class="ext"><b>延伸：</b>liveness 需要 fairness 假设；为什么 <code>s_eventually</code> 在仿真中难以检查而在 formal 中可以。</div>
+</div></details>
+</section>
+
+<section class="card" id="qg">
+  <h2>G. STA · 时钟 · 低功耗 · 后端常识（验证工程师应知）</h2>
+
+<details class="q"><summary>setup/hold 的公式，违例分别怎么修？</summary><div class="a">
+<p>setup：<code>Tclk + Tskew ≥ Tcq + Tlogic + Tsetup + Tuncertainty</code>，slack = required − arrival；hold：<code>Tcq + Tlogic ≥ Thold + Tskew</code>。修 setup：减逻辑深度（重定时、流水线）、升驱动、减负载、useful skew、降频、优化布局；修 hold：插 delay/buffer（项目中 freepdk 无 delay cell 只能用 buffer）、调 clock skew；hold 不能靠降频修，且要在所有角修（通常在 best corner 最严重）。</p>
+<div class="ext"><b>延伸：</b>为什么 CTS 后才修 hold；multi-cycle / false path 约束的验证风险（约束错了仿真也抓不到，需要 GLS with SDF）；OCV derate。</div>
+</div></details>
+
+<details class="q"><summary>时钟树综合的目标？clock gating 对验证的影响？</summary><div class="a">
+<p>CTS 目标：控制 skew、latency、transition，插入平衡的 buffer 树（CCOpt 同时做 useful skew 优化）；ICG 插入（综合 <code>lp_insert_clock_gating</code>）把 <code>if (en) q&lt;=d</code> 变成门控时钟，省动态功耗。对验证：门控后的时钟在仿真中"停"了，RTL 与门级行为等价但 GLS 中若 ICG 使能有 glitch（latch-based ICG 能防）会导致 X；LEC 需要识别 ICG 的等价；覆盖率要覆盖 gating on/off；功耗估算要有真实 activity。</p>
+<div class="ext"><b>延伸：</b>CTS 为什么在 place 之后 route 之前；skew 与 useful skew；clock gating 的 test mode 旁路（DFT）。</div>
+</div></details>
+
+<details class="q"><summary>低功耗设计技术与 UPF 验证？</summary><div class="a">
+<p>技术：clock gating、多电压域（level shifter）、power gating（isolation cell、retention 寄存器、power switch）、DVFS、多 Vt 单元、时钟/存储器休眠。UPF/CPF 描述电源意图；验证：低功耗仿真（VCS NLP/Xcelium LPS）按 UPF 关电时把域内信号置 X、检查 isolation/retention 时序（先隔离再断电，先上电再解隔离）、状态机覆盖所有电源状态转换、静态检查（UPF lint）。项目里 <code>commit_power_intent</code> 步骤对应读入电源意图，但这颗 BOOM SoC 只有单电源域。</p>
+<div class="ext"><b>延伸：</b>ICG 与 power gating 的验证差异；always-on 逻辑；retention 寄存器的保存/恢复序列断言。</div>
+</div></details>
+
+<details class="q"><summary>综合会做哪些优化？为什么综合后的网表要 LEC 而不是靠仿真？</summary><div class="a">
+<p>常量传播、死逻辑删除、寄存器合并/复制、FSM 重编码、资源共享、重定时（若开启）、时钟门控插入、boundary optimization（层次边界穿越，flatten_effort 控制）、DesignWare/ChipWare 算术单元映射。LEC 能穷举证明结构等价，仿真只能抽样且门级仿真慢几十倍；但 LEC 不检查 X 行为和时序，所以 GLS 仍然需要一小部分（复位、时钟、DFT）。</p>
+<div class="ext"><b>延伸：</b>综合无法处理的 RTL 结构（initial、#延迟、非阻塞混用）；lint（SpyGlass）在 RTL 阶段抓什么；同步复位与异步复位的综合差异与验证（复位释放的 CDC）。</div>
+</div></details>
+
+<details class="q"><summary>DFT 基本概念：scan、ATPG、BIST，验证工程师参与什么？</summary><div class="a">
+<p>Scan 把触发器串成移位链，测试模式下移入 pattern、capture、移出比较；ATPG 生成 pattern，覆盖 stuck-at/transition fault；MBIST 对存储器用内置状态机跑 March 算法；JTAG/TAP 控制。验证参与：scan 插入后网表的 GLS（shift/capture 模式）、ATPG pattern 的 Verilog 仿真（零延迟 + SDF）、MBIST 控制器功能验证、测试模式下的时钟/复位切换（占 GLS 失败大头）。</p>
+<div class="ext"><b>延伸：</b>scan chain 对 LEC 的影响（test mode 约束为 0 做等价）；带 SDF 的 ATPG 仿真为什么会挂（hold 违例、X 源、时序检查）。</div>
+</div></details>
+</section>
+
+<section class="card" id="qh">
+  <h2>H. 脚本与 C（Python / Tcl / Perl / Makefile）</h2>
+
+<details class="q"><summary>你用 Python/Tcl 做过什么自动化？举一个具体例子。</summary><div class="a">
+<p>Python：<code>cat-files.py</code> 把 .f 列表拼成单文件；<code>generate-setup-yaml.py</code> 从 adk.tcl 解析变量生成 SFK 配置；回归脚本（并行跑 seed、解析 log、汇总覆盖率、生成 HTML）；测试向量生成（GcdUnit 的 <code>generate_test_vectors.py</code>）。Tcl：mflowgen 节点里所有 EDA 脚本（Genus/Innovus/Conformal），dbGet→get_db 翻译、flow_step 定义。Makefile：mflowgen 生成的 DAG 依赖、UVM 仿真的 questa/vcs/xcelium 目标。</p>
+<div class="ext"><b>延伸：</b>手写题：用 Python 解析仿真 log 统计每个 test 的 UVM_ERROR 数并输出表格（正则 + dict + csv）；用 Tcl 写一个遍历 <code>get_db insts</code> 过滤 FILL* 的 proc；Perl 的正则一行式。</div>
+</div></details>
+
+<details class="q"><summary>手写题：Python 解析 log 汇总回归结果。</summary><div class="a">
+<pre><code>import re, glob, collections, csv
+pat_err  = re.compile(r'UVM_ERROR\s*:\s*(\d+)')
+pat_test = re.compile(r'\+UVM_TESTNAME=(\w+)')
+rows = []
+for f in glob.glob('logs/*.log'):
+    txt = open(f, errors='ignore').read()
+    test = (pat_test.search(txt) or [None, f])[1]
+    errs = int(pat_err.search(txt).group(1)) if pat_err.search(txt) else -1
+    seed = re.search(r'seed=(\d+)', txt)
+    rows.append((test, seed.group(1) if seed else '?', 'PASS' if errs == 0 else 'FAIL', errs))
+by_test = collections.Counter(r[0] for r in rows if r[2]=='FAIL')
+with open('summary.csv','w',newline='') as fp: csv.writer(fp).writerows([('test','seed','status','errors'),*rows])
+print(sorted(by_test.items(), key=lambda kv: -kv[1]))</code></pre>
+<div class="ext"><b>延伸：</b>怎么并行跑（<code>subprocess</code> + <code>concurrent.futures</code>）；怎么把 seed 失败的复现命令直接打印出来；用 <code>argparse</code> 参数化。</div>
+</div></details>
+
+<details class="q"><summary>C 语言在验证里用在哪？（JD 要求 C）</summary><div class="a">
+<p>裸机测试程序（bare-metal：启动代码、链接脚本、用 <code>tohost</code>/UART 打印判 pass）跑在 RTL/FPGA 上做系统级验证；DPI-C 参考模型（softfloat、加解密算法、ISS 封装）；驱动/固件级测试；性能 benchmark（CoreMark/Dhrystone）。需要会：volatile 访问 MMIO 寄存器、内联汇编读写 CSR（<code>csrr/csrw</code>）、中断向量表、启动汇编与 C 的交接、交叉编译 riscv64-unknown-elf-gcc、链接脚本控制段地址。</p>
+<div class="ext"><b>延伸：</b>你的 <code>application.cpp</code>（mmap + memchr 反转行，1.2 GB/s）体现了什么（系统调用、内存映射、缓冲区、错误处理）；C 测试怎么与 UVM 同步（后门 mailbox 寄存器、DPI 回调）。</div>
+</div></details>
+</section>
+
+<section class="card" id="qi">
+  <h2>I. FPGA 原型 / 硬件加速 / 系统级（JD 职责 3、4）</h2>
+
+<details class="q"><summary>仿真、emulation、FPGA 原型各自定位？在 FPGA 上复现问题怎么做？</summary><div class="a">
+<p>仿真：可观测性最好、最慢（kHz），用于模块级/系统级功能；Emulation（Palladium/Zebu/Veloce）：MHz 级、可编译整芯片、有波形/断点，用于软件启动、长 workload；FPGA 原型：几十 MHz、最接近真实、观测性差，用于软件开发、接口互操作。FPGA 复现：先用 ILA/ChipScope 抓触发条件附近波形，或用 trace buffer 记录 commit log；把问题缩小到可在仿真复现的序列（导出寄存器状态/内存镜像做仿真初始状态，或用 riscv-dv 生成同类指令流）；注意 FPGA 的 RAM 初始化、时钟比、异步接口与 ASIC 的差异导致的"只在 FPGA 出现"的问题。</p>
+<div class="ext"><b>延伸：</b>FireSim（Chipyard 的 FPGA 加速仿真，cycle-exact）；同一 RTL 在 FPGA 上需要哪些修改（时钟、存储、IO、复位）；hybrid（部分 emulation + 部分 VIP）。</div>
+</div></details>
+
+<details class="q"><summary>系统级验证怎么组织？软件测试与 UVM 怎么配合？</summary><div class="a">
+<p>系统级以 C 测试/固件驱动为主：启动 → 配置外设 → 数据流（DMA、以太网、PCIe）→ 中断 → 低功耗；UVM 提供外部接口 agent（DDR 模型、PCIe VIP、UART 监视）和被动检查；同步机制：软件写 mailbox 寄存器触发 UVM sequence，或 UVM 通过 DPI 读取软件状态；scoreboard 做端到端数据流检查；覆盖率关注集成点。回归按 test list 分层（smoke/nightly/weekly），失败自动 triage（按错误签名聚类）。</p>
+<div class="ext"><b>延伸：</b>怎么做"验证质量与进度把控"（vplan 完成率、覆盖率曲线、bug 趋势、review checkpoint）；系统级 X 传播（复位未初始化的 RAM）。</div>
+</div></details>
+
+<details class="q"><summary>协助设计定位缺陷：你怎么写一份高质量的 bug report？</summary><div class="a">
+<p>标题一句话（模块 + 现象）；复现步骤（test、seed、命令、commit hash）；期望 vs 实际（引用 spec 条款）；最小化：缩到最短序列、关掉无关随机；波形定位（时间戳、信号名、截图/路径）；初步分析（怀疑 RTL 哪一行、或验证环境问题的排除证据）；影响范围与优先级；关联 issue。BOOM tapeout 项目里的习惯：日志拷贝存档、用 <code>flowtool -from/-to</code> 80 秒复现。</p>
+<div class="ext"><b>延伸：</b>怎么判断是 TB bug 还是 RTL bug（参考模型独立、第二种检查方式、与 spec 核对）；bug 修复后怎么防回归（把复现 case 加进回归 + 加断言）。</div>
+</div></details>
+</section>
+
+<section class="card" id="qj">
+  <h2>J. 行为面 &amp; 反问（初创公司会特别看这些）</h2>
+
+<details class="q"><summary>为什么选择我们（早期初创、从零做 AI Agent 原生 RISC-V CPU）？</summary><div class="a">
+<p>结合 JD 的话术："我想在架构还没锁死的时候进来。在 BOOM tapeout 项目里我体会到，流程和验证环境的每个决定在早期都便宜、在后期都昂贵；我在 UVM 环境里做过 RAL、IEEE-754、乱序 kill 检查，希望把这种'环境跟着架构一起长'的方式用在一个新核上。我也认同 workload-driven（先分析 Agent trace 再定微架构）——验证在这个循环里不是最后一道关，而是每次迭代的反馈。"</p>
+<div class="ext"><b>延伸：</b>被问"你能独立决策吗"——用 create_clock 断言那次说明：不改断言让它过，而是查语义找根因。</div>
+</div></details>
+
+<details class="q"><summary>讲一次你和设计/他人意见不一致的经历？</summary><div class="a">
+<p>准备一个真实例子（例如：对某个 warning 是否可忽略、对 LVS 网表是否应排除物理单元、对 UVM 环境是否该抄 RTL 做参考模型）。结构：分歧点 → 双方依据 → 用数据/实验/文档解决（跑一次对比、查工具文档） → 结果与关系。</p>
+</div></details>
+
+<details class="q"><summary>你最大的短板是什么？（新人常见：没做过完整量产项目）</summary><div class="a">
+<p>坦诚：没有经历过商用 PDK 的完整签核与硅后 bring-up；补偿：在 freepdk 上把商用流程完整跑过一遍并理解了每个签核环节的产物，知道 TSMC 迁移需要什么（QRC、bc/wc 库、PG library）；学习方式：读工具源码/文档、写断言把踩过的坑固化。</p>
+</div></details>
+
+<details class="q"><summary>值得反问面试官的问题</summary><div class="a">
+<ul>
+  <li>现在核心团队里验证和设计的比例？验证环境从零搭还是基于开源（riscv-dv、Chipyard、cocotb）？</li>
+  <li>参考模型策略：Spike/自研 ISS 的 tandem co-sim？还是性能模型（gem5/自研）与 RTL 的对比？</li>
+  <li>"Verification-in-the-Loop"具体怎么落地——每次微架构改动的回归门槛是什么？性能回归用什么 workload trace？</li>
+  <li>仿真/emulation/FPGA 的资源现状（VCS/Xcelium license、Palladium/Zebu、FPGA 板）？</li>
+  <li>第一代芯片的工艺与流片时间点？IP（DDR/PCIe PHY）自研还是外购？</li>
+  <li>新人前三个月的 onboarding 和 mentor 安排？</li>
+</ul>
+</div></details>
+</section>
+
+</main>
+</div>
+
+<footer>
+  整理自：<code>mflowgen-riscv-tapeout</code>（designs/MediumBoom、nodes/cadence-*、adks/freepdk-45nm、git log 2026-02 → 2026-06）、《Spring 2026 RISC-V Tapeout Guide》（Troubleshooting / Abhik / Shreyaans / Rayhan Notes）、<code>PastProjects/BOOM/boom_exe_uvm/README.md</code>。BOOM 规模数字（1,127,406 insts、217 DRC 等）为按 TinyRocket 实测（415,848 insts、124 DRC）× MediumBoom 规模比推算的估计值，替换为你自己的日志数据后再用于面试。
+</footer>
+
+<script>
+(function(){
+  // tabs
+  var btns = document.querySelectorAll('nav.tabs button');
+  function show(id){
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.id===id); });
+    btns.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===id); });
+    try{ localStorage.setItem('tr_tab', id); }catch(e){}
+    window.scrollTo({top:0});
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.tab); }); });
+  var saved=null; try{ saved = localStorage.getItem('tr_tab'); }catch(e){}
+  if (location.hash){
+    var el = document.querySelector(location.hash);
+    if (el){ var tab = el.closest('.tab'); if (tab) { show(tab.id); setTimeout(function(){ el.scrollIntoView(); }, 0); } }
+  } else if (saved && document.getElementById(saved)) show(saved);
+
+  // TOC links: switch tab if needed
+  document.querySelectorAll('aside.toc a').forEach(function(a){
+    a.addEventListener('click', function(ev){
+      var el = document.querySelector(a.getAttribute('href'));
+      if (!el) return;
+      var tab = el.closest('.tab');
+      if (tab && !tab.classList.contains('active')) show(tab.id);
+    });
+  });
+
+  // Q&A search / expand
+  var qs = Array.prototype.slice.call(document.querySelectorAll('#t2 details.q'));
+  var input = document.getElementById('qsearch'), count = document.getElementById('qcount');
+  function filter(){
+    var s = (input.value||'').trim().toLowerCase(), n=0;
+    qs.forEach(function(d){
+      var hit = !s || d.textContent.toLowerCase().indexOf(s) >= 0;
+      d.classList.toggle('hidden', !hit); if (hit) n++;
+      if (s && hit) d.open = true;
+    });
+    document.querySelectorAll('#t2 section.card').forEach(function(sec){
+      var vis = sec.querySelectorAll('details.q:not(.hidden)').length;
+      sec.classList.toggle('hidden', vis===0);
+    });
+    count.textContent = '共 ' + qs.length + ' 题，显示 ' + n + ' 题';
+  }
+  input.addEventListener('input', filter); filter();
+  document.getElementById('expandAll').addEventListener('click', function(){ qs.forEach(function(d){ if(!d.classList.contains('hidden')) d.open = true; }); });
+  document.getElementById('collapseAll').addEventListener('click', function(){ qs.forEach(function(d){ d.open = false; }); });
+})();
+</script>
+</body>
+</html>

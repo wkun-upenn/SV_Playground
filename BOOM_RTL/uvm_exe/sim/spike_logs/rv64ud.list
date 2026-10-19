@@ -1,0 +1,12 @@
+rv64ud-p-fadd.log
+rv64ud-p-fclass.log
+rv64ud-p-fcmp.log
+rv64ud-p-fcvt.log
+rv64ud-p-fcvt_w.log
+rv64ud-p-fdiv.log
+rv64ud-p-fmadd.log
+rv64ud-p-fmin.log
+rv64ud-p-ldst.log
+rv64ud-p-move.log
+rv64ud-p-recoding.log
+rv64ud-p-structural.log

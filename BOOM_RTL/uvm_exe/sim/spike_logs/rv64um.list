@@ -1,0 +1,13 @@
+rv64um-p-div.log
+rv64um-p-divu.log
+rv64um-p-divuw.log
+rv64um-p-divw.log
+rv64um-p-mul.log
+rv64um-p-mulh.log
+rv64um-p-mulhsu.log
+rv64um-p-mulhu.log
+rv64um-p-mulw.log
+rv64um-p-rem.log
+rv64um-p-remu.log
+rv64um-p-remuw.log
+rv64um-p-remw.log

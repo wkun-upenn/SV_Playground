@@ -1,0 +1,304 @@
+# sim/tests.yml — regression list consumed by sim/regress.py
+# seeds: how many random seeds regress.py runs (seed = 1..N); tags select subsets (--tag fp)
+
+tests:
+  - name: t01_alu_rr_smoke
+    tags: [rv64i]
+    seeds: 1
+  - name: t02_alu_rr_random
+    tags: [rv64i]
+    seeds: 5
+  - name: t03_alu_imm_random
+    tags: [rv64i]
+    seeds: 5
+  - name: t04_alu_w_random
+    tags: [rv64i]
+    seeds: 5
+  - name: t05_shift_sweep
+    tags: [rv64i]
+    seeds: 1
+  - name: t06_shift_random
+    tags: [rv64i]
+    seeds: 5
+  - name: t07_cmp_corner
+    tags: [rv64i]
+    seeds: 1
+  - name: t08_int_corner_cross
+    tags: [rv64i]
+    seeds: 1
+  - name: t09_lui_auipc
+    tags: [rv64i]
+    seeds: 2
+  - name: t10_int_all_random
+    tags: [rv64i]
+    seeds: 5
+  - name: t11_int_all_b2b
+    tags: [rv64i]
+    seeds: 2
+  - name: t12_branch_random
+    tags: [branch]
+    seeds: 5
+  - name: t13_branch_matrix
+    tags: [branch]
+    seeds: 1
+  - name: t14_jump_random
+    tags: [branch]
+    seeds: 5
+  - name: t15_jalr_matrix
+    tags: [branch]
+    seeds: 1
+  - name: t16_branch_under_mispredict
+    tags: [branch]
+    seeds: 2
+  - name: t17_mul_random
+    tags: [rv64m]
+    seeds: 5
+  - name: t18_mul_b2b
+    tags: [rv64m]
+    seeds: 2
+  - name: t19_div_random
+    tags: [rv64m]
+    seeds: 5
+  - name: t20_div_corner
+    tags: [rv64m]
+    seeds: 1
+  - name: t21_div_collision
+    tags: [rv64m]
+    seeds: 2
+  - name: t22_div_b2b
+    tags: [rv64m]
+    seeds: 2
+  - name: t23_csr_random
+    tags: [csr]
+    seeds: 5
+  - name: t24_csr_sweep
+    tags: [csr]
+    seeds: 1
+  - name: t25_fp_add_random
+    tags: [fp]
+    seeds: 5
+  - name: t26_fp_mul_random
+    tags: [fp]
+    seeds: 5
+  - name: t27_fp_fma_random
+    tags: [fp]
+    seeds: 5
+  - name: t28_fp_corner_cross
+    tags: [fp]
+    seeds: 1
+  - name: t29_fma_corner
+    tags: [fp]
+    seeds: 1
+  - name: t30_fdiv_random
+    tags: [fp]
+    seeds: 5
+  - name: t31_fdiv_collision
+    tags: [fp]
+    seeds: 2
+  - name: t32_fp_sgnj
+    tags: [fp]
+    seeds: 2
+  - name: t33_fp_minmax
+    tags: [fp]
+    seeds: 2
+  - name: t34_fp_cvt_sd
+    tags: [fp]
+    seeds: 2
+  - name: t35_fp_cmp
+    tags: [fp]
+    seeds: 2
+  - name: t36_fp_class
+    tags: [fp]
+    seeds: 2
+  - name: t37_fp_mv
+    tags: [fp]
+    seeds: 2
+  - name: t38_f2i_cvt
+    tags: [fp]
+    seeds: 2
+  - name: t39_i2f_cvt
+    tags: [fp]
+    seeds: 2
+  - name: t40_cvt_corner
+    tags: [fp]
+    seeds: 1
+  - name: t41_rm_sweep
+    tags: [fp]
+    seeds: 1
+  - name: t42_nanbox
+    tags: [fp]
+    seeds: 2
+  - name: t43_fp_all_random
+    tags: [fp]
+    seeds: 5
+  - name: t44_fp_all_b2b
+    tags: [fp]
+    seeds: 2
+  - name: t45_fp_all_backpressure
+    tags: [fp]
+    seeds: 2
+  - name: t46_int_all_br_resolve
+    tags: [ooo]
+    seeds: 5
+  - name: t47_int_all_br_mispred
+    tags: [ooo]
+    seeds: 5
+  - name: t48_fp_all_br_mispred
+    tags: [ooo]
+    seeds: 5
+  - name: t49_int_all_flush
+    tags: [ooo]
+    seeds: 5
+  - name: t50_fp_all_flush
+    tags: [ooo]
+    seeds: 5
+  - name: t51_all_heavy_br
+    tags: [ooo]
+    seeds: 5
+  - name: t52_div_br_mispred
+    tags: [ooo]
+    seeds: 5
+  - name: t53_fdiv_br_mispred
+    tags: [ooo]
+    seeds: 5
+  - name: t54_fdiv_flush
+    tags: [ooo]
+    seeds: 5
+  - name: t55_mul_br_mispred
+    tags: [ooo]
+    seeds: 5
+  - name: t56_alu0_only_stress
+    tags: [stress]
+    seeds: 3
+  - name: t57_alu1_only_stress
+    tags: [stress]
+    seeds: 3
+  - name: t58_fpu_only_stress
+    tags: [stress]
+    seeds: 3
+  - name: t59_all_units_stress
+    tags: [stress]
+    seeds: 3
+  - name: t60_all_units_backpressure
+    tags: [stress]
+    seeds: 3
+  - name: t61_all_random_long
+    tags: [stress]
+    seeds: 3
+  - name: t62_iq_smoke
+    tags: [iq]
+    seeds: 1
+  - name: t63_iq_random
+    tags: [iq]
+    seeds: 5
+  - name: t64_iq_fill_drain
+    tags: [iq]
+    seeds: 2
+  - name: t65_iq_age_order
+    tags: [iq]
+    seeds: 2
+  - name: t66_iq_dual_issue
+    tags: [iq]
+    seeds: 2
+  - name: t67_iq_spec_load
+    tags: [iq]
+    seeds: 2
+  - name: t68_iq_ld_miss_storm
+    tags: [iq]
+    seeds: 2
+  - name: t69_iq_wakeup_storm
+    tags: [iq]
+    seeds: 2
+  - name: t70_iq_fu_mask
+    tags: [iq]
+    seeds: 2
+  - name: t71_iq_branch_kill
+    tags: [iq]
+    seeds: 2
+  - name: t72_iq_branch_flush
+    tags: [iq]
+    seeds: 2
+  - name: t73_iq_sparse
+    tags: [iq]
+    seeds: 2
+  - name: t74_iq_same_cycle_wakeup
+    tags: [iq]
+    seeds: 2
+  - name: t75_iq_heavy_br
+    tags: [iq]
+    seeds: 2
+  - name: t76_full_random
+    tags: [system]
+    seeds: 3
+  - name: t77_full_random_heavy
+    tags: [system]
+    seeds: 3
+  - name: t78_full_random_long
+    tags: [system]
+    seeds: 3
+  - name: t79_int_seed_sweep
+    tags: [sweep]
+    seeds: 1
+  - name: t80_fp_seed_sweep
+    tags: [sweep]
+    seeds: 1
+  - name: t81_no_iq_int_all
+    tags: [sweep]
+    seeds: 2
+  - name: t82_coverage_closure
+    tags: [sweep]
+    seeds: 1
+  - name: t83_ral_reset
+    tags: [ral]
+    seeds: 1
+  - name: t84_ral_bit_bash
+    tags: [ral]
+    seeds: 1
+  - name: t85_ral_access_warl
+    tags: [ral]
+    seeds: 5
+  - name: t86_ral_fflags
+    tags: [ral]
+    seeds: 2
+  - name: t87_ral_frm_dynamic_rm
+    tags: [ral]
+    seeds: 3
+  - name: t88_ral_pipeline_csr
+    tags: [ral]
+    seeds: 5
+  - name: t89_ral_alias
+    tags: [ral]
+    seeds: 1
+  - name: t90_ral_warl_directed
+    tags: [ral]
+    seeds: 1
+  - name: t91_ral_illegal_access
+    tags: [ral]
+    seeds: 1
+  - name: t92_ral_backdoor
+    tags: [ral, backdoor]
+    seeds: 2
+  - name: t93_ral_random_mix
+    tags: [ral]
+    seeds: 5
+  - name: t94_ral_fp_random_csr_rm
+    tags: [ral]
+    seeds: 3
+  - name: t95_spike_rv64ui
+    tags: [spike, rv64i]
+    seeds: 1
+  - name: t96_spike_rv64um
+    tags: [spike, rv64m]
+    seeds: 1
+  - name: t97_spike_rv64uf
+    tags: [spike, fp]
+    seeds: 1
+  - name: t98_spike_rv64ud
+    tags: [spike, fp]
+    seeds: 1
+  - name: t99_spike_all_backpressure
+    tags: [spike, backpressure]
+    seeds: 2
+  - name: t100_spike_all_br_resolve
+    tags: [spike, branch]
+    seeds: 2

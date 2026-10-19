@@ -1,0 +1,3 @@
+[submodule "mflowgen-riscv-tapeout"]
+	path = mflowgen-riscv-tapeout
+	url = https://github.com/radway-lab/mflowgen-riscv-tapeout.git

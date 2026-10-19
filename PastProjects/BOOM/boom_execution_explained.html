@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOOM Core — Execution Logic Explained</title>
+<style>
+  :root{
+    --bg:#0e1320; --bg2:#151c2e; --panel:#1a2338; --panel2:#202b45;
+    --line:#2e3c5e; --txt:#dfe7f5; --dim:#8fa0c0; --acc:#57c7ff;
+    --acc2:#ffb454; --good:#5ce6a1; --bad:#ff6b81; --purp:#c792ea;
+    --mono:'SF Mono',Consolas,'Cascadia Code',Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font:16px/1.65 -apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  header{padding:38px 24px 20px;text-align:center;background:
+    radial-gradient(1200px 300px at 50% -50px,#1d2a4a 0%,transparent 70%);}
+  header h1{font-size:1.9rem;letter-spacing:.5px}
+  header h1 span{color:var(--acc)}
+  header p{color:var(--dim);max-width:760px;margin:10px auto 0;font-size:.95rem}
+  nav{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;
+    justify-content:center;padding:12px 16px;background:rgba(14,19,32,.92);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  nav button{background:var(--panel);border:1px solid var(--line);color:var(--txt);
+    padding:8px 16px;border-radius:20px;cursor:pointer;font-size:.9rem;transition:.2s;}
+  nav button:hover{border-color:var(--acc);color:var(--acc)}
+  nav button.active{background:var(--acc);border-color:var(--acc);color:#04121f;font-weight:600}
+  main{max-width:1080px;margin:0 auto;padding:26px 20px 80px}
+  section.tab{display:none;animation:fadein .35s}
+  section.tab.show{display:block}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h2{font-size:1.45rem;margin:18px 0 12px;color:var(--acc)}
+  h3{font-size:1.12rem;margin:26px 0 10px;color:var(--acc2)}
+  p{margin:10px 0;color:var(--txt)}
+  p.note,div.note{background:var(--panel);border-left:3px solid var(--acc2);
+    padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:.92rem;color:var(--dim)}
+  code{font-family:var(--mono);font-size:.86em;background:var(--panel2);
+    padding:2px 6px;border-radius:5px;color:var(--acc2)}
+  pre{font-family:var(--mono);font-size:.84rem;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    overflow-x:auto;margin:12px 0;line-height:1.55}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin:16px 0}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+    padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.86rem;transition:.15s}
+  .btn:hover{border-color:var(--acc);color:var(--acc)}
+  .btn.primary{background:var(--acc);color:#04121f;border-color:var(--acc);font-weight:600}
+  .btn.warn{background:var(--bad);color:#210b10;border-color:var(--bad);font-weight:600}
+  .btn:disabled{opacity:.4;cursor:default}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.88rem}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+  th{background:var(--panel2);color:var(--acc)}
+  td.mono,th.mono{font-family:var(--mono);font-size:.82rem}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:840px){.grid2{grid-template-columns:1fr}}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin:8px 0;font-size:.82rem;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  svg text{font-family:-apple-system,'Segoe UI',sans-serif}
+  .stage-desc{min-height:88px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:12px 16px;margin-top:10px;font-size:.92rem}
+  .stage-desc b{color:var(--acc)}
+  .logbox{font-family:var(--mono);font-size:.8rem;background:#0a0f1a;
+    border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+    min-height:60px;max-height:190px;overflow-y:auto;margin-top:10px;line-height:1.6}
+  .logbox .new{color:var(--good)}
+  .logbox .kill{color:var(--bad)}
+  .logbox .info{color:var(--dim)}
+  /* rename tables */
+  .rn-tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .rn-tables table{margin:0;font-size:.8rem}
+  .rn-tables td,.rn-tables th{padding:4px 8px;font-family:var(--mono)}
+  td.hl{background:#284a6d !important;color:#fff}
+  td.freed{background:#1f4635 !important}
+  td.stale{background:#5a2b38 !important}
+  /* ROB */
+  .rob-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+  .rob-grid{display:grid;grid-template-columns:34px 1fr 1fr;gap:4px;flex:1;min-width:300px}
+  .rob-cell{border:1px solid var(--line);border-radius:6px;padding:5px 8px;
+    font-family:var(--mono);font-size:.75rem;min-height:44px;background:var(--panel);
+    position:relative;transition:.25s}
+  .rob-cell.empty{opacity:.35}
+  .rob-cell.busy{border-color:var(--acc2);background:#3a2f1b}
+  .rob-cell.done{border-color:var(--good);background:#173a2c}
+  .rob-cell.exc{border-color:var(--bad);background:#401d26}
+  .rob-cell.committed{opacity:.28;background:var(--panel)}
+  .rob-idx{display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:.75rem;color:var(--dim)}
+  .rob-ptr{font-size:.68rem;font-weight:700;letter-spacing:.5px;border-radius:4px;
+    padding:1px 5px;position:absolute;right:4px;top:3px}
+  .ptr-head{background:var(--good);color:#04160d}
+  .ptr-tail{background:var(--acc);color:#04121f}
+  .ptr-pnr{background:var(--purp);color:#1d0f26}
+  /* IEEE bits */
+  .bitrow{display:flex;flex-wrap:wrap;gap:2px;margin:14px 0 6px}
+  .bit{width:15px;height:24px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:.68rem;border-radius:3px;cursor:pointer;
+    border:1px solid transparent;user-select:none}
+  .bit:hover{border-color:#fff}
+  .bit.s{background:#5a2b38}
+  .bit.e{background:#284a6d}
+  .bit.m{background:#1f4635}
+  .bitlabels{display:flex;gap:2px;font-size:.7rem;color:var(--dim);margin-bottom:8px}
+  .fieldbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:12px 0}
+  .fieldbox .card{margin:0;padding:12px 14px;font-size:.85rem}
+  .fieldbox b{font-family:var(--mono);color:var(--acc2);word-break:break-all}
+  .cls-badge{display:inline-block;padding:3px 12px;border-radius:14px;font-weight:700;
+    font-size:.9rem;margin-top:4px}
+  input[type=text]{background:#0a0f1a;border:1px solid var(--line);color:var(--acc2);
+    font-family:var(--mono);font-size:.9rem;padding:8px 12px;border-radius:8px;width:290px;max-width:100%}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:2px 10px;font-size:.78rem;color:var(--dim);margin:2px}
+  footer{color:var(--dim);text-align:center;font-size:.8rem;padding:30px 10px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The <span>BOOM</span> Core — Execution Logic, Explained</h1>
+  <p>An interactive tour of the Berkeley Out-of-Order Machine (RV64GC): the 10-stage
+  pipeline, the execute cluster, register renaming, the reorder buffer, the CSR path,
+  and IEEE-754 floating point with all its corner cases. Built from the official
+  BOOM documentation.</p>
+</header>
+
+<nav id="topnav">
+  <button data-tab="overview"  class="active">Pipeline Overview</button>
+  <button data-tab="execute">Execute Pipeline</button>
+  <button data-tab="rename">Register Renaming</button>
+  <button data-tab="rob">Reorder Buffer</button>
+  <button data-tab="ieee">IEEE-754 FP</button>
+  <button data-tab="verif">UVM Verification</button>
+</nav>
+
+<main>
+
+<!-- =============================== OVERVIEW =============================== -->
+<section class="tab show" id="tab-overview">
+  <h2>The BOOM Pipeline at a Glance</h2>
+  <p>Conceptually BOOM has <b>10 stages</b>: Fetch, Decode, Rename, Dispatch, Issue,
+  Register&nbsp;Read, Execute, Memory, Writeback and Commit. The implementation folds
+  these into <b>7 physical stages</b> (Decode/Rename and Rename/Dispatch combine;
+  Commit happens asynchronously). Everything up to Issue runs <i>in order</i>;
+  Issue is where the machine goes <b>out of order</b>; Commit puts the illusion of
+  program order back.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn primary" id="ov-step">Step instruction ▸</button>
+      <button class="btn" id="ov-play">▶ Auto-play</button>
+      <button class="btn" id="ov-reset">↺ Reset</button>
+      <span class="pill" id="ov-cyc">cycle 0</span>
+    </div>
+    <svg id="ov-svg" viewBox="0 0 1040 210" width="100%" aria-label="pipeline stages"></svg>
+    <div class="stage-desc" id="ov-desc"><b>Click a stage</b> (or press Step) to see what
+    happens there. The moving token is one instruction traveling down the pipe.</div>
+  </div>
+
+  <h3>In-order front, out-of-order middle, in-order retire</h3>
+  <p>The front-end fetches instructions into a <b>Fetch Buffer</b> while branch
+  prediction (BTB + gshare/TAGE) steers the PC. Decode cracks them into
+  <b>micro-ops (uops)</b>. Rename maps ISA registers onto a large
+  <b>Physical Register File (PRF)</b> — BOOM is an <i>explicit renaming</i> design like
+  the MIPS R10k and Alpha 21264. Dispatch writes uops into the <b>ROB</b> (for ordering)
+  and into <b>Issue Queues</b> (for scheduling). From there, uops issue whenever their
+  operands are ready — this is where program order stops mattering — flow through
+  Register Read into the <b>Execution Units</b>, and write results back to the PRF.
+  The ROB commits finished instructions strictly in order.</p>
+
+  <div class="note">Every in-flight uop carries a <b>branch mask</b> — one bit per
+  unresolved branch it is speculated under. When a branch resolves correctly, that bit
+  clears everywhere. When it mispredicts, every uop with that bit set is killed in one
+  cycle, and the rename map is restored from the branch's snapshot.</div>
+</section>
+
+<!-- =============================== EXECUTE =============================== -->
+<section class="tab" id="tab-execute">
+  <h2>The Execute Pipeline</h2>
+  <p>Each <b>issue port</b> feeds exactly one <b>Execution Unit</b> (EU); an EU wraps a
+  mix of <b>Functional Units</b> (FUs). A dual-issue BOOM typically pairs
+  EU#0 = ALU + FPU + iMul with EU#1 = ALU + iDiv + address-gen/LSU. Try the buttons —
+  they animate a uop through the cluster below.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn primary" data-uop="alu">Issue ALU uop</button>
+      <button class="btn primary" data-uop="fpu">Issue FPU uop</button>
+      <button class="btn primary" data-uop="imul">Issue iMul uop</button>
+      <button class="btn primary" data-uop="div">Issue iDiv uop</button>
+      <button class="btn primary" data-uop="mem">Issue Load/Store</button>
+      <button class="btn warn"    data-uop="kill">⚡ Branch mispredict</button>
+    </div>
+    <svg id="ex-svg" viewBox="0 0 1040 470" width="100%" aria-label="execute pipeline"></svg>
+    <div class="stage-desc" id="ex-desc"><b>Hover any block</b> for its role.
+    Solid-border FUs are <i>pipelined</i> (accept a uop every cycle);
+    dashed FUs are <i>un-pipelined</i> (go busy, back-pressure the issue queue).</div>
+  </div>
+
+  <h3>Pipelined vs un-pipelined functional units</h3>
+  <p><b>Pipelined FUs</b> (ALU, iMul, FPU) accept a new uop every cycle with a fixed
+  latency. BOOM auto-generates a shadow pipe that carries the uop's metadata and branch
+  mask alongside the expert-written datapath (borrowed from Rocket/hardfloat); if the
+  uop is misspeculated, its response is simply <i>gated off</i> as it exits.
+  <b>Un-pipelined FUs</b> (integer divider, FDiv/Sqrt) take a variable number of cycles
+  and de-assert their <code>ready</code> bit in the EU's readiness vector while busy, so
+  the issue scheduler stops sending that class of uop.</p>
+
+  <p>A classic BOOM trick: the ALU's 1-cycle result is <b>padded with pipeline
+  registers</b> to match the FPU/iMul latency, so all pipelined FUs in an EU can
+  <b>share one register-file write port</b> without any arbitration. ALU results still
+  <i>bypass</i> to dependent instructions from the early stages — you get back-to-back
+  dependent adds — but the write port sees a perfectly scheduled single stream.</p>
+
+  <h3>The Branch Unit</h3>
+  <p>One EU hosts the <b>Branch Unit</b>. On a correct prediction it just broadcasts
+  "branch tag N resolved" and every uop clears bit N of its branch mask. On a
+  mispredict it redirects the PC immediately, kills the front-end, and broadcasts the
+  tag so all dependent uops die — the kill broadcast is pipelined one cycle for timing.
+  Jump-registers are verified against the PC of the next instruction stored in the
+  ROB's PC file.</p>
+
+  <h3>The CSR path (why CSRs need no renaming)</h3>
+  <p>Control/Status Register instructions (<code>csrrw/csrrs/csrrc</code>) execute in the
+  Rocket-derived <b>CSRFile</b>. BOOM does <b>not rename CSRs</b>; instead a CSR
+  instruction is marked <b>"unique" / serializing</b>: the ROB must drain completely
+  before it issues, and nothing dispatches behind it until it commits. It reads its
+  operand from the PRF, executes in the CSRFile (possibly raising an exception or
+  redirecting the PC — think <code>ecall</code>), and writes the old CSR value back to
+  its destination register. Slow, but trivially correct — and CSR ops are rare.</p>
+
+  <h3>FDiv/Sqrt: the awkward guest</h3>
+  <p>The double-precision divide/sqrt unit from hardfloat is un-pipelined <i>and</i> has
+  an <b>unstable FIFO interface</b> — it may be ready this cycle and not the next, even
+  with no new work. BOOM buffers instructions inside the wrapper and applies
+  back-pressure to the issue queue when that buffer fills. Single-precision operands
+  are upscaled to double, computed, and downscaled — cheaper than a second SP unit.</p>
+</section>
+
+<!-- =============================== RENAME =============================== -->
+<section class="tab" id="tab-rename">
+  <h2>Register Renaming</h2>
+  <p>Renaming maps the 32 ISA ("logical") registers <code>x0–x31</code> onto a much larger
+  pool of <b>physical registers</b> (e.g. ~100 for the integer PRF). Why? Because only
+  <b>true data dependences (RAW)</b> are fundamental. The other two hazard types are
+  artifacts of register-name reuse, and renaming simply deletes them:</p>
+  <table>
+    <tr><th>Hazard</th><th>Meaning</th><th>After renaming</th></tr>
+    <tr><td><b>RAW</b> (read-after-write)</td><td>true dependence — consumer needs the producer's value</td><td class="mono">kept (this IS the dataflow)</td></tr>
+    <tr><td><b>WAW</b> (write-after-write)</td><td>two writers reuse the same name</td><td class="mono">gone — each write gets a fresh preg</td></tr>
+    <tr><td><b>WAR</b> (write-after-read)</td><td>a later write would clobber an earlier reader</td><td class="mono">gone — the reader keeps its old preg</td></tr>
+  </table>
+
+  <p>Three structures do the work. The <b>Rename Map Table</b> holds the current
+  speculative mapping <code>xN → pM</code>. The <b>Free List</b> (a bit-vector with a
+  priority decoder) hands out unused physical registers. The <b>Busy Table</b> says
+  which physical registers still await their value — when all of a uop's source pregs
+  are un-busy, it can issue.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Worked example — step through it</h3>
+    <pre id="rn-prog"></pre>
+    <div class="btnrow">
+      <button class="btn primary" id="rn-step">Step ▸</button>
+      <button class="btn" id="rn-back">◂ Back</button>
+      <button class="btn" id="rn-reset">↺ Reset</button>
+      <span class="pill" id="rn-state">before I1</span>
+    </div>
+    <div class="rn-tables">
+      <div><table id="rn-map"><tr><th colspan="2">Map Table</th></tr></table></div>
+      <div><table id="rn-free"><tr><th>Free List</th></tr></table></div>
+      <div><table id="rn-busy"><tr><th colspan="2">Busy Table</th></tr></table></div>
+      <div><table id="rn-out"><tr><th colspan="2">Renamed uop</th></tr></table></div>
+    </div>
+    <div class="logbox" id="rn-log"><span class="info">Press Step to rename I1…</span></div>
+  </div>
+
+  <h3>The stale physical destination ("stale pdst")</h3>
+  <p>When an instruction that writes <code>xN</code> is renamed, the map table is read
+  <i>first</i> to capture the <b>old</b> mapping — the stale pdst. That old physical
+  register can't be freed yet: an earlier-in-flight instruction might still read it, and
+  if we flush, the old mapping <i>is</i> the architectural state. Only when the new
+  instruction <b>commits</b> is the stale pdst returned to the Free List. This is
+  exactly what the ROB stores per entry: logical dest + stale pdst.</p>
+
+  <h3>Branch snapshots &amp; misprediction recovery</h3>
+  <p>Every branch (and JALR) <b>snapshots the entire Map Table</b> and starts an
+  <b>Allocation List</b> in the Free List — a running record of every preg allocated
+  after that branch. On a mispredict, recovery is single-cycle: the Map Table is reset
+  from the branch's snapshot, and the Allocation List is OR-ed back into the Free List
+  (a naive "snapshot the free list" scheme leaks registers — a preg freed <i>after</i>
+  the snapshot then re-allocated would be lost; the original BOOM author hit exactly
+  this bug). An optional <b>Committed Map Table</b> gives the same single-cycle reset
+  for exceptions and pipeline flushes.</p>
+
+  <div class="note">Because RV64G puts register specifiers at fixed bit positions, the
+  Map Table can be read <i>before</i> the instruction is even fully decoded — which is
+  why BOOM merges Decode and Rename into one stage.</div>
+</section>
+
+<!-- =============================== ROB =============================== -->
+<section class="tab" id="tab-rob">
+  <h2>The Reorder Buffer — putting order back</h2>
+  <p>The ROB tracks every in-flight instruction and provides the illusion of in-order
+  execution. Uops are written at the <b>tail</b> at dispatch and marked <i>busy</i>;
+  they clear busy when they finish executing (in any order!); the <b>head</b> commits
+  instructions only in program order. For a 2-wide BOOM the ROB is a circular buffer of
+  <b>W-wide rows</b> — one row per fetch group, so a single PC serves the whole row and
+  dispatch/commit move a full row at a time.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="btn primary" id="rob-step">Step ▸</button>
+      <button class="btn" id="rob-reset">↺ Reset</button>
+      <button class="btn warn" id="rob-exc">Inject exception @ head+1</button>
+      <span class="pill" id="rob-state">idle</span>
+    </div>
+    <div class="rob-wrap">
+      <div class="rob-grid" id="rob-grid"></div>
+      <div style="flex:1;min-width:260px">
+        <div class="legend">
+          <span><span class="dot" style="background:#3a2f1b;border:1px solid var(--acc2)"></span>busy (executing)</span>
+          <span><span class="dot" style="background:#173a2c;border:1px solid var(--good)"></span>done (not busy)</span>
+          <span><span class="dot" style="background:#401d26;border:1px solid var(--bad)"></span>exception</span>
+          <span><span class="dot" style="background:var(--panel);border:1px solid var(--line)"></span>empty / committed</span>
+        </div>
+        <div class="logbox" id="rob-log"><span class="info">Step dispatches, completes and commits uops. Watch completion happen out of order while commit stays in order.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>What one ROB entry holds</h3>
+  <p>Surprisingly little: valid, busy, is-exception, the <b>branch mask</b>, the rename
+  state (<b>logical dest + stale pdst</b> — needed to free registers at commit and to
+  unwind on flushes), and FP status updates. The PC is stored once per <i>row</i> in a
+  separate PC File (branches read it at Register Read to compute targets), and full
+  exception detail (cause, bad address) is kept only for the <b>oldest</b> excepting
+  instruction — younger ones may be squashed anyway, so storing theirs would be waste.</p>
+
+  <h3>Commit, exceptions, and the two unwind strategies</h3>
+  <p>When the head entry is done and not excepting, it commits: its architectural change
+  becomes visible, its <b>stale pdst is freed</b>, and (for stores) the LSU is told it may
+  drain the store to memory. If the head <i>is</i> excepting, the pipeline flushes and the
+  rename map must be restored to the committed state — either by <b>rolling back</b> the
+  ROB one row per cycle (writing each stale pdst back into the map, R10k-style) or in a
+  <b>single cycle</b> from the Committed Map Table if that option is enabled.</p>
+
+  <p>A newer pointer, the <b>PNR (point of no return)</b>, runs ahead of the commit head
+  marking instructions that can no longer be misspeculated or fault. Instructions between
+  head and PNR are guaranteed non-speculative even before writing back — BOOM uses this
+  to launch RoCC co-processor instructions safely.</p>
+</section>
+
+<!-- =============================== IEEE =============================== -->
+<section class="tab" id="tab-ieee">
+  <h2>IEEE-754 Floating Point in BOOM</h2>
+  <p>BOOM implements RV64GC's F and D extensions with FPUs borrowed from Rocket and
+  Berkeley <b>hardfloat</b>. Internally the datapath uses hardfloat's <b>65-bit recoded</b>
+  double format (it makes subnormals cheap), converting at the boundaries — but
+  architecturally everything you see is standard IEEE-754 <b>binary64</b>:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Anatomy of a binary64 value — click bits to flip them</h3>
+    <div class="bitrow" id="fp-bits"></div>
+    <div class="btnrow" id="fp-presets">
+      <button class="btn" data-v="3FF0000000000000">1.0</button>
+      <button class="btn" data-v="C000000000000000">−2.0</button>
+      <button class="btn" data-v="0000000000000000">+0</button>
+      <button class="btn" data-v="8000000000000000">−0</button>
+      <button class="btn" data-v="7FF0000000000000">+inf</button>
+      <button class="btn" data-v="FFF0000000000000">−inf</button>
+      <button class="btn" data-v="7FF8000000000000">qNaN</button>
+      <button class="btn" data-v="7FF0000000000001">sNaN</button>
+      <button class="btn" data-v="0000000000000001">min subnormal</button>
+      <button class="btn" data-v="000FFFFFFFFFFFFF">max subnormal</button>
+      <button class="btn" data-v="0010000000000000">min normal</button>
+      <button class="btn" data-v="7FEFFFFFFFFFFFFF">max normal</button>
+      <button class="btn" data-v="400921FB54442D18">π</button>
+    </div>
+    <div style="margin:8px 0">hex: <input type="text" id="fp-hex" spellcheck="false">
+      <span id="fp-class" class="cls-badge"></span></div>
+    <div class="fieldbox">
+      <div class="card">sign (1 bit)<br><b id="fp-sign"></b></div>
+      <div class="card">exponent (11 bits, bias 1023)<br><b id="fp-exp"></b></div>
+      <div class="card">mantissa (52 bits)<br><b id="fp-man"></b></div>
+      <div class="card">value<br><b id="fp-val"></b></div>
+    </div>
+    <div class="note" id="fp-explain"></div>
+  </div>
+
+  <h3>How the encoding works</h3>
+  <table>
+    <tr><th>Exponent field</th><th>Mantissa</th><th>Meaning</th><th class="mono">Value</th></tr>
+    <tr><td class="mono">0x001 … 0x7FE</td><td>any</td><td><b>normal</b> (implicit leading 1)</td><td class="mono">(−1)^s · 1.m · 2^(e−1023)</td></tr>
+    <tr><td class="mono">0x000</td><td>= 0</td><td><b>±zero</b> (two zeros!)</td><td class="mono">±0</td></tr>
+    <tr><td class="mono">0x000</td><td>≠ 0</td><td><b>subnormal</b> (no implicit 1, gradual underflow)</td><td class="mono">(−1)^s · 0.m · 2^(−1022)</td></tr>
+    <tr><td class="mono">0x7FF</td><td>= 0</td><td><b>±infinity</b></td><td class="mono">±∞</td></tr>
+    <tr><td class="mono">0x7FF</td><td>≠ 0, MSB=1</td><td><b>quiet NaN</b></td><td class="mono">qNaN</td></tr>
+    <tr><td class="mono">0x7FF</td><td>≠ 0, MSB=0</td><td><b>signaling NaN</b> (raises NV when consumed)</td><td class="mono">sNaN</td></tr>
+  </table>
+
+  <h3>The corner cases — what BOOM (per RISC-V) must produce</h3>
+  <table>
+    <tr><th>Operation</th><th class="mono">Result</th><th>Flags</th><th>Why</th></tr>
+    <tr><td class="mono">(+inf) + (+inf)</td><td class="mono">+inf</td><td>—</td><td>infinities of the same sign add fine</td></tr>
+    <tr><td class="mono">(+inf) + (−inf)</td><td class="mono">qNaN</td><td><b>NV</b></td><td>no meaningful answer → invalid</td></tr>
+    <tr><td class="mono">0 × inf</td><td class="mono">qNaN</td><td><b>NV</b></td><td>indeterminate form</td></tr>
+    <tr><td class="mono">1 / +0</td><td class="mono">+inf</td><td><b>DZ</b></td><td>divide-by-zero, sign follows operands</td></tr>
+    <tr><td class="mono">1 / −0</td><td class="mono">−inf</td><td><b>DZ</b></td><td>−0 is a real, signed value!</td></tr>
+    <tr><td class="mono">0 / 0, inf / inf</td><td class="mono">qNaN</td><td><b>NV</b></td><td>indeterminate</td></tr>
+    <tr><td class="mono">1 / inf</td><td class="mono">+0</td><td>—</td><td>exact</td></tr>
+    <tr><td class="mono">sNaN + x</td><td class="mono">qNaN</td><td><b>NV</b></td><td>signaling NaN consumed</td></tr>
+    <tr><td class="mono">qNaN + x</td><td class="mono">qNaN</td><td>—</td><td>quiet NaN just propagates</td></tr>
+    <tr><td class="mono">MAX_NORM × 2</td><td class="mono">+inf</td><td><b>OF, NX</b></td><td>overflow rounds to ∞ (RNE)</td></tr>
+    <tr><td class="mono">MIN_SUB × MIN_SUB</td><td class="mono">+0</td><td><b>UF, NX</b></td><td>underflows below subnormal range</td></tr>
+    <tr><td class="mono">1e308 + (−1e308)</td><td class="mono">+0</td><td>—</td><td>exact cancellation gives <b>+0</b> in RNE (−0 only in RDN)</td></tr>
+    <tr><td class="mono">fmin(−0, +0)</td><td class="mono">−0</td><td>—</td><td>RISC-V: −0 &lt; +0 for fmin/fmax</td></tr>
+    <tr><td class="mono">fmin(x, qNaN)</td><td class="mono">x</td><td>—</td><td>RISC-V min/max prefer the non-NaN operand</td></tr>
+  </table>
+
+  <div class="note"><b>RISC-V NaN rules BOOM follows:</b> any NaN result is the
+  <b>canonical qNaN</b> <code>0x7FF8_0000_0000_0000</code> — NaN payloads are not
+  propagated. Single-precision values stored in the 64-bit FP registers are
+  <b>NaN-boxed</b> (upper 32 bits all-ones); a wrongly-boxed input is treated as qNaN.
+  The five accrued exception flags in <code>fflags</code> are <b>NV</b> invalid,
+  <b>DZ</b> divide-by-zero, <b>OF</b> overflow, <b>UF</b> underflow, <b>NX</b> inexact —
+  they only accumulate (sticky) and are read/cleared through the <code>fcsr/fflags</code>
+  CSRs. Because writing them is a CSR op and setting them is an FP-writeback side
+  effect, <b>fflags is exactly the kind of "volatile" register a UVM RAL model must
+  mark as such</b>.</div>
+
+  <h3>FCLASS — the classifier instruction</h3>
+  <p><code>fclass.d</code> returns a 10-bit one-hot: −inf, −normal, −subnormal, −0, +0,
+  +subnormal, +normal, +inf, sNaN, qNaN. It's the cheapest way for software (and for a
+  <i>verification scoreboard</i>) to bucket operands — the UVM coverage model in the
+  companion testbench crosses exactly these classes against every FP op.</p>
+
+  <h3>Rounding modes (frm)</h3>
+  <p><code>frm</code> holds RNE (round-to-nearest-even, the default), RTZ (toward zero),
+  RDN (toward −∞), RUP (toward +∞), RMM (to nearest, ties away). Instructions can also
+  encode DYN to use <code>frm</code>. Rounding mode changes which corner you land on:
+  <code>1e308 − 1e308·(1−ε)</code> is +0 under RNE but −0 under RDN.</p>
+
+  <h3>Inside the FPU — how add and multiply actually work</h3>
+  <p>Every pipelined FP op walks the same five stations:
+  <b>unpack</b> (split sign/exponent/significand, restore the implicit 1, branch off
+  the special cases) → <b>align or multiply</b> → <b>normalize</b> (put the result
+  back into 1.xxx form) → <b>round</b> (RNE using guard + sticky bits) →
+  <b>pack</b>. Two fully worked examples, every bit real
+  (div/sqrt are different: they grind one result bit per cycle in the un-pipelined
+  FDiv/Sqrt unit instead):</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Worked example 1 — FADD.D: 2.25 + 1.5</h3>
+    <pre>a = fl(2.25) = 0x4002_0000_0000_0000 = 1.001₂ × 2¹
+b = fl(1.5)  = 0x3FF8_0000_0000_0000 = 1.1₂   × 2⁰</pre>
+    <table>
+      <tr><th>Step</th><th>What happens</th><th class="mono">Values</th></tr>
+      <tr><td><b>1. Unpack</b></td><td>split sign/exp/mantissa, restore the implicit 1,
+          check specials (none here)</td>
+          <td class="mono">e_a=1, e_b=0</td></tr>
+      <tr><td><b>2. Align</b></td><td>exponent difference = 1 → shift the <i>smaller</i>
+          operand's significand right 1 so both share exponent 2¹. Any bits that fall off
+          the right end would be compressed into the <b>sticky</b> bit — this is where
+          precision is lost when the exponents are far apart (add a tiny number to a huge
+          one and the small significand shifts away entirely).</td>
+          <td class="mono">b → 0.11₂ × 2¹</td></tr>
+      <tr><td><b>3. Add</b></td><td>one wide integer addition of the aligned significands
+          (same-sign add; effective subtraction would instead cancel and possibly need a
+          big left-shift)</td>
+          <td class="mono">1.001 + 0.110 = 1.111₂ × 2¹</td></tr>
+      <tr><td><b>4. Normalize</b></td><td>sum is already in [1,2) → no shift
+          (a sum ≥ 2 would shift right 1 and bump the exponent)</td>
+          <td class="mono">—</td></tr>
+      <tr><td><b>5. Round</b></td><td>guard=0, sticky=0 → nothing was shifted out,
+          nothing to round: the result is <b>exact</b>, no flags at all</td>
+          <td class="mono">NX=0</td></tr>
+      <tr><td><b>6. Pack</b></td><td>reassemble sign/exp/mantissa</td>
+          <td class="mono">0x400E_0000_0000_0000 = 3.75 ✓</td></tr>
+    </table>
+    <p class="note">Same values in FP32: 2.25 = <code>0x4010_0000</code>,
+    1.5 = <code>0x3FC0_0000</code>, 3.75 = <code>0x4070_0000</code> — identical steps,
+    just bias 127 and a 23-bit mantissa.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Worked example 2 — FMUL.D: 2.25 × 2.25</h3>
+    <pre>a = b = fl(2.25) = 0x4002_0000_0000_0000 = 1.001₂ × 2¹</pre>
+    <table>
+      <tr><th>Step</th><th>What happens</th><th class="mono">Values</th></tr>
+      <tr><td><b>1. Unpack</b></td><td>split fields; specials would branch off here
+          (inf×0 → qNaN+NV …)</td>
+          <td class="mono">e=1 each</td></tr>
+      <tr><td><b>2. Sign / exponent</b></td><td>sign = s_a ⊕ s_b; exponents simply
+          <b>add</b> (no alignment needed — this is why FP multipliers are structurally
+          <i>simpler</i> than adders)</td>
+          <td class="mono">s=0, e = 1+1 = 2</td></tr>
+      <tr><td><b>3. Multiply</b></td><td>integer multiply of the significands
+          (53×53 → up to 106 bits in hardware; here 1001₂ × 1001₂ = 1010001₂);
+          this multiplier array is the big silicon of the FPU and the core of the FMA unit</td>
+          <td class="mono">P = 1.010001₂&nbsp;&nbsp;((9/8)² = 1.265625)</td></tr>
+      <tr><td><b>4. Normalize</b></td><td>a product of [1,2)² lands in [1,4);
+          here P &lt; 2 → no shift (if P ≥ 2: shift right 1, exponent+1)</td>
+          <td class="mono">—</td></tr>
+      <tr><td><b>5. Round</b></td><td>everything below bit 52 is zero → guard=0,
+          sticky=0 → <b>exact</b>, no flags</td>
+          <td class="mono">NX=0</td></tr>
+      <tr><td><b>6. Pack</b></td><td>reassemble</td>
+          <td class="mono">0x4014_4000_0000_0000 = 5.0625 ✓ = 1.010001₂ × 2²</td></tr>
+    </table>
+    <div class="note"><b>Why these examples are exact — and most aren't:</b> 2.25 and 1.5
+    have short binary fractions, so nothing ever falls off the end of the datapath.
+    Feed the same pipeline decimal-friendly values instead and rounding appears at step 5:
+    <code>fl(16.9) × fl(16.9)</code> ends one ulp <b>below</b> <code>fl(285.61)</code>
+    (so <code>16.9 × 16.9 == 285.61</code> is <i>false</i> in floating point!), while
+    <code>sqrt(fl(285.61))</code> lands one ulp <i>above</i> <code>fl(16.9)</code> — both
+    correct per IEEE-754, with NX=1. Verification lesson: a scoreboard must predict the
+    <b>correctly-rounded result of the actual binary inputs</b> (softfloat-style, bit-exact),
+    never the decimal answer a human expects — otherwise it fails correct RTL by one ulp.</div>
+  </div>
+</section>
+
+<!-- =============================== VERIF =============================== -->
+<section class="tab" id="tab-verif">
+  <h2>How the companion UVM environment verifies all this</h2>
+  <p>The <code>boom_exe_uvm/</code> tree delivered with this document is a complete UVM
+  testbench for the execute cluster. Its architecture mirrors the concepts on the other
+  tabs:</p>
+
+  <pre>
+tb_top ── boom_exe_if (issue / branch broadcast / 2 write-back ports + SVA)
+   │
+   └─ boom_exe_env
+        ├─ boom_exe_agent          one per issue port (BOOM: one port per EU)
+        │    ├─ sequencer ◄────────── RAL frontdoor rides this too
+        │    ├─ driver             honors div/fdiv back-pressure (readiness vector)
+        │    └─ monitor            issue + wb0 (pipelined) + wb1 (un-pipelined)
+        ├─ boom_exe_scoreboard     independent RV64-M + IEEE-754 reference model,
+        │                          branch-kill tracking (killed uop must NOT write back)
+        ├─ boom_exe_coverage       op × FP-class × FP-class cross, CSR op × addr cross
+        └─ boom_csr_reg_block      ★ the RAL ★
+             └─ csr_map ── boom_csr_adapter ── (CSRRW = write, CSRRS rs1=x0 = read)</pre>
+
+  <h3>The register model (RAL) maps the real BOOM CSRs</h3>
+  <table>
+    <tr><th class="mono">CSR</th><th class="mono">addr</th><th>RAL modeling</th></tr>
+    <tr><td class="mono">fflags / frm / fcsr</td><td class="mono">0x001/2/3</td><td>RW, <b>volatile</b> (FP write-backs set flags as a hardware side effect; fcsr aliases the other two)</td></tr>
+    <tr><td class="mono">mstatus</td><td class="mono">0x300</td><td>fields MIE/MPIE/MPP RW; FS volatile (set dirty by FP wb); SD read-only, derived</td></tr>
+    <tr><td class="mono">misa</td><td class="mono">0x301</td><td>RO = RV64 IMAFDC+U (WARL, writes ignored)</td></tr>
+    <tr><td class="mono">mie / mip</td><td class="mono">0x304/0x344</td><td>interrupt-enable fields RW at their legal bit positions; mip RO-volatile</td></tr>
+    <tr><td class="mono">mtvec / mepc / mcause / mtval / mscratch</td><td class="mono">0x305, 0x341-3, 0x340</td><td>RW; WARL alignment bits excluded from bit-bash (mepc bit 0 reads 0)</td></tr>
+    <tr><td class="mono">mcycle / minstret</td><td class="mono">0xB00/0xB02</td><td>RW <b>volatile</b> counters — the test checks they advance, not a fixed value</td></tr>
+    <tr><td class="mono">mvendorid/marchid/mimpid/mhartid</td><td class="mono">0xF11-14</td><td>RO constants — <b>marchid = 2</b>, BOOM's registered open-source architecture ID</td></tr>
+  </table>
+
+  <p>Because BOOM serializes CSR instructions, the adapter spaces CSR uops apart and the
+  driver completes each one only when the write-back returns the old CSR value — so a
+  RAL <code>read()</code> gets genuine DUT data, and <code>mirror(UVM_CHECK)</code>
+  compares it against the model's prediction.</p>
+
+  <h3>The five tests</h3>
+  <table>
+    <tr><th>Test</th><th>What it proves</th></tr>
+    <tr><td class="mono">boom_alu_test</td><td>random ALU traffic matches the RV64 reference model</td></tr>
+    <tr><td class="mono">boom_muldiv_test</td><td>M-extension corners: <code>x/0 → q=−1, r=x</code>; <code>MIN_INT/−1 → q=MIN_INT, r=0</code>; un-pipelined divider back-pressure</td></tr>
+    <tr><td class="mono">boom_fp_ieee754_test</td><td>full cross of ±0/±inf/qNaN/sNaN/subnormals/max-normal through FADD/FSUB/FMUL/FMIN/FMAX/FDIV — results bit-exact incl. canonical qNaN, flags NV/DZ/OF/UF checked</td></tr>
+    <tr><td class="mono">boom_csr_ral_test</td><td>reset values, write/read-back, field RMW, fcsr↔fflags/frm aliasing, fflags side-effect accumulation, counters advancing — all through the register model</td></tr>
+    <tr><td class="mono">boom_branch_kill_test</td><td>uops speculated under a mispredicted branch must never write back</td></tr>
+  </table>
+
+  <div class="note">The behavioral DUT stands in for Chisel-generated BOOM RTL so the
+  environment runs anywhere; <code>README.md</code> explains how to bind the interface
+  onto a real <code>MediumBoomConfig</code> build and swap the FP reference for softfloat
+  DPI.</div>
+</section>
+
+</main>
+<footer></footer>
+
+<script>
+"use strict";
+/* ============================ tab navigation ============================ */
+const nav = document.getElementById('topnav');
+nav.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  nav.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelectorAll('section.tab').forEach(s => s.classList.remove('show'));
+  document.getElementById('tab-' + b.dataset.tab).classList.add('show');
+  window.scrollTo({top:0});
+});
+
+/* ============================ helpers ============================ */
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs, parent, text){
+  const el = document.createElementNS(NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  if (text !== undefined) el.textContent = text;
+  if (parent) parent.appendChild(el);
+  return el;
+}
+function log(el, msg, cls){
+  const s = document.createElement('div');
+  if (cls) s.className = cls;
+  s.textContent = msg;
+  el.appendChild(s);
+  el.scrollTop = el.scrollHeight;
+}
+
+/* ============================ 1. pipeline overview ============================ */
+(function(){
+  const stages = [
+    ['Fetch',    'Instructions are fetched into the Fetch Buffer; the branch predictor (BTB, gshare/TAGE) redirects the PC in this stage.'],
+    ['Decode',   'Instructions come out of the Fetch Buffer and are cracked into micro-ops (uops). In BOOM this stage is merged with Rename.'],
+    ['Rename',   'Logical registers x0–x31 are mapped onto physical registers via the Map Table; a fresh preg is allocated from the Free List; the stale mapping is recorded.'],
+    ['Dispatch', 'The uop is written into the ROB (for in-order bookkeeping) and into an Issue Queue (int / FP / memory), marked busy.'],
+    ['Issue',    'The uop waits in the Issue Queue until every source preg is un-busy, then requests issue. THIS is where execution goes out of order.'],
+    ['Reg Read', 'The issued uop reads its operands from the unified Physical Register File (or grabs them off the Bypass Network).'],
+    ['Execute',  'The Execution Unit computes: ALU, iMul, FPU, or address-generation for memory ops. Branches resolve in the Branch Unit here.'],
+    ['Memory',   'Loads/stores talk to the LSU (LAQ/SAQ/SDQ). Loads fire when their address is ready; stores wait for commit.'],
+    ['Writeback','Results are written to the PRF; the busy bit clears; the ROB entry is marked done (not busy).'],
+    ['Commit',   'The ROB head retires finished instructions in order; stale pdsts are freed; stores may now drain to memory.']
+  ];
+  const inorder = [0,1,2,3], ooo = [4,5,6,7,8], retire=[9];
+  const svg = document.getElementById('ov-svg');
+  const desc = document.getElementById('ov-desc');
+  const W = 96, H = 54, GAP = 6, Y = 90;
+  // group bands
+  svgEl('rect',{x:2,y:60,width:4*(W+GAP)-GAP+12,height:110,rx:10,fill:'none',stroke:'#2e5e46','stroke-dasharray':'4 4'},svg);
+  svgEl('text',{x:8,y:52,fill:'#5ce6a1','font-size':12},svg,'in order');
+  svgEl('rect',{x:4*(W+GAP)+8,y:60,width:5*(W+GAP)-GAP+12,height:110,rx:10,fill:'none',stroke:'#5e4a2e','stroke-dasharray':'4 4'},svg);
+  svgEl('text',{x:4*(W+GAP)+14,y:52,fill:'#ffb454','font-size':12},svg,'out of order');
+  svgEl('rect',{x:9*(W+GAP)+14,y:60,width:W+12,height:110,rx:10,fill:'none',stroke:'#2e4a5e','stroke-dasharray':'4 4'},svg);
+  svgEl('text',{x:9*(W+GAP)+20,y:52,fill:'#57c7ff','font-size':12},svg,'in order');
+
+  const boxes = [];
+  stages.forEach((s,i)=>{
+    let x = 8 + i*(W+GAP); if (i>=4) x+=6; if (i>=9) x+=6;
+    const g = svgEl('g',{cursor:'pointer'},svg);
+    const r = svgEl('rect',{x,y:Y,width:W,height:H,rx:9,fill:'#1a2338',stroke:'#2e3c5e','stroke-width':1.5},g);
+    svgEl('text',{x:x+W/2,y:Y+H/2+5,'text-anchor':'middle',fill:'#dfe7f5','font-size':13.5},g,s[0]);
+    if(i<9) svgEl('path',{d:`M ${x+W} ${Y+H/2} l ${GAP+(i===3||i===8?6:0)} 0`,stroke:'#44557d','stroke-width':2,'marker-end':'none'},svg);
+    g.addEventListener('click',()=>show(i));
+    boxes.push({g,r,x});
+  });
+  const token = svgEl('circle',{cx:boxes[0].x+W/2,cy:Y-16,r:8,fill:'#ffb454',opacity:0},svg);
+  let pos=-1, timer=null;
+  const cyc = document.getElementById('ov-cyc');
+  function show(i){
+    boxes.forEach((b,j)=>b.r.setAttribute('stroke', j===i?'#57c7ff':'#2e3c5e'));
+    boxes.forEach((b,j)=>b.r.setAttribute('stroke-width', j===i?3:1.5));
+    desc.innerHTML = `<b>${stages[i][0]}.</b> ${stages[i][1]}`;
+  }
+  function step(){
+    pos = (pos+1) % stages.length;
+    if(pos===0 && token.getAttribute('opacity')==='1'){ /* wrap */ }
+    token.setAttribute('opacity',1);
+    token.setAttribute('cx', boxes[pos].x + W/2);
+    show(pos);
+    cyc.textContent = 'cycle ' + (pos+1);
+    if(pos===stages.length-1 && timer){ clearInterval(timer); timer=null;
+      document.getElementById('ov-play').textContent='▶ Auto-play'; }
+  }
+  document.getElementById('ov-step').addEventListener('click', step);
+  document.getElementById('ov-play').addEventListener('click', function(){
+    if(timer){ clearInterval(timer); timer=null; this.textContent='▶ Auto-play'; return; }
+    this.textContent='⏸ Pause';
+    timer = setInterval(step, 900);
+  });
+  document.getElementById('ov-reset').addEventListener('click', ()=>{
+    pos=-1; token.setAttribute('opacity',0); cyc.textContent='cycle 0';
+    if(timer){clearInterval(timer);timer=null;document.getElementById('ov-play').textContent='▶ Auto-play';}
+    boxes.forEach(b=>{b.r.setAttribute('stroke','#2e3c5e');b.r.setAttribute('stroke-width',1.5);});
+    desc.innerHTML='<b>Click a stage</b> (or press Step) to see what happens there. The moving token is one instruction traveling down the pipe.';
+  });
+})();
+
+/* ============================ 2. execute pipeline ============================ */
+(function(){
+  const svg = document.getElementById('ex-svg');
+  const desc = document.getElementById('ex-desc');
+  const blocks = {};
+  function block(id, x,y,w,h, label, color, dashed, tip){
+    const g = svgEl('g',{},svg);
+    const r = svgEl('rect',{x,y,width:w,height:h,rx:8,fill:'#1a2338',
+      stroke:color,'stroke-width':1.6,
+      ...(dashed?{'stroke-dasharray':'5 4'}:{})},g);
+    const lines = label.split('\n');
+    lines.forEach((ln,i)=>svgEl('text',{x:x+w/2,y:y+h/2+5+(i-(lines.length-1)/2)*15,
+      'text-anchor':'middle',fill:'#dfe7f5','font-size':12.5},g,ln));
+    g.addEventListener('mouseenter',()=>{desc.innerHTML=tip; r.setAttribute('stroke-width',3);});
+    g.addEventListener('mouseleave',()=>r.setAttribute('stroke-width',1.6));
+    blocks[id]={r,x,y,w,h};
+    return g;
+  }
+  function wire(x1,y1,x2,y2, color='#44557d'){
+    svgEl('path',{d:`M ${x1} ${y1} L ${x2} ${y2}`,stroke:color,'stroke-width':2,fill:'none'},svg);
+  }
+  // Layout
+  block('iq',8,190,96,80,'Issue\nSelect','#57c7ff',false,
+    '<b>Issue Select.</b> Each issue port picks a ready uop from its Issue Queue. One issue port per Execution Unit — the readiness bit-vector from each EU tells the scheduler which FU classes can accept work.');
+  block('rf',130,150,150,160,'Physical\nRegfile\n(5R / 3W)\n+ bypass','#57c7ff',false,
+    '<b>Register Read + Bypass.</b> A unified PRF (separate INT and FP files in real BOOM). Read ports are statically provisioned per issue port; ALU results bypass from the end of this stage for back-to-back dependent ops.');
+  // EU0
+  svgEl('rect',{x:320,y:20,width:520,height:210,rx:12,fill:'none',stroke:'#3a4a70'},svg);
+  svgEl('text',{x:330,y:40,fill:'#8fa0c0','font-size':12.5},svg,'Execution Unit #0');
+  block('alu0',350,55,130,44,'ALU (+pad)','#5ce6a1',false,
+    '<b>ALU, pipelined, 1-cycle</b> — but padded with pipeline registers to match the FPU/iMul latency so all three share one write port with zero arbitration. Results still bypass early.');
+  block('fpu',350,115,130,44,'FPU (FMA)','#5ce6a1',false,
+    '<b>FPU, pipelined.</b> hardfloat-based FMA pipelines; all FP units are padded to equal latency. IEEE-754 binary64/32 with RISC-V canonical-NaN rules.');
+  block('imul',350,175,130,44,'iMul','#5ce6a1',false,
+    '<b>Integer multiplier, pipelined</b>, fixed latency, shares the write port with ALU/FPU thanks to the padding trick.');
+  block('mux0',560,115,70,54,'WB\nmux','#8fa0c0',false,
+    '<b>Write-port mux.</b> Because every pipelined FU in this EU has identical latency, at most one result arrives per cycle — the mux never conflicts.');
+  // EU1
+  svgEl('rect',{x:320,y:250,width:520,height:200,rx:12,fill:'none',stroke:'#3a4a70'},svg);
+  svgEl('text',{x:330,y:270,fill:'#8fa0c0','font-size':12.5},svg,'Execution Unit #1');
+  block('alu1',350,285,130,44,'ALU + BrUnit','#5ce6a1',false,
+    '<b>Second ALU + the Branch Unit.</b> Resolves branches/jumps, broadcasts resolve or mispredict (branch tag) to every in-flight uop, and redirects the PC on a mispredict.');
+  block('div',350,345,130,44,'iDiv','#ffb454',true,
+    '<b>Integer divider — un-pipelined.</b> Variable latency; while busy it drops its ready bit so the issue scheduler stops sending divides (watch iss_ready back-pressure in the UVM driver).');
+  block('agen',350,400,130,40,'AGen → LSU → D$','#ffb454',true,
+    '<b>Memory path.</b> Address generation in Execute; the LSU (LAQ/SAQ/SDQ) handles ordering; loads fire to the D-cache, stores wait for commit.');
+  block('mux1',560,330,70,54,'WB\nmux','#8fa0c0',false,
+    '<b>Write-port mux for EU#1.</b> The un-pipelined units arbitrate here — in the sample DUT, FDiv stalls a cycle if iDiv wins the port.');
+  block('wb',700,190,110,90,'Regfile\nWriteback\n(3W)','#57c7ff',false,
+    '<b>Writeback.</b> Results land in the PRF; busy bits clear; dependent uops wake up in the Issue Queues; the ROB marks the entry done.');
+  block('csr',860,190,110,90,'CSRFile\n(serialized)','#c792ea',false,
+    '<b>CSRFile.</b> csrrw/csrrs/csrrc execute here non-speculatively: the ROB drains first ("unique" instruction). This is the path the UVM RAL model drives — CSRRW = write, CSRRS x0 = read.');
+  // wires
+  wire(104,230,130,230); wire(280,190,320,150); wire(280,270,320,330);
+  wire(480,77,560,130); wire(480,137,560,140); wire(480,197,560,152);
+  wire(630,142,700,225); wire(630,357,700,250);
+  wire(480,307,560,350); wire(480,367,560,362);
+  wire(810,235,860,235);
+
+  // token animation
+  const paths = {
+    alu:  [[60,230],[205,230],[415,77],[595,142],[755,235]],
+    fpu:  [[60,230],[205,230],[415,137],[595,142],[755,235]],
+    imul: [[60,230],[205,230],[415,197],[595,142],[755,235]],
+    div:  [[60,230],[205,230],[415,367],[595,357],[755,235]],
+    mem:  [[60,230],[205,230],[415,420],[595,357],[755,235]]
+  };
+  let busyTok = false;
+  const tok = svgEl('circle',{cx:0,cy:0,r:9,fill:'#ffb454',stroke:'#0e1320','stroke-width':2,opacity:0},svg);
+  function animate(kind){
+    if (kind === 'kill'){
+      // flash all in-flight + kill token mid-flight
+      desc.innerHTML = '<b>Branch mispredict!</b> The Branch Unit broadcasts the mispredicted branch tag. Every in-flight uop whose branch mask contains that tag is killed — pipelined FUs gate off the response as it exits; busy un-pipelined units are freed. The Map Table snapshots restore rename state in one cycle.';
+      tok.setAttribute('fill','#ff6b81');
+      setTimeout(()=>{ tok.setAttribute('opacity',0); busyTok=false; tok.setAttribute('fill','#ffb454');}, 500);
+      Object.values(blocks).forEach(b=>{
+        const old = b.r.getAttribute('stroke');
+        b.r.setAttribute('stroke','#ff6b81');
+        setTimeout(()=>b.r.setAttribute('stroke', old), 600);
+      });
+      return;
+    }
+    if (busyTok) return;
+    busyTok = true;
+    const p = paths[kind];
+    const dEsc = {alu:'ALU uop: issue → regread → ALU (padded) → shared WB port.',
+      fpu:'FPU uop: same latency as the padded ALU — trivial write-port scheduling.',
+      imul:'iMul uop: pipelined, fixed latency, third client of the same WB port.',
+      div:'iDiv uop: un-pipelined. The unit goes BUSY (dashed border) and back-pressures its issue port until done.',
+      mem:'Memory uop: AGen computes the address in Execute; the LSU orders it; loads write back like any other uop.'}[kind];
+    desc.innerHTML = '<b>In flight:</b> ' + dEsc;
+    tok.setAttribute('opacity',1);
+    let i = 0;
+    function hop(){
+      if (i >= p.length){ tok.setAttribute('opacity',0); busyTok=false; return; }
+      tok.setAttribute('cx',p[i][0]); tok.setAttribute('cy',p[i][1]);
+      tok.style.transition = i? 'all .45s ease':'none';
+      i++; setTimeout(hop, 470);
+    }
+    hop();
+  }
+  document.querySelectorAll('#tab-execute [data-uop]').forEach(b=>
+    b.addEventListener('click',()=>animate(b.dataset.uop)));
+})();
+
+/* ============================ 3. rename ============================ */
+(function(){
+  const PROG = [
+    {n:'I1', txt:'ld   x1, 0(x2)',   rd:'x1', rs:['x2']},
+    {n:'I2', txt:'add  x3, x1, x4',  rd:'x3', rs:['x1','x4']},
+    {n:'I3', txt:'sub  x1, x5, x6',  rd:'x1', rs:['x5','x6']},
+    {n:'I4', txt:'mul  x7, x1, x3',  rd:'x7', rs:['x1','x3']}
+  ];
+  const progEl = document.getElementById('rn-prog');
+  const LREGS = ['x1','x2','x3','x4','x5','x6','x7'];
+  let map, freeList, busy, step, renamed;
+  const mapT = document.getElementById('rn-map'),
+        freeT= document.getElementById('rn-free'),
+        busyT= document.getElementById('rn-busy'),
+        outT = document.getElementById('rn-out'),
+        logB = document.getElementById('rn-log'),
+        state= document.getElementById('rn-state');
+  const notes = [
+    'I1 reads x2→p2. dest x1: old mapping p1 becomes the STALE pdst; fresh p8 allocated from the Free List; Map[x1]=p8; p8 marked busy (its value is in flight).',
+    'I2 reads x1→p8 (BUSY — true RAW dependence, I2 must wait for the load) and x4→p4. dest x3: stale=p3, fresh p9 allocated, p9 busy.',
+    'I3 writes x1 AGAIN → WAW with I1 and WAR with I2. Renaming kills both: I3 gets its own p10 (stale=p8). I2 still safely reads p8; I3 need not wait for I1 at all.',
+    'I4 reads x1→p10 (the NEW mapping — RAW on I3, not I1) and x3→p9. dest x7: stale=p7, fresh p11. Only true dataflow remains: I1→I2, I3→I4.'
+  ];
+  function reset(){
+    map = {}; LREGS.forEach((x,i)=>map[x]='p'+(i+1));
+    freeList = ['p8','p9','p10','p11','p12'];
+    busy = {}; step = 0; renamed = [];
+    render();
+    logB.innerHTML = '<span class="info">Press Step to rename I1…</span>';
+    state.textContent = 'before I1';
+  }
+  function render(hl){
+    progEl.innerHTML = PROG.map((p,i)=>
+      (i===step-1?'<span style="color:#57c7ff">▶ ':'  ')+p.n+': '+p.txt+(i===step-1?'</span>':'')).join('\n');
+    mapT.innerHTML = '<tr><th colspan="2">Map Table</th></tr>' +
+      LREGS.map(x=>`<tr><td>${x}</td><td class="${hl&&hl.map===x?'hl':''}">${map[x]}</td></tr>`).join('');
+    freeT.innerHTML = '<tr><th>Free List</th></tr>' +
+      freeList.map(p=>`<tr><td class="${hl&&hl.alloc===p?'hl':''}">${p}</td></tr>`).join('') +
+      (freeList.length===0?'<tr><td class="info">empty</td></tr>':'');
+    const bkeys = Object.keys(busy);
+    busyT.innerHTML = '<tr><th colspan="2">Busy Table</th></tr>' +
+      (bkeys.length? bkeys.map(p=>`<tr><td>${p}</td><td>${busy[p]?'busy':'ready'}</td></tr>`).join('')
+                   : '<tr><td colspan="2" class="info">—</td></tr>');
+    outT.innerHTML = '<tr><th colspan="2">Renamed uop</th></tr>' +
+      (renamed.length? renamed.map(r=>`<tr><td>${r.n}</td><td>${r.txt}</td></tr>`).join('')
+                     : '<tr><td colspan="2">—</td></tr>');
+  }
+  function doStep(){
+    if (step >= PROG.length) return;
+    const I = PROG[step];
+    const srcs = I.rs.map(x=>map[x]);
+    const stale = map[I.rd];
+    const fresh = freeList.shift();
+    map[I.rd] = fresh;
+    busy[fresh] = true;
+    renamed.push({n:I.n, txt:`${I.txt.split(' ')[0]} ${fresh}, ${srcs.join(', ')}  (stale ${stale})`});
+    step++;
+    render({map:I.rd, alloc:fresh});
+    log(logB, `${I.n}: srcs ${I.rs.join(',')} → ${srcs.join(',')} | dest ${I.rd} → ${fresh} (stale ${stale})`, 'new');
+    log(logB, '   ' + notes[step-1], 'info');
+    state.textContent = 'renamed ' + I.n;
+  }
+  document.getElementById('rn-step').addEventListener('click', doStep);
+  document.getElementById('rn-back').addEventListener('click', ()=>{
+    const target = Math.max(0, step-1); reset();
+    for(let i=0;i<target;i++) doStep();
+  });
+  document.getElementById('rn-reset').addEventListener('click', reset);
+  reset();
+})();
+
+/* ============================ 4. ROB ============================ */
+(function(){
+  const ROWS=6, W=2;
+  const uops=[
+    ['ld x1','add x3'],['sub x1','mul x7'],['fadd f2','div x9'],
+    ['and x4','or x5'],['xor x6','sll x2']
+  ];
+  // completion order (out of order on purpose): [row,bank] indices
+  const grid = document.getElementById('rob-grid');
+  const logB = document.getElementById('rob-log');
+  const state= document.getElementById('rob-state');
+  let cells, head, tail, dispatched, script, si, excArmed;
+  function build(){
+    grid.innerHTML='';
+    cells=[];
+    for(let r=0;r<ROWS;r++){
+      const idx=document.createElement('div');
+      idx.className='rob-idx'; idx.textContent='row '+r;
+      grid.appendChild(idx);
+      const rowCells=[];
+      for(let b=0;b<W;b++){
+        const c=document.createElement('div');
+        c.className='rob-cell empty';
+        grid.appendChild(c);
+        rowCells.push(c);
+      }
+      cells.push(rowCells);
+    }
+  }
+  function setCell(r,b,txt,cls,ptr){
+    const c=cells[r][b];
+    c.className='rob-cell '+cls;
+    c.innerHTML=txt + (ptr?`<span class="rob-ptr ${ptr[1]}">${ptr[0]}</span>`:'');
+  }
+  function ptrs(){
+    // clear old ptr badges then re-add
+    for(let r=0;r<ROWS;r++)for(let b=0;b<W;b++){
+      const c=cells[r][b];
+      const p=c.querySelector('.rob-ptr'); if(p)p.remove();
+    }
+    if(head<ROWS){const s=document.createElement('span');s.className='rob-ptr ptr-head';s.textContent='HEAD';cells[head][0].appendChild(s);}
+    if(tail<ROWS){const s=document.createElement('span');s.className='rob-ptr ptr-tail';s.textContent='TAIL';cells[tail][0].appendChild(s);}
+  }
+  function reset(){
+    build();
+    head=0; tail=0; si=0; excArmed=false;
+    // scripted sequence of events
+    script=[
+      ()=>disp(0), ()=>disp(1),
+      ()=>done(1,0,'sub x1 finishes FIRST — out of order! busy→0, but it can NOT commit: I-load at head still busy.'),
+      ()=>disp(2),
+      ()=>done(0,1,'add x3 done. Row 0 bank 1 done, bank 0 (the load) still busy → commit still blocked.'),
+      ()=>done(2,1,'div x9 done (un-pipelined unit freed).'),
+      ()=>done(0,0,'THE LOAD RETURNS. Row 0 fully done →'),
+      ()=>commit(0,'row 0 commits (both banks, one cycle). Stale pdsts p1,p3 freed. HEAD advances.'),
+      ()=>done(1,1,'mul x7 done. Row 1 now fully done →'),
+      ()=>commit(1,'row 1 commits. Note rows completed 1→0→2 but committed 0→1→2: in order.'),
+      ()=>disp(3),
+      ()=>done(2,0,'fadd f2 done → row 2 commits next step.'),
+      ()=>commit(2,'row 2 commits; fflags from fadd accumulate into the CSR file at commit.'),
+      ()=>done(3,0,'and x4 done.'), ()=>done(3,1,'or x5 done.'),
+      ()=>commit(3,'row 3 commits. ROB empty → machine idle.')
+    ];
+    logB.innerHTML='<span class="info">Step dispatches, completes and commits uops. Watch completion happen out of order while commit stays in order.</span>';
+    state.textContent='idle';
+    ptrs();
+  }
+  function disp(i){
+    setCell(tail,0,uops[i][0],'busy'); setCell(tail,1,uops[i][1],'busy');
+    log(logB,`dispatch: {${uops[i][0]}, ${uops[i][1]}} written at TAIL (row ${tail}), both busy`,'new');
+    tail++; ptrs(); state.textContent='dispatched row '+(tail-1);
+  }
+  function done(r,b,msg){
+    if (excArmed && r===head && b===1){
+      cells[r][b].className='rob-cell exc';
+      cells[r][b].innerHTML=cells[r][b].textContent+' ⚠';
+      log(logB,'uop marks EXCEPTION in its ROB entry (only the oldest excepting uop keeps full cause/addr state)','kill');
+      excArmed=false; ptrs(); return;
+    }
+    cells[r][b].classList.remove('busy'); cells[r][b].classList.add('done');
+    log(logB,'writeback: '+msg,'info'); ptrs();
+    state.textContent='wb '+cells[r][b].textContent;
+  }
+  function commit(r,msg){
+    const excCell=[...cells[r]].find(c=>c.classList.contains('exc'));
+    if(excCell){
+      log(logB,'EXCEPTION reaches HEAD → pipeline FLUSH: ROB emptied, Map Table reset from Committed Map Table, PC → mtvec. (mepc/mcause/mtval written — the CSRs the RAL models.)','kill');
+      for(let rr=0;rr<ROWS;rr++)for(let bb=0;bb<W;bb++)
+        if(!cells[rr][bb].classList.contains('committed')) {cells[rr][bb].className='rob-cell empty';cells[rr][bb].textContent='';}
+      head=0;tail=0;si=script.length; ptrs(); state.textContent='FLUSHED';
+      return;
+    }
+    cells[r].forEach(c=>{c.className='rob-cell committed';});
+    log(logB,'commit: '+msg,'new');
+    head++; ptrs(); state.textContent='committed row '+r;
+  }
+  document.getElementById('rob-step').addEventListener('click',()=>{
+    if(si<script.length) script[si++]();
+    else log(logB,'sequence finished — Reset to run again','info');
+  });
+  document.getElementById('rob-exc').addEventListener('click',()=>{
+    excArmed=true;
+    log(logB,'armed: the next write-back at HEAD row bank 1 will raise an exception instead','kill');
+  });
+  document.getElementById('rob-reset').addEventListener('click',reset);
+  reset();
+})();
+
+/* ============================ 5. IEEE-754 ============================ */
+(function(){
+  let bits = new Array(64).fill(0);
+  const bitrow = document.getElementById('fp-bits');
+  const els = [];
+  for(let i=63;i>=0;i--){
+    const d=document.createElement('div');
+    d.className='bit '+(i===63?'s':i>=52?'e':'m');
+    d.title='bit '+i;
+    d.addEventListener('click',()=>{bits[i]^=1;render();});
+    bitrow.appendChild(d); els[i]=d;
+  }
+  const hexIn=document.getElementById('fp-hex');
+  function fromHex(h){
+    h=h.replace(/^0x/i,'').replace(/[^0-9a-fA-F]/g,'').padStart(16,'0').slice(-16);
+    const v=BigInt('0x'+h);
+    for(let i=0;i<64;i++) bits[i]=Number((v>>BigInt(i))&1n);
+  }
+  function toBig(){ let v=0n; for(let i=0;i<64;i++) if(bits[i]) v|=1n<<BigInt(i); return v; }
+  function render(){
+    els.forEach((d,i)=>d.textContent=bits[i]);
+    const v=toBig();
+    const hex=v.toString(16).toUpperCase().padStart(16,'0');
+    hexIn.value='0x'+hex;
+    const sign=bits[63], expRaw=Number((v>>52n)&0x7FFn);
+    const man=v&0xFFFFFFFFFFFFFn;
+    document.getElementById('fp-sign').textContent=`${sign}  (${sign?'negative':'positive'})`;
+    document.getElementById('fp-exp').textContent=
+      `0x${expRaw.toString(16).toUpperCase()} = ${expRaw}` +
+      (expRaw>0&&expRaw<2047?`  →  2^${expRaw-1023}`:expRaw===0?'  (subnormal/zero)':'  (inf/NaN)');
+    document.getElementById('fp-man').textContent='0x'+man.toString(16).toUpperCase().padStart(13,'0');
+    // classify
+    const badge=document.getElementById('fp-class');
+    const expl=document.getElementById('fp-explain');
+    // numeric value via typed array
+    const buf=new ArrayBuffer(8), dv=new DataView(buf);
+    dv.setBigUint64(0,v); const num=dv.getFloat64(0);
+    let cls,color,txt;
+    if(expRaw===2047 && man===0n){cls=sign?'−infinity':'+infinity';color='#ffb454';
+      txt='Exponent all-ones, mantissa zero. Infinities arise from overflow (OF) or division by zero (DZ). inf+inf=inf, but inf−inf is INVALID → qNaN + NV. RISC-V fclass bits 0 / 7.';}
+    else if(expRaw===2047 && (man>>51n)===1n){cls='quiet NaN';color='#ff6b81';
+      txt='Exponent all-ones, mantissa MSB = 1. Propagates silently through arithmetic without raising flags. RISC-V results are always the CANONICAL qNaN 0x7FF8000000000000 — payloads are dropped. fclass bit 9.';}
+    else if(expRaw===2047){cls='signaling NaN';color='#ff6b81';
+      txt='Exponent all-ones, mantissa ≠ 0 with MSB = 0. Consuming an sNaN in any arithmetic op raises NV (invalid) and produces the canonical qNaN. Used to trap uninitialized data. fclass bit 8.';}
+    else if(expRaw===0 && man===0n){cls=sign?'−0':'+0';color='#57c7ff';
+      txt='Two distinct zeros! They compare equal, but 1/+0 = +inf while 1/−0 = −inf (both raise DZ). RISC-V fmin(−0,+0) = −0. Sign of a zero result follows the rounding mode on exact cancellation (+0 under RNE). fclass bits 3 / 4.';}
+    else if(expRaw===0){cls=(sign?'−':'+')+'subnormal';color='#c792ea';
+      txt='Exponent zero, mantissa ≠ 0: NO implicit leading 1; value = ±0.m × 2⁻¹⁰²². Subnormals give gradual underflow between 0 and 2.2e-308. Results this small raise UF+NX. hardfloat’s recoded format makes these cheap in BOOM. fclass bits 2 / 5.';}
+    else{cls=(sign?'−':'+')+'normal';color='#5ce6a1';
+      txt='Value = ±1.m × 2^(e−1023). The implicit leading 1 buys one free bit of precision (52-bit mantissa → 53-bit significand). fclass bits 1 / 6.';}
+    badge.textContent=cls; badge.style.background=color; badge.style.color='#0e1320';
+    document.getElementById('fp-val').textContent=
+      (expRaw===2047&&man!==0n)?'NaN':(Object.is(num,-0)?'−0':String(num));
+    expl.innerHTML='<b>'+cls+':</b> '+txt;
+  }
+  document.getElementById('fp-presets').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    fromHex(b.dataset.v); render();
+  });
+  hexIn.addEventListener('change',()=>{fromHex(hexIn.value);render();});
+  fromHex('400921FB54442D18'); render();
+})();
+</script>
+
+</body>
+</html>

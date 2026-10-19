@@ -1,0 +1,1077 @@
+<title>Systolic Array DV Handbook</title>
+<style>
+  :root {
+    --bg: #F6F8F7;
+    --surface: #FFFFFF;
+    --surface2: #EEF2F0;
+    --ink: #17201C;
+    --muted: #5C6B65;
+    --line: #DDE4E1;
+    --accent: #0E7A5F;
+    --accent-soft: #E2F0EB;
+    --warn: #A85B18;
+    --warn-soft: #F6EADC;
+    --code-bg: #EFF3F1;
+    --shadow: 0 1px 3px rgba(23,32,28,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1513;
+      --surface: #161D1A;
+      --surface2: #1C2521;
+      --ink: #E4EBE7;
+      --muted: #8FA098;
+      --line: #2A3530;
+      --accent: #43C99E;
+      --accent-soft: #17362D;
+      --warn: #E09B57;
+      --warn-soft: #3A2A18;
+      --code-bg: #131A17;
+      --shadow: 0 1px 3px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1513;
+    --surface: #161D1A;
+    --surface2: #1C2521;
+    --ink: #E4EBE7;
+    --muted: #8FA098;
+    --line: #2A3530;
+    --accent: #43C99E;
+    --accent-soft: #17362D;
+    --warn: #E09B57;
+    --warn-soft: #3A2A18;
+    --code-bg: #131A17;
+    --shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Charter", "Bitstream Charter", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  code, pre, .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  code {
+    background: var(--code-bg);
+    border-radius: 3px;
+    padding: .08em .32em;
+    font-size: .82em;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  a { color: var(--accent); }
+
+  /* ---------- masthead + tabs ---------- */
+  header.mast {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .mast-inner {
+    max-width: 960px; margin: 0 auto; padding: 18px 20px 0;
+  }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 4px;
+  }
+  h1.site {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: clamp(20px, 3.4vw, 27px);
+    font-weight: 750; letter-spacing: -.015em;
+    margin: 0 0 2px; text-wrap: balance;
+  }
+  .sub {
+    color: var(--muted); font-size: 13.5px; margin: 0 0 12px;
+  }
+  nav.tabs {
+    display: flex; gap: 2px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button {
+    appearance: none; background: none; border: none;
+    border-bottom: 2px solid transparent;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px; letter-spacing: .02em;
+    color: var(--muted); padding: 9px 13px 11px;
+    cursor: pointer; white-space: nowrap;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button[aria-selected="true"] {
+    color: var(--accent); border-bottom-color: var(--accent); font-weight: 600;
+  }
+  nav.tabs button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px;
+  }
+
+  /* ---------- layout ---------- */
+  main { max-width: 960px; margin: 0 auto; padding: 30px 20px 90px; }
+  section[role="tabpanel"][hidden] { display: none; }
+  h2 {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 21px; font-weight: 720; letter-spacing: -.01em;
+    margin: 38px 0 10px; text-wrap: balance;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 16.5px; font-weight: 680; margin: 28px 0 8px;
+  }
+  p { margin: 0 0 13px; max-width: 74ch; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 5px; max-width: 72ch; }
+  .lede { font-size: 17.5px; color: var(--ink); }
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 0 0 16px; font-size: 14.5px; max-width: 76ch;
+  }
+  .warnnote {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    padding: 10px 14px; border-radius: 0 6px 6px 0;
+    margin: 0 0 16px; font-size: 14.5px; max-width: 76ch;
+  }
+  .klabel {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); display: block; margin: 30px 0 6px;
+  }
+
+  /* stat strip */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin: 20px 0 26px;
+  }
+  .stat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; box-shadow: var(--shadow);
+  }
+  .stat b {
+    display: block;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 19px; font-weight: 600; color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span { font-size: 12px; color: var(--muted); font-family: system-ui, sans-serif; }
+
+  /* cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 6px 0 20px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .card h4 {
+    margin: 0 0 6px;
+    font-family: system-ui, sans-serif; font-size: 15px; font-weight: 680;
+  }
+  .card p, .card li { font-size: 14px; }
+  .card .tag {
+    font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px;
+  }
+
+  /* tables */
+  .twrap { overflow-x: auto; margin: 6px 0 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); text-align: left; font-weight: 600;
+    padding: 9px 12px; border-bottom: 1px solid var(--line);
+    background: var(--surface2);
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; font-family: system-ui, sans-serif; font-size: 13.5px; }
+  tr:last-child td { border-bottom: none; }
+  td code { font-size: 12px; }
+  td.mono, .num { font-variant-numeric: tabular-nums; }
+
+  .pill {
+    display: inline-block; border-radius: 99px; padding: 1px 9px 2px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; letter-spacing: .04em;
+    border: 1px solid var(--line); white-space: nowrap;
+  }
+  .pill.ok  { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .pill.gap { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); }
+  .pill.lvl { color: var(--muted); background: var(--surface2); }
+
+  /* accordions */
+  details.q {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    margin: 0 0 10px; box-shadow: var(--shadow);
+  }
+  details.q summary {
+    cursor: pointer; list-style: none;
+    padding: 12px 16px;
+    font-family: system-ui, sans-serif; font-size: 14.5px; font-weight: 620;
+    display: flex; gap: 10px; align-items: baseline;
+  }
+  details.q summary::-webkit-details-marker { display: none; }
+  details.q summary::before {
+    content: "Q"; flex: none;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 700;
+    color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 4px; padding: 0 5px; transform: translateY(-1px);
+  }
+  details.q[open] summary { border-bottom: 1px solid var(--line); }
+  details.q .a { padding: 12px 16px 6px; font-size: 14.5px; }
+  details.q .a p, details.q .a li { font-size: 14.5px; }
+  details.q summary:focus-visible { outline: 2px solid var(--accent); border-radius: 8px; }
+
+  /* diagrams */
+  .fig {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px; margin: 8px 0 6px; overflow-x: auto; box-shadow: var(--shadow);
+  }
+  .figcap { font-size: 12.5px; color: var(--muted); margin: 4px 2px 22px; font-family: system-ui, sans-serif; }
+  svg .dbox { fill: var(--surface2); stroke: var(--line); stroke-width: 1; }
+  svg .dbox2 { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+  svg .dacc { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.2; }
+  svg .dwarn { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1; }
+  svg text { fill: var(--ink); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; }
+  svg .tmut { fill: var(--muted); font-size: 10px; }
+  svg .tacc { fill: var(--accent); font-weight: 600; }
+  svg .wire { stroke: var(--muted); stroke-width: 1.2; fill: none; }
+  svg .wireacc { stroke: var(--accent); stroke-width: 1.4; fill: none; }
+  svg .wiredash { stroke: var(--muted); stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
+
+  /* bus packing strip */
+  .bus { display: flex; margin: 10px 0 4px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-width: 560px; }
+  .bus > div {
+    flex: 1; text-align: center; padding: 8px 4px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 11.5px;
+    border-right: 1px solid var(--line);
+  }
+  .bus > div:last-child { border-right: none; }
+  .bus .ba { background: var(--accent-soft); }
+  .bus .bb { background: var(--surface2); }
+  .buswrap { overflow-x: auto; }
+  .buslab { font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; margin-bottom: 14px; }
+
+  footer {
+    max-width: 960px; margin: 0 auto; padding: 0 20px 40px;
+    color: var(--muted); font-size: 12.5px; font-family: system-ui, sans-serif;
+  }
+</style>
+
+<header class="mast">
+  <div class="mast-inner">
+    <p class="eyebrow">TetraMem DV Assignment &middot; UVM 1.2 &middot; Xcelium 25.03</p>
+    <h1 class="site">Systolic Array DV Handbook</h1>
+    <p class="sub">Every detail of the design, the testbench, the test plan &mdash; and the interview questions it invites.</p>
+    <nav class="tabs" role="tablist" aria-label="Topics">
+      <button role="tab" id="tab-overview"  aria-controls="panel-overview"  aria-selected="true">overview</button>
+      <button role="tab" id="tab-design"    aria-controls="panel-design"    aria-selected="false">dut design</button>
+      <button role="tab" id="tab-uvm"       aria-controls="panel-uvm"       aria-selected="false">uvm env</button>
+      <button role="tab" id="tab-tests"     aria-controls="panel-tests"     aria-selected="false">tests</button>
+      <button role="tab" id="tab-plan"      aria-controls="panel-plan"      aria-selected="false">test plan</button>
+      <button role="tab" id="tab-interview" aria-controls="panel-interview" aria-selected="false">interview prep</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================ OVERVIEW -->
+<section id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+  <p class="lede">The assignment: build a UVM testbench that verifies a systolic-array matrix multiplier at two levels &mdash; the bare <code>systolic_array</code> module (page&nbsp;11 of the PDF) and a two-clock streaming <code>sub_sys</code> that wraps it with FIFOs (page&nbsp;12). Constrained-random stimulus, automatic checking against a golden model, parameter support, and maximum reuse between the two levels.</p>
+
+  <div class="stats">
+    <div class="stat"><b>N=4 &middot; 8-bit</b><span>signed elements, 64-bit bus</span></div>
+    <div class="stat"><b>9 tests</b><span>smoke &rarr; random &rarr; directed</span></div>
+    <div class="stat"><b>3 &times; 100%</b><span>covergroups closed</span></div>
+    <div class="stat"><b>36 / 36</b><span>matrices matched, closure run</span></div>
+    <div class="stat"><b>0</b><span>UVM_ERROR / WARNING / FATAL</span></div>
+  </div>
+
+  <h2>What the DUT computes</h2>
+  <p>C = A&times;B for signed matrices, done as a <em>stream</em>: each cycle the DUT receives one column of A and one row of B, and accumulates their outer product. After M such cycles (M = contraction dimension, 1&hellip;N, supplied as <code>M_minus_one</code> at the sub-system level), the N&times;N result C is complete and streams out one row per cycle. Element width is <code>DIN_WIDTH=8</code>; accumulators and C elements are <code>2*DIN_WIDTH=16</code> bits and <b>wrap on overflow</b> &mdash; the golden model reproduces that wrap exactly.</p>
+  <div class="note">The key identity behind everything: <b>C = &Sigma;<sub>k</sub> (A column k)(B row k)</b> &mdash; a sum of M rank-1 updates. It is what the physical PE mesh computes distributed in space, what the behavioral model computes per cycle, and what makes the golden model a ten-line function.</div>
+
+  <h2>Two tracks were built</h2>
+  <div class="cards">
+    <div class="card">
+      <span class="tag">track A &middot; optional RTL &middot; rtl/ + tb/</span>
+      <h4>Synthesizable-style RTL, verified with Verilator</h4>
+      <p>The assignment says RTL is not required &mdash; it was built anyway to have something concrete to regress against: a weight-stationary <code>pe</code> with double-buffered weights, an N&times;N mesh with input skew / output de-skew (<code>out_valid</code> = <code>in_valid</code> delayed 2N&minus;1), a Cummings-style Gray-pointer <code>async_fifo</code>, a 6-state controller FSM, and a column&rarr;row <code>data_align</code> transpose buffer. Self-checking SV testbenches: PE (807 checks), array at N&isin;{1,2,3,4,8}, sub-system across a reversed clock ratio &mdash; all pass.</p>
+    </div>
+    <div class="card">
+      <span class="tag">track B &middot; the deliverable &middot; uvm/</span>
+      <h4>UVM 1.2 environment on Cadence Xcelium 25.03</h4>
+      <p>One environment verifies <em>both</em> DUT levels at once: an array agent plus two sub-system channel agents (write / read), monitor-side golden prediction, one reusable scoreboard class instantiated per level, three covergroups, a virtual sequencer for multi-channel stimulus, and nine tests. The DUTs here are compact behavioral models honoring the exact page-11/12 interfaces &mdash; swapping in the track-A RTL is only a <code>tb_top</code> instance change.</p>
+    </div>
+  </div>
+
+  <h2>Repository layout</h2>
+  <pre><code>TetraMem_HW/
+&#9500;&#9472; Tetramem Design Verification Interview Assignment.pdf
+&#9500;&#9472; rtl/                      &#9484;&#9472; Track A: real RTL
+&#9474;   &#9500;&#9472; pe.sv                 &#9474; signed MAC, double-buffered stationary weight
+&#9474;   &#9500;&#9472; systolic_array.sv     &#9474; N&times;N mesh + skew/de-skew + valid pipe
+&#9474;   &#9500;&#9472; async_fifo.sv         &#9474; dual-clock Gray-pointer CDC FIFO (FWFT)
+&#9474;   &#9500;&#9472; data_align.sv         &#9474; A column&rarr;row transpose / zero-pad
+&#9474;   &#9500;&#9472; systolic_ctrl.sv      &#9474; sub-system FSM (sr_clk domain)
+&#9474;   &#9492;&#9472; sub_sys.sv            &#9492; FIFOs + ctrl + align + array
+&#9500;&#9472; tb/                       # Verilator self-checking benches + golden pkg
+&#9492;&#9472; uvm/                      &#9484;&#9472; Track B: the UVM deliverable
+    &#9500;&#9472; edaplayground/        &#9474; flat copy for EDA Playground (canonical src)
+    &#9474;   &#9500;&#9472; sa_if.sv  ss_if.sv           interfaces + clocking blocks
+    &#9474;   &#9500;&#9472; systolic_array.sv sub_sys.sv  behavioral DUTs
+    &#9474;   &#9500;&#9472; matmul_item / sequences / scoreboard / coverage .svh
+    &#9474;   &#9500;&#9472; sa_* ss_*   agents, drivers, monitors, signal coverage
+    &#9474;   &#9500;&#9472; systolic_env.svh  virtual_sequencer.svh  base_test.sv
+    &#9474;   &#9492;&#9472; 9 test classes (one file each)
+    &#9500;&#9472; result-3/             &#9492; genuine Xcelium run: xrun.log + cov_work/
+    &#9492;&#9472; README.md             # development story + waveform walk-throughs</code></pre>
+
+  <h2>How the four assignment requirements were met</h2>
+  <div class="twrap"><table>
+    <tr><th>Requirement (page 13)</th><th>Where it lands</th></tr>
+    <tr><td>1 &mdash; driver, monitor, scoreboard, sequencer</td><td>Full agents per interface; 2 monitors per level (in/out); TLM-connected scoreboards; sequencers plus a <code>virtual_sequencer</code>.</td></tr>
+    <tr><td>2 &mdash; constrained-random data, automatic checking</td><td><code>matmul_item::gen()</code> randomizes operands and M; input monitors rebuild the matrix from pins and compute golden C; scoreboards compare in order, element by element.</td></tr>
+    <tr><td>3 &mdash; parameters &amp; clock relationship at sub-system level</td><td><code>DIN_WIDTH/N/BUS_WIDTH</code> parameterized end to end; <code>M_minus_one</code> swept 1&hellip;N; independent <code>sys_clk</code> (10&nbsp;ns) and <code>sr_clk</code> (14&nbsp;ns) defined in one place in <code>tb_top</code>.</td></tr>
+    <tr><td>4 &mdash; reuse between module and sub-system level</td><td>Same <code>matmul_item</code> + golden <code>compute()</code>, same scoreboard <em>class</em>, one shared env, one transaction covergroup subscribed to both levels, one <code>base_test</code> skeleton.</td></tr>
+  </table></div>
+
+  <h2>Proof of life</h2>
+  <p>The checked-in <code>result-3/xrun.log</code> is a real Xcelium 25.03 run of <code>coverage_test</code> (seed 1, 4.36&nbsp;&micro;s of sim time, 9&nbsp;s wall clock):</p>
+  <pre><code>[COV] TXN coverage    = 100.00% over 36 matrices
+[COV] ARRAY  signal coverage = 100.00%
+[COV] SUBSYS signal coverage = 100.00%
+[SCB] env.sa_sb: PASSED : 24 matrices matched
+[SCB] env.ss_sb: PASSED : 12 matrices matched
+UVM_WARNING: 0   UVM_ERROR: 0   UVM_FATAL: 0</code></pre>
+</section>
+
+<!-- ============================================================ DESIGN -->
+<section id="panel-design" role="tabpanel" aria-labelledby="tab-design" hidden>
+  <h2>The interfaces, exactly as the PDF defines them</h2>
+
+  <span class="klabel">page 11 &mdash; systolic_array</span>
+  <div class="twrap"><table>
+    <tr><th>Port</th><th>Dir</th><th>Width</th><th>Meaning</th></tr>
+    <tr><td><code>rst_n</code>, <code>clk</code></td><td>in</td><td>1</td><td>Active-low reset, single clock.</td></tr>
+    <tr><td><code>a_din[0:N-1]</code></td><td>in</td><td>N&times;8</td><td>One <b>column</b> of A per valid cycle (element i = A[i][k]).</td></tr>
+    <tr><td><code>b_din[0:N-1]</code></td><td>in</td><td>N&times;8</td><td>One <b>row</b> of B per valid cycle (element j = B[k][j]).</td></tr>
+    <tr><td><code>c_din[0:N-1]</code></td><td>in</td><td>N&times;16</td><td>Partial-sum seed for the top PE row &mdash; 0 for a fresh matrix, or a loop-back of <code>c_dout</code> to extend to M&gt;N. Driven to 0 by the TB.</td></tr>
+    <tr><td><code>in_valid</code></td><td>in</td><td>1</td><td>High during the M input cycles of one matrix.</td></tr>
+    <tr><td><code>c_dout[N-1:0]</code></td><td>out</td><td>N&times;16</td><td>One row of C per output cycle; zero when idle.</td></tr>
+    <tr><td><code>out_valid</code></td><td>out</td><td>1</td><td>High while C rows stream (N cycles per matrix).</td></tr>
+  </table></div>
+
+  <span class="klabel">page 12 &mdash; sub_sys (two clock domains)</span>
+  <div class="twrap"><table>
+    <tr><th>Port</th><th>Dir</th><th>Width</th><th>Meaning</th></tr>
+    <tr><td><code>sys_clk</code> / <code>sr_clk</code></td><td>in</td><td>1</td><td>Bus read/write clock vs. compute clock &mdash; asynchronous (TB: 10&nbsp;ns vs 14&nbsp;ns).</td></tr>
+    <tr><td><code>M_minus_one[7:0]</code></td><td>in</td><td>8</td><td>Contraction dimension minus one for the N&times;M &middot; M&times;N product.</td></tr>
+    <tr><td><code>din</code>, <code>wr_fifo</code>, <code>in_fifo_full</code></td><td>in/in/out</td><td>64/1/1</td><td>Write channel into the input FIFO; <code>full</code> is the back-pressure signal.</td></tr>
+    <tr><td><code>dout</code>, <code>rd_fifo</code>, <code>out_fifo_empty</code></td><td>out/in/out</td><td>64/1/1</td><td>Read channel from the output FIFO (first-word-fall-through: <code>dout</code> shows the head while not empty; <code>rd_fifo</code> pops it).</td></tr>
+  </table></div>
+
+  <h3>The 64-bit bus word</h3>
+  <p><code>BUS_WIDTH = 2&middot;DIN_WIDTH&middot;N = 64</code>. Each input sample carries one A column and one B row; each output word is one packed C row:</p>
+  <div class="buswrap">
+    <div class="bus">
+      <div class="ba">63:56<br>A[3][k]</div><div class="ba">55:48<br>A[2][k]</div><div class="ba">47:40<br>A[1][k]</div><div class="ba">39:32<br>A[0][k]</div>
+      <div class="bb">31:24<br>B[k][3]</div><div class="bb">23:16<br>B[k][2]</div><div class="bb">15:8<br>B[k][1]</div><div class="bb">7:0<br>B[k][0]</div>
+    </div>
+    <p class="buslab">din sample k &mdash; A column k in the high half, B row k in the low half</p>
+    <div class="bus">
+      <div class="ba">63:48<br>C[i][3]</div><div class="ba">47:32<br>C[i][2]</div><div class="ba">31:16<br>C[i][1]</div><div class="ba">15:0<br>C[i][0]</div>
+    </div>
+    <p class="buslab">dout word &mdash; one C row, four 16-bit signed elements</p>
+  </div>
+
+  <h2>Track A: the real RTL (rtl/)</h2>
+
+  <h3>pe.sv &mdash; the processing element</h3>
+  <p>A weight-stationary MAC cell. <code>a</code> flows left&rarr;right (registered pass-through), the partial sum flows top&rarr;bottom as <code>c_out = a&middot;w + c_in</code> (registered). The weight is <b>double-buffered</b>: <code>ld_w</code> writes the inactive <code>w_load</code> register while the array computes with <code>w_active</code>; a one-cycle <code>swap_w</code> pulse promotes it &mdash; so a new B matrix takes effect with zero stall (the page-10 requirement).</p>
+
+  <h3>systolic_array.sv &mdash; the N&times;N mesh</h3>
+  <div class="fig">
+  <svg viewBox="0 0 560 250" width="560" role="img" aria-label="Systolic array mesh with input skew and output de-skew">
+    <text x="8"  y="16" class="tmut">skew: row r delayed r cycles</text>
+    <!-- skew regs -->
+    <rect x="70" y="60"  width="0.1" height="0.1" fill="none"/>
+    <rect x="96" y="96"  width="22" height="18" class="dbox"/>
+    <rect x="70" y="146" width="22" height="18" class="dbox"/><rect x="96" y="146" width="22" height="18" class="dbox"/>
+    <text x="10" y="59" >a_din[0]</text>
+    <text x="10" y="109">a_din[1]</text>
+    <text x="10" y="159">a_din[2]</text>
+    <line x1="66" y1="55"  x2="140" y2="55"  class="wire"/>
+    <line x1="66" y1="105" x2="96"  y2="105" class="wire"/><line x1="118" y1="105" x2="140" y2="105" class="wire"/>
+    <line x1="66" y1="155" x2="70"  y2="155" class="wire"/><line x1="118" y1="155" x2="140" y2="155" class="wire"/>
+    <!-- PE grid 3x3 -->
+    <g>
+      <rect x="140" y="38"  width="54" height="34" class="dacc"/><text x="152" y="59">PE00</text>
+      <rect x="210" y="38"  width="54" height="34" class="dacc"/><text x="222" y="59">PE01</text>
+      <rect x="280" y="38"  width="54" height="34" class="dacc"/><text x="292" y="59">PE02</text>
+      <rect x="140" y="88"  width="54" height="34" class="dacc"/><text x="152" y="109">PE10</text>
+      <rect x="210" y="88"  width="54" height="34" class="dacc"/><text x="222" y="109">PE11</text>
+      <rect x="280" y="88"  width="54" height="34" class="dacc"/><text x="292" y="109">PE12</text>
+      <rect x="140" y="138" width="54" height="34" class="dacc"/><text x="152" y="159">PE20</text>
+      <rect x="210" y="138" width="54" height="34" class="dacc"/><text x="222" y="159">PE21</text>
+      <rect x="280" y="138" width="54" height="34" class="dacc"/><text x="292" y="159">PE22</text>
+    </g>
+    <!-- a arrows right -->
+    <line x1="194" y1="55"  x2="210" y2="55"  class="wireacc"/>
+    <line x1="264" y1="55"  x2="280" y2="55"  class="wireacc"/>
+    <line x1="194" y1="105" x2="210" y2="105" class="wireacc"/>
+    <line x1="264" y1="105" x2="280" y2="105" class="wireacc"/>
+    <line x1="194" y1="155" x2="210" y2="155" class="wireacc"/>
+    <line x1="264" y1="155" x2="280" y2="155" class="wireacc"/>
+    <!-- c arrows down -->
+    <line x1="167" y1="72"  x2="167" y2="88"  class="wire"/>
+    <line x1="237" y1="72"  x2="237" y2="88"  class="wire"/>
+    <line x1="307" y1="72"  x2="307" y2="88"  class="wire"/>
+    <line x1="167" y1="122" x2="167" y2="138" class="wire"/>
+    <line x1="237" y1="122" x2="237" y2="138" class="wire"/>
+    <line x1="307" y1="122" x2="307" y2="138" class="wire"/>
+    <line x1="167" y1="172" x2="167" y2="188" class="wire"/>
+    <line x1="237" y1="172" x2="237" y2="188" class="wire"/>
+    <line x1="307" y1="172" x2="307" y2="188" class="wire"/>
+    <!-- deskew regs -->
+    <rect x="145" y="192" width="22" height="16" class="dbox"/><rect x="171" y="192" width="22" height="16" class="dbox"/>
+    <rect x="226" y="192" width="22" height="16" class="dbox"/>
+    <text x="140" y="232">c_dout[0]</text><text x="222" y="232">c_dout[1]</text><text x="292" y="232">c_dout[2]</text>
+    <text x="360" y="200" class="tmut">de-skew: col c delayed N-1-c</text>
+    <!-- annotations -->
+    <text x="360" y="48" class="tmut">weights stationary:</text>
+    <text x="360" y="63" class="tmut">PE(r,c) holds B[r][c]</text>
+    <text x="360" y="90" class="tmut">a flows left&#8594;right</text>
+    <text x="360" y="105" class="tmut">partial sums top&#8594;bottom</text>
+    <text x="360" y="132" class="tacc">col c reduces</text>
+    <text x="360" y="147" class="tacc">&#931;_r A[i][r]&#183;B[r][c] = C[i][c]</text>
+  </svg>
+  </div>
+  <p class="figcap">Weight-stationary mesh (3&times;3 shown, design is N&times;N). The triangular skew registers on the left and the de-skew registers at the bottom keep the external interface whole-row-in / whole-row-out.</p>
+  <ul>
+    <li><b>Skew:</b> <code>a_din[r]</code> is delayed r cycles so row i&rsquo;s activation meets its partial sum that has traveled r hops down. The result of column c is delayed N&minus;1&minus;c on the way out so each <code>c_dout</code> beat is one aligned row of C.</li>
+    <li><b>Latency:</b> <code>out_valid = in_valid</code> delayed exactly <b>2N&minus;1</b> cycles (a simple shift register generates it).</li>
+    <li><b>Control strobes:</b> the PDF lists no weight-load pins but says &ldquo;control signals etc. are not listed&rdquo; &mdash; two were added: <code>w_load_en</code> (qualifies <code>b_din</code> as sequential weight-load rows, an internal counter selects the PE row) and <code>w_swap</code> (activates the freshly loaded buffer).</li>
+  </ul>
+
+  <h3>sub_sys.sv &mdash; the streaming wrapper</h3>
+  <div class="fig">
+  <svg viewBox="0 0 880 210" width="880" role="img" aria-label="Sub-system dataflow across two clock domains">
+    <rect x="0"   y="20" width="252" height="150" class="dbox" opacity="0.55"/>
+    <rect x="628" y="20" width="252" height="150" class="dbox" opacity="0.55"/>
+    <rect x="252" y="20" width="376" height="150" class="dacc" opacity="0.35"/>
+    <text x="12"  y="190" class="tmut">sys_clk domain (10 ns)</text>
+    <text x="300" y="190" class="tacc">sr_clk domain (14 ns)</text>
+    <text x="700" y="190" class="tmut">sys_clk domain (10 ns)</text>
+
+    <text x="14" y="62">din[63:0]</text>
+    <text x="14" y="80">wr_fifo</text>
+    <text x="14" y="98" class="tmut">&#8592; in_fifo_full</text>
+    <line x1="96" y1="72" x2="128" y2="72" class="wire"/>
+
+    <rect x="128" y="46" width="100" height="56" class="dbox2"/>
+    <text x="140" y="68">input</text><text x="140" y="84">async FIFO</text>
+    <line x1="228" y1="72" x2="268" y2="72" class="wire"/>
+
+    <rect x="268" y="34" width="150" height="120" class="dbox2"/>
+    <text x="282" y="56">systolic_ctrl</text>
+    <text x="282" y="74" class="tmut">S_RD&#8594;S_WLD&#8594;S_SWP</text>
+    <text x="282" y="90" class="tmut">&#8594;S_CMP&#8594;S_COL&#8594;S_WR</text>
+    <rect x="282" y="102" width="122" height="40" class="dbox"/>
+    <text x="290" y="119" class="tmut">data_align</text>
+    <text x="290" y="134" class="tmut">A col &#8594; A row</text>
+    <line x1="418" y1="72" x2="452" y2="72" class="wire"/>
+
+    <rect x="452" y="40" width="128" height="92" class="dacc"/>
+    <text x="466" y="66">systolic</text><text x="466" y="82">array</text>
+    <text x="466" y="104" class="tmut">N&#215;N PEs</text>
+    <line x1="580" y1="86" x2="612" y2="86" class="wire"/>
+
+    <rect x="612" y="60" width="104" height="56" class="dbox2"/>
+    <text x="624" y="82">output</text><text x="624" y="98">async FIFO</text>
+    <line x1="716" y1="88" x2="748" y2="88" class="wire"/>
+    <text x="752" y="78">dout[63:0]</text>
+    <text x="752" y="96">rd_fifo</text>
+    <text x="752" y="114" class="tmut">out_fifo_empty</text>
+  </svg>
+  </div>
+  <p class="figcap">The two async FIFOs do the CDC; everything between them lives on sr_clk. The controller stages weights and results in local registers, so an empty input FIFO or a full output FIFO can never corrupt array timing.</p>
+  <ul>
+    <li><b>async_fifo.sv</b> &mdash; textbook Cummings dual-clock FIFO: (AW+1)-bit binary+Gray pointer pairs, 2-flop synchronizers each direction, <b>registered <code>full</code></b> (a combinational full would close the loop full&rarr;wbin_nxt&rarr;wgray_nxt&rarr;full), combinational <code>empty</code> from two registered Grays which enables <b>FWFT</b> reads. DEPTH=16, power of two.</li>
+    <li><b>systolic_ctrl.sv</b> &mdash; six states: <code>S_RD</code> pop M samples (latch B rows, push A columns into data_align) &rarr; <code>S_WLD</code> N weight-load cycles (rows &ge; M zero-padded) &rarr; <code>S_SWP</code> one swap pulse &rarr; <code>S_CMP</code> stream N A-rows with <code>in_valid</code> &rarr; <code>S_COL</code> capture N result rows as <code>out_valid</code> arrives &rarr; <code>S_WR</code> push C rows out with back-pressure.</li>
+    <li><b>data_align.sv</b> &mdash; the bus delivers A by <em>columns</em> but the array eats A by <em>rows</em>; this buffer stores columns and reads rows, zero-padding contraction indices k &ge; M so an N&times;M operand maps onto the N&times;N mesh.</li>
+  </ul>
+
+  <h2>Track B: the behavioral DUTs used in the UVM run</h2>
+  <p>For the UVM deliverable the DUTs are the <em>simplest models that honor the interface contract</em> &mdash; the TB cannot tell the difference, sims run in seconds, and EDA Playground setup stays trivial.</p>
+  <ul>
+    <li><b>systolic_array (behavioral):</b> while <code>in_valid</code> is high, do one rank-1 update per cycle into a 4&times;4 accumulator (first cycle seeds with <code>c_din</code>). When <code>in_valid</code> drops, latch the accumulator and stream N rows with <code>out_valid</code>, one row per cycle.</li>
+    <li><b>sub_sys (behavioral):</b> two DEPTH-4 FIFOs built as <b>memory arrays + binary pointers</b> (deliberately <em>not</em> SV queues &mdash; see the bug story in the interview tab). The sr_clk process waits for M words, unpacks A/B, computes all of C combinationally in longint arithmetic, holds the four packed rows, and emits them into the output FIFO one per sr_clk cycle, stalling when the output FIFO is full.</li>
+  </ul>
+  <pre><code>// the heart of the behavioral array (one rank-1 update per valid cycle)
+if (in_valid) begin
+  for (int i = 0; i &lt; N; i++)
+    for (int j = 0; j &lt; N; j++)
+      acc[i][j] &lt;= accumulating ? acc[i][j] + $signed(a_din[i]) * $signed(b_din[j])
+                                : $signed(c_din[j]) + $signed(a_din[i]) * $signed(b_din[j]);
+  accumulating &lt;= 1'b1;
+end</code></pre>
+
+  <h2>Assumptions &amp; scope (stated, not hidden)</h2>
+  <ul>
+    <li><b>1 &le; M &le; N.</b> <code>M_eff = min(M, N)</code>; unused weight rows / activation columns are zero-padded. M&gt;N would need <code>c_dout&rarr;c_din</code> loop-back accumulation over &lceil;M/N&rceil; passes &mdash; the port is provisioned, the control is documented as the extension point, not built.</li>
+    <li><b>Accumulator wraps at 16 bits</b> per the spec; the golden model truncates identically, so checking is bit-accurate even for overflowing inputs.</li>
+    <li><b>Two implied control strobes</b> (<code>w_load_en</code>, <code>w_swap</code>) added at the array level; the PDF explicitly allows unlisted control signals.</li>
+    <li><b>Frames are processed sequentially</b> in the RTL controller; the double buffer removes the <em>reload</em> stall, not the drain. Peak &ldquo;one matrix every M cycles&rdquo; would need wavefront weight-swapping &mdash; documented as an enhancement.</li>
+    <li><b>Reset</b> is active-low asynchronous, shared by both FIFO domains.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ UVM -->
+<section id="panel-uvm" role="tabpanel" aria-labelledby="tab-uvm" hidden>
+  <h2>One environment, both DUT levels</h2>
+  <p>A single <code>systolic_env</code> owns three agents (one for the array pins, one per sub-system channel), two instances of the same scoreboard class, three coverage collectors, and a virtual sequencer. Both DUTs are instantiated side by side in <code>tb_top</code>, so any test can exercise either level or both.</p>
+
+  <div class="fig">
+  <svg viewBox="0 0 960 470" width="960" role="img" aria-label="UVM environment block diagram">
+    <rect x="6" y="34" width="948" height="360" fill="none" stroke="var(--line)" stroke-dasharray="6 4"/>
+    <text x="18" y="24" class="tacc">systolic_env</text>
+
+    <rect x="20" y="52" width="180" height="52" class="dbox2"/>
+    <text x="32" y="72">virtual_sequencer</text>
+    <text x="32" y="90" class="tmut">sa_sqr wr_sqr rd_sqr</text>
+
+    <!-- sequencers -->
+    <rect x="20"  y="150" width="118" height="38" class="dbox2"/><text x="30" y="174">sa sqr</text>
+    <rect x="20"  y="240" width="118" height="38" class="dbox2"/><text x="30" y="264">wr sqr</text>
+    <rect x="20"  y="330" width="118" height="38" class="dbox2"/><text x="30" y="354">rd sqr</text>
+    <line x1="80" y1="104" x2="80" y2="150" class="wiredash"/>
+    <line x1="95" y1="104" x2="95" y2="240" class="wiredash"/>
+    <line x1="110" y1="104" x2="110" y2="330" class="wiredash"/>
+
+    <!-- drivers -->
+    <rect x="172" y="150" width="132" height="38" class="dbox2"/><text x="182" y="174">sa_driver</text>
+    <rect x="172" y="240" width="132" height="38" class="dbox2"/><text x="182" y="264">ss_wr_driver</text>
+    <rect x="172" y="330" width="132" height="38" class="dbox2"/><text x="182" y="354">ss_rd_driver</text>
+    <line x1="138" y1="169" x2="172" y2="169" class="wire"/>
+    <line x1="138" y1="259" x2="172" y2="259" class="wire"/>
+    <line x1="138" y1="349" x2="172" y2="349" class="wire"/>
+
+    <!-- interfaces / DUTs -->
+    <rect x="344" y="132" width="150" height="72" class="dacc"/>
+    <text x="356" y="154">sa_if (clk)</text><text x="356" y="172" class="tmut">clocking drv/mon</text>
+    <text x="356" y="192">dut_sa</text>
+    <rect x="344" y="228" width="150" height="150" class="dacc"/>
+    <text x="356" y="250">ss_if</text><text x="356" y="268" class="tmut">(sys_clk, sr_clk)</text>
+    <text x="356" y="286" class="tmut">clocking wr/rd/mon</text>
+    <text x="356" y="310">dut_ss</text>
+    <text x="356" y="330" class="tmut">2 async clocks</text>
+    <line x1="304" y1="169" x2="344" y2="169" class="wireacc"/>
+    <line x1="304" y1="259" x2="344" y2="259" class="wireacc"/>
+    <line x1="304" y1="349" x2="344" y2="349" class="wireacc"/>
+
+    <!-- monitors -->
+    <rect x="536" y="118" width="146" height="34" class="dbox2"/><text x="546" y="140">sa_in_monitor</text>
+    <rect x="536" y="162" width="146" height="34" class="dbox2"/><text x="546" y="184">sa_out_monitor</text>
+    <rect x="536" y="240" width="146" height="34" class="dbox2"/><text x="546" y="262">ss_in_monitor</text>
+    <rect x="536" y="330" width="146" height="34" class="dbox2"/><text x="546" y="352">ss_out_monitor</text>
+    <line x1="494" y1="135" x2="536" y2="135" class="wire"/>
+    <line x1="494" y1="179" x2="536" y2="179" class="wire"/>
+    <line x1="494" y1="257" x2="536" y2="257" class="wire"/>
+    <line x1="494" y1="347" x2="536" y2="347" class="wire"/>
+
+    <!-- scoreboards + coverage -->
+    <rect x="726" y="128" width="108" height="44" class="dbox2"/><text x="738" y="146">sa_sb</text><text x="738" y="162" class="tmut">exp / act</text>
+    <rect x="726" y="286" width="108" height="44" class="dbox2"/><text x="738" y="304">ss_sb</text><text x="738" y="320" class="tmut">exp / act</text>
+    <rect x="856" y="206" width="92" height="56" class="dbox2"/><text x="866" y="226">matmul</text><text x="866" y="242">coverage</text>
+    <line x1="682" y1="135" x2="726" y2="140" class="wire"/>
+    <line x1="682" y1="179" x2="726" y2="160" class="wire"/>
+    <line x1="682" y1="257" x2="726" y2="298" class="wire"/>
+    <line x1="682" y1="347" x2="726" y2="318" class="wire"/>
+    <line x1="682" y1="130" x2="856" y2="218" class="wiredash"/>
+    <line x1="682" y1="252" x2="856" y2="240" class="wiredash"/>
+
+    <text x="536" y="416" class="tmut">+ sa_coverage / ss_coverage sample the interface pins directly every clock</text>
+    <text x="20"  y="440" class="tmut">solid = seq-item / pin path &#183; thin = analysis port (matmul_item) &#183; dashed = handles / subscription</text>
+  </svg>
+  </div>
+  <p class="figcap">In-monitors rebuild each matrix from the pins and publish golden expectations; out-monitors publish observed results; each scoreboard blocks on a pair of TLM analysis FIFOs and compares in order.</p>
+
+  <h2>Component by component</h2>
+  <div class="twrap"><table>
+    <tr><th>Component</th><th>What it does</th><th>Worth noticing</th></tr>
+    <tr><td><code>matmul_item</code></td><td>One multiply: A, B, M, C, plus an <code>ovf</code> flag. <code>gen(m)</code> randomizes; <code>gen_cov(m,a00,b00,mode)</code> builds directed corner matrices; <code>compute()</code> is the golden model.</td><td>Golden accumulates in <code>longint</code>, truncates to 16 bits, and flags whether C[0][0] wrapped &mdash; the model matches hardware wrap exactly.</td></tr>
+    <tr><td><code>read_item</code></td><td>An empty token: &ldquo;pop one C row.&rdquo;</td><td>Makes the read channel a first-class sequence-driven master rather than a hidden always-block.</td></tr>
+    <tr><td><code>sa_if</code> / <code>ss_if</code></td><td>Pins + clocking blocks + <code>init_drv()</code>. Nothing else.</td><td><code>default input #1step output #1</code>: monitors sample pre-edge values, drivers drive 1&nbsp;ns after the edge &mdash; race-free by construction. <code>init_drv()</code> drives idle values <em>through</em> the clocking block so the driver stays the single driver.</td></tr>
+    <tr><td><code>sa_driver</code></td><td>Streams a matrix as M cycles of (A col k, B row k) with <code>in_valid</code> high, drops it, waits N+3 cycles for drain.</td><td></td></tr>
+    <tr><td><code>ss_wr_driver</code></td><td>Presents <code>M_minus_one</code>, settles 3 cycles, pushes M packed words &mdash; <b>honoring <code>in_fifo_full</code></b> (stalls, retries).</td><td>Back-pressure compliance lives in the driver, so a full FIFO is a legal, exercised scenario, not a protocol violation.</td></tr>
+    <tr><td><code>ss_rd_driver</code></td><td>Per <code>read_item</code>: wait <code>!out_fifo_empty</code>, pulse <code>rd_fifo</code> one cycle, done. A <code>read_delay</code> knob (via <code>config_db</code>) inserts idle cycles first.</td><td>The knob is how the back-pressure test slows the reader without touching any other code.</td></tr>
+    <tr><td><code>sa_in_monitor</code> / <code>ss_in_monitor</code></td><td>Rebuild A/B from the pins (counting only <em>accepted</em> writes: <code>wr_fifo &amp;&amp; !full</code>), call <code>compute()</code>, publish the <b>expected</b> item.</td><td>Prediction from observed pins, not from the sequence &mdash; a driver or packing bug becomes a scoreboard mismatch instead of silently matching.</td></tr>
+    <tr><td><code>sa_out_monitor</code> / <code>ss_out_monitor</code></td><td>Collect rows (on <code>out_valid</code> / on accepted reads), assemble N rows into the <b>observed</b> item.</td><td></td></tr>
+    <tr><td><code>matmul_scoreboard</code></td><td>Two <code>uvm_tlm_analysis_fifo</code>s; run_phase blocks <code>get(exp); get(act); compare</code>. Reports PASSED / FAILED / IDLE.</td><td>One class, two instances (<code>sa_sb</code>, <code>ss_sb</code>) &mdash; the reuse requirement in one line. Mismatches print the full got/exp 4&times;4 grid.</td></tr>
+    <tr><td><code>matmul_coverage</code></td><td><code>uvm_subscriber</code> fed by <em>both</em> in-monitors: M, operand signs, magnitude buckets, result sign, overflow, 2 crosses.</td><td></td></tr>
+    <tr><td><code>sa_coverage</code> / <code>ss_coverage</code></td><td>Pin-level covergroups sampled every clock straight off the vif: valid handshakes, wr/rd strobes, FIFO full/empty.</td><td>Transaction coverage says <em>what math</em> was exercised; signal coverage says <em>what protocol states</em> were reached. Different questions, separate collectors.</td></tr>
+    <tr><td><code>virtual_sequencer</code> + <code>ss_vseq</code></td><td>Holds the three sequencer handles; <code>ss_vseq</code> forks a write sequence and a read sequence to run concurrently.</td><td>Models two independent bus masters &mdash; the realistic streaming scenario of page 12.</td></tr>
+    <tr><td><code>base_test</code></td><td>Builds env, owns objection + a 200&nbsp;ns drain, exposes <code>run_seqs()</code> to override and <code>wait_sb(sb,n)</code>.</td><td>Every concrete test is ~15 lines: pick sequence, set knobs, start, wait for n matrices.</td></tr>
+    <tr><td><code>tb_top</code></td><td>Three clock generators (10/10/14&nbsp;ns), both DUTs, both interfaces, reset, <code>config_db</code> publication of the two vifs, <code>run_test()</code>, VCD dump, 2&nbsp;ms watchdog.</td><td>Generate-loops map the interfaces&rsquo; packed vectors onto the DUTs&rsquo; unpacked port arrays.</td></tr>
+  </table></div>
+
+  <h2>Techniques used, and why</h2>
+  <div class="twrap"><table>
+    <tr><th>Technique</th><th>Where</th><th>Why it matters</th></tr>
+    <tr><td>Clocking blocks with <code>#1step/#1</code></td><td>both interfaces</td><td>Eliminates TB&harr;DUT races: sample the pre-edge value, drive after the edge. The first TB revision drove pins raw at posedge and raced the DUT &mdash; this was the fix.</td></tr>
+    <tr><td>Monitor-side golden prediction</td><td>in-monitors</td><td>Checks what actually hit the pins; independent of the stimulus path; scoreboard stays passive and reusable.</td></tr>
+    <tr><td><code>uvm_tlm_analysis_fifo</code> pairs</td><td>scoreboard</td><td>Blocking <code>get()</code> gives in-order stream matching with zero callback bookkeeping &mdash; a fit for a strictly-ordered DUT.</td></tr>
+    <tr><td>Virtual sequence over two channels</td><td><code>ss_vseq</code></td><td>Write and read masters are genuinely concurrent (<code>fork/join</code>), so FIFO occupancy actually varies &mdash; full and empty both get hit.</td></tr>
+    <tr><td><code>uvm_config_db</code></td><td>vifs, <code>read_delay</code></td><td>Static world &rarr; class world handoff; per-test knobs without editing the env (set before build, picked up in <code>build_phase</code>).</td></tr>
+    <tr><td>Factory (<code>::type_id::create</code>) everywhere</td><td>all components/objects</td><td>Any test can substitute an error-injecting driver or a different item via type override &mdash; no env edits.</td></tr>
+    <tr><td>One-file-per-test extending <code>base_test</code></td><td>test layer</td><td>New scenario = new ~15-line file. The regression list in the README is just <code>+UVM_TESTNAME</code> values.</td></tr>
+    <tr><td>Directed builders for closure</td><td><code>gen_cov()</code> + <code>matrix_directed_seq</code></td><td>Random covers breadth; the last few bins (overflow, zero rows/cols) are probability &asymp; 0 for random &mdash; they get constructed deliberately.</td></tr>
+  </table></div>
+
+  <h2>How to run it</h2>
+  <pre><code># Xcelium (result-3 was produced with exactly this)
+xrun -64bit -uvm -sv -timescale 1ns/1ps -access +rw \
+     -coverage all -covtest coverage_test -covoverwrite \
+     -f filelist.f +UVM_TESTNAME=coverage_test
+
+# EDA Playground: SystemVerilog/Verilog + UVM 1.2 + Cadence Xcelium
+#   Run options: -access +rw -coverage all +UVM_TESTNAME=ss_multichannel_test
+
+# merge coverage across the whole test list
+./run_all.sh          # loops all tests, then: imc -exec merge_cov.tcl</code></pre>
+  <div class="warnnote">Without <code>-coverage all</code> Xcelium silently scores nothing &mdash; the covergroups report <code>COVNSM</code> / 0.00%. Easy hour to lose; now it&rsquo;s baked into the run scripts.</div>
+</section>
+
+<!-- ============================================================ TESTS -->
+<section id="panel-tests" role="tabpanel" aria-labelledby="tab-tests" hidden>
+  <h2>The nine tests</h2>
+  <p>Every test extends <code>base_test</code> and differs only in its <code>run_seqs()</code>. The ladder runs smoke &rarr; constrained-random &rarr; scenario-directed &rarr; coverage-directed; <code>ss_multichannel_test</code> is the default in <code>tb_top</code>, and any other is selected with <code>+UVM_TESTNAME</code>.</p>
+
+  <div class="twrap"><table>
+    <tr><th>Test</th><th>Level</th><th>Stimulus</th><th>M</th><th>What it establishes</th></tr>
+    <tr><td><code>sa_smoke_test</code></td><td><span class="pill lvl">array</span></td><td class="num">3 matrices</td><td class="num">4</td><td>The basic contract: drive M columns/rows, C streams out, scoreboard matches. First thing run after any TB change.</td></tr>
+    <tr><td><code>sa_random_test</code></td><td><span class="pill lvl">array</span></td><td class="num">12 matrices</td><td class="num">rand 1&ndash;4</td><td>Constrained-random operands over the full signed range <em>and</em> random contraction dim per matrix &mdash; the requirement-2 test at module level.</td></tr>
+    <tr><td><code>ss_smoke_test</code></td><td><span class="pill lvl">sub-sys</span></td><td class="num">1 matrix</td><td class="num">4</td><td>One multiply end-to-end through both FIFOs and both clock domains; write and read channels each do their handshake once.</td></tr>
+    <tr><td><code>ss_multichannel_test</code></td><td><span class="pill lvl">sub-sys</span></td><td class="num">10 matrices</td><td class="num">4</td><td>The headline streaming scenario: write and read sequences forked concurrently through the virtual sequencer &mdash; consecutive multiplies with the reader chasing the writer.</td></tr>
+    <tr><td><code>ss_param_test</code></td><td><span class="pill lvl">sub-sys</span></td><td class="num">4&times;4 matrices</td><td class="num">sweep 1&rarr;4</td><td>Requirement 3: every legal contraction dimension, one drained batch per M so an M change never overlaps in-flight data.</td></tr>
+    <tr><td><code>ss_backpressure_test</code></td><td><span class="pill lvl">sub-sys</span></td><td class="num">6 matrices</td><td class="num">4</td><td>Sets <code>read_delay=3</code> on the read driver via <code>config_db</code>: the output FIFO fills, the compute engine stalls on <code>out_full</code>, the input FIFO backs up to <code>in_fifo_full</code>, and the write driver must honor it. Flow control, exercised for real.</td></tr>
+    <tr><td><code>ss_random_test</code></td><td><span class="pill lvl">sub-sys</span></td><td class="num">6 batches &times; 2&ndash;5</td><td class="num">rand/batch</td><td>Random M and random batch sizes, drained between batches &mdash; randomizes the <em>scenario</em>, not just the data.</td></tr>
+    <tr><td><code>regression_test</code></td><td><span class="pill lvl">both</span></td><td class="num">40 + 6&times;(3&ndash;6)</td><td class="num">rand</td><td>Long soak across both levels in one process; run with <code>-svseed random</code> for nightly variety.</td></tr>
+    <tr><td><code>coverage_test</code></td><td><span class="pill lvl">both</span></td><td class="num">24 + 12 directed</td><td class="num">all</td><td>Closure: a hand-built directed list that hits every remaining bin of all three covergroups. This is the checked-in <code>result-3</code> run: 36/36 matched, 3&times;100%.</td></tr>
+  </table></div>
+
+  <h3>Inside coverage_test &mdash; the directed list</h3>
+  <ul>
+    <li><b>Per-M block (12 items):</b> for each M &isin; {1,2,3,4}, three matrices forcing A[0][0] negative / positive / zero-row &mdash; fills <code>cp_m</code> and the entire M &times; A-sign cross.</li>
+    <li><b>Sign matrix (9 items):</b> all nine A-sign &times; B-sign combinations at M=4, using zero-row / zero-column constructions so C[0][0]&rsquo;s sign is forced too.</li>
+    <li><b>Magnitude (2 items):</b> |A[0][0]| = 60 (mid bucket) and 120 (large bucket).</li>
+    <li><b>Overflow (1 item):</b> A row 0 and B column 0 all +127, M=4 &rarr; C[0][0] = 4&middot;127&sup2; = 64,516 &gt; 32,767 &mdash; the 16-bit accumulator wraps and the <code>ovf=yes</code> bin fills; the scoreboard still matches because the golden model wraps identically.</li>
+    <li><b>Part 2 (12 items):</b> M sweep 1&rarr;4 through the sub-system (3 matrices each) to close <code>ss_coverage</code> &mdash; write/read strobes, full/empty flags, every M bin on the bus.</li>
+  </ul>
+
+  <h3>Waveform evidence (both levels, in the README)</h3>
+  <p>Two annotated waveform walk-throughs back the log files: an array frame where the streamed <code>c_dout</code> rows are recomputed digit-by-digit from the captured A/B, and a sub-system frame where the packed <code>imem</code> words and <code>hold</code> rows are decoded by hand and shown to equal golden C. The waveforms are corroboration; the authoritative check is the scoreboard plus the covergroup percentages.</p>
+</section>
+
+<!-- ============================================================ PLAN -->
+<section id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+  <h2>Verification plan</h2>
+  <p>The plan derives from the spec: what the DUT promises (compute, protocol, flow control, parameters, clocks), which of those promises are risky, and what evidence &mdash; check or coverage bin &mdash; proves each was kept.</p>
+
+  <h3>Features to verify</h3>
+  <div class="twrap"><table>
+    <tr><th>#</th><th>Feature</th><th>Checked by</th><th>Measured by</th></tr>
+    <tr><td class="num">F1</td><td>Signed C = A&times;B correctness, any operands</td><td>scoreboards (element-exact, both levels)</td><td><code>cp_a/cp_b/cp_c</code> signs, magnitude bins</td></tr>
+    <tr><td class="num">F2</td><td>Contraction dim M = 1&hellip;N via <code>M_minus_one</code></td><td>scoreboards per-M</td><td><code>cp_m</code> + M&times;A-sign cross</td></tr>
+    <tr><td class="num">F3</td><td>16-bit accumulator wrap on overflow</td><td>golden model wraps identically &rarr; match</td><td><code>cp_ovf</code> yes/no</td></tr>
+    <tr><td class="num">F4</td><td>in_valid/out_valid streaming protocol</td><td>out-monitor row counting (N rows/frame)</td><td><code>sa_coverage</code> valid bins</td></tr>
+    <tr><td class="num">F5</td><td>Consecutive back-to-back matrices</td><td>multichannel / regression matching in order</td><td>matched counts &gt; 1 per run</td></tr>
+    <tr><td class="num">F6</td><td>FIFO write flow control (<code>in_fifo_full</code>)</td><td>driver honors full; monitor counts only accepted writes</td><td><code>cp_full</code> both bins</td></tr>
+    <tr><td class="num">F7</td><td>FIFO read flow control (FWFT, <code>out_fifo_empty</code>)</td><td>read driver pops exactly one word per handshake</td><td><code>cp_empty</code> both bins</td></tr>
+    <tr><td class="num">F8</td><td>Two asynchronous clock domains</td><td>end-to-end matching across 10/14&nbsp;ns domains</td><td>(ratio fixed per run &mdash; see gaps)</td></tr>
+    <tr><td class="num">F9</td><td>Bus packing {A col, B row} / packed C rows</td><td>independent pack (driver) vs unpack (monitor &amp; DUT) must agree for the scoreboard to pass</td><td>&mdash;</td></tr>
+  </table></div>
+
+  <h3>Main cases</h3>
+  <ul>
+    <li>Square multiply M=N at both levels (smoke).</li>
+    <li>Full-range random signed operands, random M per matrix (sa_random, ss_random, regression).</li>
+    <li>Streams of consecutive matrices with concurrent, independent write and read masters (ss_multichannel).</li>
+    <li>Every legal M in isolation, drained between changes (ss_param).</li>
+    <li>Slow reader &rarr; genuine back-pressure through the whole pipe (ss_backpressure).</li>
+  </ul>
+
+  <h3>Corner cases</h3>
+  <div class="twrap"><table>
+    <tr><th>Corner</th><th>Why it&rsquo;s a corner</th><th>Hit by</th><th>Status</th></tr>
+    <tr><td>M = 1 (single rank-1 update)</td><td>Degenerate loop bounds; no accumulation step at all</td><td>ss_param, coverage_test, random Ms</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Accumulator overflow / wrap</td><td>Signed truncation is where golden and DUT most easily disagree</td><td>coverage_test mode 4 (127s row&middot;col)</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Zero operands: A row 0, B col 0, both</td><td>C sign = zero bins; prob. (1/256)<sup>4</sup> for random</td><td>coverage_test modes 1/2/3</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>All 9 sign &times; sign combinations</td><td>Signed-arithmetic bugs cluster on sign boundaries</td><td>coverage_test sign matrix</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Operand magnitude extremes (&plusmn;127 region)</td><td>Near the 8-bit boundary</td><td>mag buckets + overflow item</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Input FIFO full, writer must stall</td><td>Data loss if the flag or the driver is wrong</td><td>ss_backpressure (DEPTH=4 fills fast)</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Output FIFO full, compute engine must stall emission</td><td>Result loss / corruption</td><td>ss_backpressure (read_delay=3)</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td>Output FIFO empty, reader must wait</td><td>FWFT semantics; popping empty is a pointer corruption</td><td>every ss test (reader chases writer)</td><td><span class="pill ok">covered</span></td></tr>
+    <tr><td><code>M_minus_one</code> &gt; N&minus;1</td><td>Illegal-ish input; DUT and monitor both clamp to N</td><td>defensive clamp in both, not stimulated</td><td><span class="pill gap">defensive only</span></td></tr>
+    <tr><td>Reset in the middle of a frame</td><td>Recovery logic, pointer reset across domains</td><td>&mdash;</td><td><span class="pill gap">gap</span></td></tr>
+    <tr><td>M &gt; N (loop-back accumulation)</td><td>Architecture extension, out of scope by stated assumption</td><td>&mdash;</td><td><span class="pill gap">out of scope</span></td></tr>
+    <tr><td>Other clock ratios / inverted ratio</td><td>CDC timing windows shift with ratio</td><td>RTL track ran reversed ratio in Verilator; UVM run fixes 10:14</td><td><span class="pill gap">partial</span></td></tr>
+  </table></div>
+
+  <h3>The coverage model, bin by bin</h3>
+  <div class="twrap"><table>
+    <tr><th>Covergroup</th><th>Coverpoints</th><th>Bins</th></tr>
+    <tr><td><code>matmul_coverage</code> (transaction; subscribed to both levels)</td><td><code>cp_m</code> M=1..4 &middot; <code>cp_a/cp_b/cp_c</code> sign neg/zero/pos &middot; <code>cp_amag</code> 0 / &le;42 / &le;85 / &gt;85 &middot; <code>cp_ovf</code> no/yes &middot; crosses <code>M&times;signA</code>, <code>signA&times;signB</code></td><td class="num">40</td></tr>
+    <tr><td><code>sa_coverage</code> (array pins, sampled every clk)</td><td><code>in_valid</code> idle/active &middot; <code>out_valid</code> idle/active &middot; <code>c_dout</code> sign <code>iff out_valid</code></td><td class="num">7</td></tr>
+    <tr><td><code>ss_coverage</code> (bus pins, sampled every sys_clk)</td><td>M 1..4 &middot; <code>wr_fifo</code> &middot; <code>rd_fifo</code> &middot; <code>in_fifo_full</code> &middot; <code>out_fifo_empty</code></td><td class="num">12</td></tr>
+  </table></div>
+  <p>Sampling uses element [0][0] as the sign/magnitude proxy (with directed items constructed so that proxy is meaningful). A stricter model would sample every element &mdash; noted under improvements.</p>
+
+  <h3>The closure story</h3>
+  <ol>
+    <li>Random tests alone plateaued around <b>65%</b> on the transaction covergroup.</li>
+    <li>Hole analysis: zero-sign bins need an entire row/column of zeros (probability &asymp; (1/256)<sup>4</sup> per matrix); the overflow bin needs near-max operands aligned along a full row and column; magnitude buckets for one fixed element fill slowly.</li>
+    <li>Response: <code>gen_cov()</code> directed builders (random background + forced row/column patterns), a 24-item directed list on the array, and an M sweep through the sub-system.</li>
+    <li>Result: all three covergroups at <b>100.00%</b> in one 9-second run &mdash; the checked-in <code>result-3/xrun.log</code>, with coverage database under <code>result-3/cov_work/</code> and multi-test merging via <code>imc</code>.</li>
+  </ol>
+
+  <h3>Known gaps &mdash; stated honestly</h3>
+  <ul>
+    <li>No SVA protocol assertions (out_valid burst length, FIFO overflow/underflow, dout stability while unread).</li>
+    <li>No reset-during-traffic test; no X-propagation checking.</li>
+    <li>One clock ratio per UVM run; ratio is a one-line edit but not swept automatically.</li>
+    <li>Fixed 200&nbsp;ns end-of-test drain instead of an objection/phase-ready-to-end handshake.</li>
+    <li>N and DIN_WIDTH are compile-time macros &mdash; parameter regression means recompiling, not re-running.</li>
+    <li>The checked-in closure run is single-seed (seed 1); multi-seed soak exists (<code>-svseed random</code> on regression_test) but isn&rsquo;t archived.</li>
+  </ul>
+  <p>Every one of these has a matching &ldquo;how I&rsquo;d improve it&rdquo; answer in the interview tab &mdash; knowing the gaps is half the interview.</p>
+
+  <h2>Gap analysis: what a PDF-faithful RTL DUT would add</h2>
+  <p>The behavioral models abstract away real hardware behaviors &mdash; and tests for those behaviors currently have nothing to bite on. Swap in the real design (pipelined weight-stationary mesh, Gray-pointer async FIFOs, controller FSM) and every row below becomes a required test that none of the nine current tests covers.</p>
+
+  <h3>A &mdash; Array level: pipelined-mesh behaviors</h3>
+  <div class="twrap"><table>
+    <tr><th>#</th><th>Missing directed test / corner</th><th>Why the current suite cannot cover it</th></tr>
+    <tr><td class="num">A1</td><td><b>Gapless streaming</b>: <code>in_valid</code> held high across consecutive matrices; matrix i+1&rsquo;s input window overlapping matrix i&rsquo;s <code>out_valid</code> window</td><td><code>sa_driver</code> forces an N+3 cycle gap after every matrix; the behavioral DUT needs the falling edge as its frame delimiter. This is the double-buffer design-intent scenario &mdash; zero tests exercise it.</td></tr>
+    <tr><td class="num">A2</td><td><b>Weight protocol</b>: preload next B during compute; <code>w_swap</code> pulsed while the previous frame&rsquo;s partial sums are still draining (illegal window); weight load interrupted mid-way and restarted; <code>b_din</code> toggling junk while <code>w_load_en=0</code> (must not disturb weights)</td><td>The behavioral model has no weight registers &mdash; <code>b_din</code> is consumed and discarded each cycle.</td></tr>
+    <tr><td class="num">A3</td><td><b>Cycle-exact timing</b>: <code>out_valid</code> equals <code>in_valid</code> delayed exactly 2N&minus;1; absolute cycle of first C output (PDF p.11: 6th cycle for 2&times;2); sustained one-matrix-per-M-cycles throughput</td><td>The scoreboard checks values, never cycles; needs the cycle-accurate predictor (the assignment&rsquo;s &ldquo;big plus&rdquo;).</td></tr>
+    <tr><td class="num">A4</td><td><b><code>c_din</code> as a functional input</b>: nonzero seed (C = A&times;B + C_seed); M&gt;N multi-pass loop-back accumulation; stale <code>c_din</code> not cleared at a new matrix (PDF requires &ldquo;reset to 0 when start the new matrix&rdquo;) &mdash; contamination check</td><td>The TB drives <code>c_din=0</code> permanently; the port is effectively untested.</td></tr>
+    <tr><td class="num">A5</td><td><b>Mid-frame bubble</b>: <code>in_valid</code> dropping for one cycle inside the M-cycle window, then resuming</td><td>The skew register chains shift every cycle &mdash; a real array likely cannot tolerate this. Spec question first, test second.</td></tr>
+    <tr><td class="num">A6</td><td><b>Junk on idle cycles</b>: random values on <code>a_din</code>/<code>b_din</code> while <code>in_valid=0</code>, verifying the input mask</td><td>The driver drives zeros when idle, so the masking logic (<code>a_in_m = in_valid ? a : 0</code>) has never been challenged.</td></tr>
+    <tr><td class="num">A7</td><td><b>Localizing patterns</b>: A = identity &rArr; C must equal B (catches row/column transposition and wiring swaps); one-hot A/B &rArr; single nonzero C element at (i,j) (isolates one PE); walking-1 across the 64-bit bus (catches bit swaps / bridging)</td><td>Random stimulus <em>detects</em> a transpose bug but cannot <em>localize</em> it; these are debug-efficiency tests.</td></tr>
+    <tr><td class="num">A8</td><td><b>&minus;128 extremes</b>: M=4, all operands &minus;128 &rArr; 4&times;16384 = 65536 wraps the 16-bit accumulator to exactly <b>0</b> &mdash; all-nonzero inputs, all-zero output</td><td>Directed items use &plusmn;127/&plusmn;5/60/120; &minus;128 (the asymmetric most-negative value) is only ever hit by chance, with no bin recording it.</td></tr>
+  </table></div>
+
+  <h3>B &mdash; Sub-system level: real async FIFO + controller</h3>
+  <div class="twrap"><table>
+    <tr><th>#</th><th>Missing item</th><th>Notes</th></tr>
+    <tr><td class="num">B1</td><td><b>Clock-ratio sweep</b>: sr faster than sys (inverted), near-1:1 ratios, extreme ratios, phase offsets, jitter</td><td>The UVM run fixes one ratio (10:14); the PDF says the clocks are &ldquo;adjustable on the system level.&rdquo;</td></tr>
+    <tr><td class="num">B2</td><td><b>Gray-pointer SVA + flag conservatism</b>: pointer changes at most one bit per own-clock edge; write/read launched the first cycle after full/empty deasserts (the 2-flop-sync timing window)</td><td>The behavioral pointers are ideal and zero-latency &mdash; these timing windows do not exist to test.</td></tr>
+    <tr><td class="num">B3</td><td><b>FIFO micro-corners</b>: simultaneous push+pop on the same edge at occupancy 1 and DEPTH&minus;1; <code>dout</code> stability while <code>rd_fifo=0</code> (SVA)</td><td>Random may hit these, but with no <code>wr&times;rd</code> cross bin there is no proof it ever did.</td></tr>
+    <tr><td class="num">B4</td><td><b>Violating master</b>: deliberately drive <code>wr_fifo</code> during full and <code>rd_fifo</code> during empty, with assertions that pointers hold and no data is overwritten</td><td>The compliant drivers mean <code>wr_fifo &amp;&amp; full</code> has never once occurred on the pins.</td></tr>
+    <tr><td class="num">B5</td><td><b>Reset campaign</b>: reset mid-input-window, mid-emit, mid-weight-load; reset with FIFOs partially full; the two domains&rsquo; reset release in either order</td><td>Zero reset-during-traffic tests exist; reset-release synchronization is a classic CDC failure point.</td></tr>
+    <tr><td class="num">B6</td><td><b>Dynamic M</b>: changing M without draining (two in-flight matrices with different M &mdash; a spec question first: <code>M_minus_one</code> is one global signal); <code>M_minus_one=255</code> (clamp or error &mdash; undefined); a directed <b>B-residue leak test</b>: M=4 with all-0x7F operands immediately followed by M=1 &mdash; any zero-padding bug leaks old rows into the result</td><td><code>ss_param_test</code> sweeps M ascending only, drained between batches; random data has poor signal-to-noise for leak detection, the directed pattern is one-shot conclusive.</td></tr>
+    <tr><td class="num">B7</td><td><b>Multiple matrices in flight</b>: at M=1 the input FIFO holds 4 complete matrices at once &mdash; ordering preservation through a genuinely overlapped pipeline</td><td>The serial behavioral engine preserves order trivially; real overlap makes it a theorem to prove.</td></tr>
+    <tr><td class="num">B8</td><td><b>Performance assertions</b>: data available + output not full + engine idle for &ge;K cycles &rArr; violation (&ldquo;no gratuitous bubbles&rdquo;); end-to-end latency bound</td><td>Today a DUT taking 10,000 cycles per matrix would still pass every test.</td></tr>
+  </table></div>
+
+  <h3>C &mdash; Parameter &amp; configuration space</h3>
+  <ul>
+    <li><b>N=2</b> (the PDF&rsquo;s own worked example!), N=8, DIN_WIDTH=16 &mdash; a compile-matrix regression once the macros move into package parameters.</li>
+    <li><b>DEPTH &ge; M<sub>max</sub> legality assertion</b> &mdash; the start condition <code>occupancy &ge; M</code> is unsatisfiable if DEPTH &lt; M: deadlock by construction, currently unchecked.</li>
+    <li><b>X-propagation</b>: outputs must be X-free at reset release; poison unused inputs.</li>
+  </ul>
+
+  <div class="note"><b>How to say it in the interview:</b> the current suite proves <em>value correctness + flow-control protocol</em>. A real RTL DUT adds four test axes: cycle-exact timing (A3, B8), protocol timing windows (A1, A2, A5, B2), reset &amp; violation injection (B4, B5), and the parameter/clock space (B1, C). The scoreboard and monitors are reused unchanged &mdash; what grows is stimulus (new directed test classes), SVA bound into the interfaces, cover crosses (overlap, same-edge push/pop), and one cycle-accurate predictor.</div>
+</section>
+
+<!-- ============================================================ INTERVIEW -->
+<section id="panel-interview" role="tabpanel" aria-labelledby="tab-interview" hidden>
+  <h2>Interview preparation</h2>
+  <p class="lede">Grouped by the angle an interviewer usually takes. Answers are written the way you&rsquo;d actually say them &mdash; specific to this project, with the numbers ready.</p>
+
+  <span class="klabel">1 &middot; project walkthrough</span>
+
+  <details class="q"><summary>Give me a two-minute overview of the project.</summary><div class="a">
+    <p>&ldquo;The assignment was to verify a systolic-array matrix multiplier at two levels: the bare <code>systolic_array</code> module &mdash; N=4, 8-bit signed elements, C=A&times;B accumulated over M input cycles &mdash; and a <code>sub_sys</code> that wraps it with input/output FIFOs across two asynchronous clocks, sys_clk for the bus and sr_clk for compute. I built one UVM&nbsp;1.2 environment that verifies both DUTs simultaneously: an agent on the array pins, two channel agents on the sub-system bus (write and read, coordinated by a virtual sequence), monitors that rebuild each matrix from the pins and compute a golden result, and one scoreboard class instantiated per level. Three covergroups &mdash; transaction math, array pin protocol, bus protocol. Nine tests, smoke through constrained-random through a directed coverage test. The final Xcelium run: 36 matrices, all matched, all three covergroups at 100%, zero errors. I also implemented the optional RTL &mdash; a weight-stationary PE mesh with skew registers and a Gray-pointer async FIFO &mdash; and verified that separately with Verilator.&rdquo;</p>
+  </div></details>
+
+  <details class="q"><summary>Why is a behavioral model your DUT in the UVM run instead of your own RTL?</summary><div class="a">
+    <p>The deliverable being graded is the <em>testbench</em>, and the assignment explicitly says RTL is not required. A compact behavioral model that honors the exact interface contract keeps sims fast, keeps the EDA Playground setup reproducible, and decouples TB bring-up from RTL debug &mdash; which is exactly how you bring up a UVM env in a real project before RTL is ready. The env can&rsquo;t tell the difference: swapping in the real RTL is only a <code>tb_top</code> instance change, and the same golden model already regresses that RTL in the Verilator benches.</p>
+  </div></details>
+
+  <details class="q"><summary>How did you satisfy the reuse requirement between module level and sub-system level?</summary><div class="a">
+    <ul>
+      <li>One <code>matmul_item</code> with the golden <code>compute()</code> serves both levels &mdash; the transaction is level-agnostic.</li>
+      <li>One scoreboard <em>class</em>, two instances (<code>sa_sb</code>, <code>ss_sb</code>).</li>
+      <li>One env holds all three agents; one transaction covergroup subscribes to both input monitors.</li>
+      <li>One <code>base_test</code> owns objections, drain, and <code>wait_sb()</code>; each test is ~15 lines.</li>
+      <li>Only the pin-touching pieces (interface, driver, monitor) are per-level &mdash; unavoidable, since the physical interfaces differ.</li>
+    </ul>
+  </div></details>
+
+  <details class="q"><summary>What was the hardest part?</summary><div class="a">
+    <p>The two-clock flow-control corners. Getting the read driver to pop <em>exactly one</em> word per handshake against FWFT semantics, and making the input monitor count only <em>accepted</em> writes (<code>wr_fifo &amp;&amp; !in_fifo_full</code>) so predictions stay aligned with what the DUT actually consumed &mdash; otherwise the scoreboard drifts by one matrix under back-pressure and every subsequent compare fails. Off-by-one alignment bugs across clock domains are subtle because everything still &ldquo;mostly works.&rdquo;</p>
+  </div></details>
+
+  <span class="klabel">2 &middot; bugs &amp; debug stories</span>
+
+  <details class="q"><summary>Walk me through a bug you encountered and how you solved it.</summary><div class="a">
+    <p>Best one: the sub-system scoreboard reported mismatches where <code>dout</code> was stale by one word. My first FIFO model used a SystemVerilog queue with <code>assign dout = q[0]</code>. On Xcelium, that continuous assignment did not reliably re-evaluate when the queue was mutated inside an always block &mdash; <code>dout</code> kept showing the <em>previous</em> head. I debugged it by decoding <code>dout</code> in the monitor against the <code>imem</code> contents in the waveform: the pop visibly happened, the pointer moved, but <code>dout</code> lagged a cycle. Root cause: relying on combinational sensitivity to dynamic-container mutation is implementation-defined territory. Fix: replace queues with a static memory array plus binary read/write pointers &mdash; <code>assign dout = omem[ord[AW-1:0]]</code> &mdash; pure structural sensitivity that every simulator agrees on. The lesson I quote: when a behavioral model needs a combinational view of its state, keep it to synthesizable-style constructs.</p>
+  </div></details>
+
+  <details class="q"><summary>Any other bugs worth telling?</summary><div class="a">
+    <ul>
+      <li><b>Driver/DUT race:</b> the first driver drove <code>vif</code> signals directly at posedge; whether the DUT saw the old or new value that edge was simulator-order luck. Fixed with clocking blocks (<code>output #1</code>, <code>input #1step</code>) &mdash; and <code>init_drv()</code> drives idle values <em>through</em> the clocking block so there&rsquo;s exactly one driver of those nets, never a multi-driver X.</li>
+      <li><b>Reserved keywords:</b> coverage bins named <code>small</code>/<code>medium</code>/<code>large</code> failed to compile &mdash; they&rsquo;re Verilog charge-strength keywords. Renamed <code>sml/mid/lrg</code>. A thirty-second fix once the error message is read carefully.</li>
+      <li><b>Silent zero coverage:</b> Xcelium scores nothing without <code>-coverage all</code>; the covergroups just report 0.00%. Baked the flag into the run scripts.</li>
+      <li><b>VCD tooling:</b> Xcelium emits <code>$scope clocking</code> constructs for clocking blocks that some VCD viewers can&rsquo;t parse &mdash; the dump deliberately excludes interface instances and dumps DUT scopes plus mapping wires instead.</li>
+    </ul>
+  </div></details>
+
+  <details class="q"><summary>Your scoreboard mismatches. What&rsquo;s your debug flow?</summary><div class="a">
+    <ol>
+      <li>The scoreboard prints the full got/exp 4&times;4 grid and the matrix&rsquo;s M &mdash; localize which matrix and which elements differ (one element? a row? everything shifted?).</li>
+      <li>Decide which side is lying: recompute C by hand from the A/B the <em>monitor</em> captured. If expected is right, the DUT path is suspect; if expected is wrong, the monitor/unpacking is.</li>
+      <li>Walk the datapath in the waveform, halving the search each hop &mdash; sub-system order: was the packed <code>din</code> word correct (driver packing)? did <code>imem</code> capture the right words (write path / full flag)? does <code>hold[i]</code> match golden rows (compute)? does <code>dout</code> pop the right word at the right pointer (read path)?</li>
+      <li>Pattern-match the symptom: everything shifted by one word &rarr; pointer/handshake; single element wrong &rarr; arithmetic/packing; sign-flipped values &rarr; missing <code>$signed</code>.</li>
+    </ol>
+  </div></details>
+
+  <details class="q"><summary>How do you know your golden model itself is correct?</summary><div class="a">
+    <p>Three independent legs: (1) hand-worked examples &mdash; two waveform frames recomputed digit-by-digit in the README; (2) redundant implementations &mdash; the UVM item&rsquo;s <code>compute()</code> and the Verilator benches&rsquo; <code>matmul_pkg::golden_matmul</code> were written separately and agree; (3) cross-implementation consistency &mdash; the same golden matches two structurally unrelated DUTs (a spatial PE mesh and a temporal behavioral loop). A common-mode bug would have to hit all of those the same way, including the overflow-wrap behavior, which the directed overflow test exercises explicitly.</p>
+  </div></details>
+
+  <span class="klabel">3 &middot; uvm concepts</span>
+
+  <details class="q"><summary>Why does the monitor compute the expected result instead of the sequence sending it to the scoreboard?</summary><div class="a">
+    <p>Because then the check covers the whole path. The in-monitor rebuilds A and B from the <em>pins</em> &mdash; so if the driver packs the bus word wrong, or drops a beat under back-pressure, the prediction diverges from the stimulus intent and the scoreboard catches it. Sequence-side prediction would happily match a broken driver against a broken DUT stimulus. It also keeps the scoreboard passive and stimulus-agnostic: directed, random, or a future sequence library all get checked identically.</p>
+  </div></details>
+
+  <details class="q"><summary>Why uvm_tlm_analysis_fifo in the scoreboard rather than uvm_analysis_imp?</summary><div class="a">
+    <p><code>analysis_imp</code> forces a <code>write()</code> callback &mdash; you get pushed data in zero time and must build your own queueing and synchronization. <code>uvm_tlm_analysis_fifo</code> gives an unbounded FIFO with a <em>blocking</em> <code>get()</code>, so the run_phase is three lines: <code>get(exp); get(act); compare()</code>. For a strictly in-order DUT that&rsquo;s the whole ordering problem solved. If the DUT could reorder, I&rsquo;d switch to keyed matching (associative array on a transaction ID).</p>
+  </div></details>
+
+  <details class="q"><summary>Explain the UVM phases you actually used.</summary><div class="a">
+    <p><code>build_phase</code> top-down: factory-create children, read <code>config_db</code> (vifs, knobs). <code>connect_phase</code> bottom-up: analysis ports &rarr; scoreboard FIFOs, driver <code>seq_item_port</code> &rarr; sequencer export, virtual-sequencer handles. <code>run_phase</code>: the only time-consuming phase here &mdash; base_test raises an objection, runs the test&rsquo;s sequences, waits for the scoreboard count, drains 200&nbsp;ns, drops the objection. <code>report_phase</code>: scoreboards print PASSED/FAILED/IDLE, covergroups print percentages. I&rsquo;d name-drop that a cleaner drain uses <code>phase_ready_to_end</code> with an outstanding-transaction check instead of a fixed delay.</p>
+  </div></details>
+
+  <details class="q"><summary>How does uvm_config_db work in your bench, and what are its gotchas?</summary><div class="a">
+    <p><code>tb_top</code> publishes both virtual interfaces with <code>set(null, "*", "sa_vif", said)</code>; drivers/monitors/coverage <code>get</code> them in <code>build_phase</code> and <code>uvm_fatal</code> on failure. The back-pressure test sets <code>read_delay</code> targeted at <code>"env.ss_rd_agt.drv"</code> <em>before</em> <code>super.build_phase</code> so it exists before the driver is built. Gotchas worth saying: set-before-get ordering, precedence (higher/later setters win), wildcard scoping surprises, and the type must match exactly &mdash; <code>int</code> vs <code>int unsigned</code> lookups miss silently.</p>
+  </div></details>
+
+  <details class="q"><summary>Where would the UVM factory actually help you here? Give a concrete override.</summary><div class="a">
+    <p>Error injection without touching the env: <code>class sa_err_driver extends sa_driver</code>, override <code>drive()</code> to corrupt one beat or glitch <code>in_valid</code> mid-frame; then in a test&rsquo;s build_phase: <code>set_type_override_by_type(sa_driver::get_type(), sa_err_driver::get_type())</code>. Because every component is created via <code>::type_id::create</code>, the env silently builds the error driver. Same trick swaps in an item subclass with tighter constraints for a stress test.</p>
+  </div></details>
+
+  <details class="q"><summary>Explain your virtual sequence. Why is it needed?</summary><div class="a">
+    <p>The sub-system has two independent masters &mdash; someone writing operands and someone draining results &mdash; that in reality don&rsquo;t coordinate. <code>ss_vseq</code> (running on a <code>virtual_sequencer</code> that holds the three sequencer handles via <code>`uvm_declare_p_sequencer</code>) forks a <code>matrix_seq</code> on the write sequencer and a <code>read_seq</code> of N&times;num_matrices pop-tokens on the read sequencer, <code>join</code>-ing both. Because they genuinely race, FIFO occupancy varies run to run &mdash; which is precisely how the full and empty coverage bins get hit without being scripted.</p>
+  </div></details>
+
+  <details class="q"><summary>What are objections for, and what&rsquo;s your end-of-test strategy?</summary><div class="a">
+    <p>Objections keep <code>run_phase</code> alive: the test raises one, and the phase can&rsquo;t end until it drops. My base_test raises, runs sequences, then blocks on <code>wait_sb(sb, n)</code> &mdash; the scoreboard must have <em>processed</em> n matrices, not merely have had them driven &mdash; then a 200&nbsp;ns drain, then drop. Plus a 2&nbsp;ms watchdog in tb_top that <code>uvm_fatal</code>s so a hung handshake fails loudly instead of running forever. The honest critique I&rsquo;d volunteer: the fixed drain is a magic number; production style is objection-per-transaction or <code>phase_ready_to_end</code>.</p>
+  </div></details>
+
+  <details class="q"><summary>uvm_subscriber &mdash; what is it and why use it for coverage?</summary><div class="a">
+    <p>A component with a built-in <code>analysis_export</code> and an abstract <code>write()</code> &mdash; the natural sink for an analysis port. <code>matmul_coverage extends uvm_subscriber#(matmul_item)</code>: both in-monitors connect to it, <code>write()</code> extracts sampled attributes into ints and calls <code>cg.sample()</code>. Coverage stays out of monitors (which observe) and scoreboards (which check) &mdash; three components, three single responsibilities, and the covergroup automatically sees stimulus from <em>both</em> DUT levels.</p>
+  </div></details>
+
+  <span class="klabel">4 &middot; systemverilog &amp; tb mechanics</span>
+
+  <details class="q"><summary>Explain clocking blocks. What do #1step and output #1 mean?</summary><div class="a">
+    <p>A clocking block binds signals to a clock edge with explicit sampling and driving skews. <code>input #1step</code> samples in the Preponed region &mdash; the value just <em>before</em> the edge, i.e. the stable pre-edge state, immune to same-edge NBA updates. <code>output #1</code> drives 1&nbsp;ns <em>after</em> the edge, so the DUT&rsquo;s flops sampled the old value and see the new one next edge. Together they make TB&harr;DUT races structurally impossible &mdash; which I can testify to, because the first driver revision without them had exactly that race. One subtlety I handled: initializing pins through the clocking block (<code>init_drv()</code>) rather than assigning the raw nets, to keep a single driver.</p>
+  </div></details>
+
+  <details class="q"><summary>What signed-arithmetic pitfalls did you have to handle?</summary><div class="a">
+    <ul>
+      <li>A product of two 8-bit signed values needs 16 bits, and summing M of them needs headroom &mdash; golden accumulates in <code>longint</code>, then truncates to 16 to mirror the hardware wrap.</li>
+      <li>In SV, if <em>any</em> operand in an expression is unsigned, the whole expression goes unsigned &mdash; the bus unpacking therefore wraps every slice in <code>$signed(...)</code> before multiplying.</li>
+      <li>Overflow detection: sign-extend the truncated C[0][0] back to 64 bits and compare with the full-precision accumulator &mdash; inequality means the wrap changed the value, which sets the <code>ovf</code> coverage attribute.</li>
+      <li>Comparisons in the scoreboard use <code>!==</code> so an X in the observed data fails instead of X-matching.</li>
+    </ul>
+  </div></details>
+
+  <details class="q"><summary>Queues vs. memory arrays for modeling a FIFO &mdash; when does it matter?</summary><div class="a">
+    <p>Queues are perfect for scoreboard-side buffering (my TLM FIFOs are queues underneath). They bite when a <em>continuous assignment</em> must reflect their state &mdash; comb sensitivity to dynamic-container mutation is where simulators disagree, which is the stale-<code>dout</code> bug I hit on Xcelium. A static array plus pointers has plain structural sensitivity, works everywhere, and as a bonus models occupancy honestly: <code>full = (wr_ptr - rd_ptr) &ge; DEPTH</code> with (AW+1)-bit pointers, exactly like real hardware.</p>
+  </div></details>
+
+  <details class="q"><summary>Why interfaces at all? And why is rst_n an interface signal rather than in a clocking block?</summary><div class="a">
+    <p>Interfaces bundle the pins, the clocking blocks, and modports into one handle that crosses the static/class boundary as a <em>virtual interface</em> through config_db &mdash; without them every driver would need a hierarchical path. <code>rst_n</code> stays a plain interface signal because reset is asynchronous by definition; the driver does <code>wait (vif.rst_n === 1'b1)</code> &mdash; with <code>===</code> because at time 0 the net is X, and I want &ldquo;really 1,&rdquo; not &ldquo;not 0.&rdquo;</p>
+  </div></details>
+
+  <details class="q"><summary>Your parameters are macros (`DW, `NN). Defend that, and what&rsquo;s the better way?</summary><div class="a">
+    <p>Macros give one shared compile-time geometry across interfaces, classes, and DUT instantiation with zero plumbing, which fits a fixed-configuration assignment. The cost: changing N means recompiling, and classes can&rsquo;t be reused at two geometries in one sim. Production style: package <code>localparam</code>s driven by compile defines for the static world, plus a <code>uvm_config</code> object carrying geometry for the class world, with items using dynamic arrays sized from it. Then a Makefile matrix regresses (N, DIN_WIDTH, clock ratio) combinations &mdash; that&rsquo;s my named improvement for requirement 3.</p>
+  </div></details>
+
+  <span class="klabel">5 &middot; cdc &amp; fifos</span>
+
+  <details class="q"><summary>Why Gray-code pointers in an async FIFO?</summary><div class="a">
+    <p>A multi-bit binary pointer crossing domains can be captured mid-transition &mdash; several bits changing means the synchronizer can latch an arbitrary garbage value. Gray code changes exactly one bit per increment, so the synchronized pointer is always either the old or the new value &mdash; a <em>valid, merely stale</em> pointer. Flags computed from a stale pointer err conservative: full asserts a touch early, empty asserts a touch early &mdash; you lose a beat of throughput, never data.</p>
+  </div></details>
+
+  <details class="q"><summary>Why are the pointers AW+1 bits for a 2^AW-deep FIFO?</summary><div class="a">
+    <p>With AW bits, full and empty are both &ldquo;pointers equal&rdquo; &mdash; indistinguishable. The extra MSB acts as a wrap/lap counter: empty is complete Gray equality; full is the Cummings condition <code>wgray_next == {~rgray_sync[AW:AW-1], rgray_sync[AW-2:0]}</code> &mdash; same position, opposite lap (top two Gray bits inverted).</p>
+  </div></details>
+
+  <details class="q"><summary>In your RTL FIFO, why is full registered but empty combinational?</summary><div class="a">
+    <p><code>full</code> feeds the write-pointer increment; a combinational full closes the loop full &rarr; wbin_next &rarr; wgray_next &rarr; full. Registering it breaks the loop, is the canonical Cummings form, and can only err conservative. <code>empty</code> compares two already-registered Gray values &mdash; no loop &mdash; and keeping it combinational is what enables first-word-fall-through: <code>rdata</code> shows the head the same cycle a word lands, and <code>rd_en</code> just pops.</p>
+  </div></details>
+
+  <details class="q"><summary>Your behavioral sub_sys compares binary pointers across the two clocks. Isn&rsquo;t that a CDC violation?</summary><div class="a">
+    <p>Yes &mdash; and I&rsquo;ll say so before the interviewer does. <code>in_fifo_full</code> combines a sys-domain and an sr-domain binary pointer with no synchronizer; in silicon that&rsquo;s a real bug. It&rsquo;s acceptable only because this is a zero-delay <em>functional stand-in</em>: an event-driven simulator has no metastability, so the model still behaves like an ideal FIFO. The synthesizable answer exists in the same repo &mdash; the Gray-pointer <code>async_fifo</code> in the RTL track. Knowing exactly where a model is allowed to cheat, and saying it out loud, is the point of the question.</p>
+  </div></details>
+
+  <details class="q"><summary>How would you verify CDC properly?</summary><div class="a">
+    <ul>
+      <li><b>Structural:</b> CDC lint (Spyglass CDC / Questa CDC) &mdash; every crossing has a recognized synchronizer, no reconvergence of synced bits, no un-synced multi-bit buses.</li>
+      <li><b>Dynamic:</b> sweep clock ratios and phases including nasty near-integer ratios, add jitter; run long soaks where FIFO occupancy repeatedly saturates both ways.</li>
+      <li><b>Assertions:</b> Gray pointers change at most one bit per own-clock edge; FIFO never writes when full or pops when empty; data written equals data read (in-order integrity).</li>
+      <li><b>Reset:</b> verify both domains come out of reset cleanly in either order &mdash; tied to my named gap of no reset-mid-traffic test.</li>
+    </ul>
+  </div></details>
+
+  <span class="klabel">6 &middot; systolic-array architecture</span>
+
+  <details class="q"><summary>Why a systolic array for matrix multiply at all?</summary><div class="a">
+    <p>Data reuse with purely local wiring. Every operand fetched from memory is used N times as it marches through the mesh, so bandwidth drops by ~N versus a MAC farm hitting SRAM every cycle; wires are nearest-neighbor only, which is what makes the layout scale. N&sup2; PEs retire N&sup2;&middot;M MACs in about M + 2N &minus; 1 cycles &mdash; near-perfect utilization for streamed back-to-back matrices. It&rsquo;s the TPU / TetraMem-style architecture for exactly this workload.</p>
+  </div></details>
+
+  <details class="q"><summary>Weight-stationary vs. output-stationary &mdash; what is this design and what else exists?</summary><div class="a">
+    <p>The RTL is <b>weight-stationary</b>: PE(r,c) pins B[r][c] in place, activations stream left&rarr;right, partial sums trickle top&rarr;bottom, and column c spatially reduces &Sigma;<sub>r</sub> A[i][r]&middot;B[r][c]. Alternatives: <b>output-stationary</b> (C accumulates in place; A and B both stream &mdash; the page-11 <em>module interface</em> actually fits this view, which is what my behavioral model implements temporally) and <b>row-stationary</b> (Eyeriss; optimizes convolution reuse). Being able to say the RTL and the behavioral model realize two different dataflows that provably compute the same C is a strong moment in this interview.</p>
+  </div></details>
+
+  <details class="q"><summary>Why must inputs be skewed, and where does the 2N&minus;1 latency come from?</summary><div class="a">
+    <p>PE(r,c) needs activation a[i][r] to arrive together with the partial sum of row i that has already accumulated r hops above it &mdash; so row r&rsquo;s input is delayed r cycles, forming the classic diagonal wavefront. At the bottom, column c&rsquo;s result finishes c cycles later than column 0, so a matching N&minus;1&minus;c de-skew realigns whole rows. Total: N&minus;1 (skew) + N (mesh traversal) &mdash; <code>out_valid</code> is <code>in_valid</code> through a 2N&minus;1 shift register, which is also exactly how the TB knows when to collect.</p>
+  </div></details>
+
+  <details class="q"><summary>Explain the double-buffered weights and what problem they solve.</summary><div class="a">
+    <p>Loading B costs N cycles; naively the array idles during it, halving throughput on alternating load/compute streams (the page-10 problem). Each PE therefore holds two weight registers &mdash; <code>w_load</code> written row-by-row while <code>w_active</code> keeps computing, and a one-cycle <code>swap_w</code> promotes the new set. The reload stall vanishes. Remaining honesty point: the swap is still global, so a frame must drain before swapping &mdash; per-column wavefront swapping is the documented next step to true peak throughput.</p>
+  </div></details>
+
+  <details class="q"><summary>What happens if M &gt; N? How would you support it?</summary><div class="a">
+    <p>The mesh only holds N contraction slices, so M&gt;N needs multi-pass accumulation: slice A into &lceil;M/N&rceil; column-blocks and B into row-blocks, and seed each pass&rsquo;s partial sums with the previous pass&rsquo;s results &mdash; that&rsquo;s precisely what the <code>c_din</code> port exists for (<code>c_dout</code>&rarr;<code>c_din</code> loop-back). Structurally provisioned, control not implemented; both DUT and monitor clamp M to N, and the limit is a stated assumption. Verification impact if built: sequences spanning passes, golden unchanged, plus new corners &mdash; partial-sum wrap <em>between</em> passes and back-pressure landing mid-accumulation.</p>
+  </div></details>
+
+  <details class="q"><summary>Why does one covergroup treat magnitude buckets and signs of a single element as meaningful coverage?</summary><div class="a">
+    <p>It&rsquo;s a proxy model, and I&rsquo;d present it as such. Signed-datapath bugs cluster at sign boundaries and near the representational edges, so signs {neg, zero, pos} &times; both operands, magnitude buckets up to &plusmn;127, and the wrap bin target the risky regions with 40 bins instead of thousands. Element [0][0] is the sampled proxy &mdash; the directed generator constructs matrices so the proxy is forced through every case. The stricter model &mdash; sample all N&sup2; elements, cross with M &mdash; is in my improvements list; it costs simulation and closure effort and buys mostly redundant evidence for a uniform datapath.</p>
+  </div></details>
+
+  <span class="klabel">7 &middot; coverage &amp; closure</span>
+
+  <details class="q"><summary>Random coverage plateaued. Walk me through what you did.</summary><div class="a">
+    <p>It stalled around 65%. First, hole analysis &mdash; which bins are empty and <em>why</em>: the zero-sign bins need an entire A row or B column to be zero, probability (1/256)&#8308; per matrix &mdash; effectively never; the overflow bin needs near-max operands aligned along a full row&ndash;column pair; the magnitude buckets of one fixed element fill slowly. Then the fix matched the cause: a <code>gen_cov()</code> directed builder (random background, forced row/column patterns, five modes) and a 24-item directed list that closes every remaining bin deterministically, plus an M sweep through the sub-system for the bus covergroup. One 9-second run, three covergroups at 100%. The principle: random for breadth, directed for the measure-zero corners &mdash; and coverage feedback is what tells you which is which.</p>
+  </div></details>
+
+  <details class="q"><summary>Coverage is 100%. Is the design verified?</summary><div class="a">
+    <p>No &mdash; 100% means <em>my model of interesting</em> is exhausted, and the model is the weak link. What it doesn&rsquo;t capture: temporal corners (reset mid-frame, M changing while data is in flight), clock-ratio sensitivity, all-elements sampling, cross of back-pressure with M. Also: functional coverage without code coverage can hide unexercised RTL; on real RTL I&rsquo;d require line/expression/toggle/FSM closure too (the log shows <code>-coverage all</code> already collects it). The mature answer: coverage closure is exit criteria for the <em>plan</em>; the plan itself gets reviewed against the spec, and the gaps I listed are the review.</p>
+  </div></details>
+
+  <details class="q"><summary>How would you run this as a real regression?</summary><div class="a">
+    <p>The pieces exist: <code>run.sh</code> for one test, <code>run_all.sh</code> loops the nine tests with <code>-covtest</code> per test and merges databases with <code>imc -exec merge_cov.tcl</code>. Scale-up: multi-seed nightly (<code>-svseed random</code>, archive seeds so failures reproduce), a compile matrix over (N, DIN_WIDTH, clock ratio), rank tests by coverage contribution, gate merges on zero UVM_ERROR, and trend the merged number in CI rather than trusting one run.</p>
+  </div></details>
+
+  <span class="klabel">8 &middot; improvements &amp; critique</span>
+
+  <details class="q"><summary>What are the improvements you&rsquo;d make to this UVM testbench?</summary><div class="a">
+    <p>In priority order, each tied to a real gap:</p>
+    <ol>
+      <li><b>SVA protocol assertions</b>, bound into the interfaces: <code>out_valid</code> bursts are exactly N cycles; never write-when-full or pop-when-empty; <code>dout</code> stable while unread; Gray pointers change one bit per edge. Assertions catch protocol bugs the scoreboard&rsquo;s end-to-end view can blur.</li>
+      <li><b>Reset and error stimulus:</b> reset mid-frame with clean-recovery checks; <code>in_valid</code> gaps inside a frame; illegal <code>M_minus_one</code> driven on purpose (today the clamp is defensive code that no test provokes).</li>
+      <li><b>Parameter/clock regression:</b> geometry into a package + config object, Makefile matrix over (N, DIN_WIDTH, sys:sr ratio) including the inverted ratio &mdash; the UVM run currently fixes 10:14.</li>
+      <li><b>End-of-test hygiene:</b> replace the 200&nbsp;ns drain with <code>phase_ready_to_end</code> keyed on outstanding scoreboard items.</li>
+      <li><b>Richer coverage:</b> all-elements sign sampling, FIFO occupancy bins, back-pressure &times; M cross, clock-ratio covergroup.</li>
+      <li><b>Cycle-accurate predictor</b> (the assignment&rsquo;s &ldquo;big plus&rdquo;): model the 2N&minus;1 latency and FIFO timing so the TB checks <em>when</em>, not just <em>what</em> &mdash; catches performance regressions functionally-correct runs hide.</li>
+      <li><b>Swap the behavioral DUT for the track-A RTL</b> in the UVM run and close code coverage on it; scoreboard out-of-order tolerance via keyed matching as a robustness upgrade.</li>
+      <li><b>Infrastructure:</b> multi-seed CI with archived seeds, coverage trend dashboards, DPI-C golden model if C++ ever becomes the reference.</li>
+    </ol>
+  </div></details>
+
+  <details class="q"><summary>Be critical: what are the weaknesses of your testbench?</summary><div class="a">
+    <p>Volunteering these before being asked is the move: no assertions; no reset-during-traffic test; one clock ratio per run; single-seed archived closure evidence; a magic-number drain; compile-time geometry; coverage sampling one proxy element; the behavioral DUT&rsquo;s deliberate CDC shortcut; M&gt;N unsupported by stated assumption. None are unknowns &mdash; each has a named fix in my improvements list, which is the difference between a gap and a blind spot.</p>
+  </div></details>
+
+  <span class="klabel">9 &middot; curveballs</span>
+
+  <details class="q"><summary>The DUT starts emitting matrices out of order. What breaks, and how do you fix it?</summary><div class="a">
+    <p>My scoreboard&rsquo;s blocking in-order compare fails on the first swap. Fix: keyed matching &mdash; carry an ID (or hash of A,B,M) with the expected item, store expectations in an associative array, match observations by key, and add a timeout for never-matched entries. The monitors don&rsquo;t change; only the compare loop does &mdash; which is the payoff of keeping prediction in monitors and policy in the scoreboard.</p>
+  </div></details>
+
+  <details class="q"><summary>FIFO DEPTH changes from 4 to 2, or to a non-power-of-two. Impact?</summary><div class="a">
+    <p>DEPTH=2: functionally the TB is untouched (the write driver already honors <code>full</code> every beat); back-pressure just triggers constantly &mdash; arguably better stress. Non-power-of-two: the behavioral pointer FIFO still works (comparison arithmetic, not bit-wrap), but the Gray-pointer RTL FIFO breaks &mdash; Gray adjacency only holds when the pointer wraps at a power of two. Standard practice: round up and cap occupancy, or use credit-based flow control. Also <code>$clog2</code>-derived widths need re-checking. The follow-up they want: full/empty corners move, so re-run back-pressure and re-close the FIFO-flag bins.</p>
+  </div></details>
+
+  <details class="q"><summary>sys_clk becomes much faster than sr_clk (say 5:1). What do you expect to see?</summary><div class="a">
+    <p>The writer outruns the compute engine: <code>in_fifo_full</code> asserts routinely, the write driver spends most beats stalled, and sustained throughput collapses to the sr-side rate of one matrix per ~(M + 2N) sr cycles; the reader mostly polls <code>out_fifo_empty</code>. Correctness must not change &mdash; that&rsquo;s the whole claim of the flow-control design &mdash; and the checks that prove it are the driver honoring <code>full</code>, the monitor counting only accepted writes, and (on the RTL) the Gray-pointer conservatism. This is exactly why clock-ratio sweep is on my improvements list rather than hand-waved.</p>
+  </div></details>
+
+  <details class="q"><summary>How would you verify the PE by itself? Was the mesh-level TB enough?</summary><div class="a">
+    <p>I did both. <code>tb_pe</code> unit-tests the cell directly &mdash; 807 checks over random a/b/c_in including the &plusmn;127/&minus;128 extremes, plus the double-buffer sequencing (load doesn&rsquo;t disturb the active weight; swap takes effect exactly next cycle). Mesh-level tests can prove sum-correctness while masking a symmetric cell bug or a wiring transposition that unit + mesh together pin down. Small unit benches are cheap; debugging a 16-PE wavefront to find a one-line MAC bug is not.</p>
+  </div></details>
+
+  <details class="q"><summary>Your test computes golden C in the monitor at zero time. What if the reference model were slow &mdash; a SystemC or DPI-C model?</summary><div class="a">
+    <p>Move prediction out of the monitor&rsquo;s sampling path: monitor publishes the raw stimulus item; a separate predictor component (subscriber) calls the DPI/SystemC model &mdash; possibly pipelined or threaded &mdash; and pushes expectations into the scoreboard FIFO. The blocking-get scoreboard already tolerates arbitrary prediction latency because it just waits on whichever FIFO is behind. That&rsquo;s the standard predictor-scoreboard split; my current compute-in-monitor is the collapsed version you use when the model is a ten-line function.</p>
+  </div></details>
+
+  <details class="q"><summary>Questions worth asking the interviewer back</summary><div class="a">
+    <ul>
+      <li>For TetraMem&rsquo;s analog in-memory compute arrays &mdash; how does DV model device non-idealities (conductance drift, noise) that a digital golden model can&rsquo;t capture bit-exactly? Tolerance-band scoreboards?</li>
+      <li>What&rsquo;s the mixed-signal verification boundary &mdash; where does UVM stop and AMS/behavioral-analog modeling start?</li>
+      <li>How is the coverage model reviewed here &mdash; who signs off that the plan, not just the percentage, is complete?</li>
+      <li>Formal property checking on the FIFO/CDC layer, or simulation-only?</li>
+    </ul>
+  </div></details>
+</section>
+
+</main>
+
+<footer>
+  Built from the TetraMem_HW workspace: assignment PDF (14 pp), rtl/ + tb/ Verilator track, uvm/ Xcelium track, result-3/xrun.log closure evidence.
+</footer>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+    function select(tab, pushHash) {
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+      panels.forEach(function (p) { p.hidden = (p.id !== tab.getAttribute('aria-controls')); });
+      if (pushHash) {
+        try { history.replaceState(null, '', '#' + tab.id.replace('tab-', '')); } catch (e) {}
+      }
+      window.scrollTo({ top: 0 });
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab, true); });
+      tab.addEventListener('keydown', function (e) {
+        var j = -1;
+        if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+        if (e.key === 'ArrowLeft')  j = (i - 1 + tabs.length) % tabs.length;
+        if (j >= 0) { e.preventDefault(); tabs[j].focus(); select(tabs[j], true); }
+      });
+    });
+    var h = location.hash.replace('#', '');
+    if (h) {
+      var t = document.getElementById('tab-' + h);
+      if (t) select(t, false);
+    }
+  })();
+</script>

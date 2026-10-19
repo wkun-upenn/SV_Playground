@@ -1,0 +1,6 @@
+build/
+run/
+*.vcd
+*.fsdb
+*.log
+!sim/spike_logs/*.log
