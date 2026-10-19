@@ -1,3 +1,6 @@
 [submodule "mflowgen-riscv-tapeout"]
 	path = mflowgen-riscv-tapeout
 	url = https://github.com/radway-lab/mflowgen-riscv-tapeout.git
+[submodule "amba"]
+	path = amba
+	url = https://github.com/wkun-upenn/amba_project.git
